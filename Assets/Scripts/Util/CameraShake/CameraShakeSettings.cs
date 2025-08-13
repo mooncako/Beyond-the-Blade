@@ -15,3 +15,25 @@ public class CameraShakeSettings
         Frequency = frequency;
     }
 }
+
+[Serializable]
+public class LightShake : CameraShakeSettings
+{
+    public LightShake()
+    {
+        Duration = .1f;
+        Amplitude = 1.5f;
+        Frequency = 20;
+    }
+}
+
+[Serializable]
+public class HeavyShake : CameraShakeSettings
+{
+    public HeavyShake()
+    {
+        Duration = .2f;
+        Amplitude = 10f;
+        Frequency = 15f;
+    }
+}
