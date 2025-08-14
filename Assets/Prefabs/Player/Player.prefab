@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 2770192959741835255}
   - component: {fileID: 8603676096848177205}
   - component: {fileID: 2054509112993783971}
+  - component: {fileID: 5315302306169048786}
   - component: {fileID: 8016566717477088041}
+  - component: {fileID: 5416810635430714}
   - component: {fileID: 4458276716399103277}
   - component: {fileID: 2553810978626859978}
   - component: {fileID: 5574992783778937607}
@@ -91,6 +93,28 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!95 &5315302306169048786
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &8016566717477088041
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -113,6 +137,36 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &5416810635430714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!114 &4458276716399103277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,7 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd569aa906bb1564eacf45392b8e6ccc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Team>k__BackingField: 1
+  <Team>k__BackingField: 0
   <IsTargetable>k__BackingField: 1
 --- !u!114 &68828148833966052
 MonoBehaviour:
@@ -212,6 +266,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a4f0715a5292642874cbaaff57a63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxHealth: 0
+  _health: 0
+  OnDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealthRecovery:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1078953859885710922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,10 +294,10 @@ MonoBehaviour:
   FieldOfView: 140
   _occlusionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 896
   _visibilityMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 896
 --- !u!114 &1108131639495183653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,13 +365,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
       propertyPath: m_Name
-      value: Player_Rig
+      value: PlayerMesh
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5866666021909216657, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
