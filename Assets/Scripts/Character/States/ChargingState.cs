@@ -8,7 +8,7 @@ public class ChargingState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        Player.OnStateChanged.Invoke(STATE.Charging);
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Charging);
     }
 
     public override void Update()

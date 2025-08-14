@@ -8,7 +8,8 @@ public class StaggerState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        Player.OnStateChanged.Invoke(STATE.Staggered);
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Staggered);
+        
         if (Player.Combat.IsCharging == true)
         {
             Player.Combat.CancelCharge();

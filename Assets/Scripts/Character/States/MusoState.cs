@@ -9,7 +9,7 @@ public class MusoState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        Player.OnStateChanged.Invoke(STATE.Muso);
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Muso);
     }
 
     public override void Update()

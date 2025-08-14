@@ -8,7 +8,8 @@ public class ParryingState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        Player.OnStateChanged.Invoke(STATE.Parrying);
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Parrying);
+        
         Player.Movement.Stop();
         Player.Movement.SetMoveInput(Vector3.zero);
         Player.Movement.ResetSpeed();  

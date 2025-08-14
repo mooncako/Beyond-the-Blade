@@ -8,8 +8,16 @@ public class PlayerController : Controller
 {
     [SerializeField, FoldoutGroup("Base Reference")] private InputProcessor _inputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
+    [BoxGroup("Input"), ReadOnly] public PlayerStateMachine StateMachine { get; private set; }
+    [BoxGroup("Input"), ReadOnly] public StateCollection States { get; private set; }
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
+
+#if UNITY_EDITOR
+    [Header("Current State")]
+    [DisplayAsString, HideLabel, ShowInInspector] public string CurrentState => StateMachine?.CurrentState.ToString() ?? "None";
+#endif
+
 
     protected override void OnValidate()
     {
@@ -21,6 +29,9 @@ public class PlayerController : Controller
     {
         base.Awake();
 
+
+        StateMachine = new PlayerStateMachine();
+        States = new StateCollection(this, StateMachine);
         foreach (PlayerActionType actionType in System.Enum.GetValues(typeof(PlayerActionType)))
         {
             _availableActions[actionType] = true;

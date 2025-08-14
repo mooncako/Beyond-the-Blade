@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class DeadState : PlayerState
 {
-        public DeadState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) {}
+    public DeadState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) {}
 
     public override void Enter()
     {
@@ -12,7 +12,9 @@ public class DeadState : PlayerState
             Player.Combat.CancelCharge();
             EventHub.Instance.OnChargeEnded.Invoke();
         }
-        Player.OnStateChanged.Invoke(STATE.Dead);
+        
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Dead);
+
         new WaitForSeconds(1f);
         Player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         Player.Animator.SetTrigger("IsDead");

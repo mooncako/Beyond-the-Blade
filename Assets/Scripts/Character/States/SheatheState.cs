@@ -9,7 +9,7 @@ public class SheatheState : PlayerState
     {
         base.Enter();
         Player.Animator.ResetTrigger("Muso");
-        Player.OnStateChanged.Invoke(STATE.Sheathe);
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Sheathe);
     }
 
     public override void Update()
