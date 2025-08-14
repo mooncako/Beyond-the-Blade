@@ -7,9 +7,9 @@ using UnityEngine.InputSystem;
 public class PlayerController : Controller
 {
     [SerializeField, FoldoutGroup("Base Reference")] private InputProcessor _inputProcessor;
+    [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
-
 
     protected override void OnValidate()
     {
@@ -40,6 +40,37 @@ public class PlayerController : Controller
         _inputProcessor.SetInputActive(IsActionAvailable(PlayerActionType.Move));
     }
 
+    public void InputRotate(InputAction.CallbackContext context)
+    {
+
+        Vector2 inputValue = context.ReadValue<Vector2>();
+
+        RotateInput = inputValue;
+    }
+
+    public void InputParry(InputAction.CallbackContext context)
+    {
+        if (context.started && IsActionAvailable(PlayerActionType.Parry))
+        {
+            TryParry();
+        }
+    }
+
+    public void InputPauseUnPause(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (Time.timeScale > .5f)
+            {
+                //Pause
+            }
+            else
+            {
+                //Resume
+            }
+        }
+    }
+
 
     public void SetActionAvailable(PlayerActionType actionType, bool available)
     {
@@ -49,5 +80,10 @@ public class PlayerController : Controller
     private bool IsActionAvailable(PlayerActionType actionType)
     {
         return _availableActions.TryGetValue(actionType, out bool available) && available;
+    }
+
+    private bool TryParry()
+    {
+        return false;
     }
 }
