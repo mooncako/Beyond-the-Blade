@@ -14,6 +14,10 @@ GameObject:
   - component: {fileID: 8016566717477088041}
   - component: {fileID: 4458276716399103277}
   - component: {fileID: 2553810978626859978}
+  - component: {fileID: 5574992783778937607}
+  - component: {fileID: 68828148833966052}
+  - component: {fileID: 1078953859885710922}
+  - component: {fileID: 1108131639495183653}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -182,6 +186,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37ac4145b246d1e45add28972ce77ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5574992783778937607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd569aa906bb1564eacf45392b8e6ccc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Team>k__BackingField: 1
+  <IsTargetable>k__BackingField: 1
+--- !u!114 &68828148833966052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2a4f0715a5292642874cbaaff57a63c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1078953859885710922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ed2b1688e22ef499d33c7be3068df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Range: 4
+  AlertRange: 6
+  FieldOfView: 140
+  _occlusionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _visibilityMask:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &1108131639495183653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8ec5994c562004b854e3f9a3a5990c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Movement>k__BackingField: {fileID: 4458276716399103277}
+  <Targetable>k__BackingField: {fileID: 5574992783778937607}
+  <Health>k__BackingField: {fileID: 68828148833966052}
+  <Vision>k__BackingField: {fileID: 1078953859885710922}
+  <Stats>k__BackingField: {fileID: 11400000, guid: 557be447e5c527843ad0fa9480313799, type: 2}
 --- !u!1001 &9104618242078276840
 PrefabInstance:
   m_ObjectHideFlags: 0

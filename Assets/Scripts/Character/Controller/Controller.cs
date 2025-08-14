@@ -12,14 +12,14 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public Targetable Targetable { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
-    [SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
+    [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
 
-    void Awake()
+    protected virtual void Awake()
     {
         ApplyStats();
     }
 
-    void OnValidate()
+    protected virtual void OnValidate()
     {
         if (Movement == null) Movement = GetComponent<CustomCharacterMovement>();
         if (Targetable == null) Targetable = GetComponent<Targetable>();
@@ -32,5 +32,6 @@ public class Controller : MonoBehaviour
     {
         if (Stats == null) return;
         Vision.ApplyStats(Stats);
+        Health.ApplyStats(Stats);
     }
 }
