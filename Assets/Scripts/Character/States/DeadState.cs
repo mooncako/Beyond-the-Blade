@@ -10,9 +10,9 @@ public class DeadState : PlayerState
         if (Player.Combat.IsCharging == true)
         {
             Player.Combat.CancelCharge();
-            EventHub.Instance.OnChargeEnded.Invoke();
+            //EventHub.Instance.OnChargeEnded.Invoke();
         }
-        
+
         PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Dead);
 
         new WaitForSeconds(1f);
