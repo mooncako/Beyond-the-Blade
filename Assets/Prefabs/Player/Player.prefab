@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 68828148833966052}
   - component: {fileID: 1078953859885710922}
   - component: {fileID: 1108131639495183653}
+  - component: {fileID: 4738868850322387614}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -315,6 +316,19 @@ MonoBehaviour:
   <Health>k__BackingField: {fileID: 68828148833966052}
   <Vision>k__BackingField: {fileID: 1078953859885710922}
   <Stats>k__BackingField: {fileID: 11400000, guid: 557be447e5c527843ad0fa9480313799, type: 2}
+  _inputProcessor: {fileID: 4738868850322387614}
+--- !u!114 &4738868850322387614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8ab976c8b249443a7bdefad3d88a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &9104618242078276840
 PrefabInstance:
   m_ObjectHideFlags: 0
