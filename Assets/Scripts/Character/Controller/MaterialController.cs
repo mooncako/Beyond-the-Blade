@@ -83,7 +83,6 @@ public class MaterialController : MonoBehaviour
 
     [SerializeField, BoxGroup("References")] private SkinnedMeshRenderer[] _skinnedMeshes;
     //[SerializeField, BoxGroup("References")] private Health _health;
-    [SerializeField, BoxGroup("References")] private CanvasGroup _musoSelection;
     [SerializeField, BoxGroup("Settings")] private float _lightDetectionRadius = 40f;
     [SerializeField, BoxGroup("Settings")] private LayerMask _lightMask;
     [SerializeField, BoxGroup("Settings")] private float _fadeSpeed = 5f;

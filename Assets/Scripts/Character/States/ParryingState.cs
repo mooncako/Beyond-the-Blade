@@ -17,11 +17,11 @@ public class ParryingState : PlayerState
 
     public override void Update()
     {
-        if (Player.Combat.MusoReady)
-        {
-            StateMachine.ChangeState(Player.States.MusoState);
-        }
-        
+        // if (Player.Combat.MusoReady)
+        // {
+        //     StateMachine.ChangeState(Player.States.MusoState);
+        // }
+
         if (Player.CurrentState != PlayerStateType.Parrying)
         {
             StateMachine.ChangeState(Player.States.IdleState);

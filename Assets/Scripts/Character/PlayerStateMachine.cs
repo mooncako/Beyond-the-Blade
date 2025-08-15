@@ -31,7 +31,7 @@ public class PlayerStateMachine
         {
             return;
         }
-        
+
         CurrentState.Update();
     }
 }
