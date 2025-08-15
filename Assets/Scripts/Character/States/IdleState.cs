@@ -9,7 +9,8 @@ public class IdleState : PlayerState
         base.Enter();
         Player.Movement.Stop();
         Player.Movement.SetMoveInput(Vector3.zero);
-        Player.Movement.ResetSpeed();  
+        Player.Movement.ResetSpeed();
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Idle);  
     }
 
     public override void Update()
@@ -21,12 +22,12 @@ public class IdleState : PlayerState
             StateMachine.ChangeState(Player.States.MovingState);
         }
 
-        if (Player.Combat.IsAttacking)
+        if (Player.CurrentState == PlayerStateType.Attacking)
         {
             StateMachine.ChangeState(Player.States.AttackingState);
         }
 
-        if (Player.Combat.IsParrying)
+        if (Player.CurrentState == PlayerStateType.Parrying)
         {
             StateMachine.ChangeState(Player.States.ParryingState);
         }

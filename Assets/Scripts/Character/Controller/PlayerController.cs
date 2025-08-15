@@ -1,28 +1,30 @@
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(InputProcessor))]
-public class PlayerController : Controller
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>
 {
-    [SerializeField, FoldoutGroup("Base Reference")] private InputProcessor _inputProcessor;
+    [SerializeField, FoldoutGroup("Base Reference")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateMachine StateMachine { get; private set; }
     [BoxGroup("Input"), ReadOnly] public StateCollection States { get; private set; }
+    [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
 
 #if UNITY_EDITOR
     [Header("Current State")]
-    [DisplayAsString, HideLabel, ShowInInspector] public string CurrentState => StateMachine?.CurrentState.ToString() ?? "None";
+    [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
 #endif
 
 
     protected override void OnValidate()
     {
         base.OnValidate();
-        if (_inputProcessor == null) _inputProcessor = GetComponent<InputProcessor>();
+        if (InputProcessor == null) InputProcessor = GetComponent<InputProcessor>();
     }
 
     protected override void Awake()
@@ -38,6 +40,23 @@ public class PlayerController : Controller
         }
     }
 
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
+    }
+
+    public void OnMMEvent(PlayerAnimationStateChangeEvent e)
+    {
+        CurrentState = e.State;
+    }
+
     public void InputMovement(InputAction.CallbackContext context)
     {
         // Always process the input vector, regardless of action availability
@@ -45,10 +64,10 @@ public class PlayerController : Controller
         Vector2 inputValue = context.ReadValue<Vector2>();
 
         // Store the input in the InputProcessor
-        _inputProcessor.ProcessInputVector(inputValue);
+        InputProcessor.ProcessInputVector(inputValue);
 
         // Only apply movement if the action is available
-        _inputProcessor.SetInputActive(IsActionAvailable(PlayerActionType.Move));
+        InputProcessor.SetInputActive(IsActionAvailable(PlayerActionType.Move));
     }
 
     public void InputRotate(InputAction.CallbackContext context)
@@ -97,4 +116,6 @@ public class PlayerController : Controller
     {
         return false;
     }
+
+    
 }

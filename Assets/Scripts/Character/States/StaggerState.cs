@@ -9,17 +9,12 @@ public class StaggerState : PlayerState
     {
         base.Enter();
         PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Staggered);
-        
-        if (Player.Combat.IsCharging == true)
-        {
-            Player.Combat.CancelCharge();
-            EventHub.Instance.OnChargeEnded.Invoke();
-        }
+
     }
 
     public override void Update()
     {
-        if (!Player.Combat.IsStaggered)
+        if (Player.CurrentState != PlayerStateType.Staggered)
         {
             StateMachine.ChangeState(Player.States.IdleState);
         }

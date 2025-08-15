@@ -34,7 +34,7 @@ public abstract class PlayerState
         
         Player.Movement.SetMoveInput(moveDirection);
         
-        if (Player.Combat.IsStaggered)
+        if (Player.CurrentState == PlayerStateType.Staggered)
         {
             StateMachine.ChangeState(Player.States.StaggerState);
         }

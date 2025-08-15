@@ -15,12 +15,12 @@ public class SheatheState : PlayerState
     public override void Update()
     {
         base.Update();
-        if (Player.Combat.IsAttacking)
+        if (Player.CurrentState == PlayerStateType.Attacking)
         {
             StateMachine.ChangeState(Player.States.AttackingState);
         }
 
-        if (Player.Combat.IsParrying)
+        if (Player.CurrentState == PlayerStateType.Parrying)
         {
             StateMachine.ChangeState(Player.States.ParryingState);
         }

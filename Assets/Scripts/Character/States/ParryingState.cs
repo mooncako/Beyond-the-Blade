@@ -9,7 +9,7 @@ public class ParryingState : PlayerState
     {
         base.Enter();
         PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Parrying);
-        
+
         Player.Movement.Stop();
         Player.Movement.SetMoveInput(Vector3.zero);
         Player.Movement.ResetSpeed();  
@@ -21,7 +21,8 @@ public class ParryingState : PlayerState
         {
             StateMachine.ChangeState(Player.States.MusoState);
         }
-        if (!Player.Combat.IsParrying)
+        
+        if (Player.CurrentState != PlayerStateType.Parrying)
         {
             StateMachine.ChangeState(Player.States.IdleState);
         }

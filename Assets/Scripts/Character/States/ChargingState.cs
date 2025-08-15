@@ -14,10 +14,6 @@ public class ChargingState : PlayerState
     public override void Update()
     {
         base.Update();
-        if (!Player.Combat.IsCharging)
-        {
-            StateMachine.ChangeState(Player.States.IdleState);
-        }
     }
 
     public override void Exit()

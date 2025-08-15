@@ -7,13 +7,14 @@ public class AttackingState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Attacking);
     }
 
     public override void Update()
     {
         base.Update();
         
-        if (!Player.Combat.IsAttacking)
+        if (Player.CurrentState != PlayerStateType.Attacking)
         {
             StateMachine.ChangeState(Player.States.IdleState);
         }

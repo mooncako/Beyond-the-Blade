@@ -7,11 +7,6 @@ public class DeadState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        if (Player.Combat.IsCharging == true)
-        {
-            Player.Combat.CancelCharge();
-            //EventHub.Instance.OnChargeEnded.Invoke();
-        }
 
         PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Dead);
 

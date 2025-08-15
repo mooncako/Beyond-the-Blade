@@ -30,6 +30,16 @@ public class Controller : MonoBehaviour
         if (Animator == null) Animator = GetComponent<Animator>();
     }
 
+    protected virtual void OnEnable()
+    {
+
+    }
+
+    protected virtual void OnDisable()
+    {
+        
+    }
+
     [Button]
     public void ApplyStats()
     {

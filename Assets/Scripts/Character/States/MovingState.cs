@@ -7,6 +7,7 @@ public class MovingState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        PlayerAnimationStateChangeEvent.Trigger(PlayerStateType.Moving);
     }
 
     public override void Update()
@@ -18,12 +19,12 @@ public class MovingState : PlayerState
             StateMachine.ChangeState(Player.States.IdleState);
         }
         
-        if (Player.Combat.IsAttacking)
+        if (Player.CurrentState == PlayerStateType.Attacking)
         {
             StateMachine.ChangeState(Player.States.AttackingState);
         }
 
-        if (Player.Combat.IsParrying)
+        if (Player.CurrentState == PlayerStateType.Parrying)
         {
             StateMachine.ChangeState(Player.States.ParryingState);
         }
