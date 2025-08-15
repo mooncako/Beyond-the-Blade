@@ -134,10 +134,12 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             if (Time.timeScale > .5f)
             {
                 //Pause
+                Time.timeScale = 0;
             }
             else
             {
                 //Resume
+                Time.timeScale = 1;
             }
         }
     }
