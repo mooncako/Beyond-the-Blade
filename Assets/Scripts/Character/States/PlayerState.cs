@@ -33,6 +33,7 @@ public abstract class PlayerState
             cameraForward * Player.InputProcessor.InputVectorNormalized.y;
         
         Player.Movement.SetMoveInput(moveDirection);
+        Debug.Log(moveDirection);
         
         if (Player.CurrentState == PlayerStateType.Staggered)
         {
