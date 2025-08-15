@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
@@ -88,7 +89,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 _aimPoint = mouseRay.GetPoint(planeDistance);
                 _aimPoint.y = transform.position.y;
                 Movement.SetLookPosition(_aimPoint);
-                //_arrow.transform.LookAt(_aimPoint);
             }
         }else if(_input.currentControlScheme == "Gamepad")
         {
