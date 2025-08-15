@@ -101,17 +101,12 @@ public class PlayerCombatController : MonoBehaviour
 
     void OnEnable()
     {
-        EventHub.Instance.OnSuccessfulParry.AddListener(() => _parryHitVFX.Play());    
-        EventHub.Instance.OnSuccessfulParry.AddListener(() => _player.CharacterAnimations.PlayDeflectAnimation());
-        EventHub.Instance.OnSuccessfulParry.AddListener(CheckMuso);
+
     }
 
     private void OnDisable()
     {
-        EventHub.Instance.OnEnemyStaggered.RemoveListener(() => StartMuso());
-        EventHub.Instance.OnSuccessfulParry.RemoveListener(() => _parryHitVFX.Play());  
-        EventHub.Instance.OnSuccessfulParry.RemoveListener(() => _player.CharacterAnimations.PlayDeflectAnimation());
-        EventHub.Instance.OnSuccessfulParry.RemoveListener(CheckMuso);
+
     }
     private void Update()
     {
@@ -132,39 +127,39 @@ public class PlayerCombatController : MonoBehaviour
         //     ChargeCompleted = true;
         // }
         // If any parry window is active, check for collisions
-        if (_isPerfectParryWindowActive)
-        {
-            DetectParryInArc();
-        }
+        // if (_isPerfectParryWindowActive)
+        // {
+        //     DetectParryInArc();
+        // }
 
-        if (MusoReady)
-        {
-            if (_musoTarget != null)
-                _musoTarget.MaterialController.UnHightlight();
+        // if (MusoReady)
+        // {
+        //     if (_musoTarget != null)
+        //         _musoTarget.MaterialController.UnHightlight();
 
-            _musoTarget = FindClosestEnemyToPosition(PlayerController.Instance.GetAimPosition(), _attackRange * 2f);
+        //     _musoTarget = FindClosestEnemyToPosition(PlayerController.Instance.GetAimPosition(), _attackRange * 2f);
 
-            if (_musoTarget == null)
-            {
-                _lineRenderer.enabled = false;
-            }
+        //     if (_musoTarget == null)
+        //     {
+        //         _lineRenderer.enabled = false;
+        //     }
 
-            if (_musoTarget != null)
-            {
-                _lineRenderer.enabled = true;
-                _musoTarget.MaterialController.Highlight();
-                _bezierLine.endPoint = _musoTarget.transform;
-            }
-        }
+        //     if (_musoTarget != null)
+        //     {
+        //         _lineRenderer.enabled = true;
+        //         _musoTarget.MaterialController.Highlight();
+        //         _bezierLine.endPoint = _musoTarget.transform;
+        //     }
+        // }
     }
 
     public void CheckChargeTime(Vector3 aimPosition)
     {
-        if (MusoReady)
-        {
-            MusoAttack(aimPosition);
-        }
-        else
+        // if (MusoReady)
+        // {
+        //     MusoAttack(aimPosition);
+        // }
+        // else
         {
             TryLightAttack(aimPosition);
         }
@@ -172,10 +167,10 @@ public class PlayerCombatController : MonoBehaviour
 
     public void TryLightAttack(Vector3 aimPosition)
     {
-        _player.TryRotate();
+        // _player.TryRotate();
         if (Time.timeScale > 0)
         {
-            _player.DisableMovementRotationAnimEvent();
+            // _player.DisableMovementRotationAnimEvent();
         }
         IsCharging = false;
         _chargeStartTime = 0f;
@@ -191,38 +186,39 @@ public class PlayerCombatController : MonoBehaviour
     {
         _animator.SetTrigger("Attack");
         _animator.SetBool("IsAttacking", true);
-        _movement.Dash(_movement.LookDirection, 10f);
+        // _movement.Dash(_movement.LookDirection, 10f);
         _lastAttackTime = Time.time;
         _hitEnemiesThisAttack.Clear();
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
     }
 
-    public void OnWeaponHit(Collider other)
-    {
-        if (!_weaponCollider.enabled == true) return;
+    // public void OnWeaponHit(Collider other)
+    // {
+    //     if (!_weaponCollider.enabled == true) return;
 
-        // Get ID for enemy hit
-        int enemyId = other.gameObject.GetInstanceID();
+    //     // Get ID for enemy hit
+    //     int enemyId = other.gameObject.GetInstanceID();
 
-        // Check if enemy have been hit in this attack
-        if (!_hitEnemiesThisAttack.Contains(enemyId))
-        {
-            // Add to the hit list
-            _hitEnemiesThisAttack.Add(enemyId);
-            if (other.TryGetComponent<EnemyController>(out var enemy))
-            {
-                if (enemy.Health.IsDeflecting == true)
-                {
-                    PlayerStagger();
-                    return;
-                }
-                BeginHitStop(1);
-                if(enemy.IsTank)
-                    enemy.ApplyKnockback(transform.position, _attackKnockbackForce);
-                enemy.Health.Damage(new DamageInfo(1, enemy.gameObject, gameObject, DamageType.Regular));
-            }
-        }
-    }
+    //     // Check if enemy have been hit in this attack
+    //     if (!_hitEnemiesThisAttack.Contains(enemyId))
+    //     {
+    //         // Add to the hit list
+    //         _hitEnemiesThisAttack.Add(enemyId);
+    //         if (other.TryGetComponent<EnemyController>(out var enemy))
+    //         {
+    //             if (enemy.Health.IsDeflecting == true)
+    //             {
+    //                 PlayerStagger();
+    //                 return;
+    //             }
+    //             BeginHitStop(1);
+    //             if(enemy.IsTank)
+    //                 enemy.ApplyKnockback(transform.position, _attackKnockbackForce);
+    //             enemy.Health.Damage(new DamageInfo(1, enemy.gameObject, gameObject, DamageType.Regular));
+    //         }
+    //     }
+    // }
+
     // Combo window tracking
     public void OpenComboWindow()
     {
@@ -240,87 +236,55 @@ public class PlayerCombatController : MonoBehaviour
         _hitEnemiesThisAttack.Clear();
     }
 
-    private void CheckMuso()
-    {
-        _currentMusoStack++;
-        EventHub.Instance.OnMusoChargeIncreased.Invoke(_currentMusoStack);
-        FMODUnity.RuntimeManager.PlayOneShot(_musoChargeGainedSFX, transform.position);
+    // private void CheckMuso()
+    // {
+    //     _currentMusoStack++;
+    //     EventHub.Instance.OnMusoChargeIncreased.Invoke(_currentMusoStack);
+    //     FMODUnity.RuntimeManager.PlayOneShot(_musoChargeGainedSFX, transform.position);
         
-        if (_currentMusoStack == _musoThreshold)
-        {
-            _currentMusoStack = 0;
-            StartMuso();
-        }
-    }
+    //     if (_currentMusoStack == _musoThreshold)
+    //     {
+    //         _currentMusoStack = 0;
+    //         StartMuso();
+    //     }
+    // }
 
-    public void MusoAttack(Vector3 aimPosition)
-    {
-        _player.TryRotate();
-        ResetChargeState();
-        _animator.SetTrigger("Muso");
-        _lastAttackTime = Time.time;
+    // public void MusoAttack(Vector3 aimPosition)
+    // {
+    //     // _player.TryRotate();
+    //     _animator.SetTrigger("Muso");
+    //     _lastAttackTime = Time.time;
 
-        // Find closest enemy to aim position
-        EnemyController targetEnemy = FindClosestEnemyToPosition(aimPosition, _attackRange * 2f);
+    //     // Find closest enemy to aim position
+    //     // EnemyController targetEnemy = FindClosestEnemyToPosition(aimPosition, _attackRange * 2f);
 
-        if (targetEnemy != null)
-        {
-            // Look at the target
-            Vector3 lookDirection = targetEnemy.transform.position - transform.position;
-            lookDirection.y = 0;
-            transform.rotation = Quaternion.LookRotation(lookDirection);
-            FMODUnity.RuntimeManager.PlayOneShot(_musoAttackSFX, transform.position);
-            //CreateMusoEffect(aimPosition);
-            BeginHitStop(2);
-            targetEnemy.Health.Damage(new DamageInfo(1, targetEnemy.gameObject, gameObject, DamageType.Core));
-            _player.Movement.Teleport(targetEnemy.MusoPosition.position);
-        }
-        EventHub.Instance.OnMusoHit.Invoke();
-        EndMuso();
-        if(!_isTutorial)
-            StopCoroutine(_musoTimerCO);
-    }
+    //     // if (targetEnemy != null)
+    //     {
+    //         // Look at the target
+    //         Vector3 lookDirection = targetEnemy.transform.position - transform.position;
+    //         lookDirection.y = 0;
+    //         transform.rotation = Quaternion.LookRotation(lookDirection);
+    //         FMODUnity.RuntimeManager.PlayOneShot(_musoAttackSFX, transform.position);
+    //         //CreateMusoEffect(aimPosition);
+    //         BeginHitStop(2);
+    //         targetEnemy.Health.Damage(new DamageInfo(1, targetEnemy.gameObject, gameObject, DamageType.Core));
+    //         _player.Movement.Teleport(targetEnemy.MusoPosition.position);
+    //     }
+    //     EventHub.Instance.OnMusoHit.Invoke();
+    //     EndMuso();
+    //     if(!_isTutorial)
+    //         StopCoroutine(_musoTimerCO);
+    // }
 
-    public void MisoAttack(Vector3 aimPosition)
-    {
-        MusoAttack(aimPosition);
-    }
+    // public void MisoAttack(Vector3 aimPosition)
+    // {
+    //     MusoAttack(aimPosition);
+    // }
 
-    public void EndMiso()
-    {
-        EndMuso();
-    }
-
-    public void ExecuteHeavyAttack()
-    {
-        EventHub.Instance.OnChargeEnded.Invoke();
-        IsCharging = false;
-        _chargeStartTime = 0f;
-        _animator.SetTrigger("ReleaseCharge");
-        _movement.ResetSpeed();
-
-        // Calculate dash parameters
-        Vector3 dashDirection = transform.forward;
-        _movement.Dash(dashDirection);
-        FMODUnity.RuntimeManager.PlayOneShot(_heavyAttackSFX, transform.position);
-
-        Collider[] hits = Physics.OverlapBox(
-            transform.position + dashDirection * 2f,
-            new Vector3(2f, 1f, 1.5f),
-            Quaternion.LookRotation(dashDirection),
-            _attackLayer
-        );
-
-        foreach (var hit in hits)
-        {
-            if (hit.TryGetComponent<EnemyController>(out var enemy))
-            {
-                BeginHitStop(2);
-                enemy.Health.Damage(new DamageInfo(99, enemy.gameObject, gameObject, DamageType.Mixed));
-            }
-
-        }
-    }
+    // public void EndMiso()
+    // {
+    //     EndMuso();
+    // }
 
     public void CleanUpLightAttack()
     {
@@ -347,58 +311,58 @@ public class PlayerCombatController : MonoBehaviour
         ResetParryCO();
     }
 
-    private void DetectParryInArc()
-    {
-        // get all colliders in arc
-        Collider[] hits = Physics.OverlapSphere(new Vector3(_player.transform.position.x, _player.transform.position.y + _player.Movement.Height/2, _player.transform.position.z) + _player.transform.forward *
-        (_parryRadius * .5f), _parryRadius, _parryLayer);
+    // private void DetectParryInArc()
+    // {
+    //     // get all colliders in arc
+    //     Collider[] hits = Physics.OverlapSphere(new Vector3(_player.transform.position.x, _player.transform.position.y + _player.Movement.Height/2, _player.transform.position.z) + _player.transform.forward *
+    //     (_parryRadius * .5f), _parryRadius, _parryLayer);
 
-        foreach (Collider hit in hits)
-        {
-            if (hit.transform.parent == null)
-            {
-                if (hit.gameObject.TryGetComponent(out Fireball fireball))
-                {
-                    fireball.OnDeflect();
-                }
-                else if (hit.gameObject.TryGetComponent(out SpearProjectile spear))
-                {
-                    spear.OnDeflect();
-                }
-            }
-            else
-            {
-                Vector3 directionToTarget = hit.transform.parent.gameObject.transform.position - _player.transform.position;
-                directionToTarget.y = 0;
+    //     foreach (Collider hit in hits)
+    //     {
+    //         // if (hit.transform.parent == null)
+    //         // {
+    //         //     if (hit.gameObject.TryGetComponent(out Fireball fireball))
+    //         //     {
+    //         //         fireball.OnDeflect();
+    //         //     }
+    //         //     else if (hit.gameObject.TryGetComponent(out SpearProjectile spear))
+    //         //     {
+    //         //         spear.OnDeflect();
+    //         //     }
+    //         // }
+    //         // else
+    //         {
+    //             Vector3 directionToTarget = hit.transform.parent.gameObject.transform.position - _player.transform.position;
+    //             directionToTarget.y = 0;
 
-                float angleToTarget = Vector3.Angle(_player.transform.forward, directionToTarget);
+    //             float angleToTarget = Vector3.Angle(_player.transform.forward, directionToTarget);
 
-                if (angleToTarget < _parryAngle / 2)
-                {
-                    // add collider to the array
-                    int colliderID = hit.GetInstanceID();
-                    if (!_processedParryColliders.Contains(colliderID))
-                    {
-                        _processedParryColliders.Add(colliderID);
-                        var enemy = hit.GetComponentInParent<EnemyController>();
-                        if (enemy != null)
-                        {
-                            if (_isPerfectParryWindowActive)
-                            {
-                                _animator.SetBool("PerfectParry", true);
-                                HandlePerfectParry(enemy, hit.transform);
-                            }
-                            // else if (_isWeakParryWindowActive)
-                            // {
-                            //     _animator.SetBool("WeakParry", true);
-                            //     HandleWeakParry(enemy, hit.transform);
-                            // }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    //             if (angleToTarget < _parryAngle / 2)
+    //             {
+    //                 // add collider to the array
+    //                 int colliderID = hit.GetInstanceID();
+    //                 if (!_processedParryColliders.Contains(colliderID))
+    //                 {
+    //                     _processedParryColliders.Add(colliderID);
+    //                     var enemy = hit.GetComponentInParent<EnemyController>();
+    //                     if (enemy != null)
+    //                     {
+    //                         if (_isPerfectParryWindowActive)
+    //                         {
+    //                             _animator.SetBool("PerfectParry", true);
+    //                             HandlePerfectParry(enemy, hit.transform);
+    //                         }
+    //                         // else if (_isWeakParryWindowActive)
+    //                         // {
+    //                         //     _animator.SetBool("WeakParry", true);
+    //                         //     HandleWeakParry(enemy, hit.transform);
+    //                         // }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     // private void HandlePerfectParry(EnemyController enemy, Transform hitTransform)
     // {
@@ -504,14 +468,14 @@ public class PlayerCombatController : MonoBehaviour
         _slashVFXArray[index].GetComponent<ParticleSystem>().Stop();
     }
 
-    private IEnumerator MusoTimerCO()
-    {
-        yield return new WaitForSeconds(_musoReadyDuration);
-        if (_musoTarget != null)
-            _musoTarget.MaterialController.UnHightlight();
-        EndMuso();
-        FMODUnity.RuntimeManager.PlayOneShot(_musoExitSFX, transform.position);
-    }
+    // private IEnumerator MusoTimerCO()
+    // {
+    //     yield return new WaitForSeconds(_musoReadyDuration);
+    //     if (_musoTarget != null)
+    //         _musoTarget.MaterialController.UnHightlight();
+    //     EndMuso();
+    //     FMODUnity.RuntimeManager.PlayOneShot(_musoExitSFX, transform.position);
+    // }
 
     private void OnDrawGizmosSelected()
     {
@@ -549,42 +513,40 @@ public class PlayerCombatController : MonoBehaviour
         IsStaggered = false;
     }
 
-    public void StartMuso()
-    {
-        EventHub.Instance.OnChargeStarted.Invoke(((float)_currentMusoStack / _musoThreshold) * 5);
-        EventHub.Instance.OnMusoStart.Invoke();
-        _animator.SetBool("MusoReady", true);
-        MusoReady = true;
-        _lineRenderer.enabled = true;
-        FMODUnity.RuntimeManager.PlayOneShot(_musoActivatedSFX, transform.position);
-        if (!_isTutorial)
-        {
-            _musoTimerCO = MusoTimerCO();
-            StartCoroutine(_musoTimerCO);
-        }
+    // public void StartMuso()
+    // {
+    //     EventHub.Instance.OnMusoStart.Invoke();
+    //     _animator.SetBool("MusoReady", true);
+    //     MusoReady = true;
+    //     _lineRenderer.enabled = true;
+    //     FMODUnity.RuntimeManager.PlayOneShot(_musoActivatedSFX, transform.position);
+    //     if (!_isTutorial)
+    //     {
+    //         _musoTimerCO = MusoTimerCO();
+    //         StartCoroutine(_musoTimerCO);
+    //     }
             
-    }
+    // }
 
-    public void EndMuso()
-    {
-        EventHub.Instance.OnChargeEnded.Invoke();
-        EventHub.Instance.OnMusoEnd.Invoke();
-        MusoReady = false;
-        _animator.SetBool("MusoReady", false);
-        _lineRenderer.enabled = false;
-        FMODUnity.RuntimeManager.PlayOneShot(_musoExitSFX, transform.position);
-    }
+    // public void EndMuso()
+    // {
+    //     EventHub.Instance.OnMusoEnd.Invoke();
+    //     MusoReady = false;
+    //     _animator.SetBool("MusoReady", false);
+    //     _lineRenderer.enabled = false;
+    //     FMODUnity.RuntimeManager.PlayOneShot(_musoExitSFX, transform.position);
+    // }
 
     public void BeginHitStop(int damageType)
     {
         HitStop.Begin(_animator, "HitStop");
         if (damageType == 1)
         {
-            _player.InvokeCameraShake(_LightShake);
+            CameraShakeEvent.Trigger(new LightShake());
         }
         else if (damageType == 2)
         {
-            _player.InvokeCameraShake(_HeavyShake);
+            CameraShakeEvent.Trigger(new HeavyShake());
         }
         StartCoroutine(HitStopCO());
     }
