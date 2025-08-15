@@ -33,8 +33,6 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private float _attackKnockbackForce = 10f;
     [SerializeField] private LayerMask _attackLayer;
     [Range(0, 1), SerializeField] private float _hitStopDuration = .05f;
-    [SerializeField] private CameraShakeSettings _LightShake = new CameraShakeSettings();
-    [SerializeField] private CameraShakeSettings _HeavyShake = new CameraShakeSettings();
 
     [Header("Weapon Collider")]
     [SerializeField] private Collider _weaponCollider;
@@ -53,17 +51,7 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private float _parryVFXDuration = 1.5f;
     // [SerializeField] private ParryHit _parryHitVFX;
 
-    [Header("SFX")]
-    [SerializeField] private FMODUnity.EventReference _attackSFX;
-    [SerializeField] private FMODUnity.EventReference _heavyAttackSFX;
-    [SerializeField] private FMODUnity.EventReference _musoAttackSFX;
-    [SerializeField] private FMODUnity.EventReference _weakParrySFX;
-    [SerializeField] private FMODUnity.EventReference _perfectParrySFX;
-    [SerializeField] private FMODUnity.EventReference _sheatheSFX;
-    [SerializeField] private FMODUnity.EventReference _musoActivatedSFX;
-    [SerializeField] private FMODUnity.EventReference _musoExitSFX;
-    [SerializeField] private FMODUnity.EventReference _musoLoopSFX;
-    [SerializeField] private FMODUnity.EventReference _musoChargeGainedSFX;
+
     private EventInstance _attackInstance;
     private EventInstance _parryInstance;
 
@@ -94,9 +82,16 @@ public class PlayerCombatController : MonoBehaviour
         _movement = GetComponent<CustomCharacterMovement>();
     }
 
+    void OnValidate()
+    {
+        if (_animator == null) _animator = GetComponent<Animator>();
+        if (_movement == null) _movement = GetComponent<CustomCharacterMovement>();
+        if (_player == null) _player = GetComponent<PlayerController>();
+    }
+
     private void Start()
     {
-        
+
     }
 
     void OnEnable()
@@ -557,22 +552,7 @@ public class PlayerCombatController : MonoBehaviour
         _animator.SetFloat("HitStop", 1);
     }
 
-    public void PlayAttackSFX()
-    {
-
-        FMODUnity.RuntimeManager.PlayOneShot(_attackSFX, transform.position);
-        //create instance
-        //attach to object
-        //play the instance
-        //release 
-        // _attackInstance = FMODUnity.RuntimeManager.CreateInstance(_attackSFX);
-        // // int randomIndex = Random.Range(0, 3);
-        // // _attackInstance.setParameterByName("PlayerAttack", randomIndex);
-        // RuntimeManager.AttachInstanceToGameObject(_attackInstance, gameObject, GetComponent<Rigidbody>());
-        // _attackInstance.start();
-        // _attackInstance.release();
-        
-    }
+   
 
     public float GetKnockbackForce()
     {

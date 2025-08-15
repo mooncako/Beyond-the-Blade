@@ -35,6 +35,16 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
+    void Start()
+    {
+        StateMachine.Initialize(States.IdleState);
+    }
+
+    void Update()
+    {
+        StateMachine.CurrentState.Update();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();

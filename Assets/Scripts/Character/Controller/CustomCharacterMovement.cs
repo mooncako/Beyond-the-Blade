@@ -18,4 +18,8 @@ public class CustomCharacterMovement : CharacterMovement3D
     }
 
     public void ResetSpeed() => CurrentSpeedMultiplier = 1f;
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        CurrentSpeedMultiplier = multiplier;
+    }
 }
