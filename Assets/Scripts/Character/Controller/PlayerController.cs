@@ -6,19 +6,29 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>
 {
+    [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
+
     [BoxGroup("Input")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
     [BoxGroup("Input")] public PlayerStateMachine StateMachine { get; private set; }
     [BoxGroup("Input")] public StateCollection States { get; private set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
+    [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
+    [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
 
 #if UNITY_EDITOR
-    // [Header("Current State")]
-    // [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
+    [Header("Current State")]
+    [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
 #endif
 
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        if(_input == null) _input = GetComponent<PlayerInput>();
+    }
 
     protected override void Awake()
     {
@@ -42,6 +52,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     void Update()
     {
+
+        HandleRotation();
         StateMachine.CurrentState.Update();
     }
 
@@ -61,6 +73,30 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         CurrentState = e.State;
     }
+
+    private void HandleRotation()
+    {
+        if(Mathf.Approximately(Time.deltaTime, 0)) return;
+        if(!CanRotate) return;
+
+        if(_input.currentControlScheme == "Keyboard&Mouse")
+        {
+            Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            Plane plane = new Plane(Vector3.up, transform.position);
+            if (plane.Raycast(mouseRay, out float planeDistance))
+            {
+                _aimPoint = mouseRay.GetPoint(planeDistance);
+                _aimPoint.y = transform.position.y;
+                Movement.SetLookPosition(_aimPoint);
+                //_arrow.transform.LookAt(_aimPoint);
+            }
+        }else if(_input.currentControlScheme == "Gamepad")
+        {
+            //TODO
+        }
+    }
+
+
 
     public void InputMovement(InputAction.CallbackContext context)
     {
