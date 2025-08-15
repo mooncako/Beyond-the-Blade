@@ -4,28 +4,21 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(InputProcessor))]
 public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>
 {
-    [SerializeField, FoldoutGroup("Base Reference")] public InputProcessor InputProcessor;
+    [BoxGroup("Input")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
-    [BoxGroup("Input"), ReadOnly] public PlayerStateMachine StateMachine { get; private set; }
-    [BoxGroup("Input"), ReadOnly] public StateCollection States { get; private set; }
+    [BoxGroup("Input")] public PlayerStateMachine StateMachine { get; private set; }
+    [BoxGroup("Input")] public StateCollection States { get; private set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
 
 #if UNITY_EDITOR
-    [Header("Current State")]
-    [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
+    // [Header("Current State")]
+    // [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
 #endif
 
-
-    protected override void OnValidate()
-    {
-        base.OnValidate();
-        if (InputProcessor == null) InputProcessor = GetComponent<InputProcessor>();
-    }
 
     protected override void Awake()
     {
@@ -34,6 +27,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         StateMachine = new PlayerStateMachine();
         States = new StateCollection(this, StateMachine);
+        InputProcessor = new InputProcessor();
+
         foreach (PlayerActionType actionType in System.Enum.GetValues(typeof(PlayerActionType)))
         {
             _availableActions[actionType] = true;

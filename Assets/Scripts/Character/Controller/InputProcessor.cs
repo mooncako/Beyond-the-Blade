@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InputProcessor : MonoBehaviour
+public class InputProcessor
 {
     private Vector2 inputVector;
     private bool isInputActive = true;
@@ -8,6 +8,10 @@ public class InputProcessor : MonoBehaviour
     public Vector2 InputVector => isInputActive ? inputVector : Vector2.zero;
     public Vector2 RawInputVector => inputVector; // Always returns the actual input
     public Vector2 InputVectorNormalized => InputVector.normalized;
+
+    public InputProcessor()
+    {
+    }
 
     public void ProcessInputVector(Vector2 value)
     {
