@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 2515946022723110387}
   - component: {fileID: 6233116775064065168}
   - component: {fileID: 4962864894029839974}
+  - component: {fileID: 2652234782751008208}
+  - component: {fileID: 1186671907718876328}
   m_Layer: 0
   m_Name: HeadlessSamurai
   m_TagString: Untagged
@@ -272,6 +274,33 @@ MonoBehaviour:
   <Vision>k__BackingField: {fileID: 2515946022723110387}
   <Animator>k__BackingField: {fileID: 6233116775064065168}
   <Stats>k__BackingField: {fileID: 11400000, guid: 40806dd3b32d4334595aa39afe3346c0, type: 2}
+--- !u!114 &2652234782751008208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19925b6b65787cf439172e5e095b51fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  configInitializer: {fileID: 0}
+  agentTypeConfigFactories: []
+--- !u!114 &1186671907718876328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23b72354fbb94505b445cf1d47b3aa55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resolveTime: 1
 --- !u!1001 &4913861075336862306
 PrefabInstance:
   m_ObjectHideFlags: 0
