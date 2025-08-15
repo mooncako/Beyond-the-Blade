@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CustomCharacterMovement : CharacterMovement3D
 {
+    public float CurrentSpeedMultiplier { get; set; } = 1f;
+
     public void Teleport(Vector3 position)
     {
         transform.position = position;
@@ -14,4 +16,6 @@ public class CustomCharacterMovement : CharacterMovement3D
         Vector3 knockBackDirection = transform.position - instigator.position;
         Rigidbody.AddForce(knockBackDirection.normalized * KnockbackForce);
     }
+
+    public void ResetSpeed() => CurrentSpeedMultiplier = 1f;
 }

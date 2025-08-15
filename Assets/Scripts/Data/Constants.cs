@@ -1,20 +1,6 @@
 using UnityEngine;
 
 
-
-public static class STATE
-{
-    public const int Idle = 0;
-    public const int Moving = 1;
-    public const int Attacking = 2;
-    public const int Charging = 3;
-    public const int Dead = 4;
-    public const int Parrying = 5;
-    public const int Staggered = 6;
-    public const int Muso = 7;
-    public const int Sheathe = 8;
-}
-
 public static class ANIMKEY
 {
     public const string Stagger = "Stagger";
