@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using CrashKonijn.Agent.Core;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, ITarget
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
 
@@ -22,6 +23,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 #if UNITY_EDITOR
     [Header("Current State")]
     [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
+
+    public Vector3 Position => throw new System.NotImplementedException();
 #endif
 
 
@@ -160,5 +163,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         return false;
     }
 
-    
+    public bool IsValid()
+    {
+        return Health.IsAlive;
+    }
 }

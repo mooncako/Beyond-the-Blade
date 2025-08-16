@@ -1,9 +1,8 @@
 using UnityEngine;
 
-public class PlayerSoundController : MonoBehaviour
+public class PlayerSoundController : SoundController
 {
     [Header("SFX")]
-    [SerializeField] private FMODUnity.EventReference _attackSFX;
     [SerializeField] private FMODUnity.EventReference _heavyAttackSFX;
     [SerializeField] private FMODUnity.EventReference _musoAttackSFX;
     [SerializeField] private FMODUnity.EventReference _weakParrySFX;
@@ -14,17 +13,17 @@ public class PlayerSoundController : MonoBehaviour
     [SerializeField] private FMODUnity.EventReference _musoLoopSFX;
     [SerializeField] private FMODUnity.EventReference _musoChargeGainedSFX;
 
-    public void PlayFootstep()
+    public override void PlayFootstep()
     {
 
     }
 
-    public void PlayMovementSound()
+    public override  void PlayMovementSound()
     {
 
     }
 
-     public void PlayAttackSFX()
+     public override  void PlayAttackSFX()
     {
 
         FMODUnity.RuntimeManager.PlayOneShot(_attackSFX, transform.position);
