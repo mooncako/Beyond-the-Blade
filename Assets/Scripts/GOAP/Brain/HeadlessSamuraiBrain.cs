@@ -6,38 +6,25 @@ using CrashKonijn.Goap.Runtime;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class HeadlessSamuraiBrain : MonoBehaviour
+public class HeadlessSamuraiBrain : Brain
 {
-    [SerializeField, BoxGroup("References")] private AgentBehaviour _agent;
-    [SerializeField, BoxGroup("References")] private GoapActionProvider _provider;
-    [SerializeField, BoxGroup("References")] private GoapBehaviour _goap;
-    [SerializeField, BoxGroup("References")] private PlayerSensor _playerSensor;
-    [SerializeField, BoxGroup("References")] private AttackSensorConfigSO _attackSensorConfigSO;
 
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isPlayerInRange = false;
-
-    void OnValidate()
+    protected override void OnValidate()
     {
-        if (_agent == null) _agent = GetComponent<AgentBehaviour>();
-        if (_provider == null) _provider = GetComponent<GoapActionProvider>();
-        if (_goap == null) _goap = GetComponent<GoapBehaviour>();
+        base.OnValidate();
     }
 
-    void OnEnable()
+    protected override void OnEnable()
     {
-        _playerSensor.OnPlayerEnter += OnPlayerEnter;
-        _playerSensor.OnPlayerExit += OnPlayerExit;
-        _agent.Events.OnActionEnd += OnActionEnd;
+        base.OnEnable();
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
-        _playerSensor.OnPlayerEnter -= OnPlayerEnter;
-        _playerSensor.OnPlayerExit -= OnPlayerExit;
-        _agent.Events.OnActionEnd -= OnActionEnd;
+        base.OnDisable();
     }
 
-    void Awake()
+    protected override void Awake()
     {
         if(_provider != null && _goap != null)
         {
@@ -48,13 +35,13 @@ public class HeadlessSamuraiBrain : MonoBehaviour
         }
     }
 
-    void Start()
+    protected override void Start()
     {
         _provider.RequestGoal<WanderGoal>(false);
         _playerSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 
-    private void OnActionEnd(IAction action)
+    protected override void OnActionEnd(IAction action)
     {
         if (_isPlayerInRange)
         {
@@ -66,13 +53,13 @@ public class HeadlessSamuraiBrain : MonoBehaviour
         }
     }
 
-    private void OnPlayerEnter(Transform player)
+    protected override void OnPlayerEnter(Transform player)
     {
         _provider.RequestGoal<KillPlayerGoal>();
         _isPlayerInRange = true;
     }
 
-    private void OnPlayerExit(Vector3 lastKnownPosition)
+    protected override void OnPlayerExit(Vector3 lastKnownPosition)
     {
         _provider.RequestGoal<WanderGoal>(false);
         _isPlayerInRange = false;
