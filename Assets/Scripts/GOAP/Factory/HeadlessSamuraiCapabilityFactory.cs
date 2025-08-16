@@ -1,13 +1,15 @@
+using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.GenTest;
 using CrashKonijn.Goap.Runtime;
 using UnityEngine;
 
-public class WanderCapabilityFactory : CapabilityFactoryBase
+public class HeadlessSamuraiCapabilityFactory : CapabilityFactoryBase
 {
     public override ICapabilityConfig Create()
     {
-        var builder = new CapabilityBuilder("Wander");
+
+        var builder = new CapabilityBuilder("HeadlessSamurai");
 
         BuildGoals(builder);
         BuildActions(builder);
@@ -20,6 +22,9 @@ public class WanderCapabilityFactory : CapabilityFactoryBase
     {
         builder.AddGoal<WanderGoal>()
             .AddCondition<IsWander>(Comparison.GreaterThanOrEqual, 1);
+
+        builder.AddGoal<KillPlayerGoal>()
+            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
     }
 
     private void BuildActions(CapabilityBuilder builder)
@@ -27,7 +32,14 @@ public class WanderCapabilityFactory : CapabilityFactoryBase
         builder.AddAction<WanderAction>()
             .SetTarget<WanderTarget>()
             .AddEffect<IsWander>(EffectType.Increase)
+            .SetStoppingDistance(1)
             .SetBaseCost(5);
+
+        builder.AddAction<AttackAction>()
+            .SetTarget<PlayerTarget>()
+            .AddEffect<PlayerHealth>(EffectType.Decrease)
+            .SetStoppingDistance(1)
+            .SetBaseCost(4);
             
     }
 
@@ -35,5 +47,8 @@ public class WanderCapabilityFactory : CapabilityFactoryBase
     {
         builder.AddTargetSensor<WanderTargetSensor>()
             .SetTarget<WanderTarget>();
+
+        builder.AddTargetSensor<PlayerTargetSensor>()
+            .SetTarget<PlayerTarget>();
     }
 }

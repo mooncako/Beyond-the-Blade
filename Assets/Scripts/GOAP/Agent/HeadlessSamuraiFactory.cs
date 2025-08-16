@@ -8,7 +8,7 @@ public class HeadlessSamuraiFactory : AgentTypeFactoryBase
     {
         var factory = new AgentTypeBuilder("HeadlessSamurai");
 
-        factory.AddCapability<WanderCapabilityFactory>();
+        factory.AddCapability<HeadlessSamuraiCapabilityFactory>();
 
         return factory.Build();
     }
