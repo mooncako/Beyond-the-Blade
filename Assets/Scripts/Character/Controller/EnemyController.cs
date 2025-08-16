@@ -17,6 +17,23 @@ public class EnemyController : Controller
         AvailableSkills.Sort((a, b) => b.BaseWeight.CompareTo(a.BaseWeight));
     }
 
+    public void MoveTo(Vector3 destination)
+    {
+        if (CanMove)
+        {
+            Movement.MoveTo(destination);
+        }
+        else
+        {
+            Movement.Stop();
+        }
+    }
+
+    public void Stop()
+    {
+        Movement.Stop();
+    }
+
     [Button]
     public void ActivateSkill()
     {

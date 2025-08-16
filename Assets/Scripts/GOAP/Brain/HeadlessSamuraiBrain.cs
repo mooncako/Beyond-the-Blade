@@ -74,7 +74,7 @@ public class HeadlessSamuraiBrain : MonoBehaviour
 
     private void OnPlayerExit(Vector3 lastKnownPosition)
     {
-        _provider.RequestGoal<WanderGoal>();
+        _provider.RequestGoal<WanderGoal>(false);
         _isPlayerInRange = false;
     }
 

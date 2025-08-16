@@ -9,7 +9,7 @@ namespace CrashKonijn.Goap.GenTest
     [GoapId("Attack-ac8b7a8d-2943-4f78-9b06-2d3085eedf1b")]
     public class AttackAction : GoapActionBase<AttackAction.Data>, IInjectable
     {
-        public AttackSensorConfigSO AttackSensorConfig;
+        private AttackSensorConfigSO _attackSensorConfig;
 
 
         // This method is called when the action is created
@@ -30,8 +30,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = AttackSensorConfig.AttackDelay;
-            
+            data.Timer = _attackSensorConfig.AttackDelay;
             data.Controller.ActivateSkill();
         }
 
@@ -46,7 +45,8 @@ namespace CrashKonijn.Goap.GenTest
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
             data.Timer -= context.DeltaTime;
-            return data.Timer > 0 ? ActionRunState.Completed : ActionRunState.Continue;
+            data.Controller.Stop();
+            return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
         }
 
         // This method is called when the action is completed or stopped
@@ -57,7 +57,7 @@ namespace CrashKonijn.Goap.GenTest
 
         public void Inject(DependencyInjector injector)
         {
-            AttackSensorConfig = injector.AttackSensorConfig;
+            _attackSensorConfig = injector.AttackSensorConfig;
         }
 
 
