@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class HeadlessSamuraiCapabilityFactory : CapabilityFactoryBase
 {
+
+
     public override ICapabilityConfig Create()
     {
 
@@ -51,4 +53,6 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactoryBase
         builder.AddTargetSensor<PlayerTargetSensor>()
             .SetTarget<PlayerTarget>();
     }
+
+
 }

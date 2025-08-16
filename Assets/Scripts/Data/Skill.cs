@@ -8,9 +8,10 @@ public class Skill
     public string AnimationID;
     public float Cooldown;
     public float Damage;
-    public SkillAreaType AreaType;
+    public SkillRange SkillRange;
     public SkillRarity Rarity;
     public bool TargetSelf;
+    public bool IsTargetedGroundAOE;
     public List<string> Buffs = new List<string>();
     public List<string> Debuffs = new List<string>();
 }

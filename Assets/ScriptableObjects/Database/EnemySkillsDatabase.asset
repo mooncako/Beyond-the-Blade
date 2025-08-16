@@ -53,18 +53,36 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 15
+    - Name: SkillRange
+      Entry: 7
+      Data: 3|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
       Data: 3
+    - Name: X
+      Entry: 4
+      Data: 2.5
+    - Name: Y
+      Entry: 4
+      Data: 0
+    - Name: Z
+      Entry: 4
+      Data: 90
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: Rarity
       Entry: 3
       Data: 0
     - Name: TargetSelf
       Entry: 5
       Data: false
+    - Name: IsTargetedGroundAOE
+      Entry: 5
+      Data: false
     - Name: Buffs
       Entry: 7
-      Data: 3|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+      Data: 4|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
     - Name: 
       Entry: 12
       Data: 0
@@ -76,7 +94,7 @@ MonoBehaviour:
       Data: 
     - Name: Debuffs
       Entry: 7
-      Data: 4|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
+      Data: 5|System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib
     - Name: 
       Entry: 12
       Data: 0
