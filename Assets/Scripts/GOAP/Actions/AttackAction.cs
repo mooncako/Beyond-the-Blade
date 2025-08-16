@@ -31,6 +31,8 @@ namespace CrashKonijn.Goap.GenTest
         public override void Start(IMonoAgent agent, Data data)
         {
             data.Timer = _attackSensorConfig.AttackDelay;
+            data.Controller.Movement.SetLookPosition(data.Target.Position);
+            data.Controller.SetTargetPos(data.Target.Position);
             data.Controller.ActivateSkill();
         }
 

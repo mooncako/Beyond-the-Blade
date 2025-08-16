@@ -6,6 +6,7 @@ public class PlayerSensor : MonoBehaviour
 {
     public SphereCollider Collider;
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerLayerMask;
+    [SerializeField, BoxGroup("References")] private Vision _vision;
     public delegate void PlayerEnterEvent(Transform player);
     public delegate void PlayerExitEvent(Vector3 lastKnownPosition);
 
@@ -16,6 +17,7 @@ public class PlayerSensor : MonoBehaviour
     void OnValidate()
     {
         if (Collider == null) Collider = GetComponent<SphereCollider>();
+        if (_vision == null) _vision = GetComponentInParent<Vision>();
     }
 
 
@@ -23,7 +25,8 @@ public class PlayerSensor : MonoBehaviour
     {
         if ((_playerLayerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            OnPlayerEnter?.Invoke(other.transform);
+            if(_vision.GetVisibleTargets(1).Contains(other.GetComponent<Targetable>()))
+                OnPlayerEnter?.Invoke(other.transform);
         }
     }
 
@@ -31,7 +34,8 @@ public class PlayerSensor : MonoBehaviour
     {
         if ((_playerLayerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            OnPlayerExit?.Invoke(other.transform.position);
+            if(_vision.GetVisibleTargets(1).Contains(other.GetComponent<Targetable>()))
+                OnPlayerExit?.Invoke(other.transform.position);
         }
     }
 }
