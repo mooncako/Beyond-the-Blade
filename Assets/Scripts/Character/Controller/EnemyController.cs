@@ -13,6 +13,8 @@ public class EnemyController : Controller
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Skill _currentSkill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _targetPos;
 
+    private List<GameObject> _hitTargets = new List<GameObject>();
+
     protected override void Awake()
     {
         base.Awake();
@@ -76,7 +78,38 @@ public class EnemyController : Controller
 
     private void ApplySkillEffect()
     {
+        //TODO buffs & debuffs
+        AOEApplier.X = _currentSkill.SkillRange.X;
+        AOEApplier.Y = _currentSkill.SkillRange.Y;
+        AOEApplier.Z = _currentSkill.SkillRange.Z;
+        _hitTargets.Clear();
+        
+    }
 
+    public void DamageAnimEvent()
+    {
+        if (_currentSkill.IsTargetedGroundAOE)
+        {
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos);
+        }
+        else
+        {
+            if (AttackPoint != null)
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position);
+            }
+            else
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position);
+            }
+        }
+
+
+        foreach (GameObject target in _hitTargets)
+        {
+            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, gameObject, gameObject, DamageType.Regular);
+            target.GetComponent<Health>().Damage(info);
+        }
     }
 
     public void SetTargetPos(Vector3 position)
