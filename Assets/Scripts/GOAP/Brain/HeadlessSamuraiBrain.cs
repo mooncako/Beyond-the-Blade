@@ -55,12 +55,14 @@ public class HeadlessSamuraiBrain : Brain
 
     protected override void OnPlayerEnter(Transform player)
     {
+        _provider.ClearGoal();
         _provider.RequestGoal<KillPlayerGoal>();
         _isPlayerInRange = true;
     }
 
     protected override void OnPlayerExit(Vector3 lastKnownPosition)
     {
+        _provider.ClearGoal();
         _provider.RequestGoal<WanderGoal>(false);
         _isPlayerInRange = false;
     }
