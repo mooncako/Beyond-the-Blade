@@ -9,3 +9,9 @@ public class AttackSensorConfigSO : ScriptableObject
     public float AttackDelay = 1;
     public LayerMask AttackableLayerMask;
 }
+
+[CreateAssetMenu(fileName = "NewStrafeSensorConfig", menuName = "AI/StrafeSensorConfig")]
+public class StrafeSensorConfigSO : ScriptableObject
+{
+    public float Distance = 5f;
+}

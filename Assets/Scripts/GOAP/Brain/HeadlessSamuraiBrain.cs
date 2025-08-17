@@ -43,9 +43,9 @@ public class HeadlessSamuraiBrain : Brain
 
     protected override void OnActionEnd(IAction action)
     {
-        if (_isPlayerInRange)
+        if (_isPlayerDetected)
         {
-            _provider.RequestGoal<KillPlayerGoal>();
+            _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
         }
         else
         {
@@ -56,14 +56,15 @@ public class HeadlessSamuraiBrain : Brain
     protected override void OnPlayerEnter(Transform player)
     {
         _provider.ClearGoal();
-        _provider.RequestGoal<KillPlayerGoal>();
+        _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
         _isPlayerInRange = true;
+        _isPlayerDetected = true;
     }
 
     protected override void OnPlayerExit(Vector3 lastKnownPosition)
     {
-        _provider.ClearGoal();
-        _provider.RequestGoal<WanderGoal>(false);
+        // _provider.ClearGoal();
+        // _provider.RequestGoal<WanderGoal>(false);
         _isPlayerInRange = false;
     }
 

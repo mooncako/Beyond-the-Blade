@@ -1,17 +1,12 @@
-using System;
 using CrashKonijn.Agent.Core;
-using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
 {
-    [GoapId("Attack-ac8b7a8d-2943-4f78-9b06-2d3085eedf1b")]
-    public class AttackAction : GoapActionBase<AttackAction.Data>, IInjectable
+    [GoapId("Strafe-b798426d-a1db-4915-ab52-73994ebef808")]
+    public class StrafeAction : GoapActionBase<StrafeAction.Data>
     {
-        private AttackSensorConfigSO _attackSensorConfig;
-
-
         // This method is called when the action is created
         // This method is optional and can be removed
         public override void Created()
@@ -23,37 +18,46 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override bool IsValid(IActionReceiver agent, Data data)
         {
-            return data.Controller.CanAttack;
+            return true;
         }
 
         // This method is called when the action is started
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = _attackSensorConfig.AttackDelay;
-            
+            data.Timer = Random.Range(1, 2);
         }
 
         // This method is called once before the action is performed
         // This method is optional and can be removed
         public override void BeforePerform(IMonoAgent agent, Data data)
         {
-                
         }
 
         // This method is called every frame while the action is running
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
-            if (data.Controller.IsSkillPlaying())
-                data.Timer -= context.DeltaTime;
-            if (data.Controller.CanAttack)
+            data.Timer -= context.DeltaTime;
+
+            if(data.Timer > 0)
             {
-                data.Controller.SetTargetPos(data.Target.Position);
-                data.Controller.ActivateSkill();
+                return ActionRunState.Continue;
             }
-            data.Controller.Stop();
-            return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
+
+            return ActionRunState.Stop;
+        }
+
+        // This method is called when the action is completed
+        // This method is optional and can be removed
+        public override void Complete(IMonoAgent agent, Data data)
+        {
+        }
+
+        // This method is called when the action is stopped
+        // This method is optional and can be removed
+        public override void Stop(IMonoAgent agent, Data data)
+        {
         }
 
         // This method is called when the action is completed or stopped
@@ -62,23 +66,12 @@ namespace CrashKonijn.Goap.GenTest
         {
         }
 
-        public void Inject(DependencyInjector injector)
-        {
-            _attackSensorConfig = injector.AttackSensorConfig;
-        }
-
-
-
         // The action class itself must be stateless!
         // All data should be stored in the data class
         public class Data : IActionData
         {
             public ITarget Target { get; set; }
-
-            public float Timer { get; set; }
-
-            [GetComponent]
-            public EnemyController Controller { get; set; }
+            public float Timer {get; set;}
         }
     }
 }

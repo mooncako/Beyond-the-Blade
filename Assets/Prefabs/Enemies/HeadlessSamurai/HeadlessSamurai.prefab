@@ -287,7 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Speed>k__BackingField: 5
   <Acceleration>k__BackingField: 10
-  <TurnSpeed>k__BackingField: 15
+  <TurnSpeed>k__BackingField: 50
   <OnlyTurnWithInput>k__BackingField: 1
   <StoppingDistance>k__BackingField: 0.25
   <LookInMoveDirection>k__BackingField: 1
@@ -483,6 +483,7 @@ MonoBehaviour:
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
   <Animancer>k__BackingField: {fileID: 8394953832475103564}
   <Stats>k__BackingField: {fileID: 11400000, guid: 40806dd3b32d4334595aa39afe3346c0, type: 2}
+  _playerSensor: {fileID: 5061576002193979983}
   _animationDatabase: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
   _skillsDatabase: {fileID: 11400000, guid: 0d1da641e3f0cca41b1c513983bfb6c0, type: 2}
   <AvailableSkills>k__BackingField:
@@ -509,6 +510,7 @@ MonoBehaviour:
     Buffs: []
     Debuffs: []
   _targetPos: {x: 0, y: 0, z: 0}
+  CurrentTargetTransform: {fileID: 0}
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -559,6 +561,7 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _attackSensorConfigSO: {fileID: 11400000, guid: 2bf44a9d65f705d4bb12aa68c2459ba8, type: 2}
   _isPlayerInRange: 0
+  _isPlayerDetected: 0
 --- !u!114 &2652234782751008208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -640,6 +643,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AttackSensorConfig: {fileID: 11400000, guid: 2bf44a9d65f705d4bb12aa68c2459ba8, type: 2}
+  StrafeSensorConfig: {fileID: 11400000, guid: 94ba2990b41549e47bd00122f6015183, type: 2}
 --- !u!114 &7909133857443672914
 MonoBehaviour:
   m_ObjectHideFlags: 0

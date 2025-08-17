@@ -6,6 +6,7 @@ using UnityEngine;
 public class DependencyInjector : GoapConfigInitializerBase, IGoapInjector
 {
     public AttackSensorConfigSO AttackSensorConfig;
+    public StrafeSensorConfigSO StrafeSensorConfig;
 
     public override void InitConfig(IGoapConfig config)
     {

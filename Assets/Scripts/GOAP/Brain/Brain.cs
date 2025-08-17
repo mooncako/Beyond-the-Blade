@@ -13,6 +13,7 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
 
 
     protected virtual void OnValidate()

@@ -6,6 +6,7 @@ using UnityUtils;
 
 public class EnemyController : Controller
 {
+    [field: SerializeField, FoldoutGroup("Base References")] private PlayerSensor _playerSensor;
     [field: SerializeField, BoxGroup("Skills")] private SkillAnimationDatabaseSO _animationDatabase;
     [field: SerializeField, BoxGroup("Skills")] private EnemySkillsSO _skillsDatabase;
     [field: SerializeField, BoxGroup("Skills")] public List<PlayableSkill> AvailableSkills { get; private set; } = new List<PlayableSkill>();
@@ -14,8 +15,15 @@ public class EnemyController : Controller
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Skill _currentSkill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _targetPos;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
 
     private List<GameObject> _hitTargets = new List<GameObject>();
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+    }
 
     protected override void Awake()
     {
@@ -25,8 +33,30 @@ public class EnemyController : Controller
 
     protected override void OnEnable()
     {
-
+        _playerSensor.OnPlayerEnter += playerTransform =>
+        {
+            CurrentTargetTransform = playerTransform;
+            Movement.LookInMoveDirection = false;
+        };
     }
+
+    protected override void OnDisable()
+    {
+        _playerSensor.OnPlayerEnter -= playerTransform =>
+        {
+            CurrentTargetTransform = playerTransform;
+            Movement.LookInMoveDirection = false;
+        };
+    }
+
+    private void Update()
+    {
+        if (CurrentTargetTransform != null)
+        {
+            Movement.SetLookPosition(CurrentTargetTransform.position);
+        }
+    }
+
 
     public void MoveTo(Vector3 destination)
     {
