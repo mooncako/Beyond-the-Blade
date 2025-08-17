@@ -25,8 +25,7 @@ public class PlayerSensor : MonoBehaviour
     {
         if ((_playerLayerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            if(_vision.GetVisibleTargets(1).Contains(other.GetComponent<Targetable>()))
-                OnPlayerEnter?.Invoke(other.transform);
+            OnPlayerEnter?.Invoke(other.transform);
         }
     }
 
@@ -34,8 +33,7 @@ public class PlayerSensor : MonoBehaviour
     {
         if ((_playerLayerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            if(_vision.GetVisibleTargets(1).Contains(other.GetComponent<Targetable>()))
-                OnPlayerExit?.Invoke(other.transform.position);
+            OnPlayerExit?.Invoke(other.transform.position);
         }
     }
 }

@@ -27,6 +27,9 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactoryBase
 
         builder.AddGoal<KillPlayerGoal>()
             .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
+
+        builder.AddGoal<StrafeGoal>()
+            .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
     }
 
     private void BuildActions(CapabilityBuilder builder)
@@ -42,7 +45,12 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactoryBase
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(1)
             .SetBaseCost(4);
-            
+
+        builder.AddAction<StrafeAction>()
+            .SetTarget<StrafeTarget>()
+            .AddEffect<IsStrafe>(EffectType.Increase)
+            .SetStoppingDistance(.5f)
+            .SetBaseCost(4);    
     }
 
     private void BuildSensors(CapabilityBuilder builder)
@@ -52,6 +60,9 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactoryBase
 
         builder.AddTargetSensor<PlayerTargetSensor>()
             .SetTarget<PlayerTarget>();
+
+        builder.AddTargetSensor<StrafeTargetSensor>()
+            .SetTarget<StrafeTarget>();
     }
 
 

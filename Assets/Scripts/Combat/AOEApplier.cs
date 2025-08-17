@@ -29,7 +29,7 @@ public class AOEApplier : MonoBehaviour
         switch (type)
         {
             case SkillAreaType.Box:
-                count = SkillAreaCalculation.OverlapBox(center + transform.forward * 3f, new Vector3(X, Y, Z), transform.rotation, _hitMask, _buffer);
+                count = SkillAreaCalculation.OverlapBox(center + transform.forward * 1.5f, new Vector3(X, Y, Z), transform.rotation, _hitMask, _buffer);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_buffer[i].gameObject);
@@ -72,7 +72,7 @@ public class AOEApplier : MonoBehaviour
         {
             case SkillAreaType.Box:
                 // Box gizmo (approx)
-                Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * 3f, transform.rotation, Vector3.one);
+                Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * 1.5f, transform.rotation, Vector3.one);
                 Gizmos.DrawWireCube(Vector3.zero, new Vector3(X, Y, Z));
                 break;
             case SkillAreaType.Circle:

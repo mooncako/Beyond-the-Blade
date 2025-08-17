@@ -23,7 +23,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override bool IsValid(IActionReceiver agent, Data data)
         {
-            return true;
+            return data.Controller.CanAttack;
         }
 
         // This method is called when the action is started
@@ -31,22 +31,27 @@ namespace CrashKonijn.Goap.GenTest
         public override void Start(IMonoAgent agent, Data data)
         {
             data.Timer = _attackSensorConfig.AttackDelay;
-            data.Controller.Movement.SetLookPosition(data.Target.Position);
-            data.Controller.SetTargetPos(data.Target.Position);
-            data.Controller.ActivateSkill();
+            
         }
 
         // This method is called once before the action is performed
         // This method is optional and can be removed
         public override void BeforePerform(IMonoAgent agent, Data data)
         {
+                
         }
 
         // This method is called every frame while the action is running
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
-            data.Timer -= context.DeltaTime;
+            if (data.Controller.IsSkillPlaying())
+                data.Timer -= context.DeltaTime;
+            if (data.Controller.CanAttack)
+            {
+                data.Controller.SetTargetPos(data.Target.Position);
+                data.Controller.ActivateSkill();
+            }
             data.Controller.Stop();
             return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
         }
