@@ -35,7 +35,6 @@ public class MaterialController : MonoBehaviour
     private void OnDamage(DamageInfo info)
     {
         _delayTween.Stop();
-        Debug.Log(1);
         foreach (var renderer in _skinnedMeshes)
         {
             foreach (Material mat in renderer.materials)

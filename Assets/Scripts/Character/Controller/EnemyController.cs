@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityUtils;
 
 public class EnemyController : Controller
 {
@@ -9,7 +10,8 @@ public class EnemyController : Controller
     [field: SerializeField, BoxGroup("Skills")] private EnemySkillsSO _skillsDatabase;
     [field: SerializeField, BoxGroup("Skills")] public List<PlayableSkill> AvailableSkills { get; private set; } = new List<PlayableSkill>();
 
-    public bool CanMove = true;
+    [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
+    [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Skill _currentSkill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _targetPos;
 
@@ -23,7 +25,7 @@ public class EnemyController : Controller
 
     protected override void OnEnable()
     {
-        
+
     }
 
     public void MoveTo(Vector3 destination)
@@ -48,7 +50,7 @@ public class EnemyController : Controller
         if (_animationDatabase == null) return;
         if (_skillsDatabase == null) return;
         if (AvailableSkills.Count == 0) return;
-        _currentSkill = null;
+
 
         // Swap out the animation on the attack state, then makes it go under cooldown
         for (int i = 0; i < AvailableSkills.Count; i++)
@@ -63,6 +65,7 @@ public class EnemyController : Controller
                     StartCoroutine(SkillCooldownCO(i, _skillsDatabase.EnemySkillDict[AvailableSkills[i].SkillId].Cooldown));
                     Animator.OverrideClipForState("Attack", _animationDatabase.SkillAnimDict[_skillsDatabase.EnemySkillDict[AvailableSkills[i].SkillId].AnimationID]);
                     Animator.Play("Attack");
+                    break;
                 }
 
             }
@@ -74,6 +77,7 @@ public class EnemyController : Controller
         AvailableSkills[index].IsInCooldown = true;
         yield return new WaitForSeconds(cooldownTime);
         AvailableSkills[index].IsInCooldown = false;
+
     }
 
     private void ApplySkillEffect()
@@ -83,7 +87,7 @@ public class EnemyController : Controller
         AOEApplier.Y = _currentSkill.SkillRange.Y;
         AOEApplier.Z = _currentSkill.SkillRange.Z;
         _hitTargets.Clear();
-        
+
     }
 
     public void DamageAnimEvent()
@@ -116,5 +120,12 @@ public class EnemyController : Controller
     {
         _targetPos = position;
     }
+
+    public bool IsSkillPlaying()
+    {
+        return !_currentSkill.AnimationID.IsNullOrEmpty();
+    }
+    
+    
     
 }

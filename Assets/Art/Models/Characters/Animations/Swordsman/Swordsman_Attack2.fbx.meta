@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 412b3637056c9734994afa696cf66cbe
+guid: 2bb8215a808dcd54698be4ea1e0bd9c8
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -34,8 +34,8 @@ ModelImporter:
       name: SwordsmanAttack2
       takeName: Take 001
       internalID: 1827226128182048838
-      firstFrame: 54
-      lastFrame: 75
+      firstFrame: 56
+      lastFrame: 89
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -55,40 +55,12 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.16194332
-        functionName: TurnOnRootMotionAnimEvent
+      - time: 0.5913886
+        functionName: DamageAnimEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
-        messageOptions: 0
-      - time: 0.7640512
-        functionName: ParryOpenAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.97530556
-        functionName: TurnOffRootMotionAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.9959515
-        functionName: ParryCloseAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.7137014
-        functionName: PlayAttackSFX
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 1
         messageOptions: 0
       transformMask:
       - path: 

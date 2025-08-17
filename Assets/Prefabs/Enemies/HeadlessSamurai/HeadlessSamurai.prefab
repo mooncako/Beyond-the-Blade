@@ -489,7 +489,11 @@ MonoBehaviour:
   - BaseWeight: 1
     SkillId: ATTACK_01
     IsInCooldown: 0
+  - BaseWeight: 0.8
+    SkillId: ATTACK_02
+    IsInCooldown: 0
   CanMove: 1
+  CanAttack: 1
   _currentSkill:
     AnimationID: 
     Cooldown: 0

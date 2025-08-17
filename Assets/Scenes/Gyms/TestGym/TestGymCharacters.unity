@@ -295,6 +295,22 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.021623451
       objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: X
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: Y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: Z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: _type
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7836385255149560897, guid: 276e74981603b524aaa277777bee164b, type: 3}
     m_RemovedGameObjects: []
@@ -348,10 +364,6 @@ PrefabInstance:
     - target: {fileID: 2770192959741835255, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3246488960610721876, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
-      propertyPath: _lightMask.m_Bits
-      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 6509017619537120799, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_Name
