@@ -318,6 +318,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1108131639495183653, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _skillsDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 1a09d6739b4c8164e838f21a47b5b889, type: 2}
+    - target: {fileID: 1108131639495183653, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _animationDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
+    - target: {fileID: 1108131639495183653, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: <AvailableSkills>k__BackingField.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1108131639495183653, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: <AvailableSkills>k__BackingField.Array.data[0].BaseWeight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2770192959741835255, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.317
