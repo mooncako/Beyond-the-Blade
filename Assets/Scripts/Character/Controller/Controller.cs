@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,6 +9,8 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Vision))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AnimancerComponent))]
+[RequireComponent(typeof(AOEApplier))]
 public class Controller : MonoBehaviour
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] public CustomCharacterMovement Movement { get; private set; }  // get / private set is effectively read only
@@ -14,6 +18,9 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Animator Animator { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] public AnimancerComponent Animancer { get; private set; }
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
 
     protected virtual void Awake()
@@ -28,6 +35,8 @@ public class Controller : MonoBehaviour
         if (Health == null) Health = GetComponent<Health>();
         if (Vision == null) Vision = GetComponent<Vision>();
         if (Animator == null) Animator = GetComponent<Animator>();
+        if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
+        if (Animancer == null) Animancer = GetComponent<AnimancerComponent>();
     }
 
     protected virtual void OnEnable()

@@ -18,5 +18,22 @@ public class Health : MonoBehaviour
     {
         _maxHealth = stats.MaxHealth;
         _health = _maxHealth;
-    } 
+    }
+
+    public void Damage(DamageInfo info)
+    {
+        CameraShakeEvent.Trigger(new LightShake());
+        _health -= info.Amount;
+        OnDamage.Invoke(info);
+
+        if (_health <= 0)
+        {
+            Death(info);
+        }
+    }
+
+    public void Death(DamageInfo info)
+    {
+        OnDeath.Invoke(info);
+    }
 }

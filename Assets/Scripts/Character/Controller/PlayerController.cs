@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using CrashKonijn.Agent.Core;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, ITarget
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
 
@@ -16,19 +17,26 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
+    [field: SerializeField, BoxGroup("Skills")] private SkillAnimationDatabaseSO _animationDatabase;
+    [field: SerializeField, BoxGroup("Skills")] private EnemySkillsSO _skillsDatabase;
+    [field: SerializeField, BoxGroup("Skills")] public List<PlayableSkill> AvailableSkills { get; private set; } = new List<PlayableSkill>();
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
 
 #if UNITY_EDITOR
     [Header("Current State")]
     [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
+
+    public Vector3 Position => throw new System.NotImplementedException();
 #endif
 
+    private Vector3 _isoForward = new Vector3(-1, 0, 1).normalized;
+    private Vector3 _isoRight = new Vector3(1, 0, 1).normalized;
 
     protected override void OnValidate()
     {
         base.OnValidate();
-        if(_input == null) _input = GetComponent<PlayerInput>();
+        if (_input == null) _input = GetComponent<PlayerInput>();
     }
 
     protected override void Awake()
@@ -80,7 +88,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         if(Mathf.Approximately(Time.deltaTime, 0)) return;
         if(!CanRotate) return;
 
-        if(_input.currentControlScheme == "Keyboard&Mouse")
+        if (_input.currentControlScheme == "Keyboard&Mouse")
         {
             Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             Plane plane = new Plane(Vector3.up, transform.position);
@@ -90,9 +98,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 _aimPoint.y = transform.position.y;
                 Movement.SetLookPosition(_aimPoint);
             }
-        }else if(_input.currentControlScheme == "Gamepad")
+        } else if (_input.currentControlScheme == "Gamepad")
         {
-            //TODO
+            if (InputProcessor.InputVector.sqrMagnitude > .01f)
+            {
+                Vector3 moveDir = (_isoRight * InputProcessor.InputVector.x + _isoForward * InputProcessor.InputVector.y).normalized;
+
+                Movement.SetLookDirection(moveDir);
+            }
         }
     }
 
@@ -160,5 +173,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         return false;
     }
 
-    
+    public bool IsValid()
+    {
+        return Health.IsAlive;
+    }
 }
