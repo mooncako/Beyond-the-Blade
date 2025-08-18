@@ -21,6 +21,7 @@ public class Brain : MonoBehaviour
         if (_agent == null) _agent = GetComponent<AgentBehaviour>();
         if (_provider == null) _provider = GetComponent<GoapActionProvider>();
         if (_goap == null) _goap = GetComponent<GoapBehaviour>();
+        if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
     }
 
     protected virtual void OnEnable()

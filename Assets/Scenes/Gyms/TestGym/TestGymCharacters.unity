@@ -119,17 +119,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &1150989599 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2515946022723110387, guid: 276e74981603b524aaa277777bee164b, type: 3}
-  m_PrefabInstance: {fileID: 697394715197932471}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8ed2b1688e22ef499d33c7be3068df9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+--- !u!1001 &1067900016
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3744354742756812122, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_Name
+      value: Hososhi
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.1077304
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0022039413
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.1594095
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034926405133228867, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
 --- !u!1001 &1249241432
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -141,6 +187,10 @@ PrefabInstance:
     - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_Name
       value: HeadlessSamurai
+      objectReference: {fileID: 0}
+    - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4034926405133228867, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -194,22 +244,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.021623373
       objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: X
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: Y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: Z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: _type
-      value: 3
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -223,17 +257,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3630683316071161654, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: m_TranslationAtRest.x
-      value: -0.16952434
-      objectReference: {fileID: 0}
-    - target: {fileID: 3630683316071161654, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: m_TranslationAtRest.z
-      value: 0.021623451
-      objectReference: {fileID: 0}
     - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_Name
       value: HeadlessSamurai
+      objectReference: {fileID: 0}
+    - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4034926405133228867, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -275,44 +305,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5061576002193979983, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: _vision
-      value: 
-      objectReference: {fileID: 1150989599}
-    - target: {fileID: 5407741524840845486, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.11696307
-      objectReference: {fileID: 0}
-    - target: {fileID: 6524476659326703885, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: _minMoveDistance
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555015232803260243, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.16952434
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555015232803260243, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.021623451
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: X
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: Y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: Z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7909133857443672914, guid: 276e74981603b524aaa277777bee164b, type: 3}
-      propertyPath: _type
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7836385255149560897, guid: 276e74981603b524aaa277777bee164b, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -381,3 +374,4 @@ SceneRoots:
   - {fileID: 2354814142772029632}
   - {fileID: 697394715197932471}
   - {fileID: 1249241432}
+  - {fileID: 1067900016}

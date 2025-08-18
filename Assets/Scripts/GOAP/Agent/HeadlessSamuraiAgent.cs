@@ -2,7 +2,7 @@ using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.Runtime;
 using UnityEngine;
 
-public class HeadlessSamuraiFactory : AgentTypeFactoryBase
+public class HeadlessSamuraiAgent : AgentTypeFactoryBase
 {
     public override IAgentTypeConfig Create()
     {

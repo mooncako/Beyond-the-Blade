@@ -1,17 +1,16 @@
-using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.GenTest;
 using CrashKonijn.Goap.Runtime;
-using UnityEngine;
 
-public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
+
+public class HososhiCapabilityFactory : CapabilityFactory
 {
 
 
     public override ICapabilityConfig Create()
     {
 
-        var builder = new CapabilityBuilder("HeadlessSamurai");
+        var builder = new CapabilityBuilder("Hososhi");
 
         BuildGoals(builder);
         BuildActions(builder);
@@ -43,7 +42,7 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .SetStoppingDistance(1)
+            .SetStoppingDistance(2)
             .SetBaseCost(4);
 
         builder.AddAction<StrafeAction>()

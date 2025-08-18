@@ -10,8 +10,4 @@ public class AttackSensorConfigSO : ScriptableObject
     public LayerMask AttackableLayerMask;
 }
 
-[CreateAssetMenu(fileName = "NewStrafeSensorConfig", menuName = "AI/StrafeSensorConfig")]
-public class StrafeSensorConfigSO : ScriptableObject
-{
-    public float Distance = 5f;
-}
+

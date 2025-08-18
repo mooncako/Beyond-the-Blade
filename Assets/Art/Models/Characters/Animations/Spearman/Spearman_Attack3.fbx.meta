@@ -1,84 +1,9 @@
 fileFormatVersion: 2
-guid: c04d0b79c2f094342b00ecb9c47dda8a
+guid: d03a985d238932a4aaae16f9ee2efbca
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Body1
-    second: {fileID: 2100000, guid: b90c22e11671fd64b835d907ba3ec107, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_AnkleWraps
-    second: {fileID: 2100000, guid: 1ef161413ab459b478f5c3ebb1f7299b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Belt
-    second: {fileID: 2100000, guid: 1ef161413ab459b478f5c3ebb1f7299b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Eyes
-    second: {fileID: 2100000, guid: ece6240eb06155f4e8cf1674a56c2df7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Feet
-    second: {fileID: 2100000, guid: c9a2f29e8c4dfe743a1de50854d6ea0c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Hair1
-    second: {fileID: 2100000, guid: 1d2e508a43bb71645bf16bc632283039, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Hands
-    second: {fileID: 2100000, guid: c9a2f29e8c4dfe743a1de50854d6ea0c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Mask
-    second: {fileID: 2100000, guid: 60546d22a3e93b84ea540a782207981a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_MaskTop
-    second: {fileID: 2100000, guid: 185fa920e27b57a47af3be75c14ef2a2, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_MaskTop2
-    second: {fileID: 2100000, guid: 185fa920e27b57a47af3be75c14ef2a2, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Pants
-    second: {fileID: 2100000, guid: b90c22e11671fd64b835d907ba3ec107, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Shirt1
-    second: {fileID: 2100000, guid: ece6240eb06155f4e8cf1674a56c2df7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Shirt2
-    second: {fileID: 2100000, guid: b90c22e11671fd64b835d907ba3ec107, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Shirt3
-    second: {fileID: 2100000, guid: 0a101dc0fdfec554cb52d64c1b3da8e3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Teeth
-    second: {fileID: 2100000, guid: a448401d100050a4ca50736499556c74, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -90,7 +15,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
-    motionNodeName: 
+    motionNodeName: RIG/Root
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -104,8 +29,256 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
-    isReadable: 1
+    clipAnimations:
+    - serializedVersion: 16
+      name: SpearAttack03
+      takeName: Take 001
+      internalID: 1827226128182048838
+      firstFrame: 48
+      lastFrame: 66
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.34524426
+        functionName: DamageAnimEvent
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: RIG
+        weight: 1
+      - path: RIG/LeftFoot_IK
+        weight: 0
+      - path: RIG/LeftHeel_LOC
+        weight: 0
+      - path: RIG/LeftHeel_LOC/LeftToe_End_LOC
+        weight: 0
+      - path: RIG/LeftHeel_LOC/LeftToe_End_LOC/LeftToeBase_LOC
+        weight: 0
+      - path: RIG/LeftHeel_LOC/LeftToe_End_LOC/LeftToeBase_LOC/LeftFoot_LOC
+        weight: 0
+      - path: RIG/LeftToe_End_IK
+        weight: 0
+      - path: RIG/LeftToeBase_IK
+        weight: 0
+      - path: RIG/RightFoot_IK
+        weight: 0
+      - path: RIG/RightHeel_LOC
+        weight: 0
+      - path: RIG/RightHeel_LOC/RightToe_End_LOC
+        weight: 0
+      - path: RIG/RightHeel_LOC/RightToe_End_LOC/RightToeBase_LOC
+        weight: 0
+      - path: RIG/RightHeel_LOC/RightToe_End_LOC/RightToeBase_LOC/RightFoot_LOC
+        weight: 0
+      - path: RIG/RightToeBase_IK
+        weight: 0
+      - path: RIG/Root
+        weight: 1
+      - path: RIG/Root/Hips
+        weight: 1
+      - path: RIG/Root/Hips/LeftUpLeg
+        weight: 1
+      - path: RIG/Root/Hips/LeftUpLeg/LeftLeg
+        weight: 1
+      - path: RIG/Root/Hips/LeftUpLeg/LeftLeg/LeftFoot
+        weight: 1
+      - path: RIG/Root/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase
+        weight: 1
+      - path: RIG/Root/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase/LeftToe_End
+        weight: 0
+      - path: RIG/Root/Hips/RightUpLeg
+        weight: 1
+      - path: RIG/Root/Hips/RightUpLeg/RightLeg
+        weight: 1
+      - path: RIG/Root/Hips/RightUpLeg/RightLeg/RightFoot
+        weight: 1
+      - path: RIG/Root/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase
+        weight: 1
+      - path: RIG/Root/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase/RightToe_End
+        weight: 0
+      - path: RIG/Root/Hips/Spine
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/LeftHand
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/LeftHand/Shield
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/LeftTwist1
+        weight: 0
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/LeftTwist2
+        weight: 0
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/LeftTwist3
+        weight: 0
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/Neck
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/Neck/Head
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/Neck/Head/HeadTop_End
+        weight: 0
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm/RightHand
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm/RightHand/Yari
+        weight: 1
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm/RightTwist1
+        weight: 0
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm/RightTwist2
+        weight: 0
+      - path: RIG/Root/Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm/RightTwist3
+        weight: 0
+      - path: RIG/ZERO_Root_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON/ZERO_LeftForeArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON/ZERO_LeftForeArm_CON/LeftForeArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON/ZERO_LeftForeArm_CON/LeftForeArm_CON/ZERO_LeftHand_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON/ZERO_LeftForeArm_CON/LeftForeArm_CON/ZERO_LeftHand_CON/LeftHand_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON/ZERO_LeftForeArm_CON/LeftForeArm_CON/ZERO_LeftHand_CON/LeftHand_CON/ZERO_Shield_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_LeftShoulder_CON/LeftShoulder_CON/ZERO_LeftArm_CON/LeftArm_CON/ZERO_LeftForeArm_CON/LeftForeArm_CON/ZERO_LeftHand_CON/LeftHand_CON/ZERO_Shield_CON/Shield_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_Neck_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_Neck_CON/Neck_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_Neck_CON/Neck_CON/ZERO_Head_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_Neck_CON/Neck_CON/ZERO_Head_CON/Head_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON/ZERO_RightForeArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON/ZERO_RightForeArm_CON/RightForeArm_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON/ZERO_RightForeArm_CON/RightForeArm_CON/ZERO_RightHand_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON/ZERO_RightForeArm_CON/RightForeArm_CON/ZERO_RightHand_CON/RightHand_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON/ZERO_RightForeArm_CON/RightForeArm_CON/ZERO_RightHand_CON/RightHand_CON/ZERO_Yari_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_Hips_CON/Hips_CON/ZERO_Spine_CON/Spine_CON/ZERO_Spine1_CON/Spine1_CON/ZERO_Spine2_CON/Spine2_CON/ZERO_RightShoulder_CON/RightShoulder_CON/ZERO_RightArm_CON/RightArm_CON/ZERO_RightForeArm_CON/RightForeArm_CON/ZERO_RightHand_CON/RightHand_CON/ZERO_Yari_CON/Yari_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftFoot_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftFoot_CON/LeftFoot_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON/ZERO_LeftToe_End_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON/ZERO_LeftToe_End_CON/LeftToe_End_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON/ZERO_LeftToe_End_CON/LeftToe_End_CON/ZERO_LeftToeBase_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON/ZERO_LeftToe_End_CON/LeftToe_End_CON/ZERO_LeftToeBase_CON/LeftToeBase_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON/ZERO_LeftToe_End_CON/LeftToe_End_CON/ZERO_LeftToeBase_CON/LeftToeBase_CON/LeftToe_End_PV
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_LeftHeel_CON/LeftHeel_CON/ZERO_LeftToe_End_CON/LeftToe_End_CON/ZERO_LeftToeBase_CON/LeftToeBase_CON/LeftToeBase_PV
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightFoot_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightFoot_CON/RightFoot_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/RightToe_End_IK
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/ZERO_RightToe_End_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/ZERO_RightToe_End_CON/RightToe_End_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/ZERO_RightToe_End_CON/RightToe_End_CON/ZERO_RightToeBase_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/ZERO_RightToe_End_CON/RightToe_End_CON/ZERO_RightToeBase_CON/RightToeBase_CON
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/ZERO_RightToe_End_CON/RightToe_End_CON/ZERO_RightToeBase_CON/RightToeBase_CON/RightToe_End_PV
+        weight: 0
+      - path: RIG/ZERO_Root_CON/Root_CON/ZERO_RightHeel_CON/RightHeel_CON/ZERO_RightToe_End_CON/RightToe_End_CON/ZERO_RightToeBase_CON/RightToeBase_CON/RightToeBase_PV
+        weight: 0
+      - path: SEGEMENTED_PROXY
+        weight: 0
+      - path: SEGEMENTED_PROXY/SegmentedProxy
+        weight: 0
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
@@ -884,11 +1057,11 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c04d0b79c2f094342b00ecb9c47dda8a, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

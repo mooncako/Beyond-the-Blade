@@ -9,7 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1f6d4b33a265814bbadf21f223c07b2, type: 3}
-  m_Name: HeadlessSamuraiStrafeSensorConfig
+  m_Script: {fileID: 11500000, guid: d7b18264b462486418e1d57dbff27505, type: 3}
+  m_Name: HososhiAttackSensorConfig
   m_EditorClassIdentifier: 
-  Distance: 2.5
+  SensorRadius: 3
+  AttackRadius: 2.5
+  AttackCost: 1
+  AttackDelay: 1
+  AttackableLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
