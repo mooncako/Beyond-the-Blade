@@ -2,8 +2,13 @@ using UnityEngine;
 
 public class Stats : ScriptableObject
 {
-    [Header("Health")]
+    [Header("Stats")]
     public float MaxHealth = 100f;
+    public float MovementSpeedMultiplier = 1;
+    public float DamageMultiplier = 1;
+    public float DamageReduction = 0;
+    public float AttackSpeed = 1;
+    public float ResourceGainMultiplier = 1;
 
     [Header("Vision")]
     public float Range = 4f;
