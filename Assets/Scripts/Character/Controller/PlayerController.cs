@@ -27,11 +27,13 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     public Vector3 Position => throw new System.NotImplementedException();
 #endif
 
+    private Vector3 _isoForward = new Vector3(-1, 0, 1).normalized;
+    private Vector3 _isoRight = new Vector3(1, 0, 1).normalized;
 
     protected override void OnValidate()
     {
         base.OnValidate();
-        if(_input == null) _input = GetComponent<PlayerInput>();
+        if (_input == null) _input = GetComponent<PlayerInput>();
     }
 
     protected override void Awake()
@@ -83,7 +85,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         if(Mathf.Approximately(Time.deltaTime, 0)) return;
         if(!CanRotate) return;
 
-        if(_input.currentControlScheme == "Keyboard&Mouse")
+        if (_input.currentControlScheme == "Keyboard&Mouse")
         {
             Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             Plane plane = new Plane(Vector3.up, transform.position);
@@ -93,9 +95,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 _aimPoint.y = transform.position.y;
                 Movement.SetLookPosition(_aimPoint);
             }
-        }else if(_input.currentControlScheme == "Gamepad")
+        } else if (_input.currentControlScheme == "Gamepad")
         {
-            //TODO
+            if (InputProcessor.InputVector.sqrMagnitude > .01f)
+            {
+                Vector3 moveDir = (_isoRight * InputProcessor.InputVector.x + _isoForward * InputProcessor.InputVector.y).normalized;
+
+                Movement.SetLookDirection(moveDir);
+            }
         }
     }
 

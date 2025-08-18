@@ -165,7 +165,6 @@ GameObject:
   - component: {fileID: 6233116775064065168}
   - component: {fileID: 8394953832475103564}
   - component: {fileID: 4962864894029839974}
-  - component: {fileID: 1939310770430903750}
   - component: {fileID: 6524476659326703885}
   - component: {fileID: 6420835648838700933}
   - component: {fileID: 2652234782751008208}
@@ -175,6 +174,7 @@ GameObject:
   - component: {fileID: 8335018461307400012}
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 6241636426159505488}
+  - component: {fileID: 3351228736764815849}
   m_Layer: 0
   m_Name: Hososhi
   m_TagString: Untagged
@@ -481,39 +481,6 @@ MonoBehaviour:
     Debuffs: []
   _targetPos: {x: 0, y: 0, z: 0}
   CurrentTargetTransform: {fileID: 0}
---- !u!114 &1939310770430903750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3744354742756812122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4616214aee4bade48a2e75bd2bf108bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _attackSFX:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  _footstepSFX:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  _movementSFX:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -668,6 +635,39 @@ MonoBehaviour:
   _attackSensorConfigSO: {fileID: 11400000, guid: 344e4cfc96751e9449f7cdf938f5cc67, type: 2}
   _isPlayerInRange: 0
   _isPlayerDetected: 0
+--- !u!114 &3351228736764815849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4616214aee4bade48a2e75bd2bf108bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attackSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _footstepSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _movementSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
 --- !u!1001 &519891415355162520
 PrefabInstance:
   m_ObjectHideFlags: 0
