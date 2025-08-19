@@ -45,6 +45,12 @@ namespace CrashKonijn.Goap.Runtime
             this.goap?.Dispose();
         }
 
+        void OnEnable()
+        {
+            var controller = this.GetComponent<IGoapController>();
+            controller.Initialize(this.goap);
+        }
+
         private void Initialize()
         {
             if (this.isInitialized)
