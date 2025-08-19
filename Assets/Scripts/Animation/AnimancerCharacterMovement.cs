@@ -18,11 +18,11 @@ public class AnimancerCharacterMovement : MonoBehaviour
     {
         if(forward > 0)
         {
-            animancer?.Play(Idle);
+            animancer?.Play(Run,.25f);
         }
         else if (forward == 0)
         {
-            animancer?.Play(Run);
+            animancer?.Play(Idle,.25f);
         }
         
     }
