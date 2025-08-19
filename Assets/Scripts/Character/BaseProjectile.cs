@@ -28,22 +28,24 @@ public class BaseProjectile : MonoBehaviour, IProjectile
     private Rigidbody _rigidbody;
     private Collider _collider;
     private Vector3 _startPosition;
+    private ObjectPool _pool;
 
     #region Unity Lifecycle
-    
+
     private void Awake()
     {
+        _pool = GetComponentInParent<ObjectPool>();
         _rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        
+
         // Configure rigidbody for projectile movement
         _rigidbody.useGravity = false; // No gravity as requested
         _rigidbody.linearDamping = 0f;
         _rigidbody.angularDamping = 0f;
-        
+
         // Set collider as trigger for hit detection
         _collider.isTrigger = true;
-        
+
         IsActive = false;
     }
 
@@ -168,78 +170,78 @@ public class BaseProjectile : MonoBehaviour, IProjectile
     /// <summary>
     /// Create and fire a projectile directly - Basic version
     /// </summary>
-    public static BaseProjectile CreateAndFire(GameObject prefab, Vector3 position, Vector3 direction, GameObject owner)
-    {
-        // Create basic projectile data
-        ProjectileData data = ProjectileData.CreateBasic(10f, 25f, 0, -1);
-        return CreateAndFire(prefab, position, direction, owner, data);
-    }
+    // public static BaseProjectile CreateAndFire(GameObject prefab, Vector3 position, Vector3 direction, GameObject owner)
+    // {
+    //     // Create basic projectile data
+    //     ProjectileData data = ProjectileData.CreateBasic(10f, 25f, 0, -1);
+    //     return CreateAndFire(prefab, position, direction, owner, data);
+    // }
 
     /// <summary>
     /// Create and fire a projectile directly - Full version with ObjectPool integration
     /// </summary>
-    public static BaseProjectile CreateAndFire(GameObject prefab, Vector3 position, Vector3 direction, GameObject owner, ProjectileData data)
-    {
-        if (prefab == null)
-        {
-            Debug.LogError("Cannot create projectile: prefab is null");
-            return null;
-        }
+    // public static BaseProjectile CreateAndFire(GameObject prefab, Vector3 position, Vector3 direction, GameObject owner, ProjectileData data)
+    // {
+    //     if (prefab == null)
+    //     {
+    //         Debug.LogError("Cannot create projectile: prefab is null");
+    //         return null;
+    //     }
 
-        GameObject projectileObj = null;
-        BaseProjectile projectile = null;
+    //     GameObject projectileObj = null;
+    //     BaseProjectile projectile = null;
 
-        // Try to use ObjectPool first
-        if (ObjectPool.Instance != null)
-        {
-            projectileObj = ObjectPool.Instance.Get(prefab);
-            if (projectileObj != null)
-            {
-                projectile = projectileObj.GetComponent<BaseProjectile>();
-                if (projectile != null)
-                {
-                    // Reset position and rotation for pooled object
-                    projectileObj.transform.position = position;
-                    projectileObj.transform.rotation = Quaternion.LookRotation(direction);
+    //     // Try to use ObjectPool first
+    //     if (ObjectPool.Instance != null)
+    //     {
+    //         projectileObj = ObjectPool.Instance.Get(prefab);
+    //         if (projectileObj != null)
+    //         {
+    //             projectile = projectileObj.GetComponent<BaseProjectile>();
+    //             if (projectile != null)
+    //             {
+    //                 // Reset position and rotation for pooled object
+    //                 projectileObj.transform.position = position;
+    //                 projectileObj.transform.rotation = Quaternion.LookRotation(direction);
                     
-                    // Setup and launch pooled projectile
-                    projectile.SetOwner(owner);
-                    projectile.Initialize(data);
-                    projectile.SetPosition(position);
-                    projectile.LaunchInDirection(direction);
-                    return projectile;
-                }
-            }
-        }
+    //                 // Setup and launch pooled projectile
+    //                 projectile.SetOwner(owner);
+    //                 projectile.Initialize(data);
+    //                 projectile.SetPosition(position);
+    //                 projectile.LaunchInDirection(direction);
+    //                 return projectile;
+    //             }
+    //         }
+    //     }
 
         // Fallback to direct instantiation if ObjectPool failed or not available
-        projectileObj = Instantiate(prefab, position, Quaternion.LookRotation(direction));
-        projectile = projectileObj.GetComponent<BaseProjectile>();
+    //     projectileObj = Instantiate(prefab, position, Quaternion.LookRotation(direction));
+    //     projectile = projectileObj.GetComponent<BaseProjectile>();
 
-        if (projectile == null)
-        {
-            Debug.LogError($"Prefab '{prefab.name}' does not have BaseProjectile component!");
-            Destroy(projectileObj);
-            return null;
-        }
+    //     if (projectile == null)
+    //     {
+    //         Debug.LogError($"Prefab '{prefab.name}' does not have BaseProjectile component!");
+    //         Destroy(projectileObj);
+    //         return null;
+    //     }
 
-        // Setup and launch instantiated projectile
-        projectile.SetOwner(owner);
-        projectile.Initialize(data);
-        projectile.SetPosition(position);
-        projectile.LaunchInDirection(direction);
+    //     // Setup and launch instantiated projectile
+    //     projectile.SetOwner(owner);
+    //     projectile.Initialize(data);
+    //     projectile.SetPosition(position);
+    //     projectile.LaunchInDirection(direction);
 
-        return projectile;
-    }
+    //     return projectile;
+    // }
 
     /// <summary>
     /// Create and fire projectile towards a target
     /// </summary>
-    public static BaseProjectile CreateAndFireAt(GameObject prefab, Vector3 position, Vector3 targetPosition, GameObject owner, ProjectileData data)
-    {
-        Vector3 direction = (targetPosition - position).normalized;
-        return CreateAndFire(prefab, position, direction, owner, data);
-    }
+    // public static BaseProjectile CreateAndFireAt(GameObject prefab, Vector3 position, Vector3 targetPosition, GameObject owner, ProjectileData data)
+    // {
+    //     Vector3 direction = (targetPosition - position).normalized;
+    //     return CreateAndFire(prefab, position, direction, owner, data);
+    // }
 
     #endregion
 

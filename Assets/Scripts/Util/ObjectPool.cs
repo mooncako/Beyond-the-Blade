@@ -22,33 +22,15 @@ public interface IPoolable
 /// </summary>
 public class ObjectPool : MonoBehaviour
 {
-    [System.Serializable]
-    public class PoolConfig
-    {
-        [Tooltip("Prefab to pool")]
-        public GameObject prefab;
-        
-        [Tooltip("Initial number of objects to create")]
-        [Range(1, 100)]
-        public int initialSize = 10;
-        
-        [Tooltip("Maximum number of objects in pool (0 = unlimited)")]
-        [Range(0, 500)]
-        public int maxSize = 50;
-        
-        [Tooltip("Can pool expand beyond initial size")]
-        public bool canExpand = true;
-    }
 
     [Header("Pool Configuration")]
-    [SerializeField] private List<PoolConfig> poolConfigs = new List<PoolConfig>();
+    [SerializeField] private List<PoolConfig> _poolConfigs = new List<PoolConfig>();
     
     [Header("Settings")]
-    [SerializeField] private bool logPoolStats = false;
-    [SerializeField] private bool TurnOnDebugLog = false;   
-
-    // Static instance for global access
-    public static ObjectPool Instance { get; private set; }
+    [SerializeField] private bool _logPoolStats = false;
+    [SerializeField] private bool _turnOnDebugLog = false;
+    [SerializeField] private bool _initializeOnStart = true;
+    [SerializeField] private bool _initializeAsChild = false;   
 
     // Pool storage: Prefab -> Queue of available objects
     private Dictionary<GameObject, Queue<GameObject>> _pools;
@@ -60,25 +42,10 @@ public class ObjectPool : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            InitializePools();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        InitializePools();
     }
 
-    private void OnDestroy()
-    {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
-    }
+
 
     #endregion
 
@@ -91,7 +58,7 @@ public class ObjectPool : MonoBehaviour
         _activeCount = new Dictionary<GameObject, int>();
 
         // Initialize each pool
-        foreach (var config in poolConfigs)
+        foreach (var config in _poolConfigs)
         {
             if (config.prefab != null)
             {
@@ -99,7 +66,7 @@ public class ObjectPool : MonoBehaviour
             }
         }
 
-        if (logPoolStats)
+        if (_logPoolStats)
         {
             LogPoolStatistics();
         }
@@ -149,7 +116,7 @@ public class ObjectPool : MonoBehaviour
 
         if (!_pools.ContainsKey(prefab))
         {
-            if (TurnOnDebugLog) Debug.LogWarning($"Pool for prefab '{prefab.name}' not found. Creating runtime pool.");
+            if (_turnOnDebugLog) Debug.LogWarning($"Pool for prefab '{prefab.name}' not found. Creating runtime pool.");
             CreateRuntimePool(prefab);
         }
 
@@ -180,7 +147,7 @@ public class ObjectPool : MonoBehaviour
             return obj;
         }
 
-        if (TurnOnDebugLog) Debug.LogWarning($"Pool for '{prefab.name}' is exhausted and cannot expand");
+        if (_turnOnDebugLog) Debug.LogWarning($"Pool for '{prefab.name}' is exhausted and cannot expand");
         return null;
     }
 
@@ -200,7 +167,7 @@ public class ObjectPool : MonoBehaviour
     {
         if (obj == null)
         {
-            if (TurnOnDebugLog) Debug.LogError("Cannot return null object to pool");
+            if (_turnOnDebugLog) Debug.LogError("Cannot return null object to pool");
             return;
         }
 
@@ -208,7 +175,7 @@ public class ObjectPool : MonoBehaviour
         GameObject prefab = FindPrefabForObject(obj);
         if (prefab == null)
         {
-            if (TurnOnDebugLog) Debug.LogWarning($"Object '{obj.name}' doesn't belong to any pool. Destroying instead.");
+            if (_turnOnDebugLog) Debug.LogWarning($"Object '{obj.name}' doesn't belong to any pool. Destroying instead.");
             Destroy(obj);
             return;
         }
@@ -243,7 +210,7 @@ public class ObjectPool : MonoBehaviour
     {
         if (!_pools.ContainsKey(prefab))
         {
-            if (TurnOnDebugLog) Debug.LogError($"Pool for prefab '{prefab.name}' not found");
+            if (_turnOnDebugLog) Debug.LogError($"Pool for prefab '{prefab.name}' not found");
             return;
         }
 
@@ -292,6 +259,19 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clear the current pool, and build a new pool at runtime based on the prefabs
+    /// </summary>
+    /// <param name="prefabs"></param>
+    public void InitializeRuntimePool(List<GameObject> prefabs)
+    {
+        ClearAllPools();
+        foreach (GameObject go in prefabs)
+        {
+            CreateRuntimePool(go);
+        }
+    }
+
     #endregion
 
     #region Pool Statistics
@@ -313,10 +293,10 @@ public class ObjectPool : MonoBehaviour
 
     public void LogPoolStatistics()
     {
-        if (TurnOnDebugLog)     Debug.Log("=== Object Pool Statistics ===");
+        if (_turnOnDebugLog)     Debug.Log("=== Object Pool Statistics ===");
         foreach (var prefab in _pools.Keys)
         {
-            if (TurnOnDebugLog) Debug.Log($"{prefab.name}: Active={GetActiveCount(prefab)}, Available={GetAvailableCount(prefab)}, Total={GetTotalCount(prefab)}");
+            if (_turnOnDebugLog) Debug.Log($"{prefab.name}: Active={GetActiveCount(prefab)}, Available={GetAvailableCount(prefab)}, Total={GetTotalCount(prefab)}");
         }
     }
 
