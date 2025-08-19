@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.GenTest;
@@ -9,6 +10,7 @@ using UnityEngine;
 public class HeadlessSamuraiBrain : Brain
 {
 
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -17,11 +19,16 @@ public class HeadlessSamuraiBrain : Brain
     protected override void OnEnable()
     {
         base.OnEnable();
+        _isPlayerDetected = false;
+        _provider.ClearGoal();
+        _provider.RequestGoal<WanderGoal>(false);
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
+        _provider.ClearGoal();
+
     }
 
     protected override void Awake()
@@ -43,12 +50,16 @@ public class HeadlessSamuraiBrain : Brain
 
     protected override void OnActionEnd(IAction action)
     {
+        if (!gameObject.activeSelf) return;
+
         if (_isPlayerDetected)
         {
+            Debug.Log(1);
             _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
         }
         else
         {
+            Debug.Log(2);
             _provider.RequestGoal<WanderGoal>();
         }
     }
