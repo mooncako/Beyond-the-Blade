@@ -26,6 +26,7 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnEnable()
     {
+        _agent.IsPaused = false;
         _playerSensor.OnPlayerEnter += OnPlayerEnter;
         _playerSensor.OnPlayerExit += OnPlayerExit;
         _agent.Events.OnActionEnd += OnActionEnd;
@@ -33,6 +34,7 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnDisable()
     {
+        _agent.IsPaused = true;
         _playerSensor.OnPlayerEnter -= OnPlayerEnter;
         _playerSensor.OnPlayerExit -= OnPlayerExit;
         _agent.Events.OnActionEnd -= OnActionEnd;

@@ -36,6 +36,7 @@ public class AgentMoveBehavior : MonoBehaviour
 
     void Update()
     {
+        if (_agentBehavior.IsPaused) return;
         if (_currentTarget == null) return;
 
 
