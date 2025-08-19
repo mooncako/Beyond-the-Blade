@@ -176,6 +176,7 @@ public class PlayerCombatController : MonoBehaviour
 
     public void ExecuteLightAttack(Vector3 aimPosition)
     {
+        Debug.Log("Lol");
         _animator.SetTrigger("Attack");
         _animator.SetBool("IsAttacking", true);
         // _movement.Dash(_movement.LookDirection, 10f);
