@@ -3,5 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameDifficultyDataSO", menuName = "BytheBlade/GameDifficultyDataSO")]
 public class GameDifficultyDataSO : ScriptableObject
 {
-    [field: SerializeField] public AnimationCurve DifficultyCurve { get; private set; }
+    [SerializeField] public float TotalLevelCount = 15;
+    [field: SerializeField] public AnimationCurve MinDifficultyCurve { get; private set; }
+    [field: SerializeField] public AnimationCurve MaxDifficultyCurve { get; private set; }
 }

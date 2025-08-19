@@ -1,4 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
+using Steamworks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -33,19 +36,18 @@ public class ObjectPool : MonoBehaviour
     [SerializeField] private bool _initializeAsChild = false;   
 
     // Pool storage: Prefab -> Queue of available objects
-    private Dictionary<GameObject, Queue<GameObject>> _pools;
-    private Dictionary<GameObject, PoolConfig> _configs;
-    private Dictionary<GameObject, int> _activeCount;
+    private Dictionary<GameObject, Queue<GameObject>> _pools = new Dictionary<GameObject, Queue<GameObject>>();
+    private Dictionary<GameObject, PoolConfig> _configs = new Dictionary<GameObject, PoolConfig>();
+    private Dictionary<GameObject, int> _activeCount = new Dictionary<GameObject, int>();
 
 
     #region Unity Lifecycle
 
     private void Awake()
     {
-        InitializePools();
+        if(_initializeOnStart)
+            InitializePools();
     }
-
-
 
     #endregion
 
@@ -53,10 +55,6 @@ public class ObjectPool : MonoBehaviour
 
     private void InitializePools()
     {
-        _pools = new Dictionary<GameObject, Queue<GameObject>>();
-        _configs = new Dictionary<GameObject, PoolConfig>();
-        _activeCount = new Dictionary<GameObject, int>();
-
         // Initialize each pool
         foreach (var config in _poolConfigs)
         {
@@ -95,8 +93,17 @@ public class ObjectPool : MonoBehaviour
     {
         GameObject obj = Instantiate(prefab);
         obj.name = $"{prefab.name}_Pooled";
-        obj.SetActive(false);
+        if (_initializeAsChild)
+            obj.transform.parent = transform;
+
+        StartCoroutine(ObjectDisableCO(obj));
         return obj;
+    }
+
+    private IEnumerator ObjectDisableCO(GameObject go)
+    {
+        yield return null;
+        go.SetActive(false);
     }
 
     #endregion
@@ -253,6 +260,7 @@ public class ObjectPool : MonoBehaviour
     /// </summary>
     public void ClearAllPools()
     {
+        if (_pools.Count == 0) return;
         foreach (var prefab in _pools.Keys)
         {
             ClearPool(prefab);
@@ -268,8 +276,17 @@ public class ObjectPool : MonoBehaviour
         ClearAllPools();
         foreach (GameObject go in prefabs)
         {
-            CreateRuntimePool(go);
+            var config = new PoolConfig
+            {
+                prefab = go,
+                initialSize = 5,
+                maxSize = 20,
+                canExpand = true
+            };
+            _poolConfigs.Add(config);
         }
+
+        InitializePools();
     }
 
     #endregion
@@ -313,7 +330,6 @@ public class ObjectPool : MonoBehaviour
             maxSize = 20,
             canExpand = true
         };
-
         CreatePool(config);
     }
 
