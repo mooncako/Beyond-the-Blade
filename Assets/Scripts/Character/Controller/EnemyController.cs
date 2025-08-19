@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityUtils;
 
-public class EnemyController : Controller
+public class EnemyController : Controller, IPoolable
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
 
@@ -69,7 +69,14 @@ public class EnemyController : Controller
     {
         Movement.Stop();
     }
-    
-    
-    
+
+    public void OnPoolGet()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnPoolReturn()
+    {
+        throw new System.NotImplementedException();
+    }
 }

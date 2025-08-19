@@ -34,7 +34,6 @@ public class Weapon : MonoBehaviour
                 if (_skillDatabase.SkillDict.ContainsKey(AvailableSkills[i].SkillId) &&
                     _animationDatabase.SkillAnimDict.ContainsKey(_skillDatabase.SkillDict[AvailableSkills[i].SkillId].AnimationID))
                 {
-
                     StartCoroutine(SkillCooldownCO(i, _skillDatabase.SkillDict[AvailableSkills[i].SkillId].Cooldown));
                     return _skillDatabase.SkillDict[AvailableSkills[i].SkillId];
                 }
