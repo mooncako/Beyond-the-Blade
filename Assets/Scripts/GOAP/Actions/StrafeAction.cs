@@ -45,7 +45,7 @@ namespace CrashKonijn.Goap.GenTest
                 return ActionRunState.Continue;
             }
 
-            return ActionRunState.Stop;
+            return ActionRunState.Completed;
         }
 
         // This method is called when the action is completed

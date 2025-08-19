@@ -54,12 +54,10 @@ public class HeadlessSamuraiBrain : Brain
 
         if (_isPlayerDetected)
         {
-            Debug.Log(1);
             _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
         }
         else
         {
-            Debug.Log(2);
             _provider.RequestGoal<WanderGoal>();
         }
     }

@@ -91,7 +91,7 @@ public class ObjectPool : MonoBehaviour
 
     private GameObject CreatePooledObject(GameObject prefab)
     {
-        GameObject obj = Instantiate(prefab);
+        GameObject obj = Instantiate(prefab, transform.position, Quaternion.identity);
         obj.name = $"{prefab.name}_Pooled";
         if (_initializeAsChild)
             obj.transform.parent = transform;

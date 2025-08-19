@@ -169,12 +169,12 @@ GameObject:
   - component: {fileID: 6420835648838700933}
   - component: {fileID: 2652234782751008208}
   - component: {fileID: 7628456600314050354}
-  - component: {fileID: 5667961458422474831}
   - component: {fileID: 2533455327338582168}
   - component: {fileID: 8335018461307400012}
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 6241636426159505488}
   - component: {fileID: 3351228736764815849}
+  - component: {fileID: 4226725357478359032}
   m_Layer: 0
   m_Name: Hososhi
   m_TagString: Untagged
@@ -539,19 +539,6 @@ MonoBehaviour:
     <MaxLogSize>k__BackingField: 20
   <AgentTypeBehaviour>k__BackingField: {fileID: 0}
   <DistanceMultiplier>k__BackingField: 1
---- !u!114 &5667961458422474831
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3744354742756812122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23b72354fbb94505b445cf1d47b3aa55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolveTime: 1
 --- !u!114 &2533455327338582168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,6 +649,18 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+--- !u!114 &4226725357478359032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fed2f3e5164f4b4383d4f2ed55b4dd9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &519891415355162520
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -672,7 +671,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.76946115
+      value: -0.76946104
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.y
