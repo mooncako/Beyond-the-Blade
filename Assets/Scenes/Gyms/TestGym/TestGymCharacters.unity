@@ -136,19 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0717712064e024d98712271cb0e4c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Animancer: {fileID: 671592079}
-  _Animation: {fileID: -203655887218126122, guid: 639b57663f58fe543b0d2438ee58f86c, type: 3}
---- !u!114 &671592079 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 405093159842739244, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
-  m_PrefabInstance: {fileID: 2354814142772029632}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 671592077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ad50f81b1d25c441943c37a89ba23f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1067900016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -293,8 +280,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1418838569}
   - component: {fileID: 1418838568}
+  - component: {fileID: 1418838570}
   m_Layer: 0
-  m_Name: ObjectPooler
+  m_Name: LevelManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -330,6 +318,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1418838570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418838567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03b7ef97849694f4ea0541e875ce9efe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pool: {fileID: 1418838568}
+  _gameDifficultySettings: {fileID: 11400000, guid: eea63413195d4d743b29001ed94d565e, type: 2}
 --- !u!1001 &697394715197932471
 PrefabInstance:
   m_ObjectHideFlags: 0
