@@ -166,10 +166,10 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 
                     foreach (var (key, r) in map)
                     {
-                        if (!so.EnemySkillDict.TryGetValue(key, out var skill))
+                        if (!so.SkillDict.TryGetValue(key, out var skill))
                         {
                             skill = new Skill();
-                            so.EnemySkillDict[key] = skill;
+                            so.SkillDict[key] = skill;
                             created++;
                         }
 

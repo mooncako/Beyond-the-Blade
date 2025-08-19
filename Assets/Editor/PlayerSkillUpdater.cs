@@ -160,10 +160,10 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
                         // ---- NOTE ----
                         // Change 'PlayerSkillDict' to your actual dictionary/property name if different
-                        if (!so.PlayerSkillDict.TryGetValue(key, out var skill))
+                        if (!so.SkillDict.TryGetValue(key, out var skill))
                         {
                             skill = new Skill();
-                            so.PlayerSkillDict[key] = skill;
+                            so.SkillDict[key] = skill;
                             created++;
                         }
 

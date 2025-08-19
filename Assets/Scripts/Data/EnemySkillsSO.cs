@@ -4,7 +4,7 @@ using Sirenix.Serialization;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemySkillsDatabase", menuName = "BytheBlade/EnemySkillsDatabase")]
-public class EnemySkillsSO : SerializedScriptableObject
+public class EnemySkillsSO : SkillsSO
 {
-    public Dictionary<string, Skill> EnemySkillDict = new Dictionary<string, Skill>();
+
 }
