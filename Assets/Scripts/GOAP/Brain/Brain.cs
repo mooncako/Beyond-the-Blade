@@ -1,6 +1,8 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
+using CrashKonijn.Goap.GenTest;
 using CrashKonijn.Goap.Runtime;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,10 +13,12 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected GoapBehaviour _goap;
     [SerializeField, BoxGroup("References")] protected PlayerSensor _playerSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
+    [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .5f;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
 
+    Tween _spawnDelayTween;
 
     protected virtual void OnValidate()
     {
@@ -26,18 +30,24 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        _agent.IsPaused = false;
-        _playerSensor.OnPlayerEnter += OnPlayerEnter;
-        _playerSensor.OnPlayerExit += OnPlayerExit;
-        _agent.Events.OnActionEnd += OnActionEnd;
+        _spawnDelayTween = Tween.Delay(_spanwDelay).OnComplete(() =>
+        {
+            _playerSensor.OnPlayerEnter += OnPlayerEnter;
+            _playerSensor.OnPlayerExit += OnPlayerExit;
+            _agent.Events.OnActionEnd += OnActionEnd;
+            _isPlayerDetected = false;
+            _provider.ClearGoal();
+            _provider.RequestGoal<WanderGoal>(false);
+        });
+        
     }
 
     protected virtual void OnDisable()
     {
-        _agent.IsPaused = true;
         _playerSensor.OnPlayerEnter -= OnPlayerEnter;
         _playerSensor.OnPlayerExit -= OnPlayerExit;
         _agent.Events.OnActionEnd -= OnActionEnd;
+        _spawnDelayTween.Stop();
     }
 
     protected virtual void Awake()
