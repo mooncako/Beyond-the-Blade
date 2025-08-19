@@ -199,6 +199,7 @@ Transform:
   - {fileID: 5893039940705521778}
   - {fileID: 2728210941605041345}
   - {fileID: 1560458968914386357}
+  - {fileID: 4842898713050215005}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &4191314971418661949
@@ -449,22 +450,10 @@ MonoBehaviour:
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
   <Animancer>k__BackingField: {fileID: 8394953832475103564}
+  _weapons:
+  - {fileID: 8143121795839373604}
   <Stats>k__BackingField: {fileID: 11400000, guid: 071960f8fba6a4142a9ef95b9387637f, type: 2}
-  _playerSensor: {fileID: 5061576002193979983}
-  _animationDatabase: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
-  _skillsDatabase: {fileID: 11400000, guid: 0d1da641e3f0cca41b1c513983bfb6c0, type: 2}
-  <AvailableSkills>k__BackingField:
-  - BaseWeight: 3
-    SkillId: HOSOSHI_ATTACK_01
-    IsInCooldown: 0
-  - BaseWeight: 2
-    SkillId: HOSOSHI_ATTACK_02
-    IsInCooldown: 0
-  - BaseWeight: 1
-    SkillId: HOSOSHI_ATTACK_03
-    IsInCooldown: 0
-  CanMove: 1
-  CanAttack: 1
+  CurrentWeapon: {fileID: 8143121795839373604}
   _currentSkill:
     AnimationID: 
     Cooldown: 0
@@ -480,6 +469,11 @@ MonoBehaviour:
     Buffs: []
     Debuffs: []
   _targetPos: {x: 0, y: 0, z: 0}
+  _isSkillPlaying: 0
+  _hitTargets: []
+  _playerSensor: {fileID: 5061576002193979983}
+  CanMove: 1
+  CanAttack: 1
   CurrentTargetTransform: {fileID: 0}
 --- !u!114 &6524476659326703885
 MonoBehaviour:
@@ -678,7 +672,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.76946104
+      value: -0.76946115
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -765,6 +759,79 @@ ParentConstraint:
   m_Sources:
   - sourceTransform: {fileID: 1987008392179443160}
     weight: 1
+--- !u!1001 &3547701434022653010
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4034926405133228867}
+    m_Modifications:
+    - target: {fileID: 3217476888770518984, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_Name
+      value: EnemyYariWeapon
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+--- !u!4 &4842898713050215005 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+  m_PrefabInstance: {fileID: 3547701434022653010}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8143121795839373604 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4627969276474514806, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+  m_PrefabInstance: {fileID: 3547701434022653010}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8709718e55188964b963235baf41f255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4720023981265095262
 PrefabInstance:
   m_ObjectHideFlags: 0

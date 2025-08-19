@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityUtils;
 
 
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -21,7 +22,13 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public AnimancerComponent Animancer { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
+    [BoxGroup("Weapon")] public Weapon CurrentWeapon;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Skill _currentSkill;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isSkillPlaying = false;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected List<GameObject> _hitTargets = new List<GameObject>();
 
     protected virtual void Awake()
     {
@@ -37,6 +44,7 @@ public class Controller : MonoBehaviour
         if (Animator == null) Animator = GetComponent<Animator>();
         if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
         if (Animancer == null) Animancer = GetComponent<AnimancerComponent>();
+        _weapons = GetComponentsInChildren<Weapon>();
     }
 
     protected virtual void OnEnable()
@@ -47,6 +55,71 @@ public class Controller : MonoBehaviour
     protected virtual void OnDisable()
     {
         
+    }
+
+    public virtual void ActivateSkill()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.GetAvailableSkill();
+            ApplySkillEffect();
+            Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            Animator.Play("Attack");
+            _isSkillPlaying = true;
+        }
+        
+    }
+
+   
+
+    protected virtual void ApplySkillEffect()
+    {
+
+        //TODO buffs & debuffs
+        AOEApplier.X = _currentSkill.SkillRange.X;
+        AOEApplier.Y = _currentSkill.SkillRange.Y;
+        AOEApplier.Z = _currentSkill.SkillRange.Z;
+        _hitTargets.Clear();
+
+    }
+
+    public virtual void DamageAnimEvent()
+    {
+
+        if (_currentSkill.IsTargetedGroundAOE)
+        {
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos);
+        }
+        else
+        {
+            if (AttackPoint != null)
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position);
+            }
+            else
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position);
+            }
+        }
+
+
+        foreach (GameObject target in _hitTargets)
+        {
+            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, gameObject, gameObject, DamageType.Regular);
+            target.GetComponent<Health>().Damage(info);
+        }
+        _isSkillPlaying = false;
+    }
+
+    public virtual void SetTargetPos(Vector3 position)
+    {
+        _targetPos = position;
+    }
+
+    public bool IsSkillPlaying()
+    {
+        return _isSkillPlaying;
     }
 
     [Button]
