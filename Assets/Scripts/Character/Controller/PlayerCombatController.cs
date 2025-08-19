@@ -25,8 +25,6 @@ public class PlayerCombatController : MonoBehaviour
 
     [Header("Attack Settings")]
     [SerializeField] private float _attackRate = 3f;
-    [SerializeField] private float _attackRange = 3f;
-    [SerializeField] private float _chargeDuration = 1.5f;
     [SerializeField] private float _musoReadyDuration = 3f;
     [SerializeField] private int _musoThreshold = 2;
     [SerializeField, ReadOnly] private int _currentMusoStack = 0;
@@ -59,7 +57,6 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private bool _drawGizmos = true;
     [SerializeField] private Color _arcColor = new Color(1, 0.5f, 0, 0.3f);
     private float _lastAttackTime = Mathf.NegativeInfinity;
-    public float ChargeDuration => _chargeDuration;
     public bool IsAttacking { get; private set; }
     public bool IsCharging { get; private set; }
     public bool IsParrying { get; private set; }
@@ -75,7 +72,7 @@ public class PlayerCombatController : MonoBehaviour
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
     private Vector3 _parryDirection;
     private HashSet<int> _processedParryColliders = new HashSet<int>();
-    // [SerializeField] private EnemyController _musoTarget;
+    [SerializeField] private EnemyController _musoTarget;
 
     private void Awake()
     {
@@ -122,30 +119,30 @@ public class PlayerCombatController : MonoBehaviour
         //     ChargeCompleted = true;
         // }
         // If any parry window is active, check for collisions
-        // if (_isPerfectParryWindowActive)
-        // {
-        //     DetectParryInArc();
-        // }
+        if (_isPerfectParryWindowActive)
+        {
+            DetectParryInArc();
+        }
 
-        // if (MusoReady)
-        // {
-        //     if (_musoTarget != null)
-        //         _musoTarget.MaterialController.UnHightlight();
+        if (MusoReady)
+        {
+            if (_musoTarget != null)
+                // _musoTarget.MaterialController.UnHightlight();
 
-        //     _musoTarget = FindClosestEnemyToPosition(PlayerController.Instance.GetAimPosition(), _attackRange * 2f);
+            // _musoTarget = FindClosestEnemyToPosition(_player.GetLookDirection(), 100);
 
-        //     if (_musoTarget == null)
-        //     {
-        //         _lineRenderer.enabled = false;
-        //     }
+            if (_musoTarget == null)
+            {
+                _lineRenderer.enabled = false;
+            }
 
-        //     if (_musoTarget != null)
-        //     {
-        //         _lineRenderer.enabled = true;
-        //         _musoTarget.MaterialController.Highlight();
-        //         _bezierLine.endPoint = _musoTarget.transform;
-        //     }
-        // }
+            if (_musoTarget != null)
+            {
+                _lineRenderer.enabled = true;
+                // _musoTarget.MaterialController.Highlight();
+                _bezierLine.endPoint = _musoTarget.transform;
+            }
+        }
     }
 
     public void CheckChargeTime(Vector3 aimPosition)
@@ -306,80 +303,80 @@ public class PlayerCombatController : MonoBehaviour
         ResetParryCO();
     }
 
-    // private void DetectParryInArc()
-    // {
-    //     // get all colliders in arc
-    //     Collider[] hits = Physics.OverlapSphere(new Vector3(_player.transform.position.x, _player.transform.position.y + _player.Movement.Height/2, _player.transform.position.z) + _player.transform.forward *
-    //     (_parryRadius * .5f), _parryRadius, _parryLayer);
+    private void DetectParryInArc()
+    {
+        // get all colliders in arc
+        Collider[] hits = Physics.OverlapSphere(new Vector3(_player.transform.position.x, _player.transform.position.y + _player.Movement.Height/2, _player.transform.position.z) + _player.transform.forward *
+        (_parryRadius * .5f), _parryRadius, _parryLayer);
 
-    //     foreach (Collider hit in hits)
-    //     {
-    //         // if (hit.transform.parent == null)
-    //         // {
-    //         //     if (hit.gameObject.TryGetComponent(out Fireball fireball))
-    //         //     {
-    //         //         fireball.OnDeflect();
-    //         //     }
-    //         //     else if (hit.gameObject.TryGetComponent(out SpearProjectile spear))
-    //         //     {
-    //         //         spear.OnDeflect();
-    //         //     }
-    //         // }
-    //         // else
-    //         {
-    //             Vector3 directionToTarget = hit.transform.parent.gameObject.transform.position - _player.transform.position;
-    //             directionToTarget.y = 0;
+        foreach (Collider hit in hits)
+        {
+            // if (hit.transform.parent == null)
+            // {
+            //     if (hit.gameObject.TryGetComponent(out Fireball fireball))
+            //     {
+            //         fireball.OnDeflect();
+            //     }
+            //     else if (hit.gameObject.TryGetComponent(out SpearProjectile spear))
+            //     {
+            //         spear.OnDeflect();
+            //     }
+            // }
+            // else
+            {
+                Vector3 directionToTarget = hit.transform.parent.gameObject.transform.position - _player.transform.position;
+                directionToTarget.y = 0;
 
-    //             float angleToTarget = Vector3.Angle(_player.transform.forward, directionToTarget);
+                float angleToTarget = Vector3.Angle(_player.transform.forward, directionToTarget);
 
-    //             if (angleToTarget < _parryAngle / 2)
-    //             {
-    //                 // add collider to the array
-    //                 int colliderID = hit.GetInstanceID();
-    //                 if (!_processedParryColliders.Contains(colliderID))
-    //                 {
-    //                     _processedParryColliders.Add(colliderID);
-    //                     var enemy = hit.GetComponentInParent<EnemyController>();
-    //                     if (enemy != null)
-    //                     {
-    //                         if (_isPerfectParryWindowActive)
-    //                         {
-    //                             _animator.SetBool("PerfectParry", true);
-    //                             HandlePerfectParry(enemy, hit.transform);
-    //                         }
-    //                         // else if (_isWeakParryWindowActive)
-    //                         // {
-    //                         //     _animator.SetBool("WeakParry", true);
-    //                         //     HandleWeakParry(enemy, hit.transform);
-    //                         // }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+                if (angleToTarget < _parryAngle / 2)
+                {
+                    // add collider to the array
+                    int colliderID = hit.GetInstanceID();
+                    if (!_processedParryColliders.Contains(colliderID))
+                    {
+                        _processedParryColliders.Add(colliderID);
+                        var enemy = hit.GetComponentInParent<EnemyController>();
+                        if (enemy != null)
+                        {
+                            if (_isPerfectParryWindowActive)
+                            {
+                                _animator.SetBool("PerfectParry", true);
+                                HandlePerfectParry(enemy, hit.transform);
+                            }
+                            // else if (_isWeakParryWindowActive)
+                            // {
+                            //     _animator.SetBool("WeakParry", true);
+                            //     HandleWeakParry(enemy, hit.transform);
+                            // }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    // private void HandlePerfectParry(EnemyController enemy, Transform hitTransform)
-    // {
-    //     //Debug.Log("Perfect Parry");
-    //     BeginHitStop(1);
-    //     enemy.Stagger();
-    //     _player.StartIframe();
-    //     _player.Animator.SetBool("Deflect", true);
-    //     if (_parryVFXPrefab != null)
-    //     {
-    //         GameObject vfxInstance = Instantiate
-    //         (_parryVFXPrefab, _weapon.transform.position, Quaternion.LookRotation(transform.position - _weapon.transform.position));
-    //         Destroy(vfxInstance, _parryVFXDuration);
-    //     }
-    //     _parryInstance = FMODUnity.RuntimeManager.CreateInstance(_perfectParrySFX);
-    //     // int randomIndex = Random.Range(0, 2);
-    //     // _parryInstance.setParameterByName("Perfect", randomIndex);
-    //     RuntimeManager.AttachInstanceToGameObject(_parryInstance, gameObject, GetComponent<Rigidbody>());
-    //     _parryInstance.start();
-    //     _parryInstance.release();
-    //     StartCoroutine(ResetParryCO());
-    // }
+    private void HandlePerfectParry(EnemyController enemy, Transform hitTransform)
+    {
+        //Debug.Log("Perfect Parry");
+        BeginHitStop(1);
+        // enemy.Stagger();
+        // _player.StartIframe();
+        _player.Animator.SetBool("Deflect", true);
+        if (_parryVFXPrefab != null)
+        {
+            GameObject vfxInstance = Instantiate
+            (_parryVFXPrefab, _weapon.transform.position, Quaternion.LookRotation(transform.position - _weapon.transform.position));
+            Destroy(vfxInstance, _parryVFXDuration);
+        }
+        // _parryInstance = FMODUnity.RuntimeManager.CreateInstance(_perfectParrySFX);
+        // int randomIndex = Random.Range(0, 2);
+        // _parryInstance.setParameterByName("Perfect", randomIndex);
+        RuntimeManager.AttachInstanceToGameObject(_parryInstance, gameObject, GetComponent<Rigidbody>());
+        _parryInstance.start();
+        _parryInstance.release();
+        StartCoroutine(ResetParryCO());
+    }
 
     public void PlayerStagger()
     {
@@ -415,29 +412,29 @@ public class PlayerCombatController : MonoBehaviour
         _isWeakParryWindowActive = false;
     }
 
-    // private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
-    // {
-    //     // Find all enemies in scene within the attack layer
-    //     Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackLayer);
+    private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
+    {
+        // Find all enemies in scene within the attack layer
+        Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackLayer);
 
-    //     EnemyController closestEnemy = null;
-    //     float closestDistance = maxDistance;
+        EnemyController closestEnemy = null;
+        float closestDistance = maxDistance;
 
-    //     foreach (Collider collider in colliders)
-    //     {
-    //         if (collider.TryGetComponent<EnemyController>(out var enemy))
-    //         {
-    //             float distance = Vector3.Distance(position, enemy.transform.position);
-    //             if (distance < closestDistance)
-    //             {
-    //                 closestDistance = distance;
-    //                 closestEnemy = enemy;
-    //             }
-    //         }
-    //     }
+        foreach (Collider collider in colliders)
+        {
+            if (collider.TryGetComponent<EnemyController>(out var enemy))
+            {
+                float distance = Vector3.Distance(position, enemy.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestEnemy = enemy;
+                }
+            }
+        }
 
-    //     return closestEnemy;
-    // }
+        return closestEnemy;
+    }
 
     private void CreateMusoEffect(Vector3 aimPosition)
     {

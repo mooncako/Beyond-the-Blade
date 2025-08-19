@@ -18,7 +18,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
     [field: SerializeField, BoxGroup("Skills")] private SkillAnimationDatabaseSO _animationDatabase;
-    [field: SerializeField, BoxGroup("Skills")] private EnemySkillsSO _skillsDatabase;
+    [field: SerializeField, BoxGroup("Skills")] private PlayerSkillsSO _skillsDatabase;
     [field: SerializeField, BoxGroup("Skills")] public List<PlayableSkill> AvailableSkills { get; private set; } = new List<PlayableSkill>();
 
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
