@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Animancer;
+using Animancer.FSM;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityUtils;
@@ -64,8 +65,15 @@ public class Controller : MonoBehaviour
         {
             _currentSkill = CurrentWeapon.GetAvailableSkill();
             ApplySkillEffect();
-            Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            Animator.Play("Attack");
+            // Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            // Animator.Play("Attack");
+            AnimancerState state = Animancer.Play(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            // Animancer.Play( CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID),0.25f);
+            state.Time = 0;
+            // state.Events(this).OnEnd ??= OnEnable;
+
+
+
             _isSkillPlaying = true;
         }
         
