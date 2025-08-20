@@ -42,11 +42,29 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 7
-      Data: EnemyProfile, Assembly-CSharp
+      Data: 2|EnemyProfile, Assembly-CSharp
     - Name: EnemyName
       Entry: 1
       Data: HeadlessSamurai
     - Name: Difficulty
+      Entry: 4
+      Data: 0
+    - Name: Cost
+      Entry: 3
+      Data: 1
+    - Name: Weight
+      Entry: 4
+      Data: 1.5
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: CoolDown
+      Entry: 4
+      Data: 0.3
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 0
+    - Name: NextEligibleTime
       Entry: 4
       Data: 0
     - Name: 
@@ -63,13 +81,31 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 7
-      Data: EnemyProfile, Assembly-CSharp
+      Data: 3|EnemyProfile, Assembly-CSharp
     - Name: EnemyName
       Entry: 1
       Data: Hososhi
     - Name: Difficulty
       Entry: 4
       Data: 1
+    - Name: Cost
+      Entry: 3
+      Data: 2
+    - Name: Weight
+      Entry: 4
+      Data: 0.8
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: CoolDown
+      Entry: 4
+      Data: 0.5
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 0
+    - Name: NextEligibleTime
+      Entry: 4
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
