@@ -19,9 +19,7 @@ public class HeadlessSamuraiBrain : Brain
     protected override void OnEnable()
     {
         base.OnEnable();
-        _isPlayerDetected = false;
-        _provider.ClearGoal();
-        _provider.RequestGoal<WanderGoal>(false);
+        
     }
 
     protected override void OnDisable()
