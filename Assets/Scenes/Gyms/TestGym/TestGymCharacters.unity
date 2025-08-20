@@ -238,28 +238,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animancer: {fileID: 1563326177}
   _idleState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
+    _stateMachine: {fileID: 1563326187}
+    _animancer: {fileID: 1563326177}
+    _defaultClip: {fileID: 0}
+    Key: Idle
     FadeDuration: 0
     FadeMode: 0
   _moveState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
+    _stateMachine: {fileID: 1563326187}
+    _animancer: {fileID: 1563326177}
+    _defaultClip: {fileID: 0}
+    Key: Move
     FadeDuration: 0
     FadeMode: 0
   _actionState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
+    _stateMachine: {fileID: 1563326187}
+    _animancer: {fileID: 1563326177}
+    _defaultClip: {fileID: 0}
+    Key: Action
     FadeDuration: 0
     FadeMode: 0
   CurrentState:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
+    _defaultClip: {fileID: 0}
+    Key: 
     FadeDuration: 0
     FadeMode: 0
   PreviousState:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
+    _defaultClip: {fileID: 0}
+    Key: 
     FadeDuration: 0
     FadeMode: 0
 --- !u!1001 &1282301946003864132
