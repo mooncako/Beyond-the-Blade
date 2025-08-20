@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using CrashKonijn.Goap.Core;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -43,6 +44,12 @@ namespace CrashKonijn.Goap.Runtime
         private void OnDestroy()
         {
             this.goap?.Dispose();
+        }
+
+        void OnEnable()
+        {
+            var controller = this.GetComponent<IGoapController>();
+            controller.Initialize(this.goap);
         }
 
         private void Initialize()

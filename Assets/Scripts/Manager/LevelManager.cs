@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MMSingleton<LevelManager>
@@ -15,6 +16,8 @@ public class LevelManager : MMSingleton<LevelManager>
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelIndex = 0;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<GameObject> _currentEnemyList = new List<GameObject>();
 
+    private NavMeshTriangulation _triangulation;
+
     private void OnValidate()
     {
         if (_pool == null) _pool = GetComponent<ObjectPool>();
@@ -22,23 +25,31 @@ public class LevelManager : MMSingleton<LevelManager>
 
     void OnEnable()
     {
-        SceneManager.sceneLoaded += ResetManager;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDestroy()
     {
-        SceneManager.sceneLoaded -= ResetManager;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    
+
 
     protected override void Awake()
     {
         base.Awake();
-        
+
         UpdateEnemyList();
+
+        DontDestroyOnLoad(this);
     }
 
+    void Start()
+    {
+        _triangulation = NavMesh.CalculateTriangulation();
+    }
+
+    [Button]
     private void UpdateEnemyList()
     {
         _currentEnemyList.Clear();
@@ -56,13 +67,25 @@ public class LevelManager : MMSingleton<LevelManager>
         _pool.InitializeRuntimePool(_currentEnemyList);
     }
 
-    private void ResetManager(Scene scene, LoadSceneMode loadSceneMode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
         if (scene.name == "MainMenu")
         {
-            _minDifficulty = 0;
-            _currentLevelIndex = 0;
+            ResetManager();
         }
+    }
+
+    private void ResetManager()
+    {
+        _minDifficulty = 0;
+        _currentLevelIndex = 0;
+    }
+
+    [Button]
+    private void SpawnEnemy(GameObject prefab)
+    {
+        CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
+        movement.Teleport(AIUtil.GetRandomSpawnPos(_triangulation));
     }
 
 }

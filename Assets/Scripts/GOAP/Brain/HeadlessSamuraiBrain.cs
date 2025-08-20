@@ -19,9 +19,7 @@ public class HeadlessSamuraiBrain : Brain
     protected override void OnEnable()
     {
         base.OnEnable();
-        _isPlayerDetected = false;
-        _provider.ClearGoal();
-        _provider.RequestGoal<WanderGoal>(false);
+        
     }
 
     protected override void OnDisable()
@@ -54,12 +52,10 @@ public class HeadlessSamuraiBrain : Brain
 
         if (_isPlayerDetected)
         {
-            Debug.Log(1);
             _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
         }
         else
         {
-            Debug.Log(2);
             _provider.RequestGoal<WanderGoal>();
         }
     }

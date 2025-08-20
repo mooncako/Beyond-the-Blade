@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Steamworks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// Interface for objects that can be pooled
@@ -91,7 +92,7 @@ public class ObjectPool : MonoBehaviour
 
     private GameObject CreatePooledObject(GameObject prefab)
     {
-        GameObject obj = Instantiate(prefab);
+        GameObject obj = Instantiate(prefab, transform.position, Quaternion.identity);
         obj.name = $"{prefab.name}_Pooled";
         if (_initializeAsChild)
             obj.transform.parent = transform;
