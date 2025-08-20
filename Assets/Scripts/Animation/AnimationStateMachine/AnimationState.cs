@@ -4,13 +4,14 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
-public class AnimationState
+public abstract class AnimationState
 {
     public ClipState State;
     [SerializeField, FoldoutGroup("References")] protected AnimationStateMachine _stateMachine;
     [SerializeField, FoldoutGroup("References")] protected AnimancerComponent _animancer;
 
     [SerializeField] private AnimationClip _defaultClip;
+    public AnimationClip Clip;
     public string Key;
     public float FadeDuration = 0;
     public FadeMode FadeMode;
@@ -33,6 +34,7 @@ public class AnimationState
 
     public virtual void OnEnterState()
     {
+        State = _animancer.States.Create(Key, Clip);
         _animancer.TryPlay(State, FadeDuration, FadeMode);
     }
 
@@ -50,8 +52,7 @@ public class AnimationState
     {
         if (_defaultClip != null)
         {
-            State.Clip = _defaultClip;
-            State.Key = Key;
+            Clip = _defaultClip;
         }
         
     }
