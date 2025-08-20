@@ -1,7 +1,0 @@
-using UnityEngine;
-
-public class AvailableSkillSO : ScriptableObject
-{   
-    [Header("Skills")]
-    public Dictionary<int, List<Skill>> SkillDict = new Dictionary<int, List<Skill>>();
-}
