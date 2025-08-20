@@ -12,7 +12,6 @@ public class EnemyController : Controller, IPoolable
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
     
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
-
     
 
     protected override void OnValidate()
@@ -72,7 +71,7 @@ public class EnemyController : Controller, IPoolable
 
     public void OnPoolGet()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public void OnPoolReturn()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Steamworks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// Interface for objects that can be pooled

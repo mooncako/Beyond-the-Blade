@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: 2533455327338582168}
   - component: {fileID: 8335018461307400012}
   - component: {fileID: 7909133857443672914}
-  - component: {fileID: 8298599203356222290}
+  - component: {fileID: 5263547530667358367}
   m_Layer: 0
   m_Name: HeadlessSamurai
   m_TagString: Untagged
@@ -650,7 +650,7 @@ MonoBehaviour:
   _coneHeight: Infinity
   _arcHeight: 2
   _type: 1
---- !u!114 &8298599203356222290
+--- !u!114 &5263547530667358367
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -659,9 +659,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3744354742756812122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc81cb133564585af8a301cb8bf1056, type: 3}
+  m_Script: {fileID: 11500000, guid: 23b72354fbb94505b445cf1d47b3aa55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resolveTime: 1
 --- !u!1001 &580407877590311637
 PrefabInstance:
   m_ObjectHideFlags: 0

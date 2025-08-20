@@ -13,7 +13,7 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected GoapBehaviour _goap;
     [SerializeField, BoxGroup("References")] protected PlayerSensor _playerSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
-    [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .5f;
+    [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
@@ -30,16 +30,12 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        _spawnDelayTween = Tween.Delay(_spanwDelay).OnComplete(() =>
-        {
-            _playerSensor.OnPlayerEnter += OnPlayerEnter;
-            _playerSensor.OnPlayerExit += OnPlayerExit;
-            _agent.Events.OnActionEnd += OnActionEnd;
-            _isPlayerDetected = false;
-            _provider.ClearGoal();
-            _provider.RequestGoal<WanderGoal>(false);
-        });
-        
+        _playerSensor.OnPlayerEnter += OnPlayerEnter;
+        _playerSensor.OnPlayerExit += OnPlayerExit;
+        _agent.Events.OnActionEnd += OnActionEnd;
+        _isPlayerDetected = false;
+        _provider.ClearGoal();
+        _provider.RequestGoal<WanderGoal>(false);
     }
 
     protected virtual void OnDisable()
