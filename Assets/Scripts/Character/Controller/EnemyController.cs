@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityUtils;
@@ -69,9 +70,37 @@ public class EnemyController : Controller, IPoolable
         Movement.Stop();
     }
 
+    public override void DamageAnimEvent()
+    {
+        if (_currentSkill.IsTargetedGroundAOE)
+        {
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos);
+        }
+        else
+        {
+            if (AttackPoint != null)
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position);
+            }
+            else
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position);
+            }
+        }
+
+
+        foreach (GameObject target in _hitTargets)
+        {
+            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, gameObject, gameObject, DamageType.Regular);
+            target.GetComponent<Health>().Damage(info);
+        }
+
+        _isSkillPlaying = false;
+    }
+
     public void OnPoolGet()
     {
-        
+
     }
 
     public void OnPoolReturn()
