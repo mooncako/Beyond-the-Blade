@@ -148,6 +148,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HeadlessSamurai
       objectReference: {fileID: 0}
+    - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4034926405133228867, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.587082
@@ -241,6 +245,7 @@ MonoBehaviour:
     _stateMachine: {fileID: 1563326187}
     _animancer: {fileID: 1563326177}
     _defaultClip: {fileID: 0}
+    Clip: {fileID: 0}
     Key: Idle
     FadeDuration: 0
     FadeMode: 0
@@ -248,6 +253,7 @@ MonoBehaviour:
     _stateMachine: {fileID: 1563326187}
     _animancer: {fileID: 1563326177}
     _defaultClip: {fileID: 0}
+    Clip: {fileID: 0}
     Key: Move
     FadeDuration: 0
     FadeMode: 0
@@ -255,21 +261,8 @@ MonoBehaviour:
     _stateMachine: {fileID: 1563326187}
     _animancer: {fileID: 1563326177}
     _defaultClip: {fileID: 0}
+    Clip: {fileID: 0}
     Key: Action
-    FadeDuration: 0
-    FadeMode: 0
-  CurrentState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    _defaultClip: {fileID: 0}
-    Key: 
-    FadeDuration: 0
-    FadeMode: 0
-  PreviousState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    _defaultClip: {fileID: 0}
-    Key: 
     FadeDuration: 0
     FadeMode: 0
 --- !u!1001 &1282301946003864132
@@ -323,6 +316,10 @@ PrefabInstance:
     - target: {fileID: 2352203424212552441, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: m_Name
       value: LevelManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2352203424212552441, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

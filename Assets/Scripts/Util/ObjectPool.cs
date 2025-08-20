@@ -97,14 +97,8 @@ public class ObjectPool : MonoBehaviour
         if (_initializeAsChild)
             obj.transform.parent = transform;
 
-        StartCoroutine(ObjectDisableCO(obj));
+        obj.SetActive(false);
         return obj;
-    }
-
-    private IEnumerator ObjectDisableCO(GameObject go)
-    {
-        yield return null;
-        go.SetActive(false);
     }
 
     #endregion
@@ -280,8 +274,8 @@ public class ObjectPool : MonoBehaviour
             var config = new PoolConfig
             {
                 prefab = go,
-                initialSize = 5,
-                maxSize = 20,
+                initialSize = 20,
+                maxSize = 40,
                 canExpand = true
             };
             _poolConfigs.Add(config);
