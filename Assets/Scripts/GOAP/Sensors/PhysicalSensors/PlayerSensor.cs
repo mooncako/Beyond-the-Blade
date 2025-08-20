@@ -20,7 +20,6 @@ public class PlayerSensor : MonoBehaviour
         if (_vision == null) _vision = GetComponentInParent<Vision>();
     }
 
-
     void OnTriggerEnter(Collider other)
     {
         if ((_playerLayerMask.value & (1 << other.gameObject.layer)) != 0)
