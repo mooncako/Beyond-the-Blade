@@ -531,7 +531,30 @@ MonoBehaviour:
   _isSkillPlaying: 0
   _hitTargets: []
   _input: {fileID: 5416810635430714}
+  _bezierLine: {fileID: 0}
+  _lineRenderer: {fileID: 0}
+  _weaponCollider: {fileID: 0}
+  _isTutorial: 0
   CanRotate: 1
+  _attackRate: 3
+  _musoReadyDuration: 3
+  _attackKnockbackForce: 10
+  _attackLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _hitStopDuration: 0.05
+  _parryRadius: 1.5
+  _parryAngle: 100
+  _parryLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _slashVFXArray: []
+  _slashref: {fileID: 0}
+  _slashVFXDuration: 0.12
+  _musoVFX: {fileID: 0}
+  _parryVFXPrefab: {fileID: 0}
+  _parryVFXDuration: 1.5
+  _musoTarget: {fileID: 0}
 --- !u!114 &5394289030760871753
 MonoBehaviour:
   m_ObjectHideFlags: 0

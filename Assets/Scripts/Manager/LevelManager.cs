@@ -30,13 +30,15 @@ public class LevelManager : MMSingleton<LevelManager>
         SceneManager.sceneLoaded -= ResetManager;
     }
 
-    
+
 
     protected override void Awake()
     {
         base.Awake();
-        
+
         UpdateEnemyList();
+        
+        DontDestroyOnLoad(this);
     }
 
     private void UpdateEnemyList()
