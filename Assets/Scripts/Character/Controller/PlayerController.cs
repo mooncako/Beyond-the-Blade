@@ -261,7 +261,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         public void ExecuteLightAttack(Vector3 aimPosition)
     {
-        Debug.Log("Lol");
         // _movement.Dash(_movement.LookDirection, 10f);
         // _lastAttackTime = Time.time;
         _hitEnemiesThisAttack.Clear();
