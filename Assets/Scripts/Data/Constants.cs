@@ -38,3 +38,9 @@ public static class LIGHTING
     public const float MaxAppliedBrightness = 40f;
 }
 
+public static class AVAILABLESKILLKEY
+{
+    public const int Attack = 0;
+    public const int Parry = 1;
+    public const int Skill = 2;
+}
