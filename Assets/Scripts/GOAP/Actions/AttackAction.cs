@@ -11,7 +11,6 @@ namespace CrashKonijn.Goap.GenTest
     {
         private AttackSensorConfigSO _attackSensorConfig;
 
-
         // This method is called when the action is created
         // This method is optional and can be removed
         public override void Created()
@@ -31,7 +30,6 @@ namespace CrashKonijn.Goap.GenTest
         public override void Start(IMonoAgent agent, Data data)
         {
             data.Timer = _attackSensorConfig.AttackDelay;
-            
         }
 
         // This method is called once before the action is performed
@@ -47,11 +45,14 @@ namespace CrashKonijn.Goap.GenTest
         {
             if (data.Controller.IsSkillPlaying())
                 data.Timer -= context.DeltaTime;
+
             if (data.Controller.CanAttack)
             {
+                data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
             }
+            
             data.Controller.Stop();
             return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
         }
@@ -60,6 +61,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void End(IMonoAgent agent, Data data)
         {
+            
         }
 
         public void Inject(DependencyInjector injector)
