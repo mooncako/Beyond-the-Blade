@@ -11,6 +11,6 @@ public class EnemyProfile
     public float Weight;
     public int MaxPerWave;
     public float CoolDown;
-    [ReadOnly] public int SpawnedThisWave;
-    [ReadOnly] public float NextEligibleTime;
+    public int SpawnedThisWave;
+    public float NextEligibleTime;
 }

@@ -18,7 +18,7 @@ public class LevelManager : MMSingleton<LevelManager>
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
     [field: SerializeField, BoxGroup("Debug")] private Dictionary<EnemyProfile, GameObject> _currentEnemyDict = new Dictionary<EnemyProfile, GameObject>();
 
-    private NavMeshTriangulation _triangulation;
+    private int _budget;
 
     private void OnValidate()
     {
@@ -51,7 +51,6 @@ public class LevelManager : MMSingleton<LevelManager>
 
     void Start()
     {
-        _triangulation = NavMesh.CalculateTriangulation();
         if (_canSpawn)
         {
             SpawnWave();
@@ -91,7 +90,20 @@ public class LevelManager : MMSingleton<LevelManager>
     [Button]
     private void SpawnWave()
     {
-        
+        List<EnemyProfile> enemies = new List<EnemyProfile>();
+        foreach (var profile in _currentEnemyDict.Keys)
+        {
+            profile.SpawnedThisWave = 0;
+            profile.NextEligibleTime = 0;
+            enemies.Add(profile);
+        }
+        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, _currentLevelIndex));
+        var picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
+        Debug.Log(picks.Count);
+        foreach (var profile in picks)
+        {
+            Debug.Log(profile.EnemyName);
+        }
     }
 
     
@@ -108,7 +120,6 @@ public class LevelManager : MMSingleton<LevelManager>
     private void SpawnEnemy(GameObject prefab)
     {
         CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
-        Debug.Log(movement.gameObject);
         movement.Teleport(AIUtil.GetRandomPointOnNavMesh());
     }
 
