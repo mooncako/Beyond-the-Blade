@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : MMSingleton<LevelManager>, MMEventListener<EnemyClearedEvent>
+public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClearedEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;

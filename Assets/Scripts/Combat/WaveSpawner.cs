@@ -72,7 +72,7 @@ public static class WaveSpawner
             chosen.SpawnedThisWave++;
             remaining -= chosen.Cost;
 
-            nextAvailable[chosen.EnemyName] = t + chosen.CoolDown;
+            nextAvailable[chosen.EnemyName] = t + chosen.Cooldown;
 
             // advance virtual time by random inter-arrival
             float u = (float)rng.NextDouble();
@@ -133,7 +133,7 @@ public static class WaveSpawner
             picks.Add(chosen.EnemyName);
             counts[chosen.EnemyName] = counts.GetValueOrDefault(chosen.EnemyName) + 1;
             chosen.SpawnedThisWave++;
-            chosen.NextEligibleTime = now + chosen.CoolDown;
+            chosen.NextEligibleTime = now + chosen.Cooldown;
             remaining -= chosen.Cost;
 
             // If nothing else fits, break
