@@ -2,45 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using System.Linq;
 
 public class Weapon : MonoBehaviour
 {
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] private SkillsSO _skillDatabase;
-    [field: SerializeField, BoxGroup("Skills")] public List<PlayableSkill> AvailableSkills { get; private set; } = new List<PlayableSkill>();
+    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
+    [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
+
+#if UNITY_EDITOR
+    [ShowInInspector] List<string> _availableSkillIds => AvailableSkills.Keys.ToList();
+    [ShowInInspector] List<PlayableSkill> _availableSkill => AvailableSkills.Values.ToList();
+#endif
 
     void Awake()
     {
-        AvailableSkills.Sort((a, b) => b.BaseWeight.CompareTo(a.BaseWeight));
+        AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
     }
 
     void OnEnable()
     {
-        AvailableSkills.Sort((a, b) => b.BaseWeight.CompareTo(a.BaseWeight));
+        AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
+        foreach (List<string> skilltype in WeaponSkillSO.SkillDict.Values)
+        {
+            foreach (string key in skilltype)
+            {
+                AvailableSkills.Add(key, new PlayableSkill(key));
+            }
+        }
     }
 
-    public Skill GetAvailableSkill()
+    public Skill LoopBasicAttack()
     {
         if (_animationDatabase == null) return null;
         if (_skillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-
-        // Swap out the animation on the attack state, then makes it go under cooldown
-        for (int i = 0; i < AvailableSkills.Count; i++)
+        foreach (string key in WeaponSkillSO.SkillDict[0])
         {
-            if (!AvailableSkills[i].IsInCooldown)
-            {
-                if (_skillDatabase.SkillDict.ContainsKey(AvailableSkills[i].SkillId) &&
-                    _animationDatabase.SkillAnimDict.ContainsKey(_skillDatabase.SkillDict[AvailableSkills[i].SkillId].AnimationID))
+            if (!AvailableSkills[key].IsInCooldown)
+                if (_skillDatabase.SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
+                    _animationDatabase.SkillAnimDict.ContainsKey(_skillDatabase.SkillDict[AvailableSkills[key].SkillId].AnimationID))
                 {
-                    StartCoroutine(SkillCooldownCO(i, _skillDatabase.SkillDict[AvailableSkills[i].SkillId].Cooldown));
-                    return _skillDatabase.SkillDict[AvailableSkills[i].SkillId];
+                    StartCoroutine(SkillCooldownCO(key, _skillDatabase.SkillDict[AvailableSkills[key].SkillId].Cooldown));
+                    return _skillDatabase.SkillDict[AvailableSkills[key].SkillId];
                 }
-
-            }
         }
-
         return null;
     }
 
@@ -49,10 +57,10 @@ public class Weapon : MonoBehaviour
         return _animationDatabase.SkillAnimDict[animationId];
     }
 
-    private IEnumerator SkillCooldownCO(int index, float cooldownTime)
+    private IEnumerator SkillCooldownCO(string key, float cooldownTime)
     {
-        AvailableSkills[index].IsInCooldown = true;
+        AvailableSkills[key].IsInCooldown = true;
         yield return new WaitForSeconds(cooldownTime);
-        AvailableSkills[index].IsInCooldown = false;
+        AvailableSkills[key].IsInCooldown = false;
     }
 }
