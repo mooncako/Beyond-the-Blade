@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2352203424212552441}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -21.95069, y: -17.223845, z: -13.146095}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -68,4 +68,5 @@ MonoBehaviour:
   _minDifficulty: 0
   _maxDifficulty: 0
   _currentLevelIndex: 0
-  _currentEnemyList: []
+  _maxEnemyCountPerWave: 0
+  _canSpawn: 1
