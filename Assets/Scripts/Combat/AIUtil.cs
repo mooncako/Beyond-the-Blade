@@ -3,21 +3,53 @@ using UnityEngine.AI;
 
 public static class AIUtil
 {
-    public static Vector3 GetRandomSpawnPos(NavMeshTriangulation triangulation)
-    {
-        NavMeshHit hit;
+    private static NavMeshTriangulation _tri;
+    private static float[] _triCumAreas;
+    private static int _triCount;
 
-        int vertexIndex = Random.Range(0, triangulation.vertices.Length);
-        for (int i = 0; i < 30; i++)
+    public static void BuildSampler()
+    {
+        _tri = NavMesh.CalculateTriangulation();
+        _triCount = _tri.indices.Length / 3;
+
+        _triCumAreas = new float[_triCount];
+        float cum = 0f;
+
+        for (int i = 0; i < _triCount; i++)
         {
-            if (NavMesh.SamplePosition(triangulation.vertices[vertexIndex], out hit, 50, NavMesh.AllAreas))
-            {
-                return hit.position;
-            }
+            var a = _tri.vertices[_tri.indices[i * 3 + 0]];
+            var b = _tri.vertices[_tri.indices[i * 3 + 1]];
+            var c = _tri.vertices[_tri.indices[i * 3 + 2]];
+
+            float area = Vector3.Cross(b - a, c - a).magnitude * .5f;
+            cum += Mathf.Max(area, 1e-6f);
+            _triCumAreas[i] = cum;
+        }
+    }
+
+    public static Vector3 GetRandomPointOnNavMesh(int areaMask = NavMesh.AllAreas)
+    {
+        if (_triCumAreas == null || _triCumAreas.Length == 0) BuildSampler();
+        float r = Random.value * _triCumAreas[_triCumAreas.Length - 1];
+
+        int t = System.Array.FindIndex(_triCumAreas, cum => cum >= r);
+        if (t < 0) t = _triCount - 1;
+
+        var a = _tri.vertices[_tri.indices[t * 3 + 0]];
+        var b = _tri.vertices[_tri.indices[t * 3 + 1]];
+        var c = _tri.vertices[_tri.indices[t * 3 + 2]];
+
+        float u = Random.value;
+        float v = Random.value;
+
+        if (u + v > 1f)
+        {
+            u = 1f - u;
+            v = 1f - v;
         }
 
-        Debug.LogError("PositionNotFound");
-        return Vector3.zero;
-        
+        Vector3 p = a + u * (b - a) + v * (c - a);
+
+        return NavMesh.SamplePosition(p, out var hit, 0.5f, areaMask) ? hit.position : p;
     }
 }

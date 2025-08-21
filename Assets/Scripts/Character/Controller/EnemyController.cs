@@ -91,7 +91,7 @@ public class EnemyController : Controller, IPoolable
 
         foreach (GameObject target in _hitTargets)
         {
-            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, gameObject, gameObject, DamageType.Regular);
+            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, Health, gameObject, DamageType.Regular);
             target.GetComponent<Health>().Damage(info);
         }
 
