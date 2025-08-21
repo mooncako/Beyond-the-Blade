@@ -151,7 +151,7 @@ public class LevelManager : MMSingleton<LevelManager>, MMEventListener<EnemyClea
 
         while (_currentSpawningEnemies.Count > 0)
         {
-            GameObject enemy = _pool.Get(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()));
+            GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
             SpawnEnemy(enemy);
             EnemySpawnedEvent.Trigger(enemy.GetComponent<Health>());
         }
