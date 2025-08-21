@@ -64,7 +64,7 @@ public class Controller : MonoBehaviour
         if (CurrentWeapon == null) return;
         if (!IsSkillPlaying())
         {
-            _currentSkill = CurrentWeapon.GetAvailableSkill();
+            _currentSkill = CurrentWeapon.LoopBasicAttack();
             ApplySkillEffect();
             // Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             // Animator.Play("Attack");
