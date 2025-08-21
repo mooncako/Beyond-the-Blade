@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : MMSingleton<LevelManager>
+public class LevelManager : MMSingleton<LevelManager>, MMEventListener<EnemyClearedEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
@@ -15,10 +15,19 @@ public class LevelManager : MMSingleton<LevelManager>
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelIndex = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCountPerWave;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
-    [field: SerializeField, BoxGroup("Debug")] private Dictionary<EnemyProfile, GameObject> _currentEnemyDict = new Dictionary<EnemyProfile, GameObject>();
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<(string enemyName, float timeOffset)> _picks = new List<(string, float)>();
+#if UNITY_EDITOR
+    [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> CurrentSpawningEnemies => _currentSpawningEnemies.ToList();
+    [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> EnemiesWaitingForSpawn => _enemiesWaitingForSpawn.ToList();
+#endif
+    [field: SerializeField] private Dictionary<EnemyProfile, GameObject> _currentEnemyDict = new Dictionary<EnemyProfile, GameObject>();
 
     private int _budget;
+
+    private Queue<string> _currentSpawningEnemies = new Queue<string>();
+    private Queue<string> _enemiesWaitingForSpawn = new Queue<string>();
 
     private void OnValidate()
     {
@@ -28,22 +37,26 @@ public class LevelManager : MMSingleton<LevelManager>
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        this.MMEventStartListening<EnemyClearedEvent>();
     }
 
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        this.MMEventStopListening<EnemyClearedEvent>();
     }
 
-
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        this.MMEventStopListening<EnemyClearedEvent>();
+    }
 
     protected override void Awake()
     {
         base.Awake();
 
         UpdateEnemyList();
-
-        
 
         DontDestroyOnLoad(this);
 
@@ -53,14 +66,20 @@ public class LevelManager : MMSingleton<LevelManager>
     {
         if (_canSpawn)
         {
-            SpawnWave();
+            SetupWaveInfo();
         }
+    }
+
+    public void OnMMEvent(EnemyClearedEvent e)
+    {
+        SpawnWave();
     }
 
     [Button]
     private void UpdateEnemyList()
     {
         _currentEnemyDict.Clear();
+        _picks.Clear();
         _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(_currentLevelIndex / _gameDifficultySettings.TotalLevelCount);
         _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(_currentLevelIndex / _gameDifficultySettings.TotalLevelCount);
         List<GameObject> poolList = new List<GameObject>();
@@ -74,8 +93,6 @@ public class LevelManager : MMSingleton<LevelManager>
             }
         }
 
-
-
         _pool.InitializeRuntimePool(poolList);
     }
 
@@ -87,8 +104,7 @@ public class LevelManager : MMSingleton<LevelManager>
         }
     }
 
-    [Button]
-    private void SpawnWave()
+    private void SetupWaveInfo()
     {
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
@@ -98,29 +114,60 @@ public class LevelManager : MMSingleton<LevelManager>
             enemies.Add(profile);
         }
         _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, _currentLevelIndex));
-        var picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
-        Debug.Log(picks.Count);
-        foreach (var profile in picks)
+        _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(_currentLevelIndex));
+        float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(_currentLevelIndex);
+        _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
+
+        for (int i = 0; i < _picks.Count; i++)
         {
-            Debug.Log(profile.EnemyName);
+            _enemiesWaitingForSpawn.Enqueue(_picks[i].enemyName);
+        }
+
+        EncounterStartEvent.Trigger(timer);
+        SpawnWave();
+    }
+
+    [Button]
+    private void SpawnWave()
+    {
+        if (_enemiesWaitingForSpawn.Count >= _maxEnemyCountPerWave)
+        {
+            for (int i = 0; i < _maxEnemyCountPerWave; i++)
+            {
+                _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
+            }
+        }
+        else if (_enemiesWaitingForSpawn.Count > 0)
+        {
+            while (_enemiesWaitingForSpawn.Count > 0)
+            {
+                _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        while (_currentSpawningEnemies.Count > 0)
+        {
+            GameObject enemy = _pool.Get(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()));
+            SpawnEnemy(enemy);
+            EnemySpawnedEvent.Trigger(enemy.GetComponent<Health>());
         }
     }
-
-    
-
-    private void ResetManager()
-    {
-        _minDifficulty = 0;
-        _currentLevelIndex = 0;
-    }
-
-    
 
     [Button]
     private void SpawnEnemy(GameObject prefab)
     {
         CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
         movement.Teleport(AIUtil.GetRandomPointOnNavMesh());
+    }
+    
+    private void ResetManager()
+    {
+        _minDifficulty = 0;
+        _currentLevelIndex = 0;
     }
 
 }
