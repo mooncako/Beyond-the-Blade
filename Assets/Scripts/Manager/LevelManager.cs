@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelManager : MMSingleton<LevelManager>
 {
-    [SerializeField, BoxGroup("References")] private LevelSystem[] _availableLevelPrefabs;
+    [SerializeField, BoxGroup("References")] private LevelSystem[] _availableNormalLevelPrefabs;
 
     protected override void Awake()
     {

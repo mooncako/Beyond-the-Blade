@@ -457,7 +457,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1642649192}
-  m_VersionIndex: 3577
+  m_VersionIndex: 3586
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -986,6 +986,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 294343454693272879, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
+      propertyPath: _rewardTypes
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 294343454693272879, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
+      propertyPath: _possibleRewardTypes
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1036634870376427972, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1

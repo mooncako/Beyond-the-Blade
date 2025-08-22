@@ -14,6 +14,7 @@ public class LevelSystem : MonoBehaviour
 
     [SerializeField, BoxGroup("Settings")] public BiomeType BiomeType;
     [SerializeField, BoxGroup("Settings"), Range(1, 3)] private int _exitsAmount = 1;
+    [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardTypes;
     [field: SerializeField, BoxGroup("Settings")] public SpawnPos[] SpawnPositions { get; private set; }
     [field: SerializeField, BoxGroup("Settings")] public ExitPos[] ExitPositions { get; private set; }
 
