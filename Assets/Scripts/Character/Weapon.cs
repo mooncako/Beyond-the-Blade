@@ -28,7 +28,8 @@ public class Weapon : MonoBehaviour
         {
             foreach (string key in skilltype)
             {
-                AvailableSkills.Add(key, new PlayableSkill(key));
+                if(!AvailableSkills.ContainsKey(key))
+                    AvailableSkills.Add(key, new PlayableSkill(key));
             }
         }
     }
