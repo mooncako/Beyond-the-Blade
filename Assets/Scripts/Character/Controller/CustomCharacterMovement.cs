@@ -11,6 +11,13 @@ public class CustomCharacterMovement : CharacterMovement3D
         Rigidbody.position = position;
     }
 
+    public void Teleport(Transform transform)
+    {
+        this.transform.position = transform.position;
+        this.transform.rotation = transform.rotation;
+        Rigidbody.position = transform.position;
+    }
+
     public void KnockBack(Transform instigator, float KnockbackForce = 2000f)
     {
         Vector3 knockBackDirection = transform.position - instigator.position;

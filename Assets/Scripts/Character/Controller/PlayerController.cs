@@ -147,7 +147,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (e.State == EventStateType.OnEventEnd)
         {
-            Movement.Teleport(e.SpawnPosition);
+            Movement.Teleport(e.SpawnPoint);
         }
     }
 

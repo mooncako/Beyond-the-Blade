@@ -4,20 +4,20 @@ using UnityEngine;
 public struct LevelRandomizeCompleteEvent
 {
     public EventStateType State;
-    public Vector3 SpawnPosition;
+    public Transform SpawnPoint;
 
-    public LevelRandomizeCompleteEvent(EventStateType state, Vector3 spawnPosition)
+    public LevelRandomizeCompleteEvent(EventStateType state, Transform spawnPoint)
     {
         State = state;
-        SpawnPosition = spawnPosition;
+        SpawnPoint = spawnPoint;
     }
 
     private static LevelRandomizeCompleteEvent e;
 
-    public static void Trigger(EventStateType state, Vector3 spawnPosition)
+    public static void Trigger(EventStateType state, Transform spawnPoint)
     {
         e.State = state;
-        e.SpawnPosition = spawnPosition;
+        e.SpawnPoint = spawnPoint;
         MMEventManager.TriggerEvent(e);
     }
 }
