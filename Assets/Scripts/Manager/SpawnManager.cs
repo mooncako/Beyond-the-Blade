@@ -13,7 +13,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     [SerializeField, BoxGroup("Settings")] private GameDifficultyDataSO _gameDifficultySettings;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelIndex = 0;
+    
     [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCountPerWave;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<(string enemyName, float timeOffset)> _picks = new List<(string, float)>();
@@ -89,8 +89,8 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     {
         _currentEnemyDict.Clear();
         _picks.Clear();
-        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(_currentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(_currentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
         List<GameObject> poolList = new List<GameObject>();
 
         foreach (EnemyProfile profile in _enemyDatabase.EnemyDict.Keys)
@@ -122,9 +122,9 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
             profile.NextEligibleTime = 0;
             enemies.Add(profile);
         }
-        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, _currentLevelIndex));
-        _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(_currentLevelIndex));
-        float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(_currentLevelIndex);
+        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex));
+        _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(CurrentLevelIndex));
+        float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
         _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
 
         for (int i = 0; i < _picks.Count; i++)
@@ -176,7 +176,6 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     private void ResetManager()
     {
         _minDifficulty = 0;
-        _currentLevelIndex = 0;
     }
 
     
