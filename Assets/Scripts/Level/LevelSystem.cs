@@ -139,14 +139,7 @@ public class LevelSystem : MonoBehaviour
 
     private void RebuildNavmesh()
     {
-        if (_navMeshSurface.navMeshData != null)
-        {
-            _navMeshSurface.UpdateNavMesh(_navMeshSurface.navMeshData);
-        }
-        else
-        {
-            _navMeshSurface.BuildNavMesh();
-        }
+        _navMeshSurface.BuildNavMesh();
     }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)
