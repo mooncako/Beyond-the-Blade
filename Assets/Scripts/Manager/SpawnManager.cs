@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClearedEvent>
+public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClearedEvent>, MMEventListener<LevelRandomizeCompleteEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
@@ -33,45 +33,55 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         if (_pool == null) _pool = GetComponent<ObjectPool>();
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+
+        DontDestroyOnLoad(this);
+
+    }
+
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
         this.MMEventStartListening<EnemyClearedEvent>();
+        this.MMEventStartListening<LevelRandomizeCompleteEvent>();
     }
 
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<EnemyClearedEvent>();
+        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
     }
 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<EnemyClearedEvent>();
+        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-
-        UpdateEnemyList();
-
-        DontDestroyOnLoad(this);
-
-    }
-
-    void Start()
-    {
-        if (_canSpawn)
-        {
-            SetupWaveInfo();
-        }
-    }
+    
 
     public void OnMMEvent(EnemyClearedEvent e)
     {
         SpawnWave();
+    }
+
+    public void OnMMEvent(LevelRandomizeCompleteEvent e)
+    {
+        if(e.State == EventStateType.OnEventStart)
+        {
+            UpdateEnemyList();
+
+        if (_canSpawn)
+        {
+            SetupWaveInfo();
+        }
+        }
+        
     }
 
     [Button]
@@ -169,4 +179,5 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         _currentLevelIndex = 0;
     }
 
+    
 }

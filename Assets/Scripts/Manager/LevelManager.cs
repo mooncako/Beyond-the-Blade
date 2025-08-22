@@ -11,5 +11,7 @@ public class LevelManager : MMSingleton<LevelManager>
         base.Awake();
 
         DontDestroyOnLoad(this);
+
+
     }
 }

@@ -14,7 +14,7 @@ using UnityUtils;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, ITarget
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -128,12 +128,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         base.OnEnable();
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
+        this.MMEventStartListening<LevelRandomizeCompleteEvent>();
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
+        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
     }
 
     public void OnMMEvent(PlayerAnimationStateChangeEvent e)
@@ -141,10 +143,18 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         CurrentState = e.State;
     }
 
+    public void OnMMEvent(LevelRandomizeCompleteEvent e)
+    {
+        if (e.State == EventStateType.OnEventEnd)
+        {
+            Movement.Teleport(e.SpawnPosition);
+        }
+    }
+
     private void HandleRotation()
     {
-        if(Mathf.Approximately(Time.deltaTime, 0)) return;
-        if(!CanRotate) return;
+        if (Mathf.Approximately(Time.deltaTime, 0)) return;
+        if (!CanRotate) return;
         Movement.SetLookPosition(GetAimPoint());
     }
 
