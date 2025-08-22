@@ -336,16 +336,19 @@ public class BaseProjectile : MonoBehaviour, IProjectile
     private void HandleTargetHit(GameObject target)
     {
         // Create damage info
-        DamageInfo damageInfo = new DamageInfo(
-            _data.damage,
-            target,
-            gameObject,
-            Owner,
-            _data.damageType
-        );
+        
 
         // Try to apply damage if target has a Health component
         Health targetHealth = target.GetComponent<Health>();
+
+        DamageInfo damageInfo = new DamageInfo(
+            _data.damage,
+            target,
+            targetHealth,
+            Owner,
+            _data.damageType
+        );
+        
         if (targetHealth != null)
         {
             // Note: You may need to implement a TakeDamage method on Health component

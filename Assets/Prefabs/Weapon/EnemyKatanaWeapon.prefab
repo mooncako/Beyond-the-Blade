@@ -46,10 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animationDatabase: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
   _skillDatabase: {fileID: 11400000, guid: 0d1da641e3f0cca41b1c513983bfb6c0, type: 2}
-  <AvailableSkills>k__BackingField:
-  - BaseWeight: 2
-    SkillId: SAMURAI_ATTACK_01
-    IsInCooldown: 0
-  - BaseWeight: 1
-    SkillId: SAMURAI_ATTACK_02
-    IsInCooldown: 0
+  WeaponSkillSO: {fileID: 11400000, guid: f5e16739e77c1dc49b32ca4f2a5e0d06, type: 2}

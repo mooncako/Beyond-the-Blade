@@ -64,7 +64,7 @@ public class Controller : MonoBehaviour
         if (CurrentWeapon == null) return;
         if (!IsSkillPlaying())
         {
-            _currentSkill = CurrentWeapon.GetAvailableSkill();
+            _currentSkill = CurrentWeapon.LoopBasicAttack();
             ApplySkillEffect();
             // Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             // Animator.Play("Attack");
@@ -115,9 +115,12 @@ public class Controller : MonoBehaviour
 
         foreach (GameObject target in _hitTargets)
         {
-            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, gameObject, gameObject, DamageType.Regular);
-            target.GetComponent<Health>().Damage(info);
+            Health health = target.GetComponent<Health>();
+
+            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, health, gameObject, DamageType.Regular);
+            health.Damage(info);
         }
+        
         _isSkillPlaying = false;
     }
 
