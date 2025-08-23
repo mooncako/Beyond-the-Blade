@@ -1,6 +1,7 @@
 using System;
 using Animancer;
 using UnityEngine;
+using Animancer.TransitionLibraries;
 
 [Serializable]
 public class MoveAnimationState : AnimationState
@@ -10,11 +11,12 @@ public class MoveAnimationState : AnimationState
 
     }
 
-    public MoveAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer)
+    public MoveAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer, ClipTransition clip)
     {
         _stateMachine = stateMachine;
         _animancer = animancer;
         Key = "Move";
+        Clip = clip;
     }
 
     public override void OnEnterState()

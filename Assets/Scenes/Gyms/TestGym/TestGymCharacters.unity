@@ -119,23 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &671592077 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6509017619537120799, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
-  m_PrefabInstance: {fileID: 2354814142772029632}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &671592078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 671592077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd0717712064e024d98712271cb0e4c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1178795755
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -188,9 +171,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4962864894029839974, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: _animationStateMachine
+      value: 
+      objectReference: {fileID: 1563326187}
     - target: {fileID: 5407741524840845486, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.11696315
+      objectReference: {fileID: 0}
+    - target: {fileID: 6233116775064065168, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: m_Controller
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6555015232803260243, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -200,6 +191,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.021623373
       objectReference: {fileID: 0}
+    - target: {fileID: 8394953832475103564, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8394953832475103564, guid: 276e74981603b524aaa277777bee164b, type: 3}
+      propertyPath: _Transitions
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a599849a1e7354478822f57c5daceb1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -240,38 +239,52 @@ MonoBehaviour:
   _idleState:
     _stateMachine: {fileID: 1563326187}
     _animancer: {fileID: 1563326177}
-    _defaultClip: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: f174ef4b029a0b24b981914a6455078a, type: 2}
+      _NormalizedStartTime: NaN
     Key: Idle
     FadeDuration: 0
     FadeMode: 0
   _moveState:
     _stateMachine: {fileID: 1563326187}
     _animancer: {fileID: 1563326177}
-    _defaultClip: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: 5aae10cf529924a44811e5777c1ffa50, type: 2}
+      _NormalizedStartTime: NaN
     Key: Move
     FadeDuration: 0
     FadeMode: 0
   _actionState:
     _stateMachine: {fileID: 1563326187}
     _animancer: {fileID: 1563326177}
-    _defaultClip: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: f0e1a11e58ee6b5438c953aee33fa2a3, type: 2}
+      _NormalizedStartTime: NaN
     Key: Action
     FadeDuration: 0
     FadeMode: 0
-  CurrentState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    _defaultClip: {fileID: 0}
-    Key: 
-    FadeDuration: 0
-    FadeMode: 0
-  PreviousState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    _defaultClip: {fileID: 0}
-    Key: 
-    FadeDuration: 0
-    FadeMode: 0
+  _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &1282301946003864132
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -400,10 +413,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6509017619537120799, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 671592078}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

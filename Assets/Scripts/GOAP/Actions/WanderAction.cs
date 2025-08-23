@@ -1,5 +1,6 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Goap.Runtime;
+using CrashKonijn.Agent.Runtime;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
@@ -42,6 +43,7 @@ namespace CrashKonijn.Goap.GenTest
 
             if(data.Timer > 0)
             {
+                data.AnimationStateMachine.SwitchState(AnimationStateType.Move);
                 return ActionRunState.Continue;
             }
 
@@ -60,6 +62,9 @@ namespace CrashKonijn.Goap.GenTest
         {
             public ITarget Target { get; set; }
             public float Timer {get; set;}
+
+            [GetComponent]
+            public AnimationStateMachine AnimationStateMachine { get; set; }
         }
     }
 }

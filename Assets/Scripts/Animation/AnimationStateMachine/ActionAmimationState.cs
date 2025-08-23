@@ -1,6 +1,7 @@
 using System;
 using Animancer;
 using UnityEngine;
+using Animancer.TransitionLibraries;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
@@ -19,7 +20,9 @@ public class ActionAnimationState : AnimationState
 
     public override void OnEnterState()
     {
-        base.OnEnterState();
+        _animancer.Play(Clip);
+        AnimancerState state = _animancer.States.Current;
+        state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
     }
 
     public override void OnInterrupt()

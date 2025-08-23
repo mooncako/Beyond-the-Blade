@@ -8,17 +8,19 @@ using UnityUtils;
 public class EnemyController : Controller, IPoolable
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
+    [field: SerializeField, FoldoutGroup("Base Reference")] private AnimationStateMachine _animationStateMachine;
 
     [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
-    
+
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
-    
+
 
     protected override void OnValidate()
     {
         base.OnValidate();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+        if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
     }
 
     protected override void Awake()
@@ -96,6 +98,21 @@ public class EnemyController : Controller, IPoolable
         }
 
         _isSkillPlaying = false;
+    }
+
+    public override void ActivateSkill()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.GetAvailableSkill();
+            ApplySkillEffect();
+            // swapout animation in AnimationStateMachine
+            _animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            
+
+            _isSkillPlaying = true;
+        }
     }
 
     public void OnPoolGet()

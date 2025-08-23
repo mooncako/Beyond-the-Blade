@@ -482,7 +482,6 @@ MonoBehaviour:
   <Animator>k__BackingField: {fileID: 6233116775064065168}
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
-  <Animancer>k__BackingField: {fileID: 8394953832475103564}
   _weapons:
   - {fileID: 5801437070466398254}
   <Stats>k__BackingField: {fileID: 11400000, guid: 40806dd3b32d4334595aa39afe3346c0, type: 2}
@@ -505,6 +504,7 @@ MonoBehaviour:
   _isSkillPlaying: 0
   _hitTargets: []
   _playerSensor: {fileID: 5061576002193979983}
+  _animationStateMachine: {fileID: 0}
   CanMove: 1
   CanAttack: 1
   CurrentTargetTransform: {fileID: 0}

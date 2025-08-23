@@ -23,7 +23,6 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public Animator Animator { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
-    [field: SerializeField, FoldoutGroup("Base Reference")] public AnimancerComponent Animancer { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
     [BoxGroup("Weapon")] public Weapon CurrentWeapon;
@@ -45,7 +44,6 @@ public class Controller : MonoBehaviour
         if (Vision == null) Vision = GetComponent<Vision>();
         if (Animator == null) Animator = GetComponent<Animator>();
         if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
-        if (Animancer == null) Animancer = GetComponent<AnimancerComponent>();
         _weapons = GetComponentsInChildren<Weapon>();
     }
 
@@ -56,31 +54,16 @@ public class Controller : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        
+
     }
 
     public virtual void ActivateSkill()
     {
-        if (CurrentWeapon == null) return;
-        if (!IsSkillPlaying())
-        {
-            _currentSkill = CurrentWeapon.GetAvailableSkill();
-            ApplySkillEffect();
-            // Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            // Animator.Play("Attack");
-            AnimancerState state = Animancer.Play(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            // Animancer.Play( CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID),0.25f);
-            state.Time = 0;
-            // state.Events(this).OnEnd ??= OnEnable;
-
-
-
-            _isSkillPlaying = true;
-        }
         
+
     }
 
-   
+
 
     protected virtual void ApplySkillEffect()
     {

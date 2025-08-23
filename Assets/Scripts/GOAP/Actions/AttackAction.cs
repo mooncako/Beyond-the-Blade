@@ -36,7 +36,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void BeforePerform(IMonoAgent agent, Data data)
         {
-                
+
         }
 
         // This method is called every frame while the action is running
@@ -48,11 +48,12 @@ namespace CrashKonijn.Goap.GenTest
 
             if (data.Controller.CanAttack)
             {
+                data.AnimationStateMachine.SwitchState(AnimationStateType.Action);
                 data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
             }
-            
+
             data.Controller.Stop();
             return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
         }
@@ -61,7 +62,6 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void End(IMonoAgent agent, Data data)
         {
-            
         }
 
         public void Inject(DependencyInjector injector)
@@ -81,6 +81,9 @@ namespace CrashKonijn.Goap.GenTest
 
             [GetComponent]
             public EnemyController Controller { get; set; }
+
+            [GetComponent]
+            public AnimationStateMachine AnimationStateMachine { get; set; }
         }
     }
 }

@@ -1,23 +1,27 @@
 using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
+using Animancer.TransitionLibraries;
+using FMOD.Studio;
 public class AnimationStateMachine : MonoBehaviour
 {
     [SerializeField] private AnimancerComponent _animancer;
     [SerializeField] private IdleAnimationState _idleState;
     [SerializeField] private MoveAnimationState _moveState;
     [SerializeField] private ActionAnimationState _actionState;
-    [ReadOnly, BoxGroup("Debug")] public AnimationState CurrentState;
-    [ReadOnly, BoxGroup("Debug")] public AnimationState PreviousState;
+    [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
+    [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
+    [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState PreviousState;
+
+
 
     void OnValidate()
     {
         if (_animancer == null)
         {
             _animancer = GetComponent<AnimancerComponent>();
-            _idleState = new IdleAnimationState(this, _animancer);
-            _moveState = new MoveAnimationState(this, _animancer);
+            _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
+            _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
             _actionState = new ActionAnimationState(this, _animancer);
         }
     }
@@ -36,5 +40,46 @@ public class AnimationStateMachine : MonoBehaviour
         CurrentState.OnEnterState();
     }
 
-    
+    public void SwapAnimation(AnimationStateType type, ClipTransition clip)
+    {
+        switch (type)
+        {
+            case AnimationStateType.Idle:
+
+                break;
+            case AnimationStateType.Move:
+
+                break;
+            case AnimationStateType.Action:
+
+                break;
+        }
+        CurrentState.SwapClip(clip);
+    }
+
+    public void SwitchState(AnimationStateType type)
+    {
+        switch (type)
+        {
+            case AnimationStateType.Idle:
+                CurrentState.OnExitState();
+                CurrentState = _idleState;
+                CurrentState.OnEnterState();
+                break;
+            case AnimationStateType.Move:
+                CurrentState.OnExitState();
+                CurrentState = _moveState;
+                CurrentState.OnEnterState();
+                break;
+            case AnimationStateType.Action:
+                CurrentState.OnExitState();
+                CurrentState = _actionState;
+                CurrentState.OnEnterState();
+                break;
+        }
+        Debug.Log("Switched to " + type);
+
+
+    }
+
 }

@@ -2,7 +2,7 @@ using System;
 using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
+using Animancer.TransitionLibraries;
 [Serializable]
 public abstract class AnimationState
 {
@@ -10,8 +10,9 @@ public abstract class AnimationState
     [SerializeField, FoldoutGroup("References")] protected AnimationStateMachine _stateMachine;
     [SerializeField, FoldoutGroup("References")] protected AnimancerComponent _animancer;
 
-    [SerializeField] private AnimationClip _defaultClip;
-    public AnimationClip Clip;
+    // [SerializeField] private ClipTransition _defaultClip;
+    public ClipTransition Clip;
+    private ClipTransition _defaultClip;
     public string Key;
     public float FadeDuration = 0;
     public FadeMode FadeMode;
@@ -24,18 +25,19 @@ public abstract class AnimationState
 
     }
 
-    public AnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer)
+    public AnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer, ClipTransition clip)
     {
         _stateMachine = stateMachine;
         _animancer = animancer;
-
+        Clip = clip;
+        _defaultClip = Clip;
     }
 
 
     public virtual void OnEnterState()
     {
-        State = _animancer.States.Create(Key, Clip);
-        _animancer.TryPlay(State, FadeDuration, FadeMode);
+        _animancer.Play(Clip);
+        
     }
 
     public virtual void OnInterrupt()
@@ -50,10 +52,17 @@ public abstract class AnimationState
 
     public void RefreshState()
     {
-        if (_defaultClip != null)
-        {
-            Clip = _defaultClip;
-        }
-        
+        // if (_defaultClip != null)
+        // {
+        //     Clip = _defaultClip;
+        // }
+
+
+    }
+
+    public void SwapClip(ClipTransition clip)
+    {
+        Clip = clip;
+        _animancer.Play(Clip);
     }
 }

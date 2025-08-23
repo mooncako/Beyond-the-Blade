@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -44,7 +45,7 @@ public class Weapon : MonoBehaviour
         return null;
     }
 
-    public AnimationClip GetAnimationClip(string animationId)
+    public ClipTransition GetAnimationClip(string animationId)
     {
         return _animationDatabase.SkillAnimDict[animationId];
     }

@@ -1,29 +1,41 @@
 using Animancer;
 using UnityEngine;
-
+using Animancer.TransitionLibraries;
 public class AnimancerCharacterMovement : MonoBehaviour
 {
-    public float forward;
-    public float right;
+
     public AnimancerComponent animancer;
-    [SerializeField] public AnimationClip Idle;
-    [SerializeField] public AnimationClip Run;
+    [SerializeField] public ClipTransition Idle;
+    [SerializeField] public ClipTransition Run;
+    [SerializeField] private TransitionLibraryAsset _locomotionLibrary;
+    private Rigidbody _rigidbody;
+    
     void Start()
     {
-        
+        animancer.Transitions = _locomotionLibrary;
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(forward > 0)
+        if(_rigidbody.linearVelocity.magnitude > 0.1f)
         {
-            animancer?.Play(Run,.25f);
+            animancer.Play(Run);
         }
-        else if (forward == 0)
+        else
         {
-            animancer?.Play(Idle,.25f);
+            animancer.Play(Idle);
         }
+        
+        // if(forward > 0)
+        // {
+        //     animancer.Play(Run);
+        // }
+        // else if (forward == 0)
+        // {
+        //     animancer.Play(Idle);
+        // }
         
     }
 }
