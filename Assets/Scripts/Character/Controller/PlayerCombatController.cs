@@ -64,8 +64,6 @@ public class PlayerCombatController : MonoBehaviour
     public bool IsStaggered { get; private set; }
     public bool MusoReady { get; private set; }
     public bool IsComboWindowOpen { get; private set; }
-    private float _chargeStartTime;
-    private float _chargeThreshold = 0.5f;
     private bool _isPerfectParryWindowActive = false;
     private bool _isWeakParryWindowActive = false;
     private IEnumerator _musoTimerCO;
@@ -104,10 +102,10 @@ public class PlayerCombatController : MonoBehaviour
     {
      
         // start charge timer
-        if (IsCharging)
-        {
-            _chargeStartTime += Time.deltaTime;
-        }
+        // if (IsCharging)
+        // {
+        //     _chargeStartTime += Time.deltaTime;
+        // }
         // // check if attack input is held down long enough for charge
         // if (_chargeStartTime >= _chargeThreshold)
         // {
@@ -165,7 +163,6 @@ public class PlayerCombatController : MonoBehaviour
             // _player.DisableMovementRotationAnimEvent();
         }
         IsCharging = false;
-        _chargeStartTime = 0f;
         if (Time.time > _lastAttackTime + 0.166f / _attackRate)
         {
             _player.SetActionAvailable(PlayerActionType.Move, false);

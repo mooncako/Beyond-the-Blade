@@ -1,70 +1,45 @@
-using System;
-using System.Collections.Generic;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MMSingleton<LevelManager>
 {
-    [SerializeField, BoxGroup("References")] private ObjectPool _pool;
-    [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
-    [SerializeField, BoxGroup("Settings")] private GameDifficultyDataSO _gameDifficultySettings;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelIndex = 0;
-    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<GameObject> _currentEnemyList = new List<GameObject>();
-
-    private NavMeshTriangulation _triangulation;
-
-    private void OnValidate()
-    {
-        if (_pool == null) _pool = GetComponent<ObjectPool>();
-    }
-
-    void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-
+    [SerializeField, BoxGroup("References")] private LevelSystem[] _availableNormalLevelPrefabs;
+    [SerializeField, BoxGroup("References")] private LevelSystem[] _availableShopLevelPrefabs;
+    [SerializeField, BoxGroup("References")] private LevelSystem[] _availableReceoveryLevelPrefabs;
+    [SerializeField, BoxGroup("Debug")] private BiomeType _currentBiome;
+    [SerializeField, BoxGroup("Debug")] public LevelType CurrentLeveltype;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
 
     protected override void Awake()
     {
         base.Awake();
 
-        UpdateEnemyList();
-
         DontDestroyOnLoad(this);
+
+        CurrentLevelIndex++;
+
+        // Choose the current level based
+
+        // Choose the exit level type
     }
 
-    void Start()
+    private void OnEnable()
     {
-        _triangulation = NavMesh.CalculateTriangulation();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    [Button]
-    private void UpdateEnemyList()
+    private void OnDisable()
     {
-        _currentEnemyList.Clear();
-        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(_currentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(_currentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
-        foreach (EnemyProfile profile in _enemyDatabase.EnemyDict.Keys)
-        {
-            if (profile.Difficulty >= _minDifficulty && profile.Difficulty <= _maxDifficulty)
-            {
-                _currentEnemyList.Add(_enemyDatabase.EnemyDict[profile]);
-            }
-        }
-
-        _pool.InitializeRuntimePool(_currentEnemyList);
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
@@ -77,15 +52,6 @@ public class LevelManager : MMSingleton<LevelManager>
 
     private void ResetManager()
     {
-        _minDifficulty = 0;
-        _currentLevelIndex = 0;
+        CurrentLevelIndex = 0;
     }
-
-    [Button]
-    private void SpawnEnemy(GameObject prefab)
-    {
-        CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
-        movement.Teleport(AIUtil.GetRandomSpawnPos(_triangulation));
-    }
-
 }
