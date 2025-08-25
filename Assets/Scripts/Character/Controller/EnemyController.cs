@@ -9,6 +9,7 @@ public class EnemyController : Controller, IPoolable
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
     [field: SerializeField, FoldoutGroup("Base Reference")] private AnimationStateMachine _animationStateMachine;
+    [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
 
     [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
@@ -21,6 +22,11 @@ public class EnemyController : Controller, IPoolable
         base.OnValidate();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+        if (_brain == null) _brain = GetComponent<Brain>();
+        if ((_attackableMask & (1 << 7)) == 0)
+        {
+            _attackableMask |= 1 << 7;
+        }
     }
 
     protected override void Awake()
@@ -76,17 +82,17 @@ public class EnemyController : Controller, IPoolable
     {
         if (_currentSkill.IsTargetedGroundAOE)
         {
-            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos);
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
         }
         else
         {
             if (AttackPoint != null)
             {
-                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position);
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
             }
             else
             {
-                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position);
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
             }
         }
 

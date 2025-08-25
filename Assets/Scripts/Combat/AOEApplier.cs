@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class AOEApplier : MonoBehaviour
 {
-    [SerializeField, BoxGroup("Settings")] private LayerMask _hitMask;
 
     [BoxGroup("Settings")] public float X;
     [BoxGroup("Settings")] public float Y;
@@ -22,14 +21,14 @@ public class AOEApplier : MonoBehaviour
     private int count = 0;
 
 
-    public List<GameObject> GetDamagedEntities(SkillAreaType type, Vector3 center)
+    public List<GameObject> GetDamagedEntities(SkillAreaType type, Vector3 center, LayerMask hitMask)
     {
         _damagedEntities.Clear();
 
         switch (type)
         {
             case SkillAreaType.Box:
-                count = SkillAreaCalculation.OverlapBox(center + transform.forward * 1.5f, new Vector3(X, Y, Z), transform.rotation, _hitMask, _buffer);
+                count = SkillAreaCalculation.OverlapBox(center + transform.forward * 1.5f, new Vector3(X, Y, Z), transform.rotation, hitMask, _buffer);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_buffer[i].gameObject);
@@ -37,7 +36,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Circle:
-                count = SkillAreaCalculation.OverlapCircle(center, X, _hitMask, _buffer);
+                count = SkillAreaCalculation.OverlapCircle(center, X, hitMask, _buffer);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_buffer[i].gameObject);
@@ -45,7 +44,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Cone:
-                count = SkillAreaCalculation.OverlapCone(center, transform.forward, Y, X, _coneHeight, _hitMask, _buffer, _hits);
+                count = SkillAreaCalculation.OverlapCone(center, transform.forward, Y, X, _coneHeight, hitMask, _buffer, _hits);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_hits[i].gameObject);
@@ -53,7 +52,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Arc:
-                count = SkillAreaCalculation.OverlapArc(center, transform.forward, X, Z, Y, _arcHeight, _hitMask, _buffer, _hits);
+                count = SkillAreaCalculation.OverlapArc(center, transform.forward, X, Z, Y, _arcHeight, hitMask, _buffer, _hits);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_hits[i].gameObject);

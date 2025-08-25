@@ -18,7 +18,8 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
 
-    Tween _spawnDelayTween;
+    protected Tween _spawnDelayTween;
+    protected Tween _staggerDelayTween;
 
     protected virtual void OnValidate()
     {
@@ -44,6 +45,7 @@ public class Brain : MonoBehaviour
         _playerSensor.OnPlayerExit -= OnPlayerExit;
         _agent.Events.OnActionEnd -= OnActionEnd;
         _spawnDelayTween.Stop();
+        _staggerDelayTween.Stop();
     }
 
     protected virtual void Awake()
@@ -68,6 +70,18 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnPlayerExit(Vector3 lastKnownPosition)
     {
-        
+
+    }
+
+    public virtual void Stagger(float duration)
+    {
+        IAction action = _agent.ActionState.Action;
+        _provider.ClearGoal();
+        _agent.IsPaused = true;
+        _staggerDelayTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            _agent.IsPaused = false;
+            OnActionEnd(action);
+        });
     }
 }

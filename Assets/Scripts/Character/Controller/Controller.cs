@@ -24,7 +24,10 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
+    [SerializeField, FoldoutGroup("Base Reference")] protected ParryCollider _parryCollider;
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
+    [SerializeField, BoxGroup("Settings")] protected LayerMask _attackableMask;
+    [SerializeField, BoxGroup("Settings")] protected LayerMask _parryMask;
     [BoxGroup("Weapon")] public Weapon CurrentWeapon;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Skill _currentSkill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
@@ -44,17 +47,29 @@ public class Controller : MonoBehaviour
         if (Vision == null) Vision = GetComponent<Vision>();
         if (Animator == null) Animator = GetComponent<Animator>();
         if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
+        if (_parryCollider == null) _parryCollider = GetComponentInChildren<ParryCollider>();
         _weapons = GetComponentsInChildren<Weapon>();
+
+        if ((_parryMask & (1 << 11)) == 0)
+        {
+            _parryMask |= 1 << 11;
+        }
     }
 
     protected virtual void OnEnable()
     {
-
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.AddListener(OnParried);
+        }
     }
 
     protected virtual void OnDisable()
     {
-
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.RemoveListener(OnParried);
+        }
     }
 
     public virtual void ActivateSkill()
@@ -75,7 +90,7 @@ public class Controller : MonoBehaviour
 
             _isSkillPlaying = true;
         }
-        
+
 
     }
 
@@ -97,17 +112,17 @@ public class Controller : MonoBehaviour
 
         if (_currentSkill.IsTargetedGroundAOE)
         {
-            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos);
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
         }
         else
         {
             if (AttackPoint != null)
             {
-                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position);
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
             }
             else
             {
-                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position);
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
             }
         }
 
@@ -119,7 +134,7 @@ public class Controller : MonoBehaviour
             DamageInfo info = new DamageInfo(_currentSkill.Damage, target, health, gameObject, DamageType.Regular);
             health.Damage(info);
         }
-        
+
         _isSkillPlaying = false;
     }
 
@@ -143,6 +158,11 @@ public class Controller : MonoBehaviour
     public string GetCurrentSkillAnimationID()
     {
         return _currentSkill.AnimationID;
+    }
+
+    protected virtual void OnParried()
+    {
+
     }
         
 }

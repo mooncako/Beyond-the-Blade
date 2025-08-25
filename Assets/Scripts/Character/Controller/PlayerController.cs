@@ -73,6 +73,10 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         base.OnValidate();
         if (_input == null) _input = GetComponent<PlayerInput>();
+        if ((_attackableMask & (1 << 8)) == 0)
+        {
+            _attackableMask |= 1 << 8;
+        }
     }
 
     protected override void Awake()
