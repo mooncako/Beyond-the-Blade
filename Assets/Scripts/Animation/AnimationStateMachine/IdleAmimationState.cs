@@ -2,6 +2,7 @@ using System;
 using Animancer;
 using UnityEngine;
 using Animancer.TransitionLibraries;
+using CrashKonijn.Agent.Runtime;
 
 [Serializable]
 public class IdleAnimationState : AnimationState
@@ -22,6 +23,7 @@ public class IdleAnimationState : AnimationState
     public override void OnEnterState()
     {
         base.OnEnterState();
+        Owner.CanAttack = true;
     }
 
     public override void OnInterrupt()

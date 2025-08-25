@@ -23,12 +23,14 @@ public class AnimationStateMachine : MonoBehaviour
             _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
             _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
             _actionState = new ActionAnimationState(this, _animancer);
+            SetOwner();
         }
     }
 
     void Awake()
     {
         CurrentState = _idleState;
+        SetOwner();
     }
 
     void OnEnable()
@@ -85,5 +87,15 @@ public class AnimationStateMachine : MonoBehaviour
     public void SetActionStateClip(ClipTransition clip)
     {
         _actionState.Clip = clip;
+    }
+
+    private void SetOwner()
+    {
+        if (_idleState != null)
+            _idleState.Owner = GetComponent<EnemyController>();
+        if (_moveState != null)
+            _moveState.Owner = GetComponent<EnemyController>();
+        if (_actionState != null)
+            _actionState.Owner = GetComponent<EnemyController>();
     }
 }
