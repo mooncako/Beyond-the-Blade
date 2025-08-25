@@ -48,10 +48,12 @@ namespace CrashKonijn.Goap.GenTest
 
             if (data.Controller.CanAttack)
             {
-                data.AnimationStateMachine.SwitchState(AnimationStateType.Action);
                 data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
+                data.AnimationStateMachine.SetActionStateClip(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()));
+                data.AnimationStateMachine.SwitchState(AnimationStateType.Action);
+
             }
 
             data.Controller.Stop();

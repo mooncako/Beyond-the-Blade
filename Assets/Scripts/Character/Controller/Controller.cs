@@ -140,4 +140,9 @@ public class Controller : MonoBehaviour
         Vision.ApplyStats(Stats);
         Health.ApplyStats(Stats);
     }
+    public string GetCurrentSkillAnimationID()
+    {
+        return _currentSkill.AnimationID;
+    }
+        
 }
