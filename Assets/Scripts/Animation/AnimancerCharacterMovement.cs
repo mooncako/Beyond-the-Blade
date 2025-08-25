@@ -27,15 +27,7 @@ public class AnimancerCharacterMovement : MonoBehaviour
         {
             animancer.Play(Idle);
         }
-        
-        // if(forward > 0)
-        // {
-        //     animancer.Play(Run);
-        // }
-        // else if (forward == 0)
-        // {
-        //     animancer.Play(Idle);
-        // }
+
         
     }
 }

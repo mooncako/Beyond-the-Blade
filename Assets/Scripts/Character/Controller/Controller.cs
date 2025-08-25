@@ -66,9 +66,9 @@ public class Controller : MonoBehaviour
             ApplySkillEffect();
             // Animator.OverrideClipForState("Attack", CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             // Animator.Play("Attack");
-            AnimancerState state = Animancer.Play(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            // AnimancerState state = Animancer.Play(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             // Animancer.Play( CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID),0.25f);
-            state.Time = 0;
+            // state.Time = 0;
             // state.Events(this).OnEnd ??= OnEnable;
 
 

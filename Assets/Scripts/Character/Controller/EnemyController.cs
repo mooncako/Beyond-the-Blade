@@ -105,7 +105,7 @@ public class EnemyController : Controller, IPoolable
         if (CurrentWeapon == null) return;
         if (!IsSkillPlaying())
         {
-            _currentSkill = CurrentWeapon.GetAvailableSkill();
+            // _currentSkill = CurrentWeapon.GetAvailableSkill();
             ApplySkillEffect();
             // swapout animation in AnimationStateMachine
             _animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
