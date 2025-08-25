@@ -72,14 +72,14 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
-        if(e.State == EventStateType.OnEventStart)
+        if (e.State == EventStateType.OnEventStart)
         {
             UpdateEnemyList();
 
-        if (_canSpawn)
-        {
-            SetupWaveInfo();
-        }
+            if (_canSpawn)
+            {
+                SetupWaveInfo();
+            }
         }
         
     }

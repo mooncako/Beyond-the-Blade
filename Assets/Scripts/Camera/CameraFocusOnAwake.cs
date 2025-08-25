@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraFocusOnAwake : MonoBehaviour
 {
-    void Awake()
+    void Start()
     {
         AssignCamTargetEvent.Trigger(transform);
     }
