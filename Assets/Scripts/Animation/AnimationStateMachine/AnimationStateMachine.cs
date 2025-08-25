@@ -82,4 +82,8 @@ public class AnimationStateMachine : MonoBehaviour
 
     }
 
+    public void SetActionStateClip(ClipTransition clip)
+    {
+        _actionState.Clip = clip;
+    }
 }

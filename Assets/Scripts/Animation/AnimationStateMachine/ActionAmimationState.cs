@@ -25,6 +25,8 @@ public class ActionAnimationState : AnimationState
         state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
     }
 
+  
+
     public override void OnInterrupt()
     {
         base.OnInterrupt();
