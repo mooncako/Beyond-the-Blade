@@ -12,7 +12,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState PreviousState;
-
+    [DisplayAsString, BoxGroup(""), ShowInInspector] private AnimationStateType _currentState;
 
 
     void OnValidate()
@@ -67,19 +67,21 @@ public class AnimationStateMachine : MonoBehaviour
                 CurrentState.OnExitState();
                 CurrentState = _idleState;
                 CurrentState.OnEnterState();
+                _currentState = AnimationStateType.Idle;
                 break;
             case AnimationStateType.Move:
                 CurrentState.OnExitState();
                 CurrentState = _moveState;
                 CurrentState.OnEnterState();
+                _currentState = AnimationStateType.Move;
                 break;
             case AnimationStateType.Action:
                 CurrentState.OnExitState();
                 CurrentState = _actionState;
                 CurrentState.OnEnterState();
+                _currentState = AnimationStateType.Action;
                 break;
         }
-        Debug.Log("Switched to " + type);
 
 
     }

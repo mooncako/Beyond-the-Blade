@@ -37,7 +37,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     {
         base.Awake();
 
-
+        UpdateEnemyList();
         DontDestroyOnLoad(this);
 
     }
@@ -74,7 +74,6 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     {
         if (e.State == EventStateType.OnEventStart)
         {
-            UpdateEnemyList();
 
             if (_canSpawn)
             {

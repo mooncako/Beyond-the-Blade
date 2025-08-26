@@ -666,7 +666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4034926405133228867, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -840,7 +840,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2352203424212552441, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: _poolConfigs.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: _poolConfigs.Array.data[0].prefab
+      value: 
+      objectReference: {fileID: 3744354742756812122, guid: 6aed057b0e2ec6844bdc0195d4847fb4, type: 3}
+    - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: _poolConfigs.Array.data[0].maxSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: _poolConfigs.Array.data[0].canExpand
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: _poolConfigs.Array.data[0].initialSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7752234703304687231, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
+      propertyPath: _maxDifficulty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
