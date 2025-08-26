@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 6241636426159505488}
   - component: {fileID: 3351228736764815849}
   - component: {fileID: 1533565009318372079}
+  - component: {fileID: -5065653963056194739}
   m_Layer: 0
   m_Name: Hososhi
   m_TagString: Untagged
@@ -479,7 +480,7 @@ MonoBehaviour:
   _isSkillPlaying: 0
   _hitTargets: []
   _playerSensor: {fileID: 5061576002193979983}
-  _animationStateMachine: {fileID: 0}
+  _animationStateMachine: {fileID: -5065653963056194739}
   _brain: {fileID: 6241636426159505488}
   CanMove: 1
   CanAttack: 1
@@ -670,6 +671,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resolveTime: 1
+--- !u!114 &-5065653963056194739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90104a0c88d073a4191cd8546654e0db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animancer: {fileID: 8394953832475103564}
+  _idleState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _moveState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _actionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &519891415355162520
 PrefabInstance:
   m_ObjectHideFlags: 0
