@@ -100,4 +100,9 @@ public class AnimationStateMachine : MonoBehaviour
         if (_actionState != null)
             _actionState.Owner = GetComponent<EnemyController>();
     }
+
+    public bool IsInMoveState()
+    {
+        return CurrentState == _moveState;
+    }
 }
