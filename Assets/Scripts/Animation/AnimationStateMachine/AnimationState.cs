@@ -3,6 +3,7 @@ using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Animancer.TransitionLibraries;
+using CrashKonijn.Agent.Runtime;
 [Serializable]
 public abstract class AnimationState
 {
@@ -25,6 +26,7 @@ public abstract class AnimationState
     {
 
     }
+  
 
     public AnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer, ClipTransition clip)
     {

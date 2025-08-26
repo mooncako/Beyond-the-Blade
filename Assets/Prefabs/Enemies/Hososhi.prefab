@@ -182,7 +182,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4034926405133228867
 Transform:
   m_ObjectHideFlags: 0
@@ -405,7 +405,7 @@ Animator:
   m_GameObject: {fileID: 3744354742756812122}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c04d0b79c2f094342b00ecb9c47dda8a, type: 3}
-  m_Controller: {fileID: 9100000, guid: fac9c78bf2f880948afeb3ec38ab963a, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -685,9 +685,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animancer: {fileID: 8394953832475103564}
   _idleState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: -5065653963056194739}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -695,15 +695,15 @@ MonoBehaviour:
         _NormalizedTimes: []
         _Callbacks: []
         _Names: []
-      _Clip: {fileID: 0}
+      _Clip: {fileID: 1827226128182048838, guid: b67a787e07cd8ad4b92fcabc206dcf4f, type: 3}
       _NormalizedStartTime: NaN
     Key: 
     FadeDuration: 0
     FadeMode: 0
   _moveState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: -5065653963056194739}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -711,15 +711,15 @@ MonoBehaviour:
         _NormalizedTimes: []
         _Callbacks: []
         _Names: []
-      _Clip: {fileID: 0}
+      _Clip: {fileID: -203655887218126122, guid: 8757321dccc7a0a4b9787c60a208f5ae, type: 3}
       _NormalizedStartTime: NaN
     Key: 
     FadeDuration: 0
     FadeMode: 0
   _actionState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: -5065653963056194739}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
