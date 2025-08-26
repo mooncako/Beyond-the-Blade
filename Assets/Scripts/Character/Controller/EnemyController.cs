@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Animancer;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityUtils;
@@ -13,8 +14,11 @@ public class EnemyController : Controller, IPoolable
 
     [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
+    [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
 
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
+
+    private Tween _attackDelayTween;
 
 
     protected override void OnValidate()
@@ -52,9 +56,10 @@ public class EnemyController : Controller, IPoolable
             Movement.LookInMoveDirection = false;
         };
 
+        _attackDelayTween.Stop();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (CurrentTargetTransform != null)
         {
@@ -127,6 +132,14 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnParried(duration);
         _brain.Stagger(duration);
+    }
+
+    public void StartAttackCooldown()
+    {
+        _attackDelayTween = Tween.Delay(_attackCooldown).OnComplete(() =>
+        {
+            CanAttack = true;
+        });
     }
 
     public void OnPoolGet()
