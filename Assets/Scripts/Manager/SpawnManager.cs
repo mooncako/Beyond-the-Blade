@@ -121,7 +121,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
             profile.NextEligibleTime = 0;
             enemies.Add(profile);
         }
-        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex));
+        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex-1));
         _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex));
         float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
         _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
