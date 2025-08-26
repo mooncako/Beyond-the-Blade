@@ -160,6 +160,16 @@ public class Controller : MonoBehaviour
         return _currentSkill.AnimationID;
     }
 
+    public virtual void ParryColliderOpenAnimEvent()
+    {
+        _parryCollider.OpenCollider();
+    }
+
+    public virtual void ParryColliderCloseAnimEvent()
+    {
+        _parryCollider.CloseCollider();
+    }
+
     protected virtual void OnParried(float duration)
     {
 
