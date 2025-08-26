@@ -289,6 +289,17 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!114 &691446282 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1379345722282491249, guid: 276e74981603b524aaa277777bee164b, type: 3}
+  m_PrefabInstance: {fileID: 1178795755}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90104a0c88d073a4191cd8546654e0db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705939055
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,7 +666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3744354742756812122, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4034926405133228867, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -700,7 +711,7 @@ PrefabInstance:
     - target: {fileID: 4962864894029839974, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: _animationStateMachine
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 691446282}
     - target: {fileID: 5407741524840845486, guid: 276e74981603b524aaa277777bee164b, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.11696315
@@ -829,7 +840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2352203424212552441, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
