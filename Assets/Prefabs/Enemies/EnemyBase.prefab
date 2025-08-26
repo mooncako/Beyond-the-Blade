@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 2533455327338582168}
   - component: {fileID: 8335018461307400012}
   - component: {fileID: 7909133857443672914}
+  - component: {fileID: 4932681416210436455}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Untagged
@@ -461,7 +462,8 @@ MonoBehaviour:
   _isSkillPlaying: 0
   _hitTargets: []
   _playerSensor: {fileID: 5061576002193979983}
-  _animationStateMachine: {fileID: 0}
+  _animationStateMachine: {fileID: 4932681416210436455}
+  _brain: {fileID: 0}
   CanMove: 1
   CanAttack: 1
   CurrentTargetTransform: {fileID: 0}
@@ -597,6 +599,71 @@ MonoBehaviour:
   _coneHeight: Infinity
   _arcHeight: 2
   _type: 0
+--- !u!114 &4932681416210436455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90104a0c88d073a4191cd8546654e0db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animancer: {fileID: 8394953832475103564}
+  _idleState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _moveState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _actionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _locomotionAnimation: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &972372032365803414
 PrefabInstance:
   m_ObjectHideFlags: 0
