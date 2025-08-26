@@ -13,6 +13,7 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected GoapBehaviour _goap;
     [SerializeField, BoxGroup("References")] protected PlayerSensor _playerSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
+    [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
     [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
@@ -27,6 +28,7 @@ public class Brain : MonoBehaviour
         if (_provider == null) _provider = GetComponent<GoapActionProvider>();
         if (_goap == null) _goap = GetComponent<GoapBehaviour>();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+        if (_movement == null) _movement = GetComponent<CustomCharacterMovement>();
     }
 
     protected virtual void OnEnable()
@@ -73,11 +75,13 @@ public class Brain : MonoBehaviour
 
     }
 
+    [Sirenix.OdinInspector.Button]
     public virtual void Stagger(float duration)
     {
         IAction action = _agent.ActionState.Action;
         _provider.ClearGoal();
         _agent.IsPaused = true;
+        _movement.Stop();
         _staggerDelayTween = Tween.Delay(duration).OnComplete(() =>
         {
             _agent.IsPaused = false;
