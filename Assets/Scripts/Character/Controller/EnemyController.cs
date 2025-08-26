@@ -41,6 +41,7 @@ public class EnemyController : Controller, IPoolable
             CurrentTargetTransform = playerTransform;
             Movement.LookInMoveDirection = false;
         };
+
     }
 
     protected override void OnDisable()
@@ -50,6 +51,7 @@ public class EnemyController : Controller, IPoolable
             CurrentTargetTransform = playerTransform;
             Movement.LookInMoveDirection = false;
         };
+
     }
 
     private void Update()
@@ -121,6 +123,12 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
+    protected override void OnParried(float duration)
+    {
+        base.OnParried(duration);
+        _brain.Stagger(duration);
+    }
+
     public void OnPoolGet()
     {
 
@@ -128,6 +136,6 @@ public class EnemyController : Controller, IPoolable
 
     public void OnPoolReturn()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

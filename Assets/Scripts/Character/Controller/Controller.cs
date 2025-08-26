@@ -160,7 +160,7 @@ public class Controller : MonoBehaviour
         return _currentSkill.AnimationID;
     }
 
-    protected virtual void OnParried()
+    protected virtual void OnParried(float duration)
     {
 
     }

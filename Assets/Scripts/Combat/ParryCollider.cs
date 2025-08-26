@@ -1,13 +1,14 @@
 using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(SphereCollider))]
 public class ParryCollider : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private SphereCollider _collider;
     [SerializeField, BoxGroup("Settings")] private float _radius = .5f;
-    [BoxGroup("Events")] public UnityEvent OnParried;
+    [BoxGroup("Events")] public UnityEvent<float> OnParried;
 
     void OnValidate()
     {
@@ -35,9 +36,9 @@ public class ParryCollider : MonoBehaviour
         _collider.enabled = false;
     }
 
-    public void OnParry()
+    public void OnParry(float duration)
     {
-        OnParried.Invoke();
+        OnParried.Invoke(duration);
         CloseCollider();
     }
 }
