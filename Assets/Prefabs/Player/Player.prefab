@@ -540,6 +540,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   CurrentWeapon: {fileID: 0}
+  CanMove: 1
+  CanAttack: 1
   _currentSkill:
     AnimationID: 
     Cooldown: 0
@@ -581,6 +583,8 @@ MonoBehaviour:
   _musoVFX: {fileID: 0}
   _parryVFXPrefab: {fileID: 0}
   _parryVFXDuration: 1.5
+  _animancerComponent: {fileID: 0}
+  _animationStatemachine: {fileID: 0}
   _musoTarget: {fileID: 0}
 --- !u!114 &5394289030760871753
 MonoBehaviour:
