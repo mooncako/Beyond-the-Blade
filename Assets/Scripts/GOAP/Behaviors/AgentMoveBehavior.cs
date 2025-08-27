@@ -29,6 +29,7 @@ public class AgentMoveBehavior : MonoBehaviour
     {
         _agentBehavior.Events.OnTargetChanged += OnTargetChanged;
         _agentBehavior.Events.OnTargetNotInRange += OnTargetNotInRange;
+        _controller.Movement.Stop();
     }
 
     private void OnDisable()
