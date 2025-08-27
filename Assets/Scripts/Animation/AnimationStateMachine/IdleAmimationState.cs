@@ -23,7 +23,7 @@ public class IdleAnimationState : AnimationState
     public override void OnEnterState()
     {
         base.OnEnterState();
-        Owner.StartAttackCooldown();
+        Owner?.StartAttackCooldown();
     }
 
     public override void OnInterrupt()
