@@ -478,6 +478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Movement>k__BackingField: {fileID: 3418439087366576687}
+  _animationStateMachine: {fileID: 1379345722282491249}
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
   <Vision>k__BackingField: {fileID: 2515946022723110387}
@@ -515,7 +516,6 @@ MonoBehaviour:
   _isSkillPlaying: 0
   _hitTargets: []
   _playerSensor: {fileID: 5061576002193979983}
-  _animationStateMachine: {fileID: 1379345722282491249}
   _brain: {fileID: 5062411154900718218}
   _attackCooldown: 0.3
   CurrentTargetTransform: {fileID: 0}

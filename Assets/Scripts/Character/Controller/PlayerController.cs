@@ -106,8 +106,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         _animancerComponent = GetComponent<AnimancerComponent>();
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         HandleRotation();
         StateMachine.CurrentState.Update();
         if (_isPerfectParryWindowActive)
@@ -166,11 +167,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (Mathf.Approximately(Time.deltaTime, 0)) return;
         if (!CanRotate) return;
-        if (GetAimPoint() == Vector3.zero) return;
-        Movement.SetLookDirection(GetAimPoint());
+        if (GetMoveDir() == Vector3.zero) return;
+        Movement.SetLookDirection(GetMoveDir());
     }
 
-    private Vector3 GetAimPoint()
+    private Vector3 GetMoveDir()
     {
         if (_forward == Vector3.zero)
         {
@@ -206,6 +207,40 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         return Vector3.zero;
     }
 
+    private Vector3 GetAimPoint()
+    {
+        if (_forward == Vector3.zero)
+        {
+            _forward = transform.forward;
+            _forward.y = 0;
+            _forward.Normalize();
+        }
+        
+
+        Vector3 right = new Vector3(_forward.z, 0, -_forward.x);
+        if (_input.currentControlScheme == "Keyboard&Mouse")
+        {
+            Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            Plane plane = new Plane(Vector3.up, transform.position);
+            if (plane.Raycast(mouseRay, out float planeDistance))
+            {
+                _aimPoint = mouseRay.GetPoint(planeDistance);
+                _aimPoint.y = transform.position.y;
+                return _aimPoint;
+            }
+
+        }
+        else if (_input.currentControlScheme == "Gamepad")
+        {
+            if (InputProcessor.InputVector.sqrMagnitude > .01f)
+            {
+                Vector3 aimDir = CameraUtil.GetSnappedDir(InputProcessor.InputVector, Camera.main, 8);
+                return aimDir;
+            }
+        }
+        return Vector3.zero;
+    }
+
     public void InputMovement(InputAction.CallbackContext context)
     {
         // Always process the input vector, regardless of action availability
@@ -217,7 +252,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         // Only apply movement if the action is available
         InputProcessor.SetInputActive(IsActionAvailable(PlayerActionType.Move));
-        if(!_animationStatemachine.IsInActionState())
+        if (!_animationStatemachine.IsInActionState())
             _animationStatemachine.SwitchState(AnimationStateType.Move); //play walk/run animation
 
     }
@@ -249,14 +284,13 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started && IsActionAvailable(PlayerActionType.Parry))
         {
-            Debug.Log("Parry");    
             Parry(GetAimPoint());
             _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_PARRY"));
             _animationStatemachine.SwitchState(AnimationStateType.Action);
         }
         else
         {
-            Debug.Log("no parry");
+
         }
     }
 
@@ -373,64 +407,27 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public void Parry(Vector3 aimPosition)
     {
-        Debug.Log("Parry");
         //Debug.Log($"CanDamage: {_player.Health.CanDamage}");
-        _parryDirection = (aimPosition - transform.position).normalized;
-        _parryDirection.y = 0;
-        // Clear recorded colliders
-        _processedParryColliders.Clear();
-        ResetParryCO();
+
+
+        _isPerfectParryWindowActive = true;
     }
 
     private void DetectParryInArc()
     {
         // get all colliders in arc
-        Collider[] hits = Physics.OverlapSphere(new Vector3(transform.position.x, transform.position.y + Movement.Height / 2, transform.position.z) + transform.forward *
-        (_parryRadius * .5f), _parryRadius, _parryLayer);
-
-        foreach (Collider hit in hits)
+        if (AttackPoint != null)
         {
-            // if (hit.transform.parent == null)
-            // {
-            //     if (hit.gameObject.TryGetComponent(out Fireball fireball))
-            //     {
-            //         fireball.OnDeflect();
-            //     }
-            //     else if (hit.gameObject.TryGetComponent(out SpearProjectile spear))
-            //     {
-            //         spear.OnDeflect();
-            //     }
-            // }
-            // else
-            {
-                Vector3 directionToTarget = hit.transform.parent.gameObject.transform.position - transform.position;
-                directionToTarget.y = 0;
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _parryMask);
+        }
+        else
+        {
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _parryMask);
+        }
 
-                float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
-
-                if (angleToTarget < _parryAngle / 2)
-                {
-                    // add collider to the array
-                    int colliderID = hit.GetInstanceID();
-                    if (!_processedParryColliders.Contains(colliderID))
-                    {
-                        _processedParryColliders.Add(colliderID);
-                        var enemy = hit.GetComponentInParent<EnemyController>();
-                        if (enemy != null)
-                        {
-                            if (_isPerfectParryWindowActive)
-                            {
-                                HandlePerfectParry(enemy, hit.transform);
-                            }
-                            // else if (_isWeakParryWindowActive)
-                            // {
-                            //     _animator.SetBool("WeakParry", true);
-                            //     HandleWeakParry(enemy, hit.transform);
-                            // }
-                        }
-                    }
-                }
-            }
+        for (int i = 0; i < _hitTargets.Count; i++)
+        {
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(.5f); // TODO: Add Stats regarding parry and stagger
         }
     }
 

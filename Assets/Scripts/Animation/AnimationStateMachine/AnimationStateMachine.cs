@@ -105,6 +105,12 @@ public class AnimationStateMachine : MonoBehaviour
     {
         return CurrentState == _moveState;
     }
+
+    public bool IsInIdleState()
+    {
+        return CurrentState == _idleState;
+    }
+
     public bool IsInActionState()
     {
         return CurrentState == _actionState;

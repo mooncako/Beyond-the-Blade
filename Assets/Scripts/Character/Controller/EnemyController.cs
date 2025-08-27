@@ -9,7 +9,7 @@ using UnityUtils;
 public class EnemyController : Controller, IPoolable
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private AnimationStateMachine _animationStateMachine;
+    
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
 
     
@@ -24,7 +24,7 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnValidate();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
-        if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+        
         if (_brain == null) _brain = GetComponent<Brain>();
         if ((_attackableMask & (1 << 7)) == 0)
         {
@@ -66,6 +66,7 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
+    
 
     public void MoveTo(Vector3 destination)
     {

@@ -43,7 +43,6 @@ namespace CrashKonijn.Goap.GenTest
 
             if (data.Timer > 0)
             {
-                data.AnimationStateMachine.SwitchState(AnimationStateType.Move);
                 return ActionRunState.Continue;
             }
 

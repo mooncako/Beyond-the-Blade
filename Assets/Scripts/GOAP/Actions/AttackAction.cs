@@ -29,7 +29,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = _attackSensorConfig.AttackDelay;
+            
         }
 
         // This method is called once before the action is performed
@@ -43,8 +43,6 @@ namespace CrashKonijn.Goap.GenTest
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
-            if (data.Controller.IsSkillPlaying())
-                data.Timer -= context.DeltaTime;
 
             if (data.Controller.CanAttack)
             {
@@ -55,9 +53,10 @@ namespace CrashKonijn.Goap.GenTest
                 data.AnimationStateMachine.SwitchState(AnimationStateType.Action);
 
             }
+            
 
             data.Controller.Stop();
-            return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
+            return data.AnimationStateMachine.IsInActionState() ? ActionRunState.Continue : ActionRunState.Completed;
         }
 
         // This method is called when the action is completed or stopped
@@ -78,8 +77,6 @@ namespace CrashKonijn.Goap.GenTest
         public class Data : IActionData
         {
             public ITarget Target { get; set; }
-
-            public float Timer { get; set; }
 
             [GetComponent]
             public EnemyController Controller { get; set; }

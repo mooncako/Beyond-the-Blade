@@ -17,6 +17,7 @@ using UnityUtils;
 public class Controller : MonoBehaviour
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] public CustomCharacterMovement Movement { get; private set; }  // get / private set is effectively read only
+    [field: SerializeField, FoldoutGroup("Base Reference")] protected AnimationStateMachine _animationStateMachine;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Targetable Targetable { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
@@ -50,6 +51,7 @@ public class Controller : MonoBehaviour
         if (Animator == null) Animator = GetComponent<Animator>();
         if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
         if (_parryCollider == null) _parryCollider = GetComponentInChildren<ParryCollider>();
+        if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
         _weapons = GetComponentsInChildren<Weapon>();
 
         if ((_parryMask & (1 << 11)) == 0)
@@ -71,6 +73,21 @@ public class Controller : MonoBehaviour
         if (_parryCollider != null)
         {
             _parryCollider.OnParried.RemoveListener(OnParried);
+        }
+    }
+
+    protected virtual void Update()
+    {
+        if (!_animationStateMachine.IsInActionState())
+        {
+            if (Movement.MoveInput != Vector3.zero)
+            {
+                _animationStateMachine.SwitchState(AnimationStateType.Move);
+            }
+            else
+            {
+                _animationStateMachine.SwitchState(AnimationStateType.Idle);
+            }
         }
     }
 
