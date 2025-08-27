@@ -10,7 +10,7 @@ public abstract class AnimationState
     public ClipState State;
     [SerializeField, FoldoutGroup("References")] protected AnimationStateMachine _stateMachine;
     [SerializeField, FoldoutGroup("References")] protected AnimancerComponent _animancer;
-    [SerializeField, FoldoutGroup("References")] public EnemyController Owner;
+    [SerializeField, FoldoutGroup("References")] public Controller Owner;
 
     // [SerializeField] private ClipTransition _defaultClip;
     public ClipTransition Clip;

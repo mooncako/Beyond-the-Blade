@@ -29,6 +29,8 @@ public class Controller : MonoBehaviour
     [SerializeField, BoxGroup("Settings")] protected LayerMask _attackableMask;
     [SerializeField, BoxGroup("Settings")] protected LayerMask _parryMask;
     [BoxGroup("Weapon")] public Weapon CurrentWeapon;
+    [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
+    [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Skill _currentSkill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isSkillPlaying = false;
@@ -171,6 +173,11 @@ public class Controller : MonoBehaviour
     }
 
     protected virtual void OnParried(float duration)
+    {
+
+    }
+
+    public virtual void StartAttackCooldown()
     {
 
     }

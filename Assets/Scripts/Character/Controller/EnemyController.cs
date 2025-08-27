@@ -12,8 +12,7 @@ public class EnemyController : Controller, IPoolable
     [field: SerializeField, FoldoutGroup("Base Reference")] private AnimationStateMachine _animationStateMachine;
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
 
-    [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
-    [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
+    
     [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
 
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
@@ -134,7 +133,7 @@ public class EnemyController : Controller, IPoolable
         _brain.Stagger(duration);
     }
 
-    public void StartAttackCooldown()
+    public override void StartAttackCooldown()
     {
         _attackDelayTween = Tween.Delay(_attackCooldown).OnComplete(() =>
         {
