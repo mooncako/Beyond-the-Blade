@@ -54,6 +54,20 @@ public class Weapon : MonoBehaviour
         return null;
     }
 
+    public Skill GetSkill(string skillId)
+    {
+        if (_animationDatabase == null) return null;
+        if (_skillDatabase == null) return null;
+        if (AvailableSkills.Count == 0) return null;
+
+        return _skillDatabase.SkillDict[skillId];
+    }
+
+    public Skill GetRandomParrySkill()
+    {
+        return _skillDatabase.SkillDict[WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
+    }
+
     public ClipTransition GetAnimationClip(string animationId)
     {
         return _animationDatabase.SkillAnimDict[animationId];

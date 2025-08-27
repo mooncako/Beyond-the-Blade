@@ -39,6 +39,7 @@ public class ParryCollider : MonoBehaviour
     public void OnParry(float duration)
     {
         OnParried.Invoke(duration);
+        Debug.Log(1);
         CloseCollider();
     }
 }

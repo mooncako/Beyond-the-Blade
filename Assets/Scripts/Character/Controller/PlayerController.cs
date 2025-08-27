@@ -113,7 +113,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         StateMachine.CurrentState.Update();
         if (_isPerfectParryWindowActive)
         {
-            DetectParryInArc();
+            DetectParry();
         }
         if (MusoReady)
         {
@@ -272,7 +272,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             Debug.Log("Attack");
             ExecuteLightAttack(GetAimPoint());
             //_currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_BASIC_01"));
+            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_BASIC_01_ANIM"));
             _animationStatemachine.SwitchState(AnimationStateType.Action);
         }
         else
@@ -285,7 +285,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         if (context.started && IsActionAvailable(PlayerActionType.Parry))
         {
             Parry(GetAimPoint());
-            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_PARRY"));
+            _currentSkill = CurrentWeapon.GetRandomParrySkill();
+            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             _animationStatemachine.SwitchState(AnimationStateType.Action);
         }
         else
@@ -409,11 +410,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         //Debug.Log($"CanDamage: {_player.Health.CanDamage}");
 
-
+        Movement.SetLookPosition(aimPosition);
         _isPerfectParryWindowActive = true;
     }
 
-    private void DetectParryInArc()
+    private void DetectParry()
     {
         // get all colliders in arc
         if (AttackPoint != null)
@@ -449,7 +450,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         RuntimeManager.AttachInstanceToGameObject(_parryInstance, gameObject, GetComponent<Rigidbody>());
         _parryInstance.start();
         _parryInstance.release();
-        StartCoroutine(ResetParryCO());
     }
 
     // public void PlayerStagger()
@@ -491,14 +491,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         return closestEnemy;
     }
-    public void AnimationEventPerfectParry()
+    public void StopParryAnimEvent()
     {
-        _isPerfectParryWindowActive = true;
-    }
-
-    private IEnumerator ResetParryCO()
-    {
-        yield return new WaitForSeconds(0.2f);
         _isPerfectParryWindowActive = false;
     }
 
