@@ -20,7 +20,8 @@ public class ActionAnimationState : AnimationState
 
     public override void OnEnterState()
     {
-        Owner.CanMove = false;
+        if (Owner != null)
+            Owner.CanMove = false;
         _animancer.Play(Clip);
         AnimancerState state = _animancer.States.Current;
         state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
@@ -36,6 +37,7 @@ public class ActionAnimationState : AnimationState
     public override void OnExitState()
     {
         base.OnExitState();
-        Owner.CanMove = true;
+        if(Owner != null)
+            Owner.CanMove = true;
     }
 }
