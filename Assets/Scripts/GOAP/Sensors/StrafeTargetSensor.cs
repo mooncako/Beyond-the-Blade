@@ -32,6 +32,6 @@ public class StrafeTargetSensor : LocalTargetSensorBase, IInjectable
 
     private Vector3 GetNextPosition(IActionReceiver agent, Vector3 center)
     {
-        return CircleCalculation.RandomPointOnCircleFromEdge(center, agent.Transform.position, _strafeSensorConfig.Distance);
+        return CircleCalculation.RandomPointOnCircleFromEdge(center, agent.Transform.position, _strafeSensorConfig.Distance, maxAttempts: 10);
     }
 }
