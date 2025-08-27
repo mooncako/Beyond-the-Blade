@@ -9,6 +9,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private IdleAnimationState _idleState;
     [SerializeField] private MoveAnimationState _moveState;
     [SerializeField] private ActionAnimationState _actionState;
+    [SerializeField] private StaggerAnimationState _staggerState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState PreviousState;
@@ -23,6 +24,7 @@ public class AnimationStateMachine : MonoBehaviour
             _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
             _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
             _actionState = new ActionAnimationState(this, _animancer);
+            _staggerState = new StaggerAnimationState(this, _animancer);
             SetOwner();
         }
     }
@@ -55,6 +57,9 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Action:
 
                 break;
+            case AnimationStateType.Stagger:
+
+                break;
         }
         CurrentState.SwapClip(clip);
     }
@@ -81,6 +86,12 @@ public class AnimationStateMachine : MonoBehaviour
                 CurrentState.OnEnterState();
                 _currentState = AnimationStateType.Action;
                 break;
+            case AnimationStateType.Stagger:
+                CurrentState.OnExitState();
+                CurrentState = _staggerState;
+                CurrentState.OnEnterState();
+                _currentState = AnimationStateType.Stagger;
+                break;
         }
 
 
@@ -99,7 +110,12 @@ public class AnimationStateMachine : MonoBehaviour
             _moveState.Owner = GetComponent<EnemyController>();
         if (_actionState != null)
             _actionState.Owner = GetComponent<EnemyController>();
+        if (_staggerState != null)
+            _staggerState.Owner = GetComponent<EnemyController>();
+
     }
+  
+
 
     public bool IsInMoveState()
     {
