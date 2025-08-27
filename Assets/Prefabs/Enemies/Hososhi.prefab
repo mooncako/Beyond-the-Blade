@@ -462,6 +462,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   CurrentWeapon: {fileID: 8143121795839373604}
+  CanMove: 1
+  CanAttack: 1
   _currentSkill:
     AnimationID: 
     Cooldown: 0
@@ -482,8 +484,6 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _animationStateMachine: {fileID: -5065653963056194739}
   _brain: {fileID: 6241636426159505488}
-  CanMove: 1
-  CanAttack: 1
   _attackCooldown: 0.3
   CurrentTargetTransform: {fileID: 0}
 --- !u!114 &6524476659326703885
