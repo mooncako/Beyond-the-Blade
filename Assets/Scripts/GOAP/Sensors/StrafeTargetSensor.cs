@@ -22,7 +22,15 @@ public class StrafeTargetSensor : LocalTargetSensorBase, IInjectable
     public override ITarget Sense(IActionReceiver agent, IComponentReference references, ITarget existingTarget)
     {
         Vector3 position = GetNextPosition(agent, references.GetCachedComponent<EnemyController>().CurrentTargetTransform.position);
-        return new PositionTarget(position);
+        if (position != Vector3.zero)
+        {
+            return new PositionTarget(position);
+        }
+        else
+        {
+            return new PositionTarget(agent.Transform.position);
+        }
+        
     }
 
     public override void Update()
@@ -32,6 +40,6 @@ public class StrafeTargetSensor : LocalTargetSensorBase, IInjectable
 
     private Vector3 GetNextPosition(IActionReceiver agent, Vector3 center)
     {
-        return CircleCalculation.RandomPointOnCircleFromEdge(center, agent.Transform.position, _strafeSensorConfig.Distance, maxAttempts: 10);
+        return CircleCalculation.RandomPointOnCircleFromEdge(center, agent.Transform.position, _strafeSensorConfig.Distance, maxAttempts: 40);
     }
 }
