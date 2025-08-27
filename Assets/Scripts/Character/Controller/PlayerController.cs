@@ -428,7 +428,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(.5f); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(2); // TODO: Add Stats regarding parry and stagger
         }
     }
 
