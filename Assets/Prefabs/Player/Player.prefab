@@ -24,8 +24,8 @@ GameObject:
   - component: {fileID: 5394289030760871753}
   - component: {fileID: 1783677996304612703}
   - component: {fileID: 5714234775079022647}
-  - component: {fileID: 6000971697433981289}
   - component: {fileID: 6266151859748244355}
+  - component: {fileID: 5731174687414150010}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -539,7 +539,7 @@ MonoBehaviour:
   _parryMask:
     serializedVersion: 2
     m_Bits: 2048
-  CurrentWeapon: {fileID: 0}
+  CurrentWeapon: {fileID: 4559995143190705224}
   CanMove: 1
   CanAttack: 1
   _currentSkill:
@@ -649,41 +649,6 @@ MonoBehaviour:
   _coneHeight: Infinity
   _arcHeight: 2
   _type: 0
---- !u!114 &6000971697433981289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6509017619537120799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec6f467e761b73248af069d8e128826d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animancer: {fileID: 6266151859748244355}
-  Idle:
-    _FadeDuration: 0.113
-    _Speed: 1
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 1827226128182048838, guid: 03bafb91875b6924bbf9ce1b9f9c8768, type: 3}
-    _NormalizedStartTime: NaN
-  Run:
-    _FadeDuration: 0.017
-    _Speed: 1
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: -203655887218126122, guid: 8757321dccc7a0a4b9787c60a208f5ae, type: 3}
-    _NormalizedStartTime: NaN
-  _locomotionLibrary: {fileID: 11400000, guid: c8fa2674fa4fbdf43ab1fcae4fb68dcb, type: 2}
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &6266151859748244355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -699,6 +664,71 @@ MonoBehaviour:
   _Animator: {fileID: 5315302306169048786}
   _Transitions: {fileID: 11400000, guid: c8fa2674fa4fbdf43ab1fcae4fb68dcb, type: 2}
   _ActionOnDisable: 0
+--- !u!114 &5731174687414150010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90104a0c88d073a4191cd8546654e0db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animancer: {fileID: 6266151859748244355}
+  _idleState:
+    _stateMachine: {fileID: 5731174687414150010}
+    _animancer: {fileID: 6266151859748244355}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 1827226128182048838, guid: 03bafb91875b6924bbf9ce1b9f9c8768, type: 3}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _moveState:
+    _stateMachine: {fileID: 5731174687414150010}
+    _animancer: {fileID: 6266151859748244355}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: -203655887218126122, guid: 8757321dccc7a0a4b9787c60a208f5ae, type: 3}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _actionState:
+    _stateMachine: {fileID: 5731174687414150010}
+    _animancer: {fileID: 6266151859748244355}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _locomotionAnimation: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1001 &609050883445553796
 PrefabInstance:
   m_ObjectHideFlags: 0

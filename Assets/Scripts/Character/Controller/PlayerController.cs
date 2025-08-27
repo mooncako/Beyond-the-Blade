@@ -217,6 +217,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         // Only apply movement if the action is available
         InputProcessor.SetInputActive(IsActionAvailable(PlayerActionType.Move));
+        if(!_animationStatemachine.IsInActionState())
+            _animationStatemachine.SwitchState(AnimationStateType.Move); //play walk/run animation
+
     }
 
     public void InputRotate(InputAction.CallbackContext context)
@@ -248,6 +251,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Debug.Log("Parry");    
             Parry(GetAimPoint());
+            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_PARRY"));
+            _animationStatemachine.SwitchState(AnimationStateType.Action);
         }
         else
         {
