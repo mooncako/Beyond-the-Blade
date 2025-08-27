@@ -60,8 +60,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 #endif
     private EventInstance _attackInstance;
     private EventInstance _parryInstance;
-    private Vector3 _isoForward = new Vector3(-1, 0, 1).normalized;
-    private Vector3 _isoRight = new Vector3(1, 0, 1).normalized;
+    private Vector3 _forward;
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
     private Vector3 _parryDirection;
     private HashSet<int> _processedParryColliders = new HashSet<int>();
@@ -151,7 +150,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (e.State == EventStateType.OnEventEnd)
         {
-            Movement.Teleport(e.SpawnPoint);
+            Movement.Teleport(e.SpawnPoint.position);
         }
     }
 
@@ -159,28 +158,41 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (Mathf.Approximately(Time.deltaTime, 0)) return;
         if (!CanRotate) return;
-        Movement.SetLookPosition(GetAimPoint());
+        if (GetAimPoint() == Vector3.zero) return;
+        Movement.SetLookDirection(GetAimPoint());
     }
 
     private Vector3 GetAimPoint()
     {
+        if (_forward == Vector3.zero)
+        {
+            _forward = transform.forward;
+            _forward.y = 0;
+            _forward.Normalize();
+        }
+        
+
+        Vector3 right = new Vector3(_forward.z, 0, -_forward.x);
         if (_input.currentControlScheme == "Keyboard&Mouse")
         {
-            Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            Plane plane = new Plane(Vector3.up, transform.position);
-            if (plane.Raycast(mouseRay, out float planeDistance))
-            {
-                _aimPoint = mouseRay.GetPoint(planeDistance);
-                _aimPoint.y = transform.position.y;
-                return _aimPoint;
-            }
+            // Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            // Plane plane = new Plane(Vector3.up, transform.position);
+            // if (plane.Raycast(mouseRay, out float planeDistance))
+            // {
+            //     _aimPoint = mouseRay.GetPoint(planeDistance);
+            //     _aimPoint.y = transform.position.y;
+            //     return _aimPoint;
+            // }
+
+            Vector3 aimDir = CameraUtil.GetSnappedDir(InputProcessor.InputVector, Camera.main, 8);
+            return aimDir;
         }
         else if (_input.currentControlScheme == "Gamepad")
         {
             if (InputProcessor.InputVector.sqrMagnitude > .01f)
             {
-                Vector3 moveDir = (_isoRight * InputProcessor.InputVector.x + _isoForward * InputProcessor.InputVector.y).normalized;
-                return moveDir;
+                Vector3 aimDir = CameraUtil.GetSnappedDir(InputProcessor.InputVector, Camera.main, 8);
+                return aimDir;
             }
         }
         return Vector3.zero;
