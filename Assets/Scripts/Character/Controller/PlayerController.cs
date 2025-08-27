@@ -11,6 +11,7 @@ using UnityEngine.VFX;
 using TMPro;
 using Unity.Cinemachine;
 using UnityUtils;
+using Animancer;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -51,6 +52,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [SerializeField] private GameObject _parryVFXPrefab;
     [SerializeField] private float _parryVFXDuration = 1.5f;
     // [SerializeField] private ParryHit _parryHitVFX;
+
+    [Header("Animancer")]
+    [SerializeField] private AnimancerComponent _animancerComponent;
+    [SerializeField] private AnimationStateMachine _animationStatemachine;
+
 
 #if UNITY_EDITOR
     [Header("Current State")]
@@ -96,6 +102,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     void Start()
     {
         StateMachine.Initialize(States.IdleState);
+        _animationStatemachine = GetComponent<AnimationStateMachine>();
+        _animancerComponent = GetComponent<AnimancerComponent>();
     }
 
     void Update()
@@ -225,6 +233,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Debug.Log("Attack");
             ExecuteLightAttack(GetAimPoint());
+            //_currentSkill = CurrentWeapon.LoopBasicAttack();
+            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_BASIC_01"));
+            _animationStatemachine.SwitchState(AnimationStateType.Action);
         }
         else
         {
