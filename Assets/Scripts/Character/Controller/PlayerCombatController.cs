@@ -529,7 +529,7 @@ public class PlayerCombatController : MonoBehaviour
 
     public void BeginHitStop(int damageType)
     {
-        HitStop.Begin(_animator, "HitStop");
+        // HitStop.Begin(_animator, "HitStop");
         if (damageType == 1)
         {
             CameraShakeEvent.Trigger(new LightShake());

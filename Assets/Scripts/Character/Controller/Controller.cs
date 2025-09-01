@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Animancer;
 using Animancer.FSM;
 using CrashKonijn.Goap.GenTest;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityUtils;
@@ -29,6 +30,8 @@ public class Controller : MonoBehaviour
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
     [SerializeField, BoxGroup("Settings")] protected LayerMask _attackableMask;
     [SerializeField, BoxGroup("Settings")] protected LayerMask _parryMask;
+    [SerializeField, BoxGroup("Settings")] protected float _hitStopDuration;
+    [SerializeField, BoxGroup("Settings")] protected float _attackKnockbackForce;
     [BoxGroup("Weapon")] public Weapon CurrentWeapon;
     [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
@@ -36,6 +39,8 @@ public class Controller : MonoBehaviour
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isSkillPlaying = false;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected List<GameObject> _hitTargets = new List<GameObject>();
+
+    protected Tween _hitStopTween;
 
     protected virtual void Awake()
     {
@@ -74,6 +79,7 @@ public class Controller : MonoBehaviour
         {
             _parryCollider.OnParried.RemoveListener(OnParried);
         }
+        _hitStopTween.Stop();
     }
 
     protected virtual void Update()
@@ -152,6 +158,11 @@ public class Controller : MonoBehaviour
 
             DamageInfo info = new DamageInfo(_currentSkill.Damage, target, health, gameObject, DamageType.Regular);
             health.Damage(info);
+        }
+
+        if (_hitTargets.Count > 0)
+        {
+            HitStop.Begin(_animationStateMachine.CurrentState.AnimancerState, _hitStopDuration, _hitStopTween);
         }
 
         _isSkillPlaying = false;

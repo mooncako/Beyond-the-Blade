@@ -32,18 +32,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
 
-    [Header("Attack Settings")]
-    [SerializeField] private float _attackRate = 3f;
-    [SerializeField] private float _musoReadyDuration = 3f;
-    [SerializeField] private float _attackKnockbackForce = 10f;
-    [SerializeField] private LayerMask _attackLayer;
-    [Range(0, 1), SerializeField] private float _hitStopDuration = .05f;
-
-    [Header("Parry Settings")]
-    [SerializeField] private float _parryRadius = 1.5f;
-    [SerializeField] private float _parryAngle = 100f;
-    [SerializeField] private LayerMask _parryLayer;
-
     [Header("VFX")]
     [FoldoutGroup("Slash")] [SerializeField] private GameObject[] _slashVFXArray;
     [FoldoutGroup("Slash")] [SerializeField] private Transform _slashref;
@@ -55,7 +43,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     [Header("Animancer")]
     [SerializeField] private AnimancerComponent _animancerComponent;
-    [SerializeField] private AnimationStateMachine _animationStatemachine;
 
 
 #if UNITY_EDITOR
@@ -102,7 +89,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     void Start()
     {
         StateMachine.Initialize(States.IdleState);
-        _animationStatemachine = GetComponent<AnimationStateMachine>();
+        _animationStateMachine = GetComponent<AnimationStateMachine>();
         _animancerComponent = GetComponent<AnimancerComponent>();
     }
 
@@ -269,10 +256,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started && IsActionAvailable(PlayerActionType.Attack))
         {
+            
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            _animationStatemachine.SwitchState(AnimationStateType.Action);
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            _animationStateMachine.SwitchState(AnimationStateType.Action);
         }
         else
         {
@@ -284,8 +272,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Parry(GetAimPoint());
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
-            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            _animationStatemachine.SwitchState(AnimationStateType.Action);
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+            _animationStateMachine.SwitchState(AnimationStateType.Action);
         }
         else
         {
@@ -469,7 +457,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
     {
         // Find all enemies in scene within the attack layer
-        Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackLayer);
+        Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackableMask);
 
         EnemyController closestEnemy = null;
         float closestDistance = maxDistance;

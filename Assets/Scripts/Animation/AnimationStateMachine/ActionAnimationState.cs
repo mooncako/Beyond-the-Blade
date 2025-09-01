@@ -22,7 +22,7 @@ public class ActionAnimationState : AnimationState
     {
         if (Owner != null)
             Owner.CanMove = false;
-        _animancer.Play(Clip);
+        AnimancerState = _animancer.Play(Clip);
         AnimancerState state = _animancer.States.Current;
         state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
     }
