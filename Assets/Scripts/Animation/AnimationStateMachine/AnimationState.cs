@@ -8,6 +8,7 @@ using CrashKonijn.Agent.Runtime;
 public abstract class AnimationState
 {
     public ClipState State;
+    public AnimancerState AnimancerState;
     [SerializeField, FoldoutGroup("References")] protected AnimationStateMachine _stateMachine;
     [SerializeField, FoldoutGroup("References")] protected AnimancerComponent _animancer;
     [SerializeField, FoldoutGroup("References")] public Controller Owner;
@@ -39,7 +40,11 @@ public abstract class AnimationState
 
     public virtual void OnEnterState()
     {
-        _animancer.Play(Clip);
+        if(Clip.Clip != null)
+        {
+            AnimancerState = _animancer.Play(Clip);
+        }
+            
         
     }
 
@@ -66,6 +71,6 @@ public abstract class AnimationState
     public void SwapClip(ClipTransition clip)
     {
         Clip = clip;
-        _animancer.Play(Clip);
+        AnimancerState = _animancer.Play(Clip);
     }
 }

@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 5263547530667358367}
   - component: {fileID: 1379345722282491249}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HeadlessSamurai
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -495,6 +495,8 @@ MonoBehaviour:
   _parryMask:
     serializedVersion: 2
     m_Bits: 2048
+  _hitStopDuration: 0
+  _attackKnockbackForce: 0
   CurrentWeapon: {fileID: 5801437070466398254}
   CanMove: 1
   CanAttack: 1
@@ -660,6 +662,7 @@ MonoBehaviour:
   _coneHeight: Infinity
   _arcHeight: 2
   _type: 1
+  _attackPoint: {fileID: 0}
 --- !u!114 &5263547530667358367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -732,6 +735,22 @@ MonoBehaviour:
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
     Key: Action
+    FadeDuration: 0
+    FadeMode: 0
+  _staggerState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
     FadeDuration: 0
     FadeMode: 0
   _locomotionAnimation: {fileID: 0}

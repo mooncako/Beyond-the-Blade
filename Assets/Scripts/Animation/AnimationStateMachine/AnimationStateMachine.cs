@@ -120,7 +120,7 @@ public class AnimationStateMachine : MonoBehaviour
             _staggerState.Owner = GetComponent<EnemyController>();
 
     }
-  
+
 
 
     public bool IsInMoveState()
@@ -137,6 +137,13 @@ public class AnimationStateMachine : MonoBehaviour
     {
         return CurrentState == _actionState;
     }
+    public bool IsInStaggerState()
+    {
+        return CurrentState == _staggerState;
+    }
 
-    
+    public bool IsMovable()
+    {
+        return CurrentState == _idleState || CurrentState == _moveState;
+    }
 }

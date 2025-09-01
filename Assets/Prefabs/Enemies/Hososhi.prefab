@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 3351228736764815849}
   - component: {fileID: 1533565009318372079}
   - component: {fileID: -5065653963056194739}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hososhi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -462,6 +462,8 @@ MonoBehaviour:
   _parryMask:
     serializedVersion: 2
     m_Bits: 2048
+  _hitStopDuration: 0
+  _attackKnockbackForce: 0
   CurrentWeapon: {fileID: 8143121795839373604}
   CanMove: 1
   CanAttack: 1
@@ -606,6 +608,7 @@ MonoBehaviour:
   _coneHeight: Infinity
   _arcHeight: 2
   _type: 0
+  _attackPoint: {fileID: 0}
 --- !u!114 &6241636426159505488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,6 +725,22 @@ MonoBehaviour:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _staggerState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1

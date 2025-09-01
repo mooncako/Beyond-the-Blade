@@ -1,14 +1,21 @@
+using System.Collections;
+using Animancer;
+using Animancer.FSM;
+using PrimeTween;
 using UnityEngine;
 
 public static class HitStop
 {
-    public static void Begin(Animator animator, string animationSpeedKey)
+    public static void Begin(AnimancerState state, float duration, Tween delayTween)
     {
-        animator.SetFloat(animationSpeedKey, 0);
+        float defaultSpeed= state.Speed;
+        state.Speed = 0;
+        delayTween.Stop();
+        delayTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            state.Speed = defaultSpeed;
+        });
     }
 
-    public static void Stop(Animator animator, string animationSpeedKey)
-    {
-        animator.SetFloat(animationSpeedKey, 1);
-    }
+    
 }

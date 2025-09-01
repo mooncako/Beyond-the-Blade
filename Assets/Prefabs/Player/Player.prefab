@@ -541,6 +541,8 @@ MonoBehaviour:
   _parryMask:
     serializedVersion: 2
     m_Bits: 2048
+  _hitStopDuration: 0.1
+  _attackKnockbackForce: 10
   CurrentWeapon: {fileID: 4559995143190705224}
   CanMove: 1
   CanAttack: 1
@@ -567,18 +569,6 @@ MonoBehaviour:
   _weaponCollider: {fileID: 0}
   _isTutorial: 0
   CanRotate: 1
-  _attackRate: 3
-  _musoReadyDuration: 3
-  _attackKnockbackForce: 10
-  _attackLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  _hitStopDuration: 0.05
-  _parryRadius: 1.5
-  _parryAngle: 100
-  _parryLayer:
-    serializedVersion: 2
-    m_Bits: 0
   _slashVFXArray: []
   _slashref: {fileID: 0}
   _slashVFXDuration: 0.12
@@ -586,7 +576,6 @@ MonoBehaviour:
   _parryVFXPrefab: {fileID: 0}
   _parryVFXDuration: 1.5
   _animancerComponent: {fileID: 0}
-  _animationStatemachine: {fileID: 0}
   _musoTarget: {fileID: 0}
 --- !u!114 &5394289030760871753
 MonoBehaviour:
@@ -651,6 +640,7 @@ MonoBehaviour:
   _coneHeight: Infinity
   _arcHeight: 2
   _type: 0
+  _attackPoint: {fileID: 6111448855060232503}
 --- !u!114 &6266151859748244355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -714,6 +704,22 @@ MonoBehaviour:
   _actionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+  _staggerState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
     Owner: {fileID: 0}
     Clip:
       _FadeDuration: 0.25

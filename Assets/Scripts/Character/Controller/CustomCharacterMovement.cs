@@ -30,6 +30,9 @@ public class CustomCharacterMovement : CharacterMovement3D
         CurrentSpeedMultiplier = multiplier;
     }
 
-  
- 
+    protected override void Update()
+    {
+        base.Update();
+        
+    }
 }

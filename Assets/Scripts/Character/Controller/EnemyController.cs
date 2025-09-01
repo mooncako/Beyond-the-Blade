@@ -18,13 +18,14 @@ public class EnemyController : Controller, IPoolable
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
 
     private Tween _attackDelayTween;
+    private Tween _staggerTween;
 
 
     protected override void OnValidate()
     {
         base.OnValidate();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
-        
+
         if (_brain == null) _brain = GetComponent<Brain>();
         if ((_attackableMask & (1 << 7)) == 0)
         {
@@ -39,6 +40,11 @@ public class EnemyController : Controller, IPoolable
 
     protected override void OnEnable()
     {
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.AddListener(OnParried);
+        }
+
         _playerSensor.OnPlayerEnter += playerTransform =>
         {
             CurrentTargetTransform = playerTransform;
@@ -49,6 +55,10 @@ public class EnemyController : Controller, IPoolable
 
     protected override void OnDisable()
     {
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.RemoveListener(OnParried);
+        }
         _playerSensor.OnPlayerEnter -= playerTransform =>
         {
             CurrentTargetTransform = playerTransform;
@@ -87,6 +97,10 @@ public class EnemyController : Controller, IPoolable
 
     public override void DamageAnimEvent()
     {
+        if (_animationStateMachine.IsInStaggerState()) return;
+
+        _hitTargets.Clear();
+
         if (_currentSkill.IsTargetedGroundAOE)
         {
             _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
@@ -103,6 +117,7 @@ public class EnemyController : Controller, IPoolable
             }
         }
 
+         if (_animationStateMachine.IsInStaggerState()) return;
 
         foreach (GameObject target in _hitTargets)
         {
@@ -131,7 +146,12 @@ public class EnemyController : Controller, IPoolable
     protected override void OnParried(float duration)
     {
         base.OnParried(duration);
+        Debug.Log("Parried");
         _brain.Stagger(duration);
+        _staggerTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            _animationStateMachine.SwitchState(AnimationStateType.Idle);
+        });
     }
 
     public override void StartAttackCooldown()
