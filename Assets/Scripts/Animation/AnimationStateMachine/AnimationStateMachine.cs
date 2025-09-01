@@ -243,7 +243,10 @@ public class AnimationStateMachine : MonoBehaviour
 
     public bool IsInActionState()
     {
-        return _currentState == AnimationStateType.Attack || _currentState == AnimationStateType.Parry || _currentState == AnimationStateType.Ability || _currentState == AnimationStateType.Dash;
+        return _currentState == AnimationStateType.Attack
+                            || _currentState == AnimationStateType.Parry
+                            || _currentState == AnimationStateType.Ability
+                            || _currentState == AnimationStateType.Dash;
     }
 
     public bool IsInStaggerState()
