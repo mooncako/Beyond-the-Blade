@@ -500,12 +500,16 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  OnIframe:
+    m_PersistentCalls:
+      m_Calls: []
   OnHealthRecovery:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  IsDamageable: 1
 --- !u!114 &1078953859885710922
 MonoBehaviour:
   m_ObjectHideFlags: 0

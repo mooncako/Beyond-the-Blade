@@ -8,6 +8,7 @@ public class MaterialController : MonoBehaviour
     [SerializeField, BoxGroup("References")] private Health _health;
 
     private Tween _delayTween;
+    private Tween _iframeTween;
 
     void OnValidate()
     {
@@ -20,6 +21,7 @@ public class MaterialController : MonoBehaviour
         if (_health != null)
         {
             _health.OnDamage.AddListener(OnDamage);
+            _health.OnIframe.AddListener(OnIframe);
         }
     }
 
@@ -28,8 +30,46 @@ public class MaterialController : MonoBehaviour
         if (_health != null)
         {
             _health.OnDamage.RemoveListener(OnDamage);
+            _health.OnIframe.RemoveListener(OnIframe);
         }
         _delayTween.Stop();
+        _iframeTween.Stop();
+        foreach (var renderer in _skinnedMeshes)
+        {
+            foreach (Material mat in renderer.materials)
+            {
+                mat.SetInt("_IsIframe", 0);
+            }
+        }
+        foreach (var renderer in _skinnedMeshes)
+        {
+            foreach (Material mat in renderer.materials)
+            {
+                mat.SetInt("_OnDamage", 0);
+            }
+        }
+    }
+
+    private void OnIframe(float duration)
+    {
+        _iframeTween.Stop();
+        foreach (var renderer in _skinnedMeshes)
+        {
+            foreach (Material mat in renderer.materials)
+            {
+                mat.SetInt("_IsIframe", 1);
+            }
+        }
+        _delayTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            foreach (var renderer in _skinnedMeshes)
+            {
+                foreach (Material mat in renderer.materials)
+                {
+                    mat.SetInt("_IsIframe", 0);
+                }
+            }
+        });
     }
 
     private void OnDamage(DamageInfo info)

@@ -284,10 +284,13 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             if (Movement.IsGrounded)
             {
-                if(_animationStateMachine.CanEnter(AnimationStateType.Dash))
+                if (_animationStateMachine.CanEnter(AnimationStateType.Dash))
+                {
                     Movement.Dash(GetMoveDir(), Stats.DashForce);
+                    StartIframe();
+                }   
                 _animationStateMachine.InterruptState(AnimationStateType.Dash);
-                StartIframe();
+                
             }
                 
         }
@@ -437,6 +440,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         _iframeTween.Stop();
         Health.IsDamageable = false;
         _iframeTween = Tween.Delay(Stats.IframeDuration).OnComplete(() => Health.IsDamageable = true);
+        Health.OnIframe.Invoke(Stats.IframeDuration);
     }
 
     public void SlashEffect(int Index)
