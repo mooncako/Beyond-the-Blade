@@ -128,7 +128,6 @@ public class Controller : MonoBehaviour
 
     public virtual void DamageAnimEvent()
     {
-
         if (_currentSkill.IsTargetedGroundAOE)
         {
             _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
@@ -140,8 +139,9 @@ public class Controller : MonoBehaviour
                 _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
             }
             else
-            {
+            {                
                 _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
+                
             }
         }
 

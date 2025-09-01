@@ -135,4 +135,9 @@ public class AnimationStateMachine : MonoBehaviour
     {
         return CurrentState == _staggerState;
     }
+
+    public bool IsMovable()
+    {
+        return CurrentState == _idleState || CurrentState == _moveState;
+    }
 }

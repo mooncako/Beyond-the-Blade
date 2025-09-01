@@ -251,9 +251,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         InputProcessor.ProcessInputVector(inputValue);
 
         // Only apply movement if the action is available
-        InputProcessor.SetInputActive(IsActionAvailable(PlayerActionType.Move));
-        if (!_animationStatemachine.IsInActionState())
-            _animationStatemachine.SwitchState(AnimationStateType.Move); //play walk/run animation
+        InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+        // if (!_animationStatemachine.IsInActionState())
+        //     _animationStatemachine.SwitchState(AnimationStateType.Move); 
 
     }
 
@@ -269,15 +269,13 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started && IsActionAvailable(PlayerActionType.Attack))
         {
-            Debug.Log("Attack");
             ExecuteLightAttack(GetAimPoint());
-            //_currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip("SWORD_BASIC_01_ANIM"));
+            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            _animationStatemachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             _animationStatemachine.SwitchState(AnimationStateType.Action);
         }
         else
         {
-            Debug.Log("no attack");
         }
     }
     public void InputParry(InputAction.CallbackContext context)
