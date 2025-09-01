@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Animancer.TransitionLibraries;
 using CrashKonijn.Agent.Runtime;
+using System.Collections;
 [Serializable]
 public abstract class AnimationState
 {
@@ -20,6 +21,7 @@ public abstract class AnimationState
     public float FadeDuration = 0;
     public FadeMode FadeMode;
     public AnimationState NextState;
+    public AnimationStateType PossibleInterruptStates;
 
 
 

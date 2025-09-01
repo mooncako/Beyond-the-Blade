@@ -12,6 +12,7 @@ using TMPro;
 using Unity.Cinemachine;
 using UnityUtils;
 using Animancer;
+using PrimeTween;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -51,15 +52,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public Vector3 Position => throw new System.NotImplementedException();
 #endif
-    private EventInstance _attackInstance;
-    private EventInstance _parryInstance;
+
     private Vector3 _forward;
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
-    private Vector3 _parryDirection;
-    private HashSet<int> _processedParryColliders = new HashSet<int>();
     private bool _isPerfectParryWindowActive = false;
     public bool MusoReady { get; private set; }
     [SerializeField] private EnemyController _musoTarget;
+
+    private Tween _iframeTween;
 
     protected override void OnValidate()
     {
@@ -98,6 +98,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.Update();
         HandleRotation();
         StateMachine.CurrentState.Update();
+        InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         if (_isPerfectParryWindowActive)
         {
             DetectParry();
@@ -135,6 +136,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.OnDisable();
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        _iframeTween.Stop();
     }
 
     public void OnMMEvent(PlayerAnimationStateChangeEvent e)
@@ -171,14 +173,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         Vector3 right = new Vector3(_forward.z, 0, -_forward.x);
         if (_input.currentControlScheme == "Keyboard&Mouse")
         {
-            // Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            // Plane plane = new Plane(Vector3.up, transform.position);
-            // if (plane.Raycast(mouseRay, out float planeDistance))
-            // {
-            //     _aimPoint = mouseRay.GetPoint(planeDistance);
-            //     _aimPoint.y = transform.position.y;
-            //     return _aimPoint;
-            // }
 
             Vector3 aimDir = CameraUtil.GetSnappedDir(InputProcessor.InputVector, Camera.main, 8);
             return aimDir;
@@ -238,7 +232,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         InputProcessor.ProcessInputVector(inputValue);
 
         // Only apply movement if the action is available
-        InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+        //InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         // if (!_animationStatemachine.IsInActionState())
         //     _animationStatemachine.SwitchState(AnimationStateType.Move); 
 
@@ -256,14 +250,16 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started && IsActionAvailable(PlayerActionType.Attack))
         {
-            
+
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            _animationStateMachine.SwitchState(AnimationStateType.Action);
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
+            _animationStateMachine.InterruptState(AnimationStateType.Attack);
+            Movement.Stop();
         }
         else
         {
+
         }
     }
     public void InputParry(InputAction.CallbackContext context)
@@ -272,12 +268,31 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Parry(GetAimPoint());
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            _animationStateMachine.SwitchState(AnimationStateType.Action);
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry);
+            _animationStateMachine.InterruptState(AnimationStateType.Parry);
+            Movement.Stop();
         }
         else
         {
 
+        }
+    }
+
+    public void InputDash(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (Movement.IsGrounded)
+            {
+                if (_animationStateMachine.CanEnter(AnimationStateType.Dash))
+                {
+                    Movement.Dash(GetMoveDir(), Stats.DashForce);
+                    StartIframe();
+                }   
+                _animationStateMachine.InterruptState(AnimationStateType.Dash);
+                
+            }
+                
         }
     }
 
@@ -322,63 +337,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
-        public void ExecuteLightAttack(Vector3 aimPosition)
+    public void ExecuteLightAttack(Vector3 aimPosition)
     {
         // _movement.Dash(_movement.LookDirection, 10f);
         // _lastAttackTime = Time.time;
-        Movement.SetLookPosition(aimPosition);
+        // Movement.SetLookPosition(aimPosition);
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
     }
     
-    // private void CheckMuso()
-    // {
-    //     _currentMusoStack++;
-    //     EventHub.Instance.OnMusoChargeIncreased.Invoke(_currentMusoStack);
-    //     FMODUnity.RuntimeManager.PlayOneShot(_musoChargeGainedSFX, transform.position);
-
-    //     if (_currentMusoStack == _musoThreshold)
-    //     {
-    //         _currentMusoStack = 0;
-    //         StartMuso();
-    //     }
-    // }
-
-    // public void MusoAttack(Vector3 aimPosition)
-    // {
-    //     // _player.TryRotate();
-    //     _animator.SetTrigger("Muso");
-    //     _lastAttackTime = Time.time;
-
-    //     // Find closest enemy to aim position
-    //     // EnemyController targetEnemy = FindClosestEnemyToPosition(aimPosition, _attackRange * 2f);
-
-    //     // if (targetEnemy != null)
-    //     {
-    //         // Look at the target
-    //         Vector3 lookDirection = targetEnemy.transform.position - transform.position;
-    //         lookDirection.y = 0;
-    //         transform.rotation = Quaternion.LookRotation(lookDirection);
-    //         FMODUnity.RuntimeManager.PlayOneShot(_musoAttackSFX, transform.position);
-    //         //CreateMusoEffect(aimPosition);
-    //         BeginHitStop(2);
-    //         targetEnemy.Health.Damage(new DamageInfo(1, targetEnemy.gameObject, gameObject, DamageType.Core));
-    //         _player.Movement.Teleport(targetEnemy.MusoPosition.position);
-    //     }
-    //     EventHub.Instance.OnMusoHit.Invoke();
-    //     EndMuso();
-    //     if(!_isTutorial)
-    //         StopCoroutine(_musoTimerCO);
-    // }
-
-    // public void MisoAttack(Vector3 aimPosition)
-    // {
-    //     MusoAttack(aimPosition);
-    // }
-
-    // public void EndMiso()
-    // {
-    //     EndMuso();
-    // }
 
     public void CleanUpLightAttack()
     {
@@ -390,7 +356,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         //Debug.Log($"CanDamage: {_player.Health.CanDamage}");
 
-        Movement.SetLookPosition(aimPosition);
+        // Movement.SetLookPosition(aimPosition);
         _isPerfectParryWindowActive = true;
     }
 
@@ -408,29 +374,10 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(2); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(.5f); // TODO: Add Stats regarding parry and stagger
         }
     }
 
-    private void HandlePerfectParry(EnemyController enemy, Transform hitTransform)
-    {
-        //Debug.Log("Perfect Parry");
-        // BeginHitStop(1);
-        // enemy.Stagger();
-        // StartIframe();
-        // if (_parryVFXPrefab != null)
-        // {
-        //     GameObject vfxInstance = Instantiate
-        //     (_parryVFXPrefab, _weapon.transform.position, Quaternion.LookRotation(transform.position - _weapon.transform.position));
-        //     Destroy(vfxInstance, _parryVFXDuration);
-        // }
-        // _parryInstance = FMODUnity.RuntimeManager.CreateInstance(_perfectParrySFX);
-        // int randomIndex = Random.Range(0, 2);
-        // _parryInstance.setParameterByName("Perfect", randomIndex);
-        RuntimeManager.AttachInstanceToGameObject(_parryInstance, gameObject, GetComponent<Rigidbody>());
-        _parryInstance.start();
-        _parryInstance.release();
-    }
 
     // public void PlayerStagger()
     // {
@@ -476,7 +423,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         _isPerfectParryWindowActive = false;
     }
 
-        private void CreateMusoEffect(Vector3 aimPosition)
+    private void CreateMusoEffect(Vector3 aimPosition)
     {
         if (_musoVFX != null)
         {
@@ -486,6 +433,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
             _musoVFX.Play();
         }
+    }
+
+    private void StartIframe()
+    {
+        _iframeTween.Stop();
+        Health.IsDamageable = false;
+        _iframeTween = Tween.Delay(Stats.IframeDuration).OnComplete(() => Health.IsDamageable = true);
+        Health.OnIframe.Invoke(Stats.IframeDuration);
     }
 
     public void SlashEffect(int Index)

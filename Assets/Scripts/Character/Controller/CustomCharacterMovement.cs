@@ -18,10 +18,18 @@ public class CustomCharacterMovement : CharacterMovement3D
         Rigidbody.position = transform.position;
     }
 
-    public void KnockBack(Transform instigator, float KnockbackForce = 2000f)
+    public void KnockBack(Transform instigator, float knockbackForce = 2000f)
     {
         Vector3 knockBackDirection = transform.position - instigator.position;
-        Rigidbody.AddForce(knockBackDirection.normalized * KnockbackForce);
+        Rigidbody.AddForce(knockBackDirection.normalized * knockbackForce);
+    }
+
+    public void Dash(Vector3 direction, float dashForce = 2000f)
+    {
+        if (direction == Vector3.zero)
+            Rigidbody.AddForce(transform.forward.normalized * dashForce);
+        else
+            Rigidbody.AddForce(direction.normalized * dashForce);
     }
 
     public void ResetSpeed() => CurrentSpeedMultiplier = 1f;

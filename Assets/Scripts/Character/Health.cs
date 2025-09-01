@@ -11,8 +11,11 @@ public class Health : MonoBehaviour
     [SerializeField, BoxGroup("Stats"), ReadOnly] public float HealthPercentage => _health / _maxHealth;
 
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDamage;
+    [FoldoutGroup("Events")] public UnityEvent<float> OnIframe;
     [FoldoutGroup("Events")] public UnityEvent OnHealthRecovery;
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDeath;
+
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
 
     public void ApplyStats(Stats stats)
     {
@@ -22,6 +25,7 @@ public class Health : MonoBehaviour
 
     public void Damage(DamageInfo info)
     {
+        if (!IsDamageable) return;
         CameraShakeEvent.Trigger(new LightShake());
         _health -= info.Amount;
         OnDamage.Invoke(info);

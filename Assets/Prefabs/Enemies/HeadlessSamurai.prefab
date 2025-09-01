@@ -368,12 +368,16 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  OnIframe:
+    m_PersistentCalls:
+      m_Calls: []
   OnHealthRecovery:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  IsDamageable: 1
 --- !u!114 &2515946022723110387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,7 +696,7 @@ MonoBehaviour:
   _idleState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
-    Owner: {fileID: 0}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -705,10 +709,11 @@ MonoBehaviour:
     Key: Idle
     FadeDuration: 0
     FadeMode: 0
+    PossibleInterruptStates: -1
   _moveState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
-    Owner: {fileID: 0}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -721,7 +726,42 @@ MonoBehaviour:
     Key: Move
     FadeDuration: 0
     FadeMode: 0
-  _actionState:
+    PossibleInterruptStates: -1
+  _attackActionState:
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: Attack
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 124
+  _parryActionState:
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: Parry
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 96
+  _dashActionState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 0}
@@ -734,13 +774,14 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: Action
+    Key: Dash
     FadeDuration: 0
     FadeMode: 0
-  _staggerState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    PossibleInterruptStates: 32
+  _abilityActionState:
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -750,9 +791,27 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: 
+    Key: Ability
     FadeDuration: 0
     FadeMode: 0
+    PossibleInterruptStates: 32
+  _staggerState:
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: Stagger
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
   _locomotionAnimation: {fileID: 0}
   references:
     version: 2
