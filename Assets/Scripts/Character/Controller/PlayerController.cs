@@ -171,14 +171,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         Vector3 right = new Vector3(_forward.z, 0, -_forward.x);
         if (_input.currentControlScheme == "Keyboard&Mouse")
         {
-            // Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            // Plane plane = new Plane(Vector3.up, transform.position);
-            // if (plane.Raycast(mouseRay, out float planeDistance))
-            // {
-            //     _aimPoint = mouseRay.GetPoint(planeDistance);
-            //     _aimPoint.y = transform.position.y;
-            //     return _aimPoint;
-            // }
 
             Vector3 aimDir = CameraUtil.GetSnappedDir(InputProcessor.InputVector, Camera.main, 8);
             return aimDir;
@@ -256,14 +248,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started && IsActionAvailable(PlayerActionType.Attack))
         {
-            
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            _animationStateMachine.SwitchState(AnimationStateType.Action);
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
+            _animationStateMachine.InterruptState(AnimationStateType.Attack);
         }
         else
         {
+            
         }
     }
     public void InputParry(InputAction.CallbackContext context)
@@ -272,12 +264,21 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Parry(GetAimPoint());
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            _animationStateMachine.SwitchState(AnimationStateType.Action);
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry);
+            _animationStateMachine.InterruptState(AnimationStateType.Parry);
         }
         else
         {
 
+        }
+    }
+
+    public void InputDash(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if(Movement.IsGrounded)
+                Movement.Dash(Stats.DashForce);
         }
     }
 
@@ -326,7 +327,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         // _movement.Dash(_movement.LookDirection, 10f);
         // _lastAttackTime = Time.time;
-        Movement.SetLookPosition(aimPosition);
+        // Movement.SetLookPosition(aimPosition);
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
     }
     
@@ -390,7 +391,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         //Debug.Log($"CanDamage: {_player.Health.CanDamage}");
 
-        Movement.SetLookPosition(aimPosition);
+        // Movement.SetLookPosition(aimPosition);
         _isPerfectParryWindowActive = true;
     }
 
@@ -408,7 +409,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(2); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(.5f); // TODO: Add Stats regarding parry and stagger
         }
     }
 
@@ -476,7 +477,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         _isPerfectParryWindowActive = false;
     }
 
-        private void CreateMusoEffect(Vector3 aimPosition)
+    private void CreateMusoEffect(Vector3 aimPosition)
     {
         if (_musoVFX != null)
         {

@@ -18,6 +18,13 @@ public class ActionAnimationState : AnimationState
         Key = "Action";
     }
 
+    public ActionAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer, string key)
+    {
+        _stateMachine = stateMachine;
+        _animancer = animancer;
+        Key = key;
+    }
+
     public override void OnEnterState()
     {
         if (Owner != null)

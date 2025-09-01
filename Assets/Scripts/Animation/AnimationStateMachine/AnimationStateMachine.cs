@@ -8,7 +8,10 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private AnimancerComponent _animancer;
     [SerializeField] private IdleAnimationState _idleState;
     [SerializeField] private MoveAnimationState _moveState;
-    [SerializeField] private ActionAnimationState _actionState;
+    [SerializeField] private ActionAnimationState _attackActionState;
+    [SerializeField] private ActionAnimationState _parryActionState;
+    [SerializeField] private ActionAnimationState _dashActionState;
+    [SerializeField] private ActionAnimationState _abilityActionState;
     [SerializeField] private StaggerAnimationState _staggerState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
@@ -23,11 +26,30 @@ public class AnimationStateMachine : MonoBehaviour
             _animancer = GetComponent<AnimancerComponent>();
             _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
             _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
-            _actionState = new ActionAnimationState(this, _animancer);
+            _attackActionState = new ActionAnimationState(this, _animancer, "Attack");
+            _parryActionState = new ActionAnimationState(this, _animancer, "Parry");
+            _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
+            _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
             _staggerState = new StaggerAnimationState(this, _animancer);
             SetOwner();
         }
     }
+#if UNITY_EDITOR
+    [Button]
+    private void ApplyChanges()
+    {
+        _animancer = GetComponent<AnimancerComponent>();
+        // _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
+        // _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
+        _attackActionState = new ActionAnimationState(this, _animancer, "Attack");
+        _parryActionState = new ActionAnimationState(this, _animancer, "Parry");
+        _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
+        _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
+        _staggerState = new StaggerAnimationState(this, _animancer);
+        SetOwner();
+
+    }
+#endif
 
     void Awake()
     {
@@ -39,7 +61,7 @@ public class AnimationStateMachine : MonoBehaviour
     {
         _idleState.RefreshState();
         _moveState.RefreshState();
-        _actionState.RefreshState();
+        _attackActionState.RefreshState();
         CurrentState = _idleState;
         CurrentState.OnEnterState();
     }
@@ -54,7 +76,16 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Move:
 
                 break;
-            case AnimationStateType.Action:
+            case AnimationStateType.Attack:
+
+                break;
+            case AnimationStateType.Parry:
+
+                break;
+            case AnimationStateType.Ability:
+
+                break;
+            case AnimationStateType.Dash:
 
                 break;
             case AnimationStateType.Stagger:
@@ -66,40 +97,102 @@ public class AnimationStateMachine : MonoBehaviour
 
     public void SwitchState(AnimationStateType type)
     {
+        CurrentState.OnExitState();
+
         switch (type)
         {
             case AnimationStateType.Idle:
-                CurrentState.OnExitState();
                 CurrentState = _idleState;
-                CurrentState.OnEnterState();
                 _currentState = AnimationStateType.Idle;
                 break;
             case AnimationStateType.Move:
-                CurrentState.OnExitState();
                 CurrentState = _moveState;
-                CurrentState.OnEnterState();
                 _currentState = AnimationStateType.Move;
                 break;
-            case AnimationStateType.Action:
-                CurrentState.OnExitState();
-                CurrentState = _actionState;
-                CurrentState.OnEnterState();
-                _currentState = AnimationStateType.Action;
+            case AnimationStateType.Attack:
+                CurrentState = _attackActionState;
+                _currentState = AnimationStateType.Attack;
+                break;
+            case AnimationStateType.Parry:
+                CurrentState = _parryActionState;
+                _currentState = AnimationStateType.Parry;
+                break;
+            case AnimationStateType.Ability:
+                CurrentState = _abilityActionState;
+                _currentState = AnimationStateType.Ability;
+                break;
+            case AnimationStateType.Dash:
+                CurrentState = _dashActionState;
+                _currentState = AnimationStateType.Dash;
                 break;
             case AnimationStateType.Stagger:
-                CurrentState.OnExitState();
                 CurrentState = _staggerState;
-                CurrentState.OnEnterState();
+                _currentState = AnimationStateType.Stagger;
+                break;
+        }
+        
+        CurrentState.OnEnterState();
+    }
+
+    public void InterruptState(AnimationStateType type)
+    {
+        if (!CanEnter(type)) return;
+
+        CurrentState.OnExitState();
+        CurrentState.OnInterrupt();
+
+        switch (type)
+        {
+            case AnimationStateType.Idle:
+
+                CurrentState = _idleState;
+
+                _currentState = AnimationStateType.Idle;
+                break;
+            case AnimationStateType.Move:
+                CurrentState = _moveState;
+                _currentState = AnimationStateType.Move;
+                break;
+            case AnimationStateType.Attack:
+                CurrentState = _attackActionState;
+                _currentState = AnimationStateType.Attack;
+                break;
+            case AnimationStateType.Parry:
+                CurrentState = _parryActionState;
+                _currentState = AnimationStateType.Parry;
+                break;
+            case AnimationStateType.Ability:
+                CurrentState = _abilityActionState;
+                _currentState = AnimationStateType.Ability;
+                break;
+            case AnimationStateType.Dash:
+                CurrentState = _dashActionState;
+                _currentState = AnimationStateType.Dash;
+                break;
+            case AnimationStateType.Stagger:
+                CurrentState = _staggerState;
                 _currentState = AnimationStateType.Stagger;
                 break;
         }
 
-
+        CurrentState.OnEnterState();
     }
 
-    public void SetActionStateClip(ClipTransition clip)
+    public void SetActionStateClip(ClipTransition clip, AnimationStateType type)
     {
-        _actionState.Clip = clip;
+        switch (type)
+        {
+            case AnimationStateType.Attack:
+                _attackActionState.Clip = clip;
+                break;
+            case AnimationStateType.Parry:
+                _parryActionState.Clip = clip;
+                break;
+            case AnimationStateType.Ability:
+                _abilityActionState.Clip = clip;
+                break;
+        }
+        
     }
 
     private void SetOwner()
@@ -108,14 +201,21 @@ public class AnimationStateMachine : MonoBehaviour
             _idleState.Owner = GetComponent<EnemyController>();
         if (_moveState != null)
             _moveState.Owner = GetComponent<EnemyController>();
-        if (_actionState != null)
-            _actionState.Owner = GetComponent<EnemyController>();
+        if (_attackActionState != null)
+            _attackActionState.Owner = GetComponent<EnemyController>();
+        if (_parryActionState != null)
+            _parryActionState.Owner = GetComponent<EnemyController>();
+        if (_abilityActionState != null)
+            _abilityActionState.Owner = GetComponent<EnemyController>();
         if (_staggerState != null)
             _staggerState.Owner = GetComponent<EnemyController>();
 
     }
 
-
+    public bool CanEnter(AnimationStateType stateType)
+    {
+        return (CurrentState.PossibleInterruptStates & stateType) == stateType;
+    }
 
     public bool IsInMoveState()
     {
@@ -127,10 +227,26 @@ public class AnimationStateMachine : MonoBehaviour
         return CurrentState == _idleState;
     }
 
+    public bool IsInAttackActionState()
+    {
+        return CurrentState == _attackActionState;
+    }
+
+    public bool IsInParryActionState()
+    {
+        return CurrentState == _parryActionState;
+    }
+
+    public bool IsInAbilityActionState()
+    {
+        return CurrentState == _abilityActionState;
+    }
+
     public bool IsInActionState()
     {
-        return CurrentState == _actionState;
+        return CurrentState == _attackActionState || CurrentState == _parryActionState || CurrentState == _abilityActionState;
     }
+
     public bool IsInStaggerState()
     {
         return CurrentState == _staggerState;

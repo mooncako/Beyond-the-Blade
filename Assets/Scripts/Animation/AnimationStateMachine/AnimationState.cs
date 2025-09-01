@@ -20,6 +20,7 @@ public abstract class AnimationState
     public float FadeDuration = 0;
     public FadeMode FadeMode;
     public AnimationState NextState;
+    public AnimationStateType PossibleInterruptStates;
 
 
 

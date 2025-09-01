@@ -9,6 +9,7 @@ public class Stats : ScriptableObject
     public float DamageReduction = 0;
     public float AttackSpeed = 1;
     public float ResourceGainMultiplier = 1;
+    public float DashForce = 1000f;
 
     [Header("Vision")]
     public float Range = 4f;

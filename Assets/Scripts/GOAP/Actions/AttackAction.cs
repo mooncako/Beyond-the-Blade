@@ -49,14 +49,14 @@ namespace CrashKonijn.Goap.GenTest
                 data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
-                data.AnimationStateMachine.SetActionStateClip(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()));
-                data.AnimationStateMachine.SwitchState(AnimationStateType.Action);
+                data.AnimationStateMachine.SetActionStateClip(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack);
+                data.AnimationStateMachine.SwitchState(AnimationStateType.Attack);
 
             }
             
 
             data.Controller.Stop();
-            return data.AnimationStateMachine.IsInActionState() ? ActionRunState.Continue : ActionRunState.Completed;
+            return data.AnimationStateMachine.IsInAttackActionState() ? ActionRunState.Continue : ActionRunState.Completed;
         }
 
         // This method is called when the action is completed or stopped

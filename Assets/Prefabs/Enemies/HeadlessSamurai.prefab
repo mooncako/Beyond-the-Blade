@@ -705,6 +705,7 @@ MonoBehaviour:
     Key: Idle
     FadeDuration: 0
     FadeMode: 0
+    PossibleInterruptStates: 0
   _moveState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
@@ -721,9 +722,10 @@ MonoBehaviour:
     Key: Move
     FadeDuration: 0
     FadeMode: 0
-  _actionState:
-    _stateMachine: {fileID: 1379345722282491249}
-    _animancer: {fileID: 8394953832475103564}
+    PossibleInterruptStates: 0
+  _attackActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
     Owner: {fileID: 0}
     Clip:
       _FadeDuration: 0.25
@@ -734,9 +736,61 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: Action
+    Key: 
     FadeDuration: 0
     FadeMode: 0
+    PossibleInterruptStates: 0
+  _parryActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+  _dashActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+  _abilityActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
   _staggerState:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
@@ -753,6 +807,7 @@ MonoBehaviour:
     Key: 
     FadeDuration: 0
     FadeMode: 0
+    PossibleInterruptStates: 0
   _locomotionAnimation: {fileID: 0}
   references:
     version: 2

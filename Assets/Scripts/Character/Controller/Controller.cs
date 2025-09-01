@@ -203,7 +203,7 @@ public class Controller : MonoBehaviour
 
     protected virtual void OnParried(float duration)
     {
-        _animationStateMachine.SwitchState(AnimationStateType.Stagger);
+        _animationStateMachine.InterruptState(AnimationStateType.Stagger);
     }
 
     public virtual void StartAttackCooldown()
