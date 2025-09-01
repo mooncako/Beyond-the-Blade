@@ -25,7 +25,7 @@ public class StaggerAnimationState : AnimationState
 
     public override void OnEnterState()
     {
-        _animancer.Play(Clip);
+        base.OnEnterState();
     }
     public override void OnInterrupt()
     {

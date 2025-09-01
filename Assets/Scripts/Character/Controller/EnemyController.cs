@@ -40,7 +40,11 @@ public class EnemyController : Controller, IPoolable
 
     protected override void OnEnable()
     {
-        base.OnEnable();
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.AddListener(OnParried);
+        }
+
         _playerSensor.OnPlayerEnter += playerTransform =>
         {
             CurrentTargetTransform = playerTransform;
@@ -51,7 +55,10 @@ public class EnemyController : Controller, IPoolable
 
     protected override void OnDisable()
     {
-        base.OnDisable();
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.RemoveListener(OnParried);
+        }
         _playerSensor.OnPlayerEnter -= playerTransform =>
         {
             CurrentTargetTransform = playerTransform;

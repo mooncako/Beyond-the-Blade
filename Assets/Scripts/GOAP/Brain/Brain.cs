@@ -78,6 +78,7 @@ public class Brain : MonoBehaviour
     [Sirenix.OdinInspector.Button]
     public virtual void Stagger(float duration)
     {
+        Debug.Log("Staggered");
         IAction action = _agent.ActionState.Action;
         _provider.ClearGoal();
         _agent.IsPaused = true;

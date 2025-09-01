@@ -39,7 +39,7 @@ public abstract class AnimationState
 
     public virtual void OnEnterState()
     {
-        if(Clip != null)
+        if(Clip.Clip != null)
             _animancer.Play(Clip);
         
     }
