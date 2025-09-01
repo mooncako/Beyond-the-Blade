@@ -98,6 +98,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.Update();
         HandleRotation();
         StateMachine.CurrentState.Update();
+        InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         if (_isPerfectParryWindowActive)
         {
             DetectParry();
@@ -230,7 +231,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         InputProcessor.ProcessInputVector(inputValue);
 
         // Only apply movement if the action is available
-        InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+        //InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         // if (!_animationStatemachine.IsInActionState())
         //     _animationStatemachine.SwitchState(AnimationStateType.Move); 
 
@@ -253,7 +254,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _currentSkill = CurrentWeapon.LoopBasicAttack();
             _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
             _animationStateMachine.InterruptState(AnimationStateType.Attack);
-            InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+            Movement.Stop();
         }
         else
         {
@@ -268,7 +269,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
             _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry);
             _animationStateMachine.InterruptState(AnimationStateType.Parry);
-            InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+            Movement.Stop();
         }
         else
         {
@@ -422,25 +423,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
-    private void HandlePerfectParry(EnemyController enemy, Transform hitTransform)
-    {
-        //Debug.Log("Perfect Parry");
-        // BeginHitStop(1);
-        // enemy.Stagger();
-        // StartIframe();
-        // if (_parryVFXPrefab != null)
-        // {
-        //     GameObject vfxInstance = Instantiate
-        //     (_parryVFXPrefab, _weapon.transform.position, Quaternion.LookRotation(transform.position - _weapon.transform.position));
-        //     Destroy(vfxInstance, _parryVFXDuration);
-        // }
-        // _parryInstance = FMODUnity.RuntimeManager.CreateInstance(_perfectParrySFX);
-        // int randomIndex = Random.Range(0, 2);
-        // _parryInstance.setParameterByName("Perfect", randomIndex);
-        RuntimeManager.AttachInstanceToGameObject(_parryInstance, gameObject, GetComponent<Rigidbody>());
-        _parryInstance.start();
-        _parryInstance.release();
-    }
 
     // public void PlayerStagger()
     // {

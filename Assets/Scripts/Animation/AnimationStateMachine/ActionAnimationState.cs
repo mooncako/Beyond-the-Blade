@@ -39,7 +39,7 @@ public class ActionAnimationState : AnimationState
         }
         else
         {
-            Tween.Delay(1f).OnComplete(() =>
+            Tween.Delay(.5f).OnComplete(() =>
             {
                 _stateMachine.SwitchState(AnimationStateType.Idle);
             });
