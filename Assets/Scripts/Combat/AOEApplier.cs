@@ -14,6 +14,7 @@ public class AOEApplier : MonoBehaviour
     [SerializeField, BoxGroup("Settings")] private float _arcHeight = 2;
 
     [SerializeField, BoxGroup("Debug")] private SkillAreaType _type;
+    [SerializeField, BoxGroup("Debug")] private Transform _attackPoint;
 
     private readonly Collider[] _buffer = new Collider[64];
     private readonly List<Collider> _hits = new List<Collider>(64);
@@ -67,25 +68,35 @@ public class AOEApplier : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.white;
-        switch (_type)
+        Vector3 _startPos;
+        if (_attackPoint == null)
         {
-            case SkillAreaType.Box:
-                // Box gizmo (approx)
-                Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * 1.5f, transform.rotation, Vector3.one);
-                Gizmos.DrawWireCube(Vector3.zero, new Vector3(X, Y, Z));
-                break;
-            case SkillAreaType.Circle:
-                Gizmos.DrawWireSphere(transform.position, X);
-                break;
-            case SkillAreaType.Cone:
-                // Cone (wire)
-                DrawCone(transform.position, transform.forward, X, Y);
-                break;
-            case SkillAreaType.Arc:
-                // Arc (sector)
-                DrawArcSector(transform.position, transform.forward, X, Y, Z);
-                break;
+            _startPos = transform.position;
         }
+        else
+        {
+            _startPos = _attackPoint.position;
+        }
+
+        switch (_type)
+            {
+                case SkillAreaType.Box:
+                    // Box gizmo (approx)
+                    Gizmos.matrix = Matrix4x4.TRS(_startPos + transform.forward * 1.5f, transform.rotation, Vector3.one);
+                    Gizmos.DrawWireCube(Vector3.zero, new Vector3(X, Y, Z));
+                    break;
+                case SkillAreaType.Circle:
+                    Gizmos.DrawWireSphere(_startPos, X);
+                    break;
+                case SkillAreaType.Cone:
+                    // Cone (wire)
+                    DrawCone(_startPos, transform.forward, X, Y);
+                    break;
+                case SkillAreaType.Arc:
+                    // Arc (sector)
+                    DrawArcSector(_startPos, transform.forward, X, Y, Z);
+                    break;
+            }
         
     }
 

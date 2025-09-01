@@ -163,6 +163,7 @@ public class Controller : MonoBehaviour
         if (_hitTargets.Count > 0)
         {
             HitStop.Begin(_animationStateMachine.CurrentState.AnimancerState, _hitStopDuration, _hitStopTween);
+            CameraShakeEvent.Trigger(new LightShake());
         }
 
         _isSkillPlaying = false;

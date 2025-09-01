@@ -326,14 +326,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         // _movement.Dash(_movement.LookDirection, 10f);
         // _lastAttackTime = Time.time;
-        _hitEnemiesThisAttack.Clear();
+        Movement.SetLookPosition(aimPosition);
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
-    }
-
-    public void ActivateWeaponCollider()
-    {
-        _weaponCollider.enabled = true;
-        _hitEnemiesThisAttack.Clear();
     }
     
     // private void CheckMuso()
