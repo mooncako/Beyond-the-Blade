@@ -12,6 +12,7 @@ using TMPro;
 using Unity.Cinemachine;
 using UnityUtils;
 using Animancer;
+using PrimeTween;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -51,15 +52,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public Vector3 Position => throw new System.NotImplementedException();
 #endif
-    private EventInstance _attackInstance;
-    private EventInstance _parryInstance;
+
     private Vector3 _forward;
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
-    private Vector3 _parryDirection;
-    private HashSet<int> _processedParryColliders = new HashSet<int>();
     private bool _isPerfectParryWindowActive = false;
     public bool MusoReady { get; private set; }
     [SerializeField] private EnemyController _musoTarget;
+
+    private Tween _iframeTween;
 
     protected override void OnValidate()
     {
@@ -136,6 +136,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.OnDisable();
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        _iframeTween.Stop();
     }
 
     public void OnMMEvent(PlayerAnimationStateChangeEvent e)
@@ -286,7 +287,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 if(_animationStateMachine.CanEnter(AnimationStateType.Dash))
                     Movement.Dash(GetMoveDir(), Stats.DashForce);
                 _animationStateMachine.InterruptState(AnimationStateType.Dash);
-                
+                StartIframe();
             }
                 
         }
@@ -333,7 +334,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
-        public void ExecuteLightAttack(Vector3 aimPosition)
+    public void ExecuteLightAttack(Vector3 aimPosition)
     {
         // _movement.Dash(_movement.LookDirection, 10f);
         // _lastAttackTime = Time.time;
@@ -341,55 +342,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
     }
     
-    // private void CheckMuso()
-    // {
-    //     _currentMusoStack++;
-    //     EventHub.Instance.OnMusoChargeIncreased.Invoke(_currentMusoStack);
-    //     FMODUnity.RuntimeManager.PlayOneShot(_musoChargeGainedSFX, transform.position);
-
-    //     if (_currentMusoStack == _musoThreshold)
-    //     {
-    //         _currentMusoStack = 0;
-    //         StartMuso();
-    //     }
-    // }
-
-    // public void MusoAttack(Vector3 aimPosition)
-    // {
-    //     // _player.TryRotate();
-    //     _animator.SetTrigger("Muso");
-    //     _lastAttackTime = Time.time;
-
-    //     // Find closest enemy to aim position
-    //     // EnemyController targetEnemy = FindClosestEnemyToPosition(aimPosition, _attackRange * 2f);
-
-    //     // if (targetEnemy != null)
-    //     {
-    //         // Look at the target
-    //         Vector3 lookDirection = targetEnemy.transform.position - transform.position;
-    //         lookDirection.y = 0;
-    //         transform.rotation = Quaternion.LookRotation(lookDirection);
-    //         FMODUnity.RuntimeManager.PlayOneShot(_musoAttackSFX, transform.position);
-    //         //CreateMusoEffect(aimPosition);
-    //         BeginHitStop(2);
-    //         targetEnemy.Health.Damage(new DamageInfo(1, targetEnemy.gameObject, gameObject, DamageType.Core));
-    //         _player.Movement.Teleport(targetEnemy.MusoPosition.position);
-    //     }
-    //     EventHub.Instance.OnMusoHit.Invoke();
-    //     EndMuso();
-    //     if(!_isTutorial)
-    //         StopCoroutine(_musoTimerCO);
-    // }
-
-    // public void MisoAttack(Vector3 aimPosition)
-    // {
-    //     MusoAttack(aimPosition);
-    // }
-
-    // public void EndMiso()
-    // {
-    //     EndMuso();
-    // }
 
     public void CleanUpLightAttack()
     {
@@ -478,6 +430,13 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
             _musoVFX.Play();
         }
+    }
+
+    private void StartIframe()
+    {
+        _iframeTween.Stop();
+        Health.IsDamageable = false;
+        _iframeTween = Tween.Delay(Stats.IframeDuration).OnComplete(() => Health.IsDamageable = true);
     }
 
     public void SlashEffect(int Index)

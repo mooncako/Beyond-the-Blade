@@ -10,6 +10,7 @@ public class Stats : ScriptableObject
     public float AttackSpeed = 1;
     public float ResourceGainMultiplier = 1;
     public float DashForce = 1000f;
+    public float IframeDuration = .2f;
 
     [Header("Vision")]
     public float Range = 4f;

@@ -146,7 +146,6 @@ public class EnemyController : Controller, IPoolable
     protected override void OnParried(float duration)
     {
         base.OnParried(duration);
-        Debug.Log("Parried");
         _brain.Stagger(duration);
         _staggerTween = Tween.Delay(duration).OnComplete(() =>
         {

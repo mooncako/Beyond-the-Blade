@@ -14,6 +14,8 @@ public class Health : MonoBehaviour
     [FoldoutGroup("Events")] public UnityEvent OnHealthRecovery;
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDeath;
 
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
+
     public void ApplyStats(Stats stats)
     {
         _maxHealth = stats.MaxHealth;
@@ -22,6 +24,7 @@ public class Health : MonoBehaviour
 
     public void Damage(DamageInfo info)
     {
+        if (!IsDamageable) return;
         CameraShakeEvent.Trigger(new LightShake());
         _health -= info.Amount;
         OnDamage.Invoke(info);
