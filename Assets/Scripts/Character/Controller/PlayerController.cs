@@ -248,14 +248,16 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started && IsActionAvailable(PlayerActionType.Attack))
         {
+
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
             _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
             _animationStateMachine.InterruptState(AnimationStateType.Attack);
+            InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         }
         else
         {
-            
+
         }
     }
     public void InputParry(InputAction.CallbackContext context)
@@ -266,6 +268,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
             _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry);
             _animationStateMachine.InterruptState(AnimationStateType.Parry);
+            InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         }
         else
         {
@@ -277,8 +280,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started)
         {
-            if(Movement.IsGrounded)
-                Movement.Dash(Stats.DashForce);
+            if (Movement.IsGrounded)
+            {
+                if(_animationStateMachine.CanEnter(AnimationStateType.Dash))
+                    Movement.Dash(GetMoveDir(), Stats.DashForce);
+                _animationStateMachine.InterruptState(AnimationStateType.Dash);
+                
+            }
+                
         }
     }
 

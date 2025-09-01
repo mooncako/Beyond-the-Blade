@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Animancer.TransitionLibraries;
 using CrashKonijn.Agent.Runtime;
+using System.Collections;
 [Serializable]
 public abstract class AnimationState
 {

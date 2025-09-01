@@ -692,7 +692,7 @@ MonoBehaviour:
   _idleState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
-    Owner: {fileID: 0}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -705,11 +705,11 @@ MonoBehaviour:
     Key: Idle
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 0
+    PossibleInterruptStates: -1
   _moveState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
-    Owner: {fileID: 0}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -722,11 +722,11 @@ MonoBehaviour:
     Key: Move
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 0
+    PossibleInterruptStates: -1
   _attackActionState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -736,14 +736,14 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: 
+    Key: Attack
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 0
+    PossibleInterruptStates: 124
   _parryActionState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -753,13 +753,13 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: 
+    Key: Parry
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 0
+    PossibleInterruptStates: 96
   _dashActionState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 0}
     Clip:
       _FadeDuration: 0.25
@@ -770,14 +770,14 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: 
+    Key: Dash
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 0
+    PossibleInterruptStates: 32
   _abilityActionState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -787,14 +787,14 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: 
+    Key: Ability
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 0
+    PossibleInterruptStates: 32
   _staggerState:
-    _stateMachine: {fileID: 0}
-    _animancer: {fileID: 0}
-    Owner: {fileID: 0}
+    _stateMachine: {fileID: 1379345722282491249}
+    _animancer: {fileID: 8394953832475103564}
+    Owner: {fileID: 4962864894029839974}
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -804,7 +804,7 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
-    Key: 
+    Key: Stagger
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 0

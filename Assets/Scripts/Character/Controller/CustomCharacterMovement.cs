@@ -24,9 +24,12 @@ public class CustomCharacterMovement : CharacterMovement3D
         Rigidbody.AddForce(knockBackDirection.normalized * knockbackForce);
     }
 
-    public void Dash(float dashForce = 2000f)
+    public void Dash(Vector3 direction, float dashForce = 2000f)
     {
-        Rigidbody.AddForce(transform.forward.normalized * dashForce);
+        if (direction == Vector3.zero)
+            Rigidbody.AddForce(transform.forward.normalized * dashForce);
+        else
+            Rigidbody.AddForce(direction.normalized * dashForce);
     }
 
     public void ResetSpeed() => CurrentSpeedMultiplier = 1f;

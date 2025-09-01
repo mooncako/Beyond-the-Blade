@@ -2,6 +2,8 @@ using System;
 using Animancer;
 using UnityEngine;
 using Animancer.TransitionLibraries;
+using System.Collections;
+using PrimeTween;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
@@ -29,12 +31,22 @@ public class ActionAnimationState : AnimationState
     {
         if (Owner != null)
             Owner.CanMove = false;
-        AnimancerState = _animancer.Play(Clip);
-        AnimancerState state = _animancer.States.Current;
-        state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
+        if (Clip.Clip != null)
+        {
+            AnimancerState = _animancer.Play(Clip);
+            AnimancerState state = _animancer.States.Current;
+            state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
+        }
+        else
+        {
+            Tween.Delay(1f).OnComplete(() =>
+            {
+                _stateMachine.SwitchState(AnimationStateType.Idle);
+            });
+        }
+        
     }
 
-  
 
     public override void OnInterrupt()
     {
