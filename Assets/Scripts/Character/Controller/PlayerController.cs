@@ -22,6 +22,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
     [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
+    [field: SerializeField, FoldoutGroup("Base Reference")] private SkillManager _skillManager;
     [Header("General Settings")]
     [SerializeField] private bool _isTutorial = false;
     [BoxGroup("Input")] public InputProcessor InputProcessor;
@@ -91,6 +92,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         StateMachine.Initialize(States.IdleState);
         _animationStateMachine = GetComponent<AnimationStateMachine>();
         _animancerComponent = GetComponent<AnimancerComponent>();
+        _skillManager = GetComponent<SkillManager>();
     }
 
     protected override void Update()
@@ -293,6 +295,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 
             }
                 
+        }
+    }
+
+    public void InputUseSkill(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            _skillManager.UseCurrentSkill();
         }
     }
 

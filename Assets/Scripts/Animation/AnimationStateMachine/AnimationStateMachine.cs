@@ -14,6 +14,8 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private ActionAnimationState _abilityActionState;
     [SerializeField] private StaggerAnimationState _staggerState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
+    [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
+
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState PreviousState;
     [DisplayAsString, BoxGroup(""), ShowInInspector] private AnimationStateType _currentState;
@@ -65,7 +67,11 @@ public class AnimationStateMachine : MonoBehaviour
         CurrentState = _idleState;
         CurrentState.OnEnterState();
     }
+    private void Update()
+    {
 
+        ;
+    }
     public void SwapAnimation(AnimationStateType type, ClipTransition clip)
     {
         switch (type)

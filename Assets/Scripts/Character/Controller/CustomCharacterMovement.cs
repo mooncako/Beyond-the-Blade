@@ -1,10 +1,10 @@
+using Animancer;
 using CharacterMovement;
 using UnityEngine;
 
 public class CustomCharacterMovement : CharacterMovement3D
 {
     public float CurrentSpeedMultiplier { get; set; } = 1f;
-
     public void Teleport(Vector3 position)
     {
         transform.position = position;
