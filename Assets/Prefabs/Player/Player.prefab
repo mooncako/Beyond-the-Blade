@@ -26,7 +26,6 @@ GameObject:
   - component: {fileID: 5714234775079022647}
   - component: {fileID: 6266151859748244355}
   - component: {fileID: 5731174687414150010}
-  - component: {fileID: 3160968339763890362}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -300,7 +299,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1108131639495183653}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: InputUseSkill
+        m_MethodName: InputUseAbility
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -604,7 +603,6 @@ MonoBehaviour:
   _bezierLine: {fileID: 0}
   _lineRenderer: {fileID: 0}
   _weaponCollider: {fileID: 0}
-  _skillManager: {fileID: 3160968339763890362}
   _isTutorial: 0
   CanRotate: 1
   _slashVFXArray: []
@@ -830,25 +828,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
---- !u!114 &3160968339763890362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6509017619537120799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d495d847272a416468df1bf597ad7fe6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerSkillsSO: {fileID: 11400000, guid: 1a09d6739b4c8164e838f21a47b5b889, type: 2}
-  SkillAnimationDatabaseSO: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
-  CurrentWeapon: {fileID: 4559995143190705224}
-  _animationStateMachine: {fileID: 0}
-  OnSkillCooldown:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &7761241864927025980
 GameObject:
   m_ObjectHideFlags: 0

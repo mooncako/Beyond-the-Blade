@@ -22,7 +22,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
     [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private SkillManager _skillManager;
     [Header("General Settings")]
     [SerializeField] private bool _isTutorial = false;
     [BoxGroup("Input")] public InputProcessor InputProcessor;
@@ -33,7 +32,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
-
+    [BoxGroup("Ability"), ReadOnly] public Dictionary<string, PlayableSkill> AbilityList { get; private set; } = new Dictionary<string, PlayableSkill>();
+    [BoxGroup("Ability"), ReadOnly] private PlayableSkill _currentAbility;
+    
     [Header("VFX")]
     [FoldoutGroup("Slash")] [SerializeField] private GameObject[] _slashVFXArray;
     [FoldoutGroup("Slash")] [SerializeField] private Transform _slashref;
@@ -92,7 +93,20 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         StateMachine.Initialize(States.IdleState);
         _animationStateMachine = GetComponent<AnimationStateMachine>();
         _animancerComponent = GetComponent<AnimancerComponent>();
-        _skillManager = GetComponent<SkillManager>();
+        foreach (string skillId in CurrentWeapon.WeaponSkillSO.SkillDict[2])
+        {
+            AbilityList.Add(skillId, new PlayableSkill(skillId));
+        }
+        if(_currentAbility==null)
+        {
+            foreach (string abilityId in AbilityList.Keys)
+            {
+                if (AbilityList.ContainsKey(abilityId))
+                    _currentAbility = AbilityList[abilityId];
+            }
+        }
+           
+
     }
 
     protected override void Update()
@@ -298,11 +312,15 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
-    public void InputUseSkill(InputAction.CallbackContext context)
+    public void InputUseAbility(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-            _skillManager.UseCurrentSkill();
+            if (_currentAbility == null) return;
+            if (_currentAbility.IsInCooldown) return;
+            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentAbility.SkillId), AnimationStateType.Ability);
+            _animationStateMachine.SwitchState(AnimationStateType.Ability);
+            StartCoroutine(AbilityCooldownCo(_currentAbility.SkillId, CurrentWeapon.SkillDatabase.SkillDict[_currentAbility.SkillId].Cooldown));
         }
     }
 
@@ -511,5 +529,22 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     public bool IsValid()
     {
         return Health.IsAlive;
+    }
+
+    public void SetCurrentAbility(string abilityId)
+    {
+        foreach(string id in AbilityList.Keys)
+        {
+            if(AbilityList.ContainsKey(abilityId))
+            {
+                _currentAbility = AbilityList[abilityId];
+            }
+        }
+    }
+    private IEnumerator AbilityCooldownCo(string key, float cooldownTime)
+    {
+        AbilityList[key].IsInCooldown = true;
+        yield return new WaitForSeconds(cooldownTime);
+        AbilityList[key].IsInCooldown = false;
     }
 }
