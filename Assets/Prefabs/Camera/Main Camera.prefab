@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7767335112569887079}
   - component: {fileID: 4515643776177804807}
   - component: {fileID: 6359407413241541527}
+  - component: {fileID: 1304162730317059089}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -271,3 +272,52 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!114 &1304162730317059089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300265162278773912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21f82ee99238ee4eb21b9a59244893c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_generateRenderTexture: 1
+  m_outputType: 0
+  m_outputTexture: {fileID: 0}
+  m_assignGlobalTexture: 1
+  m_globalTextureName: _RaytracedHardShadow
+  m_cullBackFaces: 1
+  m_flipCasterFaces: 0
+  m_ignoreSelfShadow: 1
+  m_keepSelfDropShadow: 1
+  m_selfShadowThreshold: 0.0001
+  m_shadowRayOffset: 0.0001
+  m_useCameraCullingMask: 1
+  m_useLightShadowSettings: 1
+  m_useLightCullingMask: 1
+  m_setLightIndexToAlpha: 0
+  m_useObjectShadowSettings: 1
+  m_lightScope: 0
+  m_lightScenes:
+  - {fileID: 102900000, guid: 1d4a08c53b117c649871e96e5d2dcc51, type: 3}
+  m_lightScenePaths:
+  - Assets/Scenes/Gyms/TestGym/TestGymCam.unity
+  m_lightObjects: []
+  m_geometryScope: 1
+  m_geometryScenes:
+  - {fileID: 102900000, guid: 49d604141418bdd45b3c0fd75abac4e7, type: 3}
+  m_showPreviewInSceneView: 1
+  m_geometryScenePaths:
+  - Assets/Scenes/Gyms/TestGym/TestGymCharacters.unity
+  m_geometryObjects: []
+  m_GPUSkinning: 1
+  m_adaptiveSampling: 0
+  m_antialiasing: 0
+  m_clampBlendshapeWeights: 0
+  m_dbgVerboseLog: 0
+  m_HDRPDirectionalLightList: []
+  m_renderPipeLine: 2
+  m_foldDebug: 0
