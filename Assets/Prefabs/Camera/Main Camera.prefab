@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7767335112569887079}
   - component: {fileID: 4515643776177804807}
   - component: {fileID: 6359407413241541527}
-  - component: {fileID: 1304162730317059089}
+  - component: {fileID: 575563289218849831}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -272,7 +272,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
---- !u!114 &1304162730317059089
+--- !u!114 &575563289218849831
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -301,15 +301,13 @@ MonoBehaviour:
   m_setLightIndexToAlpha: 0
   m_useObjectShadowSettings: 1
   m_lightScope: 0
-  m_lightScenes:
-  - {fileID: 102900000, guid: 1d4a08c53b117c649871e96e5d2dcc51, type: 3}
-  m_lightScenePaths:
-  - Assets/Scenes/Gyms/TestGym/TestGymCam.unity
+  m_lightScenes: []
+  m_lightScenePaths: []
   m_lightObjects: []
   m_geometryScope: 1
   m_geometryScenes:
   - {fileID: 102900000, guid: 49d604141418bdd45b3c0fd75abac4e7, type: 3}
-  m_showPreviewInSceneView: 1
+  m_showPreviewInSceneView: 0
   m_geometryScenePaths:
   - Assets/Scenes/Gyms/TestGym/TestGymCharacters.unity
   m_geometryObjects: []
@@ -318,6 +316,7 @@ MonoBehaviour:
   m_antialiasing: 0
   m_clampBlendshapeWeights: 0
   m_dbgVerboseLog: 0
-  m_HDRPDirectionalLightList: []
+  m_HDRPDirectionalLightList:
+  - {fileID: 0}
   m_renderPipeLine: 2
   m_foldDebug: 0

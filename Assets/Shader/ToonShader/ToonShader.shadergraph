@@ -462,6 +462,9 @@
         },
         {
             "m_Id": "38d5a74c5cf24d9d84eb1e5501133346"
+        },
+        {
+            "m_Id": "a35302070bd34599a1c94a7d0b6b3ada"
         }
     ],
     "m_GroupDatas": [
@@ -1340,6 +1343,20 @@
                     "m_Id": "ed330ffa02ac4d9b8f9ddf5354315604"
                 },
                 "m_SlotId": -1551598658
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "a35302070bd34599a1c94a7d0b6b3ada"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "846434a6f8654eedb28586c92770b4bb"
+                },
+                "m_SlotId": -2048359267
             }
         },
         {
@@ -2901,6 +2918,24 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Texture2DInputMaterialSlot",
+    "m_ObjectId": "1a86556f5dbc449fbbdbacc8f28347a4",
+    "m_Id": -2048359267,
+    "m_DisplayName": "RaytracedHardShadow",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_RaytracedHardShadow",
+    "m_StageCapability": 2,
+    "m_BareResource": false,
+    "m_Texture": {
+        "m_SerializedTexture": "",
+        "m_Guid": ""
+    },
+    "m_DefaultType": 0
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "1b025c07623649cbaffcf5beeb8cf795",
     "m_Id": 714148225,
@@ -4387,10 +4422,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 2612.255615234375,
-            "y": 756.1363525390625,
-            "width": 0.0,
-            "height": 0.0
+            "x": 2488.0,
+            "y": 758.0,
+            "width": 204.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
@@ -7211,6 +7246,19 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
+    "m_ObjectId": "823eb5ca1c3f40d8891cff304dee071e",
+    "m_Id": 0,
+    "m_DisplayName": "RaytracedHardShadow",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_BareResource": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.BooleanMaterialSlot",
     "m_ObjectId": "829a959d94b54b7ca577d8fa80dbff6b",
     "m_Id": -312157044,
@@ -7308,6 +7356,9 @@
             "m_Id": "2f3ad4a8244f4519be2bfba73d39ff2e"
         },
         {
+            "m_Id": "1a86556f5dbc449fbbdbacc8f28347a4"
+        },
+        {
             "m_Id": "134f8844206945fc931f785f9ebe82ab"
         }
     ],
@@ -7329,7 +7380,8 @@
         "6e41d7fe-b781-47c4-b85c-fc01ffc869df",
         "d6a42597-dcfe-4fe1-a0d3-3f9c52bff82e",
         "06afb3e2-16d7-47f0-aca3-f74ebc03de21",
-        "3e4d4e06-aa21-4c16-9c50-5b433c7d03f4"
+        "3e4d4e06-aa21-4c16-9c50-5b433c7d03f4",
+        "d01e3659-3e97-48b8-8272-9d2dd1fed330"
     ],
     "m_PropertyIds": [
         166142876,
@@ -7340,7 +7392,8 @@
         -149883848,
         729978267,
         779486501,
-        -989607545
+        -989607545,
+        -2048359267
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
@@ -7939,10 +7992,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 2249.0,
-            "y": 758.0,
+            "x": 2266.0,
+            "y": 866.9999389648438,
             "width": 305.0,
-            "height": 382.9998779296875
+            "height": 382.99993896484377
         }
     },
     "m_Slots": [
@@ -8696,6 +8749,42 @@
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "a35302070bd34599a1c94a7d0b6b3ada",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 1343.0001220703125,
+            "y": 1490.0001220703125,
+            "width": 204.0,
+            "height": 34.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "823eb5ca1c3f40d8891cff304dee071e"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "e8174c53e06c4f91822fa8e310fddf31"
+    }
 }
 
 {
@@ -11290,16 +11379,16 @@
     "m_RefNameGeneratedByDisplayName": "RaytracedHardShadow",
     "m_DefaultReferenceName": "_RaytracedHardShadow",
     "m_OverrideReferenceName": "_RaytracedHardShadow",
-    "m_GeneratePropertyBlock": true,
+    "m_GeneratePropertyBlock": false,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
     "m_DismissedVersion": 0,
     "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
+    "overrideHLSLDeclaration": true,
+    "hlslDeclarationOverride": 1,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":8400000,\"guid\":\"8dead03b5ff603344a9195c5f352102d\",\"type\":2}}",
+        "m_SerializedTexture": "",
         "m_Guid": ""
     },
     "isMainTexture": false,
