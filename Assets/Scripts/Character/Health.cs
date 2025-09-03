@@ -40,4 +40,11 @@ public class Health : MonoBehaviour
     {
         OnDeath.Invoke(info);
     }
+
+    [Button, BoxGroup("Debug")]
+    public void DebugTakeDamaage()
+    {
+        _health -= 10;
+        OnDamage.Invoke(new DamageInfo(10, gameObject,this,gameObject, DamageType.Regular));
+    }
 }
