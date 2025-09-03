@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8603676096848177205}
   - component: {fileID: 2054509112993783971}
   - component: {fileID: 8016566717477088041}
+  - component: {fileID: 8798416106402121756}
   - component: {fileID: 6266151859748244355}
   - component: {fileID: 5416810635430714}
   - component: {fileID: 4458276716399103277}
@@ -19,6 +20,7 @@ GameObject:
   - component: {fileID: 9112547462766832494}
   - component: {fileID: 5574992783778937607}
   - component: {fileID: 68828148833966052}
+  - component: {fileID: 3294508932354644453}
   - component: {fileID: 1078953859885710922}
   - component: {fileID: 1108131639495183653}
   - component: {fileID: 5394289030760871753}
@@ -123,6 +125,28 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!95 &8798416106402121756
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &6266151859748244355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -518,6 +542,26 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   IsDamageable: 1
+--- !u!114 &3294508932354644453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxEnergy: 0
+  _energy: 0
+  OnExecution:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEnergyGain:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1078953859885710922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -594,6 +638,7 @@ MonoBehaviour:
   _bezierLine: {fileID: 0}
   _lineRenderer: {fileID: 0}
   _weaponCollider: {fileID: 0}
+  Energy: {fileID: 0}
   _isTutorial: 0
   CanRotate: 1
   _slashVFXArray: []
@@ -602,7 +647,7 @@ MonoBehaviour:
   _musoVFX: {fileID: 0}
   _parryVFXPrefab: {fileID: 0}
   _parryVFXDuration: 1.5
-  _animancerComponent: {fileID: 0}
+  _animancerComponent: {fileID: 6266151859748244355}
   _musoTarget: {fileID: 0}
 --- !u!114 &5394289030760871753
 MonoBehaviour:
@@ -616,7 +661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90900d6e1efbb3f498b8ce9ad3a546f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 0}
+  _animator: {fileID: 8798416106402121756}
   _playerController: {fileID: 1108131639495183653}
   _combatController: {fileID: 0}
   _soundController: {fileID: 9112547462766832494}
@@ -638,7 +683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5f7476bff380554fa15ecb1dda3bfdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 0}
+  _animator: {fileID: 8798416106402121756}
   _characterMovement: {fileID: 4458276716399103277}
   ArmIKRig: {fileID: 0}
   DeflectRig: {fileID: 0}

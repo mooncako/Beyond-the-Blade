@@ -22,6 +22,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
     [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
     [Header("General Settings")]
     [SerializeField] private bool _isTutorial = false;
     [BoxGroup("Input")] public InputProcessor InputProcessor;
@@ -32,10 +33,10 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
     [BoxGroup("Ability"), ReadOnly] public Dictionary<string, PlayableSkill> AbilityList { get; private set; } = new Dictionary<string, PlayableSkill>();
     [BoxGroup("Ability"), ReadOnly] private PlayableSkill _currentAbility;
-    
+
     [Header("VFX")]
-    [FoldoutGroup("Slash")] [SerializeField] private GameObject[] _slashVFXArray;
-    [FoldoutGroup("Slash")] [SerializeField] private Transform _slashref;
+    [FoldoutGroup("Slash")][SerializeField] private GameObject[] _slashVFXArray;
+    [FoldoutGroup("Slash")][SerializeField] private Transform _slashref;
     [SerializeField] private float _slashVFXDuration = 0.12f;
     [SerializeField] private VisualEffect _musoVFX;
     [SerializeField] private GameObject _parryVFXPrefab;
@@ -58,8 +59,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         base.OnValidate();
         if (_input == null) _input = GetComponent<PlayerInput>();
-        if(_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
-        if(_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
+        if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+        if (_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
+        if (Energy == null) Energy = GetComponent<Energy>();
         if ((_attackableMask & (1 << 8)) == 0)
         {
             _attackableMask |= 1 << 8;
@@ -75,17 +77,17 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             _availableActions[actionType] = true;
         }
-        
+
     }
 
     void Start()
     {
-        
+
         foreach (string skillId in CurrentWeapon.WeaponSkillSO.SkillDict[2])
         {
             AbilityList.Add(skillId, new PlayableSkill(skillId));
         }
-        if(_currentAbility==null)
+        if (_currentAbility == null)
         {
             foreach (string abilityId in AbilityList.Keys)
             {
@@ -93,7 +95,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                     _currentAbility = AbilityList[abilityId];
             }
         }
-           
+
 
     }
 
@@ -111,12 +113,12 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             if (_musoTarget != null)
                 // _musoTarget.MaterialController.UnHightlight();
 
-            // _musoTarget = FindClosestEnemyToPosition(GetLookDirection(), 100);
+                // _musoTarget = FindClosestEnemyToPosition(GetLookDirection(), 100);
 
-            if (_musoTarget == null)
-            {
-                _lineRenderer.enabled = false;
-            }
+                if (_musoTarget == null)
+                {
+                    _lineRenderer.enabled = false;
+                }
 
             if (_musoTarget != null)
             {
@@ -171,7 +173,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _forward.y = 0;
             _forward.Normalize();
         }
-        
+
 
         Vector3 right = new Vector3(_forward.z, 0, -_forward.x);
         if (_input.currentControlScheme == "Keyboard&Mouse")
@@ -199,7 +201,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _forward.y = 0;
             _forward.Normalize();
         }
-        
+
 
         Vector3 right = new Vector3(_forward.z, 0, -_forward.x);
         if (_input.currentControlScheme == "Keyboard&Mouse")
@@ -291,11 +293,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 {
                     Movement.Dash(GetMoveDir(), Stats.DashForce);
                     StartIframe();
-                }   
+                }
                 _animationStateMachine.InterruptState(AnimationStateType.Dash);
-                
+
             }
-                
+
         }
     }
 
@@ -310,7 +312,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             {
                 StartCoroutine(AbilityCooldownCo(_currentAbility.SkillId, CurrentWeapon.SkillDatabase.SkillDict[_currentAbility.SkillId].Cooldown));
             }
-            
+
         }
     }
 
@@ -362,7 +364,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         // Movement.SetLookPosition(aimPosition);
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
     }
-    
+
 
     public void CleanUpLightAttack()
     {
@@ -499,7 +501,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     //         _musoTimerCO = MusoTimerCO();
     //         StartCoroutine(_musoTimerCO);
     //     }
-            
+
     // }
 
     // public void EndMuso()
@@ -523,9 +525,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public void SetCurrentAbility(string abilityId)
     {
-        foreach(string id in AbilityList.Keys)
+        foreach (string id in AbilityList.Keys)
         {
-            if(AbilityList.ContainsKey(abilityId))
+            if (AbilityList.ContainsKey(abilityId))
             {
                 _currentAbility = AbilityList[abilityId];
             }
@@ -536,5 +538,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         AbilityList[key].IsInCooldown = true;
         yield return new WaitForSeconds(cooldownTime);
         AbilityList[key].IsInCooldown = false;
+    }
+
+    [Button]
+    public override void ApplyStats()
+    {
+        if (Stats == null) return;
+        Vision.ApplyStats(Stats);
+        Health.ApplyStats(Stats);
+        Energy.ApplyStats(Stats);
     }
 }

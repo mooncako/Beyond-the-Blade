@@ -4,6 +4,7 @@ public class Stats : ScriptableObject
 {
     [Header("Stats")]
     public float MaxHealth = 100f;
+    public float MaxEnergy = 10f;
     public float MovementSpeedMultiplier = 1;
     public float DamageMultiplier = 1;
     public float DamageReduction = 0;

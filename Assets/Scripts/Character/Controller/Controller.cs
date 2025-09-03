@@ -178,7 +178,7 @@ public class Controller : MonoBehaviour
     }
 
     [Button]
-    public void ApplyStats()
+    public virtual void ApplyStats()
     {
         if (Stats == null) return;
         Vision.ApplyStats(Stats);
