@@ -104,6 +104,13 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.Update();
         HandleRotation();
         InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+
+        // link the input to movement
+        var customMovement = Movement as CustomCharacterMovement;
+        if (customMovement != null)
+        {
+            customMovement.SetMoveInput(GetMoveDir());
+        }
         if (_isPerfectParryWindowActive)
         {
             DetectParry();
@@ -238,8 +245,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         // Only apply movement if the action is available
         //InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
-        // if (!_animationStatemachine.IsInActionState())
-        //     _animationStatemachine.SwitchState(AnimationStateType.Move); 
+        //if (!_animationStateMachine.IsInActionState())
+        //    _animationStateMachine.SwitchState(AnimationStateType.Move);
+
 
     }
 

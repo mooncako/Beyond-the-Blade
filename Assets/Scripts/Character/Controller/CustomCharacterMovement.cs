@@ -38,6 +38,12 @@ public class CustomCharacterMovement : CharacterMovement3D
         CurrentSpeedMultiplier = multiplier;
     }
 
+
+    public void SetMoveInput(Vector3 input)
+    {
+        MoveInput = input;
+    }
+
     protected override void Update()
     {
         base.Update();
