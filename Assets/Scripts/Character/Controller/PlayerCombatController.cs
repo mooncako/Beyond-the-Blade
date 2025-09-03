@@ -360,7 +360,7 @@ public class PlayerCombatController : MonoBehaviour
         BeginHitStop(1);
         // enemy.Stagger();
         // _player.StartIframe();
-        _player.Animator.SetBool("Deflect", true);
+        // _player.Animator.SetBool("Deflect", true);
         if (_parryVFXPrefab != null)
         {
             GameObject vfxInstance = Instantiate

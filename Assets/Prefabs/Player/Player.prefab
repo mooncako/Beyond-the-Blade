@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2770192959741835255}
   - component: {fileID: 8603676096848177205}
   - component: {fileID: 2054509112993783971}
-  - component: {fileID: 5315302306169048786}
   - component: {fileID: 8016566717477088041}
+  - component: {fileID: 6266151859748244355}
   - component: {fileID: 5416810635430714}
   - component: {fileID: 4458276716399103277}
   - component: {fileID: 2553810978626859978}
@@ -24,7 +24,6 @@ GameObject:
   - component: {fileID: 5394289030760871753}
   - component: {fileID: 1783677996304612703}
   - component: {fileID: 5714234775079022647}
-  - component: {fileID: 6266151859748244355}
   - component: {fileID: 5731174687414150010}
   m_Layer: 7
   m_Name: Player
@@ -102,28 +101,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!95 &5315302306169048786
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6509017619537120799}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &8016566717477088041
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -146,6 +123,21 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6266151859748244355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ad50f81b1d25c441943c37a89ba23f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Animator: {fileID: 0}
+  _Transitions: {fileID: 11400000, guid: c8fa2674fa4fbdf43ab1fcae4fb68dcb, type: 2}
+  _ActionOnDisable: 0
 --- !u!114 &5416810635430714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,7 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Speed>k__BackingField: 5
   <Acceleration>k__BackingField: 10
-  <TurnSpeed>k__BackingField: 15
+  <TurnSpeed>k__BackingField: 50
   <OnlyTurnWithInput>k__BackingField: 1
   <StoppingDistance>k__BackingField: 0.25
   <LookInMoveDirection>k__BackingField: 1
@@ -564,7 +556,6 @@ MonoBehaviour:
   <Targetable>k__BackingField: {fileID: 5574992783778937607}
   <Health>k__BackingField: {fileID: 68828148833966052}
   <Vision>k__BackingField: {fileID: 1078953859885710922}
-  <Animator>k__BackingField: {fileID: 5315302306169048786}
   <AOEApplier>k__BackingField: {fileID: 5714234775079022647}
   <AttackPoint>k__BackingField: {fileID: 6111448855060232503}
   _weapons:
@@ -625,7 +616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90900d6e1efbb3f498b8ce9ad3a546f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 5315302306169048786}
+  _animator: {fileID: 0}
   _playerController: {fileID: 1108131639495183653}
   _combatController: {fileID: 0}
   _soundController: {fileID: 9112547462766832494}
@@ -647,7 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5f7476bff380554fa15ecb1dda3bfdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 5315302306169048786}
+  _animator: {fileID: 0}
   _characterMovement: {fileID: 4458276716399103277}
   ArmIKRig: {fileID: 0}
   DeflectRig: {fileID: 0}
@@ -677,21 +668,6 @@ MonoBehaviour:
   _arcHeight: 2
   _type: 0
   _attackPoint: {fileID: 6111448855060232503}
---- !u!114 &6266151859748244355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6509017619537120799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ad50f81b1d25c441943c37a89ba23f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _Animator: {fileID: 5315302306169048786}
-  _Transitions: {fileID: 11400000, guid: c8fa2674fa4fbdf43ab1fcae4fb68dcb, type: 2}
-  _ActionOnDisable: 0
 --- !u!114 &5731174687414150010
 MonoBehaviour:
   m_ObjectHideFlags: 0

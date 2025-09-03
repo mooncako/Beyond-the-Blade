@@ -12,7 +12,6 @@ using UnityUtils;
 [RequireComponent(typeof(Targetable))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Vision))]
-[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(AnimancerComponent))]
 [RequireComponent(typeof(AOEApplier))]
 public class Controller : MonoBehaviour
@@ -22,7 +21,6 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public Targetable Targetable { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
-    [field: SerializeField, FoldoutGroup("Base Reference")] public Animator Animator { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
@@ -53,7 +51,6 @@ public class Controller : MonoBehaviour
         if (Targetable == null) Targetable = GetComponent<Targetable>();
         if (Health == null) Health = GetComponent<Health>();
         if (Vision == null) Vision = GetComponent<Vision>();
-        if (Animator == null) Animator = GetComponent<Animator>();
         if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
         if (_parryCollider == null) _parryCollider = GetComponentInChildren<ParryCollider>();
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();

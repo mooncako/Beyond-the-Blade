@@ -26,8 +26,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [SerializeField] private bool _isTutorial = false;
     [BoxGroup("Input")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
-    [BoxGroup("Input")] public PlayerStateMachine StateMachine { get; private set; }
-    [BoxGroup("Input")] public StateCollection States { get; private set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
@@ -48,13 +46,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [SerializeField] private AnimancerComponent _animancerComponent;
 
 
-#if UNITY_EDITOR
-    [Header("Current State")]
-    [DisplayAsString, HideLabel, ShowInInspector] public string PlayerCurrentState => StateMachine?.CurrentState.ToString() ?? "None";
-
-    public Vector3 Position => throw new System.NotImplementedException();
-#endif
-
     private Vector3 _forward;
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
     private bool _isPerfectParryWindowActive = false;
@@ -67,6 +58,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         base.OnValidate();
         if (_input == null) _input = GetComponent<PlayerInput>();
+        if(_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+        if(_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
         if ((_attackableMask & (1 << 8)) == 0)
         {
             _attackableMask |= 1 << 8;
@@ -76,9 +69,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     protected override void Awake()
     {
         base.Awake();
-
-        StateMachine = new PlayerStateMachine();
-        States = new StateCollection(this, StateMachine);
         InputProcessor = new InputProcessor();
 
         foreach (PlayerActionType actionType in System.Enum.GetValues(typeof(PlayerActionType)))
@@ -90,9 +80,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     void Start()
     {
-        StateMachine.Initialize(States.IdleState);
-        _animationStateMachine = GetComponent<AnimationStateMachine>();
-        _animancerComponent = GetComponent<AnimancerComponent>();
+        
         foreach (string skillId in CurrentWeapon.WeaponSkillSO.SkillDict[2])
         {
             AbilityList.Add(skillId, new PlayableSkill(skillId));
@@ -113,7 +101,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         base.Update();
         HandleRotation();
-        StateMachine.CurrentState.Update();
         InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
         if (_isPerfectParryWindowActive)
         {
