@@ -319,8 +319,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             if (_currentAbility == null) return;
             if (_currentAbility.IsInCooldown) return;
             _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentAbility.SkillId), AnimationStateType.Ability);
-            _animationStateMachine.SwitchState(AnimationStateType.Ability);
-            StartCoroutine(AbilityCooldownCo(_currentAbility.SkillId, CurrentWeapon.SkillDatabase.SkillDict[_currentAbility.SkillId].Cooldown));
+            if (_animationStateMachine.InterruptState(AnimationStateType.Ability))
+            {
+                StartCoroutine(AbilityCooldownCo(_currentAbility.SkillId, CurrentWeapon.SkillDatabase.SkillDict[_currentAbility.SkillId].Cooldown));
+            }
+            
         }
     }
 

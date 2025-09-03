@@ -101,6 +101,10 @@ public class AnimationStateMachine : MonoBehaviour
         CurrentState.SwapClip(clip);
     }
 
+    /// <summary>
+    /// Forcifully switching to another state, does not care whether the current state can transfer to the target state
+    /// </summary>
+    /// <param name="type"></param>
     public void SwitchState(AnimationStateType type)
     {
         CurrentState.OnExitState();
@@ -136,13 +140,18 @@ public class AnimationStateMachine : MonoBehaviour
                 _currentState = AnimationStateType.Stagger;
                 break;
         }
-        
+
         CurrentState.OnEnterState();
     }
 
-    public void InterruptState(AnimationStateType type)
+    /// <summary>
+    /// Interrupting the current state and switch to another one if allows
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public bool InterruptState(AnimationStateType type)
     {
-        if (!CanEnter(type)) return;
+        if (!CanEnter(type)) return false;
 
         CurrentState.OnExitState();
         CurrentState.OnInterrupt();
@@ -181,6 +190,7 @@ public class AnimationStateMachine : MonoBehaviour
                 break;
         }
         CurrentState.OnEnterState();
+        return true;
     }
 
     public void SetActionStateClip(ClipTransition clip, AnimationStateType type)
