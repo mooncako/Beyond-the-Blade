@@ -8,7 +8,7 @@ using System.Linq;
 public class Weapon : MonoBehaviour
 {
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
-    [SerializeField, BoxGroup("Data")] private SkillsSO _skillDatabase;
+    [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
     [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
 
@@ -38,17 +38,17 @@ public class Weapon : MonoBehaviour
     public Skill LoopBasicAttack()
     {
         if (_animationDatabase == null) return null;
-        if (_skillDatabase == null) return null;
+        if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
         foreach (string key in WeaponSkillSO.SkillDict[0])
         {
             if (!AvailableSkills[key].IsInCooldown)
-                if (_skillDatabase.SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
-                    _animationDatabase.SkillAnimDict.ContainsKey(_skillDatabase.SkillDict[AvailableSkills[key].SkillId].AnimationID))
+                if (SkillDatabase.SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
+                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDatabase.SkillDict[AvailableSkills[key].SkillId].AnimationID))
                 {
-                    StartCoroutine(SkillCooldownCO(key, _skillDatabase.SkillDict[AvailableSkills[key].SkillId].Cooldown));
-                    return _skillDatabase.SkillDict[AvailableSkills[key].SkillId];
+                    StartCoroutine(SkillCooldownCO(key, SkillDatabase.SkillDict[AvailableSkills[key].SkillId].Cooldown));
+                    return SkillDatabase.SkillDict[AvailableSkills[key].SkillId];
                 }
         }
         return null;
@@ -57,15 +57,15 @@ public class Weapon : MonoBehaviour
     public Skill GetSkill(string skillId)
     {
         if (_animationDatabase == null) return null;
-        if (_skillDatabase == null) return null;
+        if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        return _skillDatabase.SkillDict[skillId];
+        return SkillDatabase.SkillDict[skillId];
     }
 
     public Skill GetRandomParrySkill()
     {
-        return _skillDatabase.SkillDict[WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
+        return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
     }
 
     public ClipTransition GetAnimationClip(string animationId)
@@ -78,5 +78,9 @@ public class Weapon : MonoBehaviour
         AvailableSkills[key].IsInCooldown = true;
         yield return new WaitForSeconds(cooldownTime);
         AvailableSkills[key].IsInCooldown = false;
+    }
+    public void UseAbility(string abilityId)
+    {
+
     }
 }
