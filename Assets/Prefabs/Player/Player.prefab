@@ -650,6 +650,9 @@ MonoBehaviour:
   _parryVFXDuration: 1.5
   _animancerComponent: {fileID: 6266151859748244355}
   _musoTarget: {fileID: 0}
+  OnExecutionStarted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5394289030760871753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,6 +1062,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2770192959741835255}
     m_Modifications:
+    - target: {fileID: 1736731544073496272, guid: a3308335b0bcd344ba72812b64ea77a5, type: 3}
+      propertyPath: _controller
+      value: 
+      objectReference: {fileID: 1108131639495183653}
     - target: {fileID: 7134121965875845359, guid: a3308335b0bcd344ba72812b64ea77a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

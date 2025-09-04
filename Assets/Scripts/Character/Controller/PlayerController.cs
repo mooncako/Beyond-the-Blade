@@ -47,6 +47,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     public bool MusoReady { get; private set; }
     [SerializeField] private EnemyController _musoTarget;
 
+    [HideInInspector] public UnityEvent OnExecutionStarted;
+
     private Tween _iframeTween;
 
     protected override void OnValidate()
@@ -421,23 +423,6 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
-
-    // public void PlayerStagger()
-    // {
-    //     StartCoroutine(PlayerStaggerCO());
-    // }
-
-    // private IEnumerator PlayerStaggerCO()
-    // {
-    //     IsStaggered = true;
-    //     _animator.SetBool("IsStaggered", true);
-    //     //Debug.Log("Staggered");
-    //     yield return new WaitForSeconds(0.25f);
-    //     //Debug.Log("Recovered");
-    //     IsStaggered = false;
-    //     _animator.SetBool("IsStaggered", false);
-    // }
-
     private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
     {
         // Find all enemies in scene within the attack layer
@@ -497,44 +482,10 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         yield return new WaitForSeconds(_slashVFXDuration);
         _slashVFXArray[index].GetComponent<ParticleSystem>().Stop();
     }
-
-    // private IEnumerator MusoTimerCO()
-    // {
-    //     yield return new WaitForSeconds(_musoReadyDuration);
-    //     if (_musoTarget != null)
-    //         _musoTarget.MaterialController.UnHightlight();
-    //     EndMuso();
-    //     FMODUnity.RuntimeManager.PlayOneShot(_musoExitSFX, transform.position);
-    // }
-
     public void EndParry()
     {
         _isPerfectParryWindowActive = false;
     }
-
-    // public void StartMuso()
-    // {
-    //     EventHub.Instance.OnMusoStart.Invoke();
-    //     _animator.SetBool("MusoReady", true);
-    //     MusoReady = true;
-    //     _lineRenderer.enabled = true;
-    //     FMODUnity.RuntimeManager.PlayOneShot(_musoActivatedSFX, transform.position);
-    //     if (!_isTutorial)
-    //     {
-    //         _musoTimerCO = MusoTimerCO();
-    //         StartCoroutine(_musoTimerCO);
-    //     }
-
-    // }
-
-    // public void EndMuso()
-    // {
-    //     EventHub.Instance.OnMusoEnd.Invoke();
-    //     MusoReady = false;
-    //     _animator.SetBool("MusoReady", false);
-    //     _lineRenderer.enabled = false;
-    //     FMODUnity.RuntimeManager.PlayOneShot(_musoExitSFX, transform.position);
-    // }   
 
     public float GetKnockbackForce()
     {

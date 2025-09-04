@@ -107,4 +107,9 @@ public class AnimationEventReceiver : MonoBehaviour
     {
         Tween.Custom(0, 1, duration: 1.5f, onValueChange: newVal => Time.timeScale = _deathTimeScaleCurve.Evaluate(newVal), useUnscaledTime: true);
     }
+
+    public void StartExecutionLogicAnimEvent()
+    {
+        _playerController.OnExecutionStarted.Invoke();
+    }
 }
