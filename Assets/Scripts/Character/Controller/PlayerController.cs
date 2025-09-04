@@ -324,10 +324,19 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             if (Energy.IsFull)
             {
-                // TODO: Muso Algorithm
-                Energy.Execute(); // depletes energy
+                TryExecution();
             }
         }
+    }
+
+    private void TryExecution()
+    {
+        // TODO: Muso Algorithm
+        _currentSkill = CurrentWeapon.GetExecutionSkill();
+        _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
+        _animationStateMachine.InterruptState(AnimationStateType.Attack);
+        Movement.Stop();
+        Energy.Execute(); // depletes energy
     }
 
     public void InputPauseUnPause(InputAction.CallbackContext context)

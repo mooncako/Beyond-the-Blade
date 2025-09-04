@@ -54,6 +54,15 @@ public class Weapon : MonoBehaviour
         return null;
     }
 
+    public Skill GetExecutionSkill()
+    {
+        if (_animationDatabase == null) return null;
+        if (SkillDatabase == null) return null;
+        if (AvailableSkills.Count == 0) return null;
+
+        return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[3][0]];
+    }
+
     public Skill GetSkill(string skillId)
     {
         if (_animationDatabase == null) return null;
