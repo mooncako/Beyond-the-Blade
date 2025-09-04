@@ -238,10 +238,6 @@ MonoBehaviour:
     m_ActionName: 'Player/Next[/Keyboard/2]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 641cd816-40e6-41b4-8c3d-04687c349290
-    m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
-  - m_PersistentCalls:
-      m_Calls: []
     m_ActionId: c95b2375-e6d9-4b88-9c4c-c5e76515df4b
     m_ActionName: 'UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
@@ -328,6 +324,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: b016902b-dcf1-42af-9883-126510980622
     m_ActionName: 'Player/UseSkill[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a12d0a45-fb63-424c-9541-b740281cd32d
+    m_ActionName: 'Player/Execution[/Keyboard/z]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -528,8 +528,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a4f0715a5292642874cbaaff57a63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 0
-  _health: 0
+  _maxHealth: 100
+  _health: 100
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -555,7 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxEnergy: 0
+  _maxEnergy: 10
   _energy: 0
   OnExecution:
     m_PersistentCalls:
@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Range: 4
-  AlertRange: 6
+  AlertRange: 7.3
   FieldOfView: 140
   _occlusionMask:
     serializedVersion: 2
@@ -777,7 +777,7 @@ MonoBehaviour:
     Key: Attack
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 124
+    PossibleInterruptStates: 0
   _parryActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -794,7 +794,7 @@ MonoBehaviour:
     Key: Parry
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 96
+    PossibleInterruptStates: 0
   _dashActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -811,7 +811,7 @@ MonoBehaviour:
     Key: Dash
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 40
+    PossibleInterruptStates: 0
   _abilityActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -828,7 +828,7 @@ MonoBehaviour:
     Key: Ability
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 104
+    PossibleInterruptStates: 0
   _staggerState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1233,9 +1233,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterUI
       objectReference: {fileID: 0}
+    - target: {fileID: 6963146363708394124, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
+      propertyPath: _health
+      value: 
+      objectReference: {fileID: 68828148833966052}
     - target: {fileID: 9142264748244354741, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.08
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9142264748244354741, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1243,7 +1247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9142264748244354741, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.97
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9142264748244354741, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
       propertyPath: m_LocalRotation.w

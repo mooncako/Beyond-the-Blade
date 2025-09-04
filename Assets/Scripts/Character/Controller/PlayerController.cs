@@ -1,16 +1,10 @@
 using System.Collections.Generic;
-using CrashKonijn.Agent.Core;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
-using FMODUnity;
-using FMOD.Studio;
 using UnityEngine.VFX;
-using TMPro;
-using Unity.Cinemachine;
-using UnityUtils;
 using Animancer;
 using PrimeTween;
 
@@ -321,6 +315,18 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 StartCoroutine(AbilityCooldownCo(_currentAbility.SkillId, CurrentWeapon.SkillDatabase.SkillDict[_currentAbility.SkillId].Cooldown));
             }
 
+        }
+    }
+
+    public void InputExecution(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (Energy.IsFull)
+            {
+                // TODO: Muso Algorithm
+                Energy.Execute(); // depletes energy
+            }
         }
     }
 

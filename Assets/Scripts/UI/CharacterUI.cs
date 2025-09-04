@@ -4,12 +4,12 @@ public class CharacterUI : MonoBehaviour
 {
     [SerializeField] protected Health _health;
     private HealthBar _healthBar;
-    void Awake()
+
+    void OnValidate()
     {
-          _healthBar = GetComponentInChildren<HealthBar>();
+        if (_healthBar == null) _healthBar = GetComponentInChildren<HealthBar>();
         if(_health == null) _health = GetComponentInParent<Health>();
     }
-
 
     private void OnEnable()
     {

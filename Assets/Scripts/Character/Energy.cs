@@ -6,9 +6,9 @@ using UnityUtils;
 public class Energy : MonoBehaviour
 {
     [SerializeField, BoxGroup("Stats"), ReadOnly] private float _maxEnergy;
-    [SerializeField, BoxGroup("Stats"), ReadOnly] private float _energy;
+    [field: SerializeField, BoxGroup("Stats"), ReadOnly] private float _energy = 0;
 
-    [SerializeField, BoxGroup("Stats"), ReadOnly] public bool IsFull => _energy.Approx(_maxEnergy);
+    [ShowInInspector, BoxGroup("Stats"), ReadOnly] public bool IsFull => _energy.Approx(_maxEnergy);
 
     [FoldoutGroup("Events")] public UnityEvent OnExecution;
     [FoldoutGroup("Events")] public UnityEvent<float> OnEnergyGain;
@@ -16,6 +16,12 @@ public class Energy : MonoBehaviour
     public void ApplyStats(Stats stats)
     {
         _maxEnergy = stats.MaxEnergy;
-        _energy = _maxEnergy;
+        _energy = 0;
+    }
+
+    public void Execute()
+    {
+        _energy = 0;
+        OnExecution.Invoke();
     }
 }
