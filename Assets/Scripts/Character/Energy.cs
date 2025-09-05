@@ -24,4 +24,8 @@ public class Energy : MonoBehaviour
         _energy = 0;
         OnExecution.Invoke();
     }
+    public float GetCurrentEnergyPercentage()
+    {
+        return _energy / _maxEnergy;
+    }
 }

@@ -3,27 +3,27 @@ using UnityEngine;
 public class CharacterUI : MonoBehaviour
 {
     [SerializeField] protected Health _health;
-    private HealthBar _healthBar;
+    [SerializeField] private ResourceBar _healthBar;
 
-    void OnValidate()
+    protected virtual void OnValidate()
     {
-        if (_healthBar == null) _healthBar = GetComponentInChildren<HealthBar>();
+        if (_healthBar == null) _healthBar = GetComponentInChildren<ResourceBar>();
         if(_health == null) _health = GetComponentInParent<Health>();
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         if (_health != null)
         {
             _health.OnDamage.AddListener(OnDamage);
         }
     }
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         _health.OnDamage.RemoveListener(OnDamage);
     }
     private void OnDamage(DamageInfo damageInfo)
     {
-        _healthBar.OnDamage(_health.HealthPercentage);
+        _healthBar.UpdateFillAmount(_health.HealthPercentage);
     }
 }

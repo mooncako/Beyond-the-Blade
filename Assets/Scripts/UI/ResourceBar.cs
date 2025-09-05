@@ -1,9 +1,9 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.UI;
-public class HealthBar : MonoBehaviour
+public class ResourceBar : MonoBehaviour
 {
-    [BoxGroup("References"), SerializeField] protected Image _healthImage;
+    [BoxGroup("References"), SerializeField] protected Image _resourceImage;
     //[BoxGroup("References"), SerializeField] protected Health _health;
 
     protected virtual void Start()
@@ -14,8 +14,8 @@ public class HealthBar : MonoBehaviour
     {
 
     }
-    public virtual void OnDamage(float healthPercentage)
+    public virtual void UpdateFillAmount(float fillAmount)
     {
-        _healthImage.fillAmount = healthPercentage;
+        _resourceImage.fillAmount = fillAmount;
     }
 }
