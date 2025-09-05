@@ -630,8 +630,6 @@ MonoBehaviour:
     Rarity: 0
     TargetSelf: 0
     IsTargetedGroundAOE: 0
-    Buffs: []
-    Debuffs: []
   _targetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -1063,6 +1061,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 2770192959741835255}
     m_Modifications:
     - target: {fileID: 1736731544073496272, guid: a3308335b0bcd344ba72812b64ea77a5, type: 3}
+      propertyPath: _controller
+      value: 
+      objectReference: {fileID: 1108131639495183653}
+    - target: {fileID: 2810536173347335280, guid: a3308335b0bcd344ba72812b64ea77a5, type: 3}
       propertyPath: _controller
       value: 
       objectReference: {fileID: 1108131639495183653}

@@ -126,12 +126,12 @@ public class Controller : MonoBehaviour
         AOEApplier.X = _currentSkill.SkillRange.X;
         AOEApplier.Y = _currentSkill.SkillRange.Y;
         AOEApplier.Z = _currentSkill.SkillRange.Z;
-        _hitTargets.Clear();
 
     }
 
     public virtual void DamageAnimEvent()
     {
+        _hitTargets.Clear();
         if (_currentSkill.IsTargetedGroundAOE)
         {
             _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
@@ -148,7 +148,6 @@ public class Controller : MonoBehaviour
 
             }
         }
-
 
         foreach (GameObject target in _hitTargets)
         {
