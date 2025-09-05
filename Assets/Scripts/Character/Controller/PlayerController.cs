@@ -196,7 +196,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         return Vector3.zero;
     }
 
-    private Vector3 GetAimPoint()
+    public Vector3 GetAimPoint()
     {
         if (_forward == Vector3.zero)
         {

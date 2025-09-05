@@ -176,7 +176,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         // Basic fields
                         skill.AnimationID = r.AnimationID ?? "";
                         skill.Cooldown = r.Cooldown;
-                        skill.Damage   = r.Damage;
+                        skill.Damage = r.Damage;
                         skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
 
@@ -209,8 +209,8 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         skill.SkillRange.Z = r.RangeZ;
 
                         // Lists
-                        skill.Buffs   = SplitList(r.Buffs);
-                        skill.Debuffs = SplitList(r.Debuffs);
+                        skill.Buffs = ParsePairs(r.Buffs);
+                        skill.Debuffs = ParsePairs(r.Debuffs);
 
                         dirty = true;
                         updated++;
@@ -240,6 +240,70 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
         for (int i = 0; i < parts.Count; i++)
             parts[i] = parts[i].Replace("\\;", ";");
         return parts;
+    }
+
+    private static List<(string, float)> ParsePairs(string s)
+    {
+        var result = new List<(string, float)>();
+        if (string.IsNullOrEmpty(s)) return result;
+
+        // Tokenize by unescaped semicolons
+        List<string> tokens = new List<string>();
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        bool escape = false;
+        foreach (char ch in s)
+        {
+            if (escape) { sb.Append(ch); escape = false; continue; }
+            if (ch == '\\') { escape = true; continue; }
+            if (ch == ';') { tokens.Add(sb.ToString()); sb.Clear(); continue; }
+            sb.Append(ch);
+        }
+        if (sb.Length > 0) tokens.Add(sb.ToString());
+
+        foreach (var token in tokens)
+        {
+            // Split by first unescaped colon
+            string left = null, right = null;
+            sb.Clear(); escape = false;
+            bool split = false;
+            foreach (char ch in token)
+            {
+                if (escape) { sb.Append(ch); escape = false; continue; }
+                if (ch == '\\') { escape = true; continue; }
+                if (ch == ':' && !split)
+                {
+                    left = sb.ToString();
+                    sb.Clear();
+                    split = true;
+                    continue;
+                }
+                sb.Append(ch);
+            }
+            right = sb.ToString();
+
+            string id = (left ?? "").Trim();
+            string valStr = (right ?? "").Trim();
+            if (string.IsNullOrEmpty(id)) continue;
+
+            float value = 0f;
+            float.TryParse(valStr, System.Globalization.NumberStyles.Float,
+                           System.Globalization.CultureInfo.InvariantCulture, out value);
+
+            result.Add((id, value));
+        }
+
+        return result;
+    }
+
+    // Optional (useful if you add PUSH later)
+    private static string FormatPairs(IEnumerable<(string, float)> pairs)
+    {
+        if (pairs == null) return "";
+        string Esc(string x) => x?.Replace("\\", "\\\\").Replace(";", "\\;").Replace(":", "\\:") ?? "";
+        var parts = new List<string>();
+        foreach (var (id, val) in pairs)
+            parts.Add($"{Esc(id)}:{val.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+        return string.Join(";", parts);
     }
 }
 

@@ -12,6 +12,6 @@ public class Skill
     public SkillRarity Rarity;
     public bool TargetSelf;
     public bool IsTargetedGroundAOE;
-    public List<string> Buffs = new List<string>();
-    public List<string> Debuffs = new List<string>();
+    public List<(string,float)> Buffs = new List<(string,float)>();
+    public List<(string,float)> Debuffs = new List<(string,float)>();
 }

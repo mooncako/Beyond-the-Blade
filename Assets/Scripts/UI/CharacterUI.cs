@@ -20,7 +20,11 @@ public class CharacterUI : MonoBehaviour
     }
     protected virtual void OnDisable()
     {
-        _health.OnDamage.RemoveListener(OnDamage);
+        if (_health != null)
+        {
+            _health.OnDamage.RemoveListener(OnDamage);
+        }
+        
     }
     private void OnDamage(DamageInfo damageInfo)
     {

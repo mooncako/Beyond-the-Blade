@@ -143,9 +143,9 @@ public class Controller : MonoBehaviour
                 _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
             }
             else
-            {                
+            {
                 _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
-                
+
             }
         }
 
@@ -153,7 +153,6 @@ public class Controller : MonoBehaviour
         foreach (GameObject target in _hitTargets)
         {
             Health health = target.GetComponent<Health>();
-
             DamageInfo info = new DamageInfo(_currentSkill.Damage, target, health, gameObject, DamageType.Regular);
             health.Damage(info);
         }

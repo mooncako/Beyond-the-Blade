@@ -26,7 +26,6 @@ public class Health : MonoBehaviour
     public void Damage(DamageInfo info)
     {
         if (!IsDamageable) return;
-        CameraShakeEvent.Trigger(new LightShake());
         _health -= info.Amount;
         OnDamage.Invoke(info);
 

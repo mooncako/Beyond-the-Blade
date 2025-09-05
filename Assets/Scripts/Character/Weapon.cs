@@ -35,6 +35,11 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    public void ApplyModifiers()
+    {
+        
+    }
+
     public Skill LoopBasicAttack()
     {
         if (_animationDatabase == null) return null;
@@ -59,6 +64,7 @@ public class Weapon : MonoBehaviour
         if (_animationDatabase == null) return null;
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
+
 
         return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[3][0]];
     }

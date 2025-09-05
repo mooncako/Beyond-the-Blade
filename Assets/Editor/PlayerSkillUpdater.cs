@@ -41,9 +41,9 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
     // --- UI state (adjust URL/secret to your values) ---
     [Header("Google Apps Script Web App")]
-    [SerializeField] private string _webAppUrl    = "https://script.google.com/macros/s/AKfycbw-fe8xucRwRdbBlrM8r5yLFZGbHe7WZNIKMH-F_a2Dv9iiw7B3uNG_p04U3g6FeudR9w/exec";
-    [SerializeField] private string _sharedSecret  = "BYTHEBLADE";
-    [SerializeField] private string _sheetName     = "PlayerSkills"; // <- new tab name
+    [SerializeField] private string _webAppUrl = "https://script.google.com/macros/s/AKfycbw-fe8xucRwRdbBlrM8r5yLFZGbHe7WZNIKMH-F_a2Dv9iiw7B3uNG_p04U3g6FeudR9w/exec";
+    [SerializeField] private string _sharedSecret = "BYTHEBLADE";
+    [SerializeField] private string _sheetName = "PlayerSkills"; // <- new tab name
 
     [Header("Sources (ScriptableObjects)")]
     [SerializeField] private List<PlayerSkillsSO> _sources = new List<PlayerSkillsSO>();
@@ -61,9 +61,9 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
     private void OnGUI()
     {
         EditorGUILayout.LabelField("Google Apps Script Web App", EditorStyles.boldLabel);
-        _webAppUrl    = EditorGUILayout.TextField("Web App URL", _webAppUrl);
+        _webAppUrl = EditorGUILayout.TextField("Web App URL", _webAppUrl);
         _sharedSecret = EditorGUILayout.TextField("Shared Secret", _sharedSecret);
-        _sheetName    = EditorGUILayout.TextField("Sheet (tab) Name", _sheetName);
+        _sheetName = EditorGUILayout.TextField("Sheet (tab) Name", _sheetName);
 
         EditorGUILayout.Space();
 
@@ -134,7 +134,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
             }
 
             // detail has an info header then the JSON body on next line
-            var idx  = detail.IndexOf('\n');
+            var idx = detail.IndexOf('\n');
             var body = idx >= 0 ? detail.Substring(idx + 1) : detail;
 
             Debug.Log($"[SheetSync] PULL raw body:\n{body}");
@@ -156,7 +156,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                     foreach (var kv in map)
                     {
                         var key = kv.Key;
-                        var r   = kv.Value;
+                        var r = kv.Value;
 
                         // ---- NOTE ----
                         // Change 'PlayerSkillDict' to your actual dictionary/property name if different
@@ -168,10 +168,10 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         }
 
                         // Basic fields
-                        skill.AnimationID         = r.AnimationID ?? "";
-                        skill.Cooldown            = r.Cooldown;
-                        skill.Damage              = r.Damage;
-                        skill.TargetSelf          = r.TargetSelf;
+                        skill.AnimationID = r.AnimationID ?? "";
+                        skill.Cooldown = r.Cooldown;
+                        skill.Damage = r.Damage;
+                        skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
 
                         // Rarity enum
@@ -196,8 +196,8 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         skill.SkillRange.Z = r.RangeZ;
 
                         // Lists
-                        skill.Buffs   = SplitList(r.Buffs);
-                        skill.Debuffs = SplitList(r.Debuffs);
+                        skill.Buffs = ParsePairs(r.Buffs);
+                        skill.Debuffs = ParsePairs(r.Debuffs);
 
                         dirty = true;
                         updated++;
@@ -226,6 +226,69 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
         for (int i = 0; i < parts.Count; i++)
             parts[i] = parts[i].Replace("\\;", ";");
         return parts;
+    }
+    private static List<(string, float)> ParsePairs(string s)
+    {
+        var result = new List<(string, float)>();
+        if (string.IsNullOrEmpty(s)) return result;
+
+        // Tokenize by unescaped semicolons
+        List<string> tokens = new List<string>();
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        bool escape = false;
+        foreach (char ch in s)
+        {
+            if (escape) { sb.Append(ch); escape = false; continue; }
+            if (ch == '\\') { escape = true; continue; }
+            if (ch == ';') { tokens.Add(sb.ToString()); sb.Clear(); continue; }
+            sb.Append(ch);
+        }
+        if (sb.Length > 0) tokens.Add(sb.ToString());
+
+        foreach (var token in tokens)
+        {
+            // Split by first unescaped colon
+            string left = null, right = null;
+            sb.Clear(); escape = false;
+            bool split = false;
+            foreach (char ch in token)
+            {
+                if (escape) { sb.Append(ch); escape = false; continue; }
+                if (ch == '\\') { escape = true; continue; }
+                if (ch == ':' && !split)
+                {
+                    left = sb.ToString();
+                    sb.Clear();
+                    split = true;
+                    continue;
+                }
+                sb.Append(ch);
+            }
+            right = sb.ToString();
+
+            string id = (left ?? "").Trim();
+            string valStr = (right ?? "").Trim();
+            if (string.IsNullOrEmpty(id)) continue;
+
+            float value = 0f;
+            float.TryParse(valStr, System.Globalization.NumberStyles.Float,
+                           System.Globalization.CultureInfo.InvariantCulture, out value);
+
+            result.Add((id, value));
+        }
+
+        return result;
+    }
+
+    // Optional (useful if you add PUSH later)
+    private static string FormatPairs(IEnumerable<(string, float)> pairs)
+    {
+        if (pairs == null) return "";
+        string Esc(string x) => x?.Replace("\\", "\\\\").Replace(";", "\\;").Replace(":", "\\:") ?? "";
+        var parts = new List<string>();
+        foreach (var (id, val) in pairs)
+            parts.Add($"{Esc(id)}:{val.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+        return string.Join(";", parts);
     }
 }
 #endif
