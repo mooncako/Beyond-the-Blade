@@ -96,7 +96,9 @@ public class Weapon : MonoBehaviour
 
     public Skill GetRandomParrySkill()
     {
-        _skill = SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
+        _skill = SkillDatabase.SkillDict
+            
+            [WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
         return _skill;
     }
 
@@ -111,8 +113,14 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(cooldownTime);
         AvailableSkills[key].IsInCooldown = false;
     }
-    public void UseAbility(string abilityId)
+    public Skill GetAbility()
     {
+        if (_animationDatabase == null) return null;
+        if (SkillDatabase == null) return null;
+        if (AvailableSkills.Count == 0) return null;
 
+        _skill = SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[2][0]];
+        return _skill;
     }
+   
 }
