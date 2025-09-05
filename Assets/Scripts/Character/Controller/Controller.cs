@@ -39,9 +39,11 @@ public class Controller : MonoBehaviour
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected List<GameObject> _hitTargets = new List<GameObject>();
 
     protected Tween _hitStopTween;
+    protected ModifierContext _context;
 
     protected virtual void Awake()
     {
+        _context = new ModifierContext(this);
         ApplyStats();
     }
 
@@ -81,7 +83,7 @@ public class Controller : MonoBehaviour
 
     protected virtual void Update()
     {
-        
+
         if (!_animationStateMachine.IsInActionState() && !_animationStateMachine.IsInStaggerState())
         {
             if (Movement.MoveInput != Vector3.zero)
@@ -206,5 +208,15 @@ public class Controller : MonoBehaviour
     {
 
     }
-        
+
+    public virtual void ModifierRelayAnimEvent(ModifierSO modifier)
+    {
+        modifier.Perform(_context);
+    }
+
+    public Skill GetCurrentSkill()
+    {
+        return _currentSkill;
+    }
+
 }

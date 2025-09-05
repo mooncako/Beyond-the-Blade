@@ -5,6 +5,8 @@ using UnityEngine;
 using Animancer.TransitionLibraries;
 using CrashKonijn.Agent.Runtime;
 using System.Collections;
+using System.Collections.Generic;
+
 [Serializable]
 public abstract class AnimationState
 {
@@ -13,6 +15,7 @@ public abstract class AnimationState
     [SerializeField, FoldoutGroup("References")] protected AnimationStateMachine _stateMachine;
     [SerializeField, FoldoutGroup("References")] protected AnimancerComponent _animancer;
     [SerializeField, FoldoutGroup("References")] public Controller Owner;
+    [SerializeField, BoxGroup("Modifiers")] public List<(float eventIndex, ModifierSO modifier)> Modifiers = new List<(float, ModifierSO)>();
 
     // [SerializeField] private ClipTransition _defaultClip;
     public ClipTransition Clip;
@@ -29,7 +32,7 @@ public abstract class AnimationState
     {
 
     }
-  
+
 
     public AnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer, ClipTransition clip)
     {
@@ -42,12 +45,12 @@ public abstract class AnimationState
 
     public virtual void OnEnterState()
     {
-        if(Clip.Clip != null)
+        if (Clip.Clip != null)
         {
             AnimancerState = _animancer.Play(Clip);
         }
-            
-        
+
+
     }
 
     public virtual void OnInterrupt()
@@ -57,7 +60,7 @@ public abstract class AnimationState
 
     public virtual void OnExitState()
     {
-
+        
     }
 
     public void RefreshState()
@@ -75,4 +78,7 @@ public abstract class AnimationState
         Clip = clip;
         AnimancerState = _animancer.Play(Clip);
     }
+
+    
+
 }

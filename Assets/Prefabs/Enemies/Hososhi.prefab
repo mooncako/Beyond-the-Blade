@@ -690,6 +690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90104a0c88d073a4191cd8546654e0db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
   _idleState:
     _stateMachine: {fileID: -5065653963056194739}
@@ -923,6 +924,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyYariWeapon
       objectReference: {fileID: 0}
+    - target: {fileID: 4627969276474514806, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
+      propertyPath: _controller
+      value: 
+      objectReference: {fileID: 4962864894029839974}
     - target: {fileID: 8218674667798240783, guid: f1a5fa16a8320a54fa2a28ebdbd0bfe3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1089,6 +1094,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4034926405133228867}
     m_Modifications:
+    - target: {fileID: 1758457165217432825, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
+      propertyPath: _health
+      value: 
+      objectReference: {fileID: 2640687494238271249}
     - target: {fileID: 3617361178959738854, guid: 2c4471d7de56f584b95a52526ac804e4, type: 3}
       propertyPath: m_Name
       value: CharacterUI

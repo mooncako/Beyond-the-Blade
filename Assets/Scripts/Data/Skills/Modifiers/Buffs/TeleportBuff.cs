@@ -3,19 +3,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Teleport", menuName = "Modifier/Buffs/TeleportBuff")]
 public class TeleportBuff : ModifierSO
 {
-    public override void Perform(Controller controller)
+    public override void Perform(in ModifierContext context)
     {
-        base.Perform(controller);
-        if (controller is PlayerController)
+        if (context.Caster is PlayerController p)
         {
-            PlayerController pController = controller as PlayerController;
-
-            pController.Movement.Teleport(pController.GetAimPoint());
+            p.Movement.Teleport(p.GetAimPoint());
         }
-        else
+        else if(context.Caster is EnemyController e)
         {
-            EnemyController eController = controller as EnemyController;
-            eController.Movement.Teleport(eController.CurrentTargetTransform.forward);
+            e.Movement.Teleport(e.CurrentTargetTransform.forward);
         }
         
     }

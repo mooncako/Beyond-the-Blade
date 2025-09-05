@@ -3,9 +3,11 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Animancer.TransitionLibraries;
 using FMOD.Studio;
+using System.Collections.Generic;
 public class AnimationStateMachine : MonoBehaviour
 {
-    [SerializeField] private AnimancerComponent _animancer;
+    [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _modifierDatabase;
+    [SerializeField, BoxGroup("References")] private AnimancerComponent _animancer;
     [SerializeField] private IdleAnimationState _idleState;
     [SerializeField] private MoveAnimationState _moveState;
     [SerializeField] private ActionAnimationState _attackActionState;
@@ -18,8 +20,9 @@ public class AnimationStateMachine : MonoBehaviour
 
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState PreviousState;
-    [DisplayAsString, BoxGroup(""), ShowInInspector] private AnimationStateType _currentState;
+    [DisplayAsString, BoxGroup("Debug"), ShowInInspector] private AnimationStateType _currentState;
 
+    private List<(float, ModifierSO)> _currentModifiers = new List<(float, ModifierSO)>();
 
     void OnValidate()
     {
@@ -70,7 +73,7 @@ public class AnimationStateMachine : MonoBehaviour
     private void Update()
     {
 
-        ;
+
     }
     public void SwapAnimation(AnimationStateType type, ClipTransition clip)
     {
@@ -193,37 +196,52 @@ public class AnimationStateMachine : MonoBehaviour
         return true;
     }
 
-    public void SetActionStateClip(ClipTransition clip, AnimationStateType type)
+    public void SetAction(ClipTransition clip, AnimationStateType type, Skill skill)
     {
+        // append the current modifiers on the skill to the list and push it to the animancer state
+        _currentModifiers.Clear();
+        for (int i = 0; i < skill.Buffs.Count; i++)
+        {
+            _currentModifiers.Add((skill.Buffs[i].Item2, _modifierDatabase.SkillModifierDict[skill.Buffs[i].Item1]));
+        }
+
         switch (type)
         {
             case AnimationStateType.Attack:
                 _attackActionState.Clip = clip;
+                _attackActionState.UpdateModifiers(_currentModifiers);
                 break;
             case AnimationStateType.Parry:
                 _parryActionState.Clip = clip;
+                _parryActionState.UpdateModifiers(_currentModifiers);
                 break;
             case AnimationStateType.Ability:
                 _abilityActionState.Clip = clip;
+                _abilityActionState.UpdateModifiers(_currentModifiers);
                 break;
         }
+
+
+        
         
     }
 
     private void SetOwner()
     {
         if (_idleState != null)
-            _idleState.Owner = GetComponent<EnemyController>();
+            _idleState.Owner = GetComponent<Controller>();
         if (_moveState != null)
-            _moveState.Owner = GetComponent<EnemyController>();
+            _moveState.Owner = GetComponent<Controller>();
         if (_attackActionState != null)
-            _attackActionState.Owner = GetComponent<EnemyController>();
+            _attackActionState.Owner = GetComponent<Controller>();
         if (_parryActionState != null)
-            _parryActionState.Owner = GetComponent<EnemyController>();
+            _parryActionState.Owner = GetComponent<Controller>();
         if (_abilityActionState != null)
-            _abilityActionState.Owner = GetComponent<EnemyController>();
+            _abilityActionState.Owner = GetComponent<Controller>();
+        if (_dashActionState != null)
+            _dashActionState.Owner = GetComponent<Controller>();
         if (_staggerState != null)
-            _staggerState.Owner = GetComponent<EnemyController>();
+            _staggerState.Owner = GetComponent<Controller>();
 
     }
 

@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class ModifierSO : ScriptableObject
 {
-    public virtual void Perform(Controller controller)
+
+    public virtual void Perform(in ModifierContext context)
     {
 
     }
+    
 }

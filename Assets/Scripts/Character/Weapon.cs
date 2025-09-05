@@ -12,7 +12,6 @@ public class Weapon : MonoBehaviour
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
     [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
-    [SerializeField, BoxGroup("Data")] public ModifierDatabaseSO SkillModifierDatabase;
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
 
     private Skill _skill;
@@ -21,6 +20,7 @@ public class Weapon : MonoBehaviour
     [ShowInInspector] List<string> _availableSkillIds => AvailableSkills.Keys.ToList();
     [ShowInInspector] List<PlayableSkill> _availableSkill => AvailableSkills.Values.ToList();
 #endif
+
 
     void OnValidate()
     {
@@ -40,19 +40,24 @@ public class Weapon : MonoBehaviour
         {
             foreach (string key in skilltype)
             {
-                if(!AvailableSkills.ContainsKey(key))
+                if (!AvailableSkills.ContainsKey(key))
                     AvailableSkills.Add(key, new PlayableSkill(key));
             }
         }
+        
     }
 
+    [Button]
+    private void SetupAnimEvents()
+    {
+        
+    }
 
     public Skill LoopBasicAttack()
     {
         if (_animationDatabase == null) return null;
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
-        if (SkillModifierDatabase == null) return null;
 
         foreach (string key in WeaponSkillSO.SkillDict[0])
         {
@@ -73,7 +78,6 @@ public class Weapon : MonoBehaviour
         if (_animationDatabase == null) return null;
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
-        if (SkillModifierDatabase == null) return null;
 
         _skill = SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[3][0]];
         return _skill;
@@ -84,7 +88,6 @@ public class Weapon : MonoBehaviour
         if (_animationDatabase == null) return null;
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
-        if (SkillModifierDatabase == null) return null;
         
         _skill = SkillDatabase.SkillDict[skillId];
 

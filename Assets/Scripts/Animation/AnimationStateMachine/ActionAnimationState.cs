@@ -4,10 +4,13 @@ using UnityEngine;
 using Animancer.TransitionLibraries;
 using System.Collections;
 using PrimeTween;
+using System.Collections.Generic;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
 {
+    private AnimancerEvent.Sequence _events;
+
     public ActionAnimationState()
     {
 
@@ -35,7 +38,7 @@ public class ActionAnimationState : AnimationState
         {
             AnimancerState = _animancer.Play(Clip);
             AnimancerState state = _animancer.States.Current;
-            state.Events(this).OnEnd = () => _stateMachine.SwitchState(AnimationStateType.Idle);
+            AddEvents(AnimancerState);
         }
         else
         {
@@ -44,7 +47,7 @@ public class ActionAnimationState : AnimationState
                 _stateMachine.SwitchState(AnimationStateType.Idle);
             });
         }
-        
+
     }
 
 
@@ -56,7 +59,27 @@ public class ActionAnimationState : AnimationState
     public override void OnExitState()
     {
         base.OnExitState();
-        if(Owner != null)
+        Modifiers.Clear();
+        if (Owner != null)
             Owner.CanMove = true;
+    }
+    
+    public void UpdateModifiers(List<(float, ModifierSO)> modifiers)
+    {
+        Modifiers.Clear();
+        for (int i = 0; i < modifiers.Count; i++)
+        {
+            Modifiers.Add((modifiers[i].Item1, modifiers[i].Item2));
+        }
+    }
+
+    public void AddEvents(AnimancerState state)
+    {
+        foreach (var modifierTuple in Modifiers)
+        {
+            state.Events(this).Add(modifierTuple.eventIndex, () => Owner.ModifierRelayAnimEvent(modifierTuple.modifier));
+        }
+        state.Events(this).OnEnd ??= () => _stateMachine.SwitchState(AnimationStateType.Idle);
+
     }
 }

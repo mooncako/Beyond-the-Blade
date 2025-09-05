@@ -49,7 +49,7 @@ namespace CrashKonijn.Goap.GenTest
                 data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
-                data.AnimationStateMachine.SetActionStateClip(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack);
+                data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
                 data.AnimationStateMachine.SwitchState(AnimationStateType.Attack);
 
             }

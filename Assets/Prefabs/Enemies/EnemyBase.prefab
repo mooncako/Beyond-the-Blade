@@ -436,7 +436,6 @@ MonoBehaviour:
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
   <Vision>k__BackingField: {fileID: 2515946022723110387}
-  <Animator>k__BackingField: {fileID: 6233116775064065168}
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
   _weapons: []
@@ -465,8 +464,6 @@ MonoBehaviour:
     Rarity: 0
     TargetSelf: 0
     IsTargetedGroundAOE: 0
-    Buffs: []
-    Debuffs: []
   _targetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -620,6 +617,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90104a0c88d073a4191cd8546654e0db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
   _idleState:
     _stateMachine: {fileID: 0}

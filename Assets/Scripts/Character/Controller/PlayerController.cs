@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine.VFX;
 using Animancer;
 using PrimeTween;
+using UnityEditor.Rendering.LookDev;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -67,6 +68,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     protected override void Awake()
     {
         base.Awake();
+        
         InputProcessor = new InputProcessor();
 
         foreach (PlayerActionType actionType in System.Enum.GetValues(typeof(PlayerActionType)))
@@ -262,7 +264,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
+            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
             _animationStateMachine.InterruptState(AnimationStateType.Attack);
             Movement.Stop();
         }
@@ -277,7 +279,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Parry(GetAimPoint());
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry);
+            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
             _animationStateMachine.InterruptState(AnimationStateType.Parry);
             Movement.Stop();
         }
@@ -311,7 +313,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             if (_currentAbility == null) return;
             if (_currentAbility.IsInCooldown) return;
-            _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentAbility.SkillId), AnimationStateType.Ability);
+            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentAbility.SkillId), AnimationStateType.Ability, _currentSkill);
             if (_animationStateMachine.InterruptState(AnimationStateType.Ability))
             {
                 StartCoroutine(AbilityCooldownCo(_currentAbility.SkillId, CurrentWeapon.SkillDatabase.SkillDict[_currentAbility.SkillId].Cooldown));
@@ -335,7 +337,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         // TODO: Muso Algorithm
         _currentSkill = CurrentWeapon.GetExecutionSkill();
-        _animationStateMachine.SetActionStateClip(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack);
+        _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
         _animationStateMachine.InterruptState(AnimationStateType.Attack);
         Movement.Stop();
         Energy.Execute(); // depletes energy
@@ -522,4 +524,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         Health.ApplyStats(Stats);
         Energy.ApplyStats(Stats);
     }
+
+    
+
 }
