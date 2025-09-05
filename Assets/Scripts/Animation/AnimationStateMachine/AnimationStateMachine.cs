@@ -205,6 +205,11 @@ public class AnimationStateMachine : MonoBehaviour
             _currentModifiers.Add((skill.Buffs[i].Item2, _modifierDatabase.SkillModifierDict[skill.Buffs[i].Item1]));
         }
 
+        for (int i = 0; i < skill.Debuffs.Count; i++)
+        {
+            _currentModifiers.Add((skill.Debuffs[i].Item2, _modifierDatabase.SkillModifierDict[skill.Debuffs[i].Item1]));
+        }
+
         switch (type)
         {
             case AnimationStateType.Attack:
