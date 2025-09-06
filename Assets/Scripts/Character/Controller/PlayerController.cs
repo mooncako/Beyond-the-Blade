@@ -26,9 +26,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
-    //[BoxGroup("Ability"), ReadOnly] public Dictionary<string, PlayableSkill> AbilityList { get; private set; } = new Dictionary<string, PlayableSkill>();
-    [BoxGroup("Ability"), ReadOnly] private Skill _currentAbility;
+    [BoxGroup("Ability"), ReadOnly] public Skill CurrentAbility { get; private set; }
     [BoxGroup("Ability"), ReadOnly] private bool _abilityInCooldown;
+    [BoxGroup("Ability"), ReadOnly] public UnityEvent OnAbilityStartCooldown;
 
     [Header("VFX")]
     [FoldoutGroup("Slash")][SerializeField] private GameObject[] _slashVFXArray;
@@ -86,14 +86,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         //{
         //    AbilityList.Add(skillId, new PlayableSkill(skillId));
         //}
-        if (_currentAbility == null)
+        if (CurrentAbility == null)
         {
             //foreach (string abilityId in AbilityList.Keys)
             //{
             //    if (AbilityList.ContainsKey(abilityId))
             //        _currentAbility = AbilityList[abilityId];
             //}
-            _currentAbility = CurrentWeapon.GetAbility();
+            CurrentAbility = CurrentWeapon.GetAbility();
         }
 
 
@@ -313,13 +313,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         if (context.started)
         {
-            if (_currentAbility == null) return;
+            if (CurrentAbility == null) return;
             if (_abilityInCooldown) return;
 
-            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
+            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
             if (_animationStateMachine.InterruptState(AnimationStateType.Ability))
             {
-                StartCoroutine(AbilityCooldownCo(_currentAbility.Cooldown));
+                OnAbilityStartCooldown.Invoke();
+                StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
             }
 
         }
@@ -504,7 +505,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public void SetCurrentAbility(string skillId)
     {
-        _currentAbility = CurrentWeapon.GetSkill(skillId);
+        CurrentAbility = CurrentWeapon.GetSkill(skillId);
     }
     private IEnumerator AbilityCooldownCo(float cooldownTime)
     {
