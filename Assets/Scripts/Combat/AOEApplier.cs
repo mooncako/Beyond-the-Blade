@@ -11,7 +11,6 @@ public class AOEApplier : MonoBehaviour
     [BoxGroup("Settings")] public float Z;
 
     [SerializeField, BoxGroup("Settings")] private float _coneHeight = Mathf.Infinity;
-    [SerializeField, BoxGroup("Settings")] private float _arcHeight = 2;
 
     [SerializeField, BoxGroup("Debug")] private SkillAreaType _type;
     [SerializeField, BoxGroup("Debug")] private Transform _attackPoint;
@@ -53,7 +52,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Arc:
-                count = SkillAreaCalculation.OverlapArc(center, transform.forward, X, Z, Y, _arcHeight, hitMask, _buffer, _hits);
+                count = SkillAreaCalculation.OverlapArc(center, transform.forward, X, Z, Y, hitMask, _buffer, _hits);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_hits[i].gameObject);
