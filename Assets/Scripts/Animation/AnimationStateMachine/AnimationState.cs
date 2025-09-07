@@ -25,7 +25,9 @@ public abstract class AnimationState
     public FadeMode FadeMode;
     public AnimationState NextState;
     public AnimationStateType PossibleInterruptStates;
-
+    [HideInInspector, SerializeField] private AnimationStateType _emptyStates;
+    [HideInInspector, SerializeField] private AnimationStateType _tempStates;
+    [HideInInspector, SerializeField] protected bool _isInterruptionBlocked = false;
 
 
     public AnimationState()
@@ -60,7 +62,10 @@ public abstract class AnimationState
 
     public virtual void OnExitState()
     {
-        
+        if (_isInterruptionBlocked)
+        {
+            ToggleInterruption(true);
+        }
     }
 
     public void RefreshState()
@@ -79,6 +84,20 @@ public abstract class AnimationState
         AnimancerState = _animancer.Play(Clip);
     }
 
+    public virtual void ToggleInterruption(bool toggle)
+    {
+        if (toggle)
+        {
+            _isInterruptionBlocked = false;
+            PossibleInterruptStates = _tempStates;
+        }
+        else
+        {
+            _isInterruptionBlocked = true;
+            _tempStates = PossibleInterruptStates;
+            PossibleInterruptStates = _emptyStates;
+        }
+    }
     
 
 }

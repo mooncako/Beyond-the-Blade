@@ -708,6 +708,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: -1
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _moveState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -725,6 +728,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: -1
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -742,6 +748,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _parryActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -759,6 +768,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 32
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _dashActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -776,6 +788,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 32
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _abilityActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -793,6 +808,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 32
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _staggerState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -810,6 +828,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
   references:
     version: 2

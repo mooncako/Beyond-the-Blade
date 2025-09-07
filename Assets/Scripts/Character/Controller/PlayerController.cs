@@ -345,6 +345,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         _currentSkill = CurrentWeapon.GetExecutionSkill();
         _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
         _animationStateMachine.InterruptState(AnimationStateType.Attack);
+        _animationStateMachine.CurrentState.ToggleInterruption(false);
         Movement.Stop();
         Energy.Execute(); // depletes energy
     }
