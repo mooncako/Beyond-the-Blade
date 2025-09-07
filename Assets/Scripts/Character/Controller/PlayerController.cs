@@ -261,13 +261,16 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public void InputAttack(InputAction.CallbackContext context)
     {
-        if (context.started && IsActionAvailable(PlayerActionType.Attack))
+        if (context.started && IsActionAvailable(AnimationStateType.Attack))
         {
-
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
-            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
-            _animationStateMachine.InterruptState(AnimationStateType.Attack);
+            if (_currentSkill != null)
+            {
+                _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
+                _animationStateMachine.InterruptState(AnimationStateType.Attack);
+            }
+            
             Movement.Stop();
         }
         else
@@ -277,7 +280,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     }
     public void InputParry(InputAction.CallbackContext context)
     {
-        if (context.started && IsActionAvailable(PlayerActionType.Parry))
+        if (context.started && IsActionAvailable(AnimationStateType.Parry))
         {
             Parry(GetAimPoint());
             _currentSkill = CurrentWeapon.GetRandomParrySkill();
@@ -293,15 +296,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public void InputDash(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && IsActionAvailable(AnimationStateType.Dash))
         {
             if (Movement.IsGrounded)
             {
-                if (_animationStateMachine.CanEnter(AnimationStateType.Dash))
-                {
-                    Movement.Dash(GetMoveDir(), Stats.DashForce);
-                    StartIframe();
-                }
+
+                Movement.Dash(GetMoveDir(), Stats.DashForce);
+                StartIframe();
+
                 _animationStateMachine.InterruptState(AnimationStateType.Dash);
 
             }
@@ -311,7 +313,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
     public void InputUseAbility(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && IsActionAvailable(AnimationStateType.Ability))
         {
             if (CurrentAbility == null) return;
             if (_abilityInCooldown) return;
@@ -370,9 +372,9 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         _availableActions[actionType] = available;
     }
 
-    private bool IsActionAvailable(PlayerActionType actionType)
+    private bool IsActionAvailable(AnimationStateType stateType)
     {
-        return _availableActions.TryGetValue(actionType, out bool available) && available;
+        return _animationStateMachine.CanEnter(stateType);
     }
 
     public void TryLightAttack(Vector3 aimPosition)
