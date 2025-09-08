@@ -39,7 +39,14 @@ public class Health : MonoBehaviour
 
     public void Damage(DamageInfo info)
     {
-        if (!IsDamageable) return;
+        if (!IsDamageable)
+        {
+            if (_controller is PlayerController p)
+            {
+                p.Energy.GainEnergy(p.Stats.DashEnergyGain * p.Stats.ResourceGainMultiplier);
+            }
+            return;
+        }
         _health -= info.Amount * (1 - _controller.Stats.DamageReduction);
         OnDamage.Invoke(info);
 

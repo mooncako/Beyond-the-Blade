@@ -364,6 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a4f0715a5292642874cbaaff57a63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _controller: {fileID: 4962864894029839974}
   _maxHealth: 100
   _health: 100
   OnDamage:
@@ -376,6 +377,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMaxHealthUpdated:
     m_PersistentCalls:
       m_Calls: []
   IsDamageable: 1

@@ -413,10 +413,17 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _parryMask);
         }
 
+        if (_hitTargets.Count > 0)
+        {
+            Energy.GainEnergy(Stats.ParryEnergyGain * Stats.ResourceGainMultiplier);
+        }
+
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(.5f); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.HitStunDuration); // TODO: Add Stats regarding parry and stagger
         }
+
+        
     }
 
     private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)

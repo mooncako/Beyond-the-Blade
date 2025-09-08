@@ -678,6 +678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a4f0715a5292642874cbaaff57a63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _controller: {fileID: 1108131639495183653}
   _maxHealth: 100
   _health: 100
   OnDamage:
@@ -690,6 +691,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMaxHealthUpdated:
     m_PersistentCalls:
       m_Calls: []
   IsDamageable: 1
@@ -865,7 +869,6 @@ MonoBehaviour:
   Y: 0
   Z: 160
   _coneHeight: Infinity
-  _arcHeight: 2
   _type: 3
   _attackPoint: {fileID: 6111448855060232503}
 --- !u!114 &5731174687414150010
@@ -899,6 +902,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: -2
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _moveState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -916,6 +922,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: -3
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _attackActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -933,6 +942,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 124
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _parryActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -950,6 +962,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 96
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _dashActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -967,6 +982,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 40
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _abilityActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -984,6 +1002,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 104
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _staggerState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1001,6 +1022,9 @@ MonoBehaviour:
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 0}
   references:
     version: 2
