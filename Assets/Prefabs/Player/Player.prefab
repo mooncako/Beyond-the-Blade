@@ -475,7 +475,19 @@ MonoBehaviour:
     m_ActionId: b016902b-dcf1-42af-9883-126510980622
     m_ActionName: 'Player/UseSkill[/Keyboard/q]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1108131639495183653}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: InputExecution
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: a12d0a45-fb63-424c-9541-b740281cd32d
     m_ActionName: 'Player/Execution[/Keyboard/z]'
   m_NeverAutoSwitchControlSchemes: 0
