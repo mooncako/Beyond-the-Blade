@@ -37,7 +37,7 @@ public class ActionAnimationState : AnimationState
         if (Clip.Clip != null)
         {
             AnimancerState = _animancer.Play(Clip);
-            AnimancerState state = _animancer.States.Current;
+            AnimancerState.Speed *= Owner.Stats.AttackSpeed;
             AddEvents(AnimancerState);
         }
         else

@@ -4,6 +4,8 @@ using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
+    [SerializeField, BoxGroup("References")] private Controller _controller;
+
     [SerializeField, BoxGroup("Stats"), ReadOnly] private float _maxHealth;
     [SerializeField, BoxGroup("Stats"), ReadOnly] private float _health;
 
@@ -14,8 +16,14 @@ public class Health : MonoBehaviour
     [FoldoutGroup("Events")] public UnityEvent<float> OnIframe;
     [FoldoutGroup("Events")] public UnityEvent OnHealthRecovery;
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDeath;
+    [FoldoutGroup("Events")] public UnityEvent OnMaxHealthUpdated;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
+
+    void OnValidate()
+    {
+        if (_controller == null) _controller = GetComponent<Controller>();
+    } 
 
     public void ApplyStats(Stats stats)
     {
@@ -23,10 +31,16 @@ public class Health : MonoBehaviour
         _health = _maxHealth;
     }
 
+    public void UpdateMaxHealth(float maxHealth)
+    {
+        _maxHealth = maxHealth;
+        OnMaxHealthUpdated.Invoke();
+    }
+
     public void Damage(DamageInfo info)
     {
         if (!IsDamageable) return;
-        _health -= info.Amount;
+        _health -= info.Amount * (1 - _controller.Stats.DamageReduction);
         OnDamage.Invoke(info);
 
         if (_health <= 0)

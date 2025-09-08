@@ -513,6 +513,10 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         Energy.ApplyStats(Stats);
     }
 
-    
+    public override void OnStatsUpdated()
+    {
+        base.OnStatsUpdated();
+        Energy.ApplyStats(Stats);
+    }
 
 }

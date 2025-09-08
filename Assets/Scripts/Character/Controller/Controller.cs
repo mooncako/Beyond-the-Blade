@@ -154,7 +154,7 @@ public class Controller : MonoBehaviour
         foreach (GameObject target in _hitTargets)
         {
             Health health = target.GetComponent<Health>();
-            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, health, gameObject, DamageType.Regular);
+            DamageInfo info = new DamageInfo(_currentSkill.Damage * Stats.DamageMultiplier, target, health, gameObject, DamageType.Regular);
             health.Damage(info);
         }
 
@@ -217,6 +217,12 @@ public class Controller : MonoBehaviour
     public Skill GetCurrentSkill()
     {
         return _currentSkill;
+    }
+
+    public virtual void OnStatsUpdated()
+    {
+        Movement.SetSpeedMultiplier(Stats.MovementSpeedMultiplier);
+        Health.UpdateMaxHealth(Stats.MaxHealth);
     }
 
 }

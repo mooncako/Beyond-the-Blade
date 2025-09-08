@@ -16,7 +16,6 @@ public class Energy : MonoBehaviour
     public void ApplyStats(Stats stats)
     {
         _maxEnergy = stats.MaxEnergy;
-        _energy = 0;
     }
 
     public void Execute()
