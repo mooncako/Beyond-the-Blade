@@ -17,6 +17,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private ActionAnimationState _executionActionState;
     [SerializeField] private StaggerAnimationState _staggerState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
+    [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
 
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
@@ -73,8 +74,11 @@ public class AnimationStateMachine : MonoBehaviour
     }
     private void Update()
     {
-
-
+        // Update directional movement parameters if we're in move state with directional movement enabled
+        if (CurrentState == _moveState && _moveState != null && _moveState.IsDirectionalMovement)
+        {
+            _moveState.UpdateMovementParameters();
+        }
     }
     public void SwapAnimation(AnimationStateType type, ClipTransition clip)
     {
@@ -278,6 +282,7 @@ public class AnimationStateMachine : MonoBehaviour
         return CurrentState == _moveState;
     }
 
+
     public bool IsInIdleState()
     {
         return CurrentState == _idleState;
@@ -315,5 +320,40 @@ public class AnimationStateMachine : MonoBehaviour
     public bool IsMovable()
     {
         return CurrentState == _idleState || CurrentState == _moveState;
+    }
+
+    /// <summary>
+    /// Gets the directional movement animations asset
+    /// </summary>
+    public DirectionalMovementAnimationsSO GetDirectionalMovementAnimations()
+    {
+        return _directionalMovementAnimations;
+    }
+
+    /// <summary>
+    /// Sets the directional movement animations asset
+    /// </summary>
+    public void SetDirectionalMovementAnimations(DirectionalMovementAnimationsSO animations)
+    {
+        _directionalMovementAnimations = animations;
+    }
+
+    /// <summary>
+    /// Enables or disables directional movement on the move state
+    /// </summary>
+    public void SetDirectionalMovement(bool isDirectional)
+    {
+        if (_moveState != null)
+        {
+            _moveState.SetDirectionalMovement(isDirectional);
+        }
+    }
+
+    /// <summary>
+    /// Checks if the move state is using directional movement
+    /// </summary>
+    public bool IsUsingDirectionalMovement()
+    {
+        return _moveState != null && _moveState.IsDirectionalMovement;
     }
 }

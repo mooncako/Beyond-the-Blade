@@ -735,6 +735,10 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _isDirectionalMovement: 1
+    _parameterSmoothTime: 0.15
+    _stopProximity: 0.1
+    _characterMovement: {fileID: 0}
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -856,6 +860,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
+  _directionalMovementAnimations: {fileID: 11400000, guid: bd82bddf3ec44d74aa1ea3a1e83377cf, type: 2}
   references:
     version: 2
     RefIds: []
