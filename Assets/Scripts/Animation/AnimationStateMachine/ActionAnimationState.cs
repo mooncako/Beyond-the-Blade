@@ -5,6 +5,7 @@ using Animancer.TransitionLibraries;
 using System.Collections;
 using PrimeTween;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
@@ -36,6 +37,7 @@ public class ActionAnimationState : AnimationState
             Owner.CanMove = false;
         if (Clip.Clip != null)
         {
+            ToggleInterruption(false);
             AnimancerState = _animancer.Play(Clip);
             AnimancerState.Speed *= Owner.Stats.AttackSpeed;
             AddEvents(AnimancerState);
@@ -79,6 +81,7 @@ public class ActionAnimationState : AnimationState
         {
             state.Events(this).Add(modifierTuple.eventIndex, () => Owner.ModifierRelayAnimEvent(modifierTuple.modifier));
         }
+        state.Events(this).Add(.3f, () => ToggleInterruption(true));
         state.Events(this).OnEnd ??= () => _stateMachine.SwitchState(AnimationStateType.Idle);
 
     }
