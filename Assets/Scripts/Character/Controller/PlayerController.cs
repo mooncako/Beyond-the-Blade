@@ -301,7 +301,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             if (Movement.IsGrounded)
             {
 
-                Movement.Dash(GetMoveDir(), Stats.DashForce);
+                Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
                 StartIframe();
 
                 _animationStateMachine.InterruptState(AnimationStateType.Dash);
@@ -378,24 +378,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         return _animationStateMachine.CanEnter(stateType);
     }
 
-    public void TryLightAttack(Vector3 aimPosition)
-    {
-        // TryRotate();
-        if (Time.timeScale > 0)
-        {
-            // DisableMovementRotationAnimEvent();
-        }
-        {
-            SetActionAvailable(PlayerActionType.Move, false);
-            ExecuteLightAttack(aimPosition);
-        }
-    }
-
     public void ExecuteLightAttack(Vector3 aimPosition)
     {
         // _movement.Dash(_movement.LookDirection, 10f);
         // _lastAttackTime = Time.time;
-        // Movement.SetLookPosition(aimPosition);
+        Movement.SetLookPosition(aimPosition);
         // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
     }
 
@@ -410,7 +397,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         //Debug.Log($"CanDamage: {_player.Health.CanDamage}");
 
-        // Movement.SetLookPosition(aimPosition);
+        Movement.SetLookPosition(aimPosition);
         _isPerfectParryWindowActive = true;
     }
 
