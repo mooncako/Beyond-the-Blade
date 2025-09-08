@@ -14,6 +14,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private ActionAnimationState _parryActionState;
     [SerializeField] private ActionAnimationState _dashActionState;
     [SerializeField] private ActionAnimationState _abilityActionState;
+    [SerializeField] private ActionAnimationState _executionActionState;
     [SerializeField] private StaggerAnimationState _staggerState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
@@ -97,6 +98,9 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Dash:
 
                 break;
+            case AnimationStateType.Execution:
+
+                break;
             case AnimationStateType.Stagger:
 
                 break;
@@ -133,6 +137,10 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Ability:
                 CurrentState = _abilityActionState;
                 _currentState = AnimationStateType.Ability;
+                break;
+            case AnimationStateType.Execution:
+                CurrentState = _executionActionState;
+                _currentState = AnimationStateType.Execution;
                 break;
             case AnimationStateType.Dash:
                 CurrentState = _dashActionState;
@@ -183,6 +191,10 @@ public class AnimationStateMachine : MonoBehaviour
                 CurrentState = _abilityActionState;
                 _currentState = AnimationStateType.Ability;
                 break;
+            case AnimationStateType.Execution:
+                CurrentState = _executionActionState;
+                _currentState = AnimationStateType.Execution;
+                break;
             case AnimationStateType.Dash:
                 CurrentState = _dashActionState;
                 _currentState = AnimationStateType.Dash;
@@ -224,6 +236,10 @@ public class AnimationStateMachine : MonoBehaviour
                 _abilityActionState.Clip = clip;
                 _abilityActionState.UpdateModifiers(_currentModifiers);
                 break;
+            case AnimationStateType.Execution:
+                _executionActionState.Clip = clip;
+                _executionActionState.UpdateModifiers(_currentModifiers);
+                break;
         }
 
 
@@ -243,6 +259,8 @@ public class AnimationStateMachine : MonoBehaviour
             _parryActionState.Owner = GetComponent<Controller>();
         if (_abilityActionState != null)
             _abilityActionState.Owner = GetComponent<Controller>();
+        if (_executionActionState != null)
+            _executionActionState.Owner = GetComponent<Controller>();
         if (_dashActionState != null)
             _dashActionState.Owner = GetComponent<Controller>();
         if (_staggerState != null)
@@ -285,7 +303,8 @@ public class AnimationStateMachine : MonoBehaviour
         return _currentState == AnimationStateType.Attack
                             || _currentState == AnimationStateType.Parry
                             || _currentState == AnimationStateType.Ability
-                            || _currentState == AnimationStateType.Dash;
+                            || _currentState == AnimationStateType.Dash
+                            || _currentState == AnimationStateType.Execution;
     }
 
     public bool IsInStaggerState()
