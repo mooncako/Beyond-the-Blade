@@ -4,19 +4,40 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class SkillPickup : MonoBehaviour, IPickup
 {
+    [SerializeField, FoldoutGroup("References")] private SphereCollider _collider;
+
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] public string SkillId;
 
     void OnValidate()
     {
-        // if ((_attackableMask & (1 << 8)) == 0)
-        // {
-        //     _attackableMask |= 1 << 8;
-        // }
+        if ((_playerMask & (1 << 7)) == 0)
+        {
+            _playerMask |= 1 << 7;
+        }
+
+        if (_collider == null)
+        {
+            _collider = GetComponent<SphereCollider>();
+            _collider.isTrigger = true;
+            _collider.radius = 1f;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
+        {
+            PlayerController controller = other.GetComponent<PlayerController>();
+            SkillPickupInteractEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDatabase.SkillDict[SkillId]);
+        }
+    }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
+        {
+            SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null);
+        }
     }
 }

@@ -4,6 +4,7 @@ using Animancer;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using System.Linq;
+using UnityUtils;
 
 public class Weapon : MonoBehaviour
 {
@@ -44,13 +45,13 @@ public class Weapon : MonoBehaviour
                     AvailableSkills.Add(key, new PlayableSkill(key));
             }
         }
-        
+
     }
 
     [Button]
     private void SetupAnimEvents()
     {
-        
+
     }
 
     public Skill LoopBasicAttack()
@@ -88,7 +89,7 @@ public class Weapon : MonoBehaviour
         if (_animationDatabase == null) return null;
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
-        
+
         _skill = SkillDatabase.SkillDict[skillId];
 
         return _skill;
@@ -97,7 +98,7 @@ public class Weapon : MonoBehaviour
     public Skill GetRandomParrySkill()
     {
         _skill = SkillDatabase.SkillDict
-            
+
             [WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
         return _skill;
     }
@@ -122,5 +123,22 @@ public class Weapon : MonoBehaviour
         _skill = SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[2][0]];
         return _skill;
     }
-   
+
+    public Skill GetPlayerAttackSkill(float cooldown)
+    {
+        if (cooldown.Approx(1.2f))
+        {
+            return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[0][0]];
+        }
+        else if (cooldown.Approx(1f))
+        {
+            return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[0][1]];
+        }
+        else if (cooldown.Approx(.7f))
+        {
+            return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[0][2]];
+        }
+
+        return null;
+    }
 }
