@@ -57,7 +57,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 543083757608931154}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -74,6 +74,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvasGroup: {fileID: 8426596494963943846}
+  _swapButton: {fileID: 8543465673042171760}
+  _currentRarity: {fileID: 6297713659964538929}
+  _currentDamageText: {fileID: 7463246452849793393}
+  _newRarity: {fileID: 4939364627993680810}
+  _newDamageText: {fileID: 5294706299243834143}
 --- !u!1 &835808669317792494
 GameObject:
   m_ObjectHideFlags: 0
