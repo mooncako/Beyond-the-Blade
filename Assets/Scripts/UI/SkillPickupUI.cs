@@ -42,7 +42,9 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
             _canvasGroup.interactable = true;
             _alphaTween = Tween.Alpha(_canvasGroup, 1, duration: .5f);
             _currentDamageText.text = e.Controller.CurrentWeapon.GetPlayerAttackSkill(e.TargetSkill.Cooldown).Damage + " Damage";
+            _currentRarity.color = RarityUtil.GetRarityColor(e.Controller.CurrentWeapon.GetPlayerAttackSkill(e.TargetSkill.Cooldown).Rarity);
             _newDamageText.text = e.TargetSkill.Damage + " Damage";
+            _newRarity.color = RarityUtil.GetRarityColor(e.TargetSkill.Rarity);
         }
         else
         {
@@ -52,4 +54,5 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
             _alphaTween = Tween.Alpha(_canvasGroup, 0, duration: .5f);
         }
     }
+
 }
