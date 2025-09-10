@@ -20,7 +20,7 @@ public class SkillPickup : MonoBehaviour, IPickup
         {
             _collider = GetComponent<SphereCollider>();
             _collider.isTrigger = true;
-            _collider.radius = 1f;
+            _collider.radius = 2f;
         }
     }
 

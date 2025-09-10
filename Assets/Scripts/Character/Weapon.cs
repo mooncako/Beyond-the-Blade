@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using System.Linq;
 using UnityUtils;
+using MoreMountains.Tools;
 
 public class Weapon : MonoBehaviour
 {
@@ -124,7 +125,7 @@ public class Weapon : MonoBehaviour
         return _skill;
     }
 
-    public Skill GetPlayerAttackSkill(float cooldown)
+    public Skill GetAttackSkillWithCooldown(float cooldown)
     {
         if (cooldown.Approx(1.2f))
         {
@@ -141,4 +142,24 @@ public class Weapon : MonoBehaviour
 
         return null;
     }
+
+    public int GetAttackSkillIndexWithCooldown(float cooldown)
+    {
+        if (cooldown.Approx(1.2f))
+        {
+            return 0;
+        }
+        else if (cooldown.Approx(1f))
+        {
+            return 1;
+        }
+        else if (cooldown.Approx(.7f))
+        {
+            return 2;
+        }
+
+        return -1;
+    }
+
+    
 }

@@ -11,7 +11,7 @@ using UnityEditor.Rendering.LookDev;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>, MMEventListener<SkillSwapEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -141,6 +141,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.OnEnable();
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStartListening<SkillSwapEvent>();
     }
 
     protected override void OnDisable()
@@ -148,6 +149,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         base.OnDisable();
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<SkillSwapEvent>();
         _iframeTween.Stop();
     }
 
@@ -162,6 +164,10 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             Movement.Teleport(e.SpawnPoint.position);
         }
+    }
+    public void OnMMEvent(SkillSwapEvent e)
+    {
+        CurrentWeapon.SkillDatabase.SkillDict[CurrentWeapon.WeaponSkillSO.SkillDict[0][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)]] = e.Skill;
     }
 
     private void HandleRotation()

@@ -15,6 +15,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
     [SerializeField, BoxGroup("References")] private Image _newRarity;
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _newDamageText;
     private Tween _alphaTween;
+    private Skill _targetSkill;
 
 
     void OnValidate()
@@ -25,12 +26,21 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
     void OnEnable()
     {
         this.MMEventStartListening<SkillPickupInteractEvent>();
+        _swapButton.onClick.AddListener(SwapSkill);
     }
 
     void OnDisable()
     {
         this.MMEventStopListening<SkillPickupInteractEvent>();
+        _swapButton.onClick.RemoveListener(SwapSkill);
         _alphaTween.Stop();
+    }
+
+    private void SwapSkill()
+    {
+        SkillSwapEvent.Trigger(_targetSkill);
+        SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null);
+        gameObject.SetActive(false);
     }
 
     public void OnMMEvent(SkillPickupInteractEvent e)
@@ -41,10 +51,11 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
             _canvasGroup.blocksRaycasts = true;
             _canvasGroup.interactable = true;
             _alphaTween = Tween.Alpha(_canvasGroup, 1, duration: .5f);
-            _currentDamageText.text = e.Controller.CurrentWeapon.GetPlayerAttackSkill(e.TargetSkill.Cooldown).Damage + " Damage";
-            _currentRarity.color = RarityUtil.GetRarityColor(e.Controller.CurrentWeapon.GetPlayerAttackSkill(e.TargetSkill.Cooldown).Rarity);
+            _currentDamageText.text = e.Controller.CurrentWeapon.GetAttackSkillWithCooldown(e.TargetSkill.Cooldown).Damage + " Damage";
+            _currentRarity.color = RarityUtil.GetRarityColor(e.Controller.CurrentWeapon.GetAttackSkillWithCooldown(e.TargetSkill.Cooldown).Rarity);
             _newDamageText.text = e.TargetSkill.Damage + " Damage";
             _newRarity.color = RarityUtil.GetRarityColor(e.TargetSkill.Rarity);
+            _targetSkill = e.TargetSkill;
         }
         else
         {
