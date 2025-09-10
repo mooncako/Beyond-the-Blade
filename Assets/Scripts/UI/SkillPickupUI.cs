@@ -16,6 +16,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _newDamageText;
     private Tween _alphaTween;
     private Skill _targetSkill;
+    private string _skillId;
 
 
     void OnValidate()
@@ -38,8 +39,8 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
 
     private void SwapSkill()
     {
-        SkillSwapEvent.Trigger(_targetSkill);
-        SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null);
+        SkillSwapEvent.Trigger(_targetSkill, _skillId);
+        SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
         gameObject.SetActive(false);
     }
 
@@ -56,6 +57,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
             _newDamageText.text = e.TargetSkill.Damage + " Damage";
             _newRarity.color = RarityUtil.GetRarityColor(e.TargetSkill.Rarity);
             _targetSkill = e.TargetSkill;
+            _skillId = e.SkillId;
         }
         else
         {

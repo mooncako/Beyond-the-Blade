@@ -13,7 +13,7 @@ public class Weapon : MonoBehaviour
 
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
-    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
+    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO; // Might need to change to a class or struct
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
 
     private Skill _skill;
@@ -47,6 +47,18 @@ public class Weapon : MonoBehaviour
             }
         }
 
+    }
+
+    public void RefreshAvailableSkills()
+    {
+        foreach (List<string> skilltype in WeaponSkillSO.SkillDict.Values)
+        {
+            foreach (string key in skilltype)
+            {
+                if (!AvailableSkills.ContainsKey(key))
+                    AvailableSkills.Add(key, new PlayableSkill(key));
+            }
+        }
     }
 
     [Button]
