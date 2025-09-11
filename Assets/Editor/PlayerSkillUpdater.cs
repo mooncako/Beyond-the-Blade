@@ -29,6 +29,9 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
         public string Buffs;
         public string Debuffs;
+
+        public string Name;
+        public string Description;
     }
 
     [Serializable]
@@ -198,6 +201,9 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         // Lists
                         skill.Buffs = ParsePairs(r.Buffs);
                         skill.Debuffs = ParsePairs(r.Debuffs);
+
+                        skill.Name        = r.Name ?? "";
+                        skill.Description = r.Description ?? "";
 
                         dirty = true;
                         updated++;

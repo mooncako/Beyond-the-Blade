@@ -15,6 +15,8 @@ public class Skill
     public bool IsTargetedGroundAOE;
     public List<(string, float)> Buffs = new List<(string, float)>();
     public List<(string, float)> Debuffs = new List<(string, float)>();
+    public string Name;
+    public string Description;
     [ReadOnly] public bool IsStartBuffed = false;
     [ReadOnly] public bool IsMidBuffed = false;
     [ReadOnly] public bool IsEndBuffed = false;

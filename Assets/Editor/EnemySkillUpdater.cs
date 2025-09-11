@@ -34,6 +34,9 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 
         public string Buffs;   // semicolon-joined
         public string Debuffs; // semicolon-joined
+
+        public string Name;
+        public string Description;
     }
 
     [Serializable]
@@ -211,6 +214,9 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         // Lists
                         skill.Buffs = ParsePairs(r.Buffs);
                         skill.Debuffs = ParsePairs(r.Debuffs);
+
+                        skill.Name        = r.Name ?? "";
+                        skill.Description = r.Description ?? "";
 
                         dirty = true;
                         updated++;
