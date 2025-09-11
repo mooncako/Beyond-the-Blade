@@ -41,6 +41,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
     {
         SkillSwapEvent.Trigger(_targetSkill, _skillId);
         SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+        PickupUsedEvent.Trigger();
         gameObject.SetActive(false);
     }
 

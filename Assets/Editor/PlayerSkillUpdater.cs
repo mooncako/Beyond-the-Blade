@@ -176,7 +176,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
                         // Rarity enum
                         var rarityStr = (r.Rarity ?? "").Trim();
-                        if (Enum.TryParse<SkillRarity>(rarityStr, true, out var rarity))
+                        if (Enum.TryParse<Rarity>(rarityStr, true, out var rarity))
                             skill.Rarity = rarity;
                         else
                             Debug.LogWarning($"[SheetSync] Unknown Rarity '{r.Rarity}' for Key '{key}'");

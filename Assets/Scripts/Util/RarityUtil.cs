@@ -2,17 +2,17 @@ using UnityEngine;
 
 public static class RarityUtil
 {
-    public static Color GetRarityColor(SkillRarity rarity)
+    public static Color GetRarityColor(Rarity rarity)
     {
         switch (rarity)
         {
-            case SkillRarity.Normal:
+            case Rarity.Normal:
                 return RARITYCOLOR.Normal;
-            case SkillRarity.Rare:
+            case Rarity.Rare:
                 return RARITYCOLOR.Rare;
-            case SkillRarity.Epic:
+            case Rarity.Epic:
                 return RARITYCOLOR.Epic;
-            case SkillRarity.Legendary:
+            case Rarity.Legendary:
                 return RARITYCOLOR.Legendary;
         }
 

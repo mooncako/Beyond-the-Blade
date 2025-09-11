@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using System.Linq;
 using UnityUtils;
-using MoreMountains.Tools;
 
 public class Weapon : MonoBehaviour
 {
@@ -14,6 +13,7 @@ public class Weapon : MonoBehaviour
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
     [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO; // Might need to change to a class or struct
+    [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, Skill> SkillDict = new Dictionary<string, Skill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<int, List<string>> WeaponSkillDict = new Dictionary<int, List<string>>();
 
@@ -40,8 +40,21 @@ public class Weapon : MonoBehaviour
 
     void OnEnable()
     {
+        RefreshSkillDatabase();
         RefreshAvailableWeaponSkills();
         AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
+    }
+
+    public void RefreshSkillDatabase()
+    {
+        if (SkillDatabase.SkillDict.Count > SkillDict.Count)
+        {
+            foreach (var key in SkillDatabase.SkillDict.Keys)
+            {
+                if (!SkillDict.ContainsKey(key))
+                    SkillDict.Add(key, SkillDatabase.SkillDict[key]);
+            }
+        }
     }
 
     public void RefreshAvailableSkills()
@@ -84,11 +97,11 @@ public class Weapon : MonoBehaviour
         foreach (string key in WeaponSkillDict[0])
         {
             if (!AvailableSkills[key].IsInCooldown)
-                if (SkillDatabase.SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
-                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDatabase.SkillDict[AvailableSkills[key].SkillId].AnimationID))
+                if (SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
+                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDict[AvailableSkills[key].SkillId].AnimationID))
                 {
-                    StartCoroutine(SkillCooldownCO(key, SkillDatabase.SkillDict[AvailableSkills[key].SkillId].Cooldown));
-                    _skill = SkillDatabase.SkillDict[AvailableSkills[key].SkillId];
+                    StartCoroutine(SkillCooldownCO(key, SkillDict[AvailableSkills[key].SkillId].Cooldown));
+                    _skill = SkillDict[AvailableSkills[key].SkillId];
                     return _skill;
                 }
         }
@@ -101,7 +114,7 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDatabase.SkillDict[WeaponSkillDict[3][0]];
+        _skill = SkillDict[WeaponSkillDict[3][0]];
         return _skill;
     }
 
@@ -111,14 +124,14 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDatabase.SkillDict[skillId];
+        _skill = SkillDict[skillId];
 
         return _skill;
     }
 
     public Skill GetRandomParrySkill()
     {
-        _skill = SkillDatabase.SkillDict[WeaponSkillDict[1][Random.Range(0, WeaponSkillDict[1].Count)]];
+        _skill = SkillDict[WeaponSkillDict[1][Random.Range(0, WeaponSkillDict[1].Count)]];
         return _skill;
     }
 
@@ -139,7 +152,7 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDatabase.SkillDict[WeaponSkillDict[2][0]];
+        _skill = SkillDict[WeaponSkillDict[2][0]];
         return _skill;
     }
 
@@ -147,15 +160,15 @@ public class Weapon : MonoBehaviour
     {
         if (cooldown.Approx(1.2f))
         {
-            return SkillDatabase.SkillDict[WeaponSkillDict[0][0]];
+            return SkillDict[WeaponSkillDict[0][0]];
         }
         else if (cooldown.Approx(1f))
         {
-            return SkillDatabase.SkillDict[WeaponSkillDict[0][1]];
+            return SkillDict[WeaponSkillDict[0][1]];
         }
         else if (cooldown.Approx(.7f))
         {
-            return SkillDatabase.SkillDict[WeaponSkillDict[0][2]];
+            return SkillDict[WeaponSkillDict[0][2]];
         }
 
         return null;
@@ -179,5 +192,42 @@ public class Weapon : MonoBehaviour
         return -1;
     }
 
-    
+    public void AddModifier(string skillId, (string, UpgradeSlotType) modifier, bool isBuff)
+    {
+        if (isBuff)
+        {
+            switch (modifier.Item2)
+            {
+                case UpgradeSlotType.Start:
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 0));
+                    SkillDict[skillId].IsStartBuffed = true;
+                    break;
+                case UpgradeSlotType.Mid:
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 0.5f));
+                    SkillDict[skillId].IsMidBuffed = true;
+                    break;
+                case UpgradeSlotType.End:
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 1f));
+                    SkillDict[skillId].IsEndBuffed = true;
+                    break;
+            }
+            
+        }
+        else
+        {
+            switch (modifier.Item2)
+            {
+                case UpgradeSlotType.Start:
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 0));
+                    break;
+                case UpgradeSlotType.Mid:
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 0.5f));
+                    break;
+                case UpgradeSlotType.End:
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 1f));
+                    break;
+            }
+        }
+
+    }
 }

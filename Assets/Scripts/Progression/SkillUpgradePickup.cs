@@ -1,14 +1,16 @@
-using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using MoreMountains.Tools;
 
 [RequireComponent(typeof(SphereCollider))]
-public class SkillPickup : MonoBehaviour, IPickup
+public class SkillUpgradePickup : MonoBehaviour, IPickup
 {
     [SerializeField, FoldoutGroup("References")] private SphereCollider _collider;
 
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
-    [SerializeField, BoxGroup("Settings")] public string SkillId;
+
+    [SerializeField, BoxGroup("Settings")] private UpgradeSlotType _slotType;
+    [SerializeField, BoxGroup("Settings")] private string _modifierId;
 
     void OnEnable()
     {
@@ -39,8 +41,7 @@ public class SkillPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            SkillPickupInteractEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDict[SkillId], SkillId);
+            SkillUpgradePickupInteractEvent.Trigger(EventStateType.OnEventStart, other.GetComponent<PlayerController>().CurrentWeapon, (_modifierId, _slotType));
         }
     }
 
@@ -48,7 +49,7 @@ public class SkillPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+            SkillUpgradePickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, ("", UpgradeSlotType.Start));
         }
     }
 
