@@ -85,8 +85,8 @@ public class ActionAnimationState : AnimationState
         state.Events(this).OnEnd ??= () =>
         {
             _stateMachine.SwitchState(AnimationStateType.Idle);
-            Modifiers.Clear();
+            
         };
-
+        Modifiers.Clear();
     }
 }
