@@ -1,16 +1,14 @@
+using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
 
 public class SkillUpgradeUI : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _attackOneText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _attackTwoText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _attackThreeText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _abilityText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _executionText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _parryText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _dashText;
 }
