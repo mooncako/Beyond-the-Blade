@@ -15,12 +15,14 @@ public class Weapon : MonoBehaviour
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
     [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO; // Might need to change to a class or struct
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
+    [field: SerializeField, BoxGroup("Skills")] public Dictionary<int, List<string>> WeaponSkillDict = new Dictionary<int, List<string>>();
 
     private Skill _skill;
 
 #if UNITY_EDITOR
     [ShowInInspector] List<string> _availableSkillIds => AvailableSkills.Keys.ToList();
     [ShowInInspector] List<PlayableSkill> _availableSkill => AvailableSkills.Values.ToList();
+    [ShowInInspector] List<List<string>> _weaponSkill => WeaponSkillDict.Values.ToList();
 #endif
 
 
@@ -32,26 +34,19 @@ public class Weapon : MonoBehaviour
 
     void Awake()
     {
+
         AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
     }
 
     void OnEnable()
     {
+        RefreshAvailableWeaponSkills();
         AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
-        foreach (List<string> skilltype in WeaponSkillSO.SkillDict.Values)
-        {
-            foreach (string key in skilltype)
-            {
-                if (!AvailableSkills.ContainsKey(key))
-                    AvailableSkills.Add(key, new PlayableSkill(key));
-            }
-        }
-
     }
 
     public void RefreshAvailableSkills()
     {
-        foreach (List<string> skilltype in WeaponSkillSO.SkillDict.Values)
+        foreach (List<string> skilltype in WeaponSkillDict.Values)
         {
             foreach (string key in skilltype)
             {
@@ -59,6 +54,19 @@ public class Weapon : MonoBehaviour
                     AvailableSkills.Add(key, new PlayableSkill(key));
             }
         }
+    }
+
+    public void RefreshAvailableWeaponSkills()
+    {
+        foreach (var key in WeaponSkillSO.SkillDict.Keys)
+        {
+            List<string> list = WeaponSkillSO.SkillDict[key].Clone();
+            if (!WeaponSkillDict.ContainsKey(key))
+                WeaponSkillDict.Add(key, list);
+            else
+                WeaponSkillDict[key] = list;
+        }
+        RefreshAvailableSkills();
     }
 
     [Button]
@@ -73,7 +81,7 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        foreach (string key in WeaponSkillSO.SkillDict[0])
+        foreach (string key in WeaponSkillDict[0])
         {
             if (!AvailableSkills[key].IsInCooldown)
                 if (SkillDatabase.SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
@@ -93,7 +101,7 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[3][0]];
+        _skill = SkillDatabase.SkillDict[WeaponSkillDict[3][0]];
         return _skill;
     }
 
@@ -110,9 +118,7 @@ public class Weapon : MonoBehaviour
 
     public Skill GetRandomParrySkill()
     {
-        _skill = SkillDatabase.SkillDict
-
-            [WeaponSkillSO.SkillDict[1][Random.Range(0, WeaponSkillSO.SkillDict[1].Count)]];
+        _skill = SkillDatabase.SkillDict[WeaponSkillDict[1][Random.Range(0, WeaponSkillDict[1].Count)]];
         return _skill;
     }
 
@@ -133,7 +139,7 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[2][0]];
+        _skill = SkillDatabase.SkillDict[WeaponSkillDict[2][0]];
         return _skill;
     }
 
@@ -141,15 +147,15 @@ public class Weapon : MonoBehaviour
     {
         if (cooldown.Approx(1.2f))
         {
-            return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[0][0]];
+            return SkillDatabase.SkillDict[WeaponSkillDict[0][0]];
         }
         else if (cooldown.Approx(1f))
         {
-            return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[0][1]];
+            return SkillDatabase.SkillDict[WeaponSkillDict[0][1]];
         }
         else if (cooldown.Approx(.7f))
         {
-            return SkillDatabase.SkillDict[WeaponSkillSO.SkillDict[0][2]];
+            return SkillDatabase.SkillDict[WeaponSkillDict[0][2]];
         }
 
         return null;

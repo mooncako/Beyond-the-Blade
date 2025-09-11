@@ -167,7 +167,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     }
     public void OnMMEvent(SkillSwapEvent e)
     {
-        CurrentWeapon.WeaponSkillSO.SkillDict[0][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
+        CurrentWeapon.WeaponSkillDict[0][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
     }
 

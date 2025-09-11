@@ -49,7 +49,7 @@ public static class AVAILABLESKILLKEY
 public static class RARITYCOLOR
 {
     public static readonly Color Normal = new Color(198f / 255f, 250f / 255f, 162f / 255f);
-    public static readonly Color Rare = new Color(87 / 255, 164 / 255, 253 / 255);
-    public static readonly Color Epic = new Color(179 / 255, 125 / 255, 248 / 255);
-    public static readonly Color Legendary = new Color(248 / 255, 210 / 255, 125 / 255);
+    public static readonly Color Rare = new Color(87f / 255f, 164f / 255f, 253f / 255f);
+    public static readonly Color Epic = new Color(179f / 255f, 125f / 255f, 248f / 255f);
+    public static readonly Color Legendary = new Color(248f / 255f, 210f / 255f, 125f / 255f);
 }

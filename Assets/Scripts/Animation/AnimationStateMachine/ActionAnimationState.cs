@@ -6,6 +6,7 @@ using System.Collections;
 using PrimeTween;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using sc.splines.spawner.runtime;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
@@ -61,14 +62,12 @@ public class ActionAnimationState : AnimationState
     public override void OnExitState()
     {
         base.OnExitState();
-        Modifiers.Clear();
         if (Owner != null)
             Owner.CanMove = true;
     }
     
     public void UpdateModifiers(List<(float, ModifierSO)> modifiers)
     {
-        Modifiers.Clear();
         for (int i = 0; i < modifiers.Count; i++)
         {
             Modifiers.Add((modifiers[i].Item1, modifiers[i].Item2));
@@ -77,12 +76,17 @@ public class ActionAnimationState : AnimationState
 
     public void AddEvents(AnimancerState state)
     {
+        state.Events(this).Clear();
         foreach (var modifierTuple in Modifiers)
         {
             state.Events(this).Add(modifierTuple.eventIndex, () => Owner.ModifierRelayAnimEvent(modifierTuple.modifier));
         }
         state.Events(this).Add(.3f, () => ToggleInterruption(true));
-        state.Events(this).OnEnd ??= () => _stateMachine.SwitchState(AnimationStateType.Idle);
+        state.Events(this).OnEnd ??= () =>
+        {
+            _stateMachine.SwitchState(AnimationStateType.Idle);
+            Modifiers.Clear();
+        };
 
     }
 }
