@@ -290,7 +290,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         if (context.started && IsActionAvailable(AnimationStateType.Parry))
         {
             Parry(GetAimPoint());
-            _currentSkill = CurrentWeapon.GetRandomParrySkill();
+            _currentSkill = CurrentWeapon.GetParrySkill();
             _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
             _animationStateMachine.InterruptState(AnimationStateType.Parry);
             Movement.Stop();
@@ -310,7 +310,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
                 StartIframe();
-
+                _currentSkill = CurrentWeapon.GetParrySkill();
+                _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
                 _animationStateMachine.InterruptState(AnimationStateType.Dash);
 
             }

@@ -17,7 +17,38 @@ public class Skill
     public List<(string, float)> Debuffs = new List<(string, float)>();
     public string Name;
     public string Description;
-    [ReadOnly] public bool IsStartBuffed = false;
-    [ReadOnly] public bool IsMidBuffed = false;
-    [ReadOnly] public bool IsEndBuffed = false;
+    public bool IsStartBuffed = false;
+    public bool IsMidBuffed = false;
+    public bool IsEndBuffed = false;
+
+    public Skill(Skill skill)
+    {
+        AnimationID = skill.AnimationID;
+        Cooldown = skill.Cooldown;
+        Damage = skill.Damage;
+        SkillRange = skill.SkillRange;
+        Rarity = skill.Rarity;
+        TargetSelf = skill.TargetSelf;
+        IsTargetedGroundAOE = skill.IsTargetedGroundAOE;
+        for (int i = 0; i < skill.Buffs.Count; i++)
+        {
+            Buffs.Add(skill.Buffs[i]);
+        }
+
+        for (int i = 0; i < skill.Debuffs.Count; i++)
+        {
+            Debuffs.Add(skill.Debuffs[i]);
+        }
+
+        Name = skill.Name;
+        Description = skill.Description;
+        IsStartBuffed = skill.IsStartBuffed;
+        IsMidBuffed = skill.IsMidBuffed;
+        IsEndBuffed = skill.IsEndBuffed;
+    }
+
+    public Skill()
+    {
+
+    }
 }

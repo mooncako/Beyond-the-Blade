@@ -1,14 +1,89 @@
+using MoreMountains.Tools;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
-public class SkillUpgradeUI : MonoBehaviour
+public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupInteractEvent>, MMEventListener<PickupUsedEvent>
 {
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _attackOneText;
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _attackTwoText;
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _attackThreeText;
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _abilityText;
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _executionText;
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _parryText;
-    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _dashText;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackOneSlot;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackTwoSlot;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackThreeSlot;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _abilitySlot;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _executionSlot;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _parrySlot;
+    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _dashSlot;
+    [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
+
+    private Tween _alphaTween;
+
+    void OnValidate()
+    {
+        if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    void OnEnable()
+    {
+        this.MMEventStartListening<SkillUpgradePickupInteractEvent>();
+        this.MMEventStartListening<PickupUsedEvent>();
+    }
+
+    void OnDisable()
+    {
+        this.MMEventStopListening<SkillUpgradePickupInteractEvent>();
+        this.MMEventStopListening<PickupUsedEvent>();
+        _alphaTween.Stop();
+    }
+
+    public void OnMMEvent(SkillUpgradePickupInteractEvent e)
+    {
+        if (e.Type == EventStateType.OnEventStart)
+        {
+            _alphaTween.Stop();
+            _alphaTween = Tween.Alpha(_canvasGroup, 1, duration: .5f);
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
+            AssignData(e.Weapon, e.Modifier);
+        }
+        else
+        {
+            _alphaTween.Stop();
+            _alphaTween = Tween.Alpha(_canvasGroup, 0, duration: .5f);
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
+        }
+    }
+    public void OnMMEvent(PickupUsedEvent e)
+    {
+        _alphaTween.Stop();
+        _alphaTween = Tween.Alpha(_canvasGroup, 0, duration: .5f);
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
+    }
+
+    void Awake()
+    {
+        _canvasGroup.alpha = 0;
+    }
+
+    private void AssignData(Weapon weapon, (string, UpgradeSlotType) modifier)
+    {
+        _attackOneSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[0][0]).Name, weapon.WeaponSkillDict[0][0]);
+        _attackTwoSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[0][1]).Name, weapon.WeaponSkillDict[0][1]);
+        _attackThreeSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[0][2]).Name, weapon.WeaponSkillDict[0][2]);
+        _abilitySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[2][0]).Name, weapon.WeaponSkillDict[2][0]);
+        _parrySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[1][0]).Name, weapon.WeaponSkillDict[1][0]);
+        _dashSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[4][0]).Name, weapon.WeaponSkillDict[4][0]);
+        _executionSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[3][0]).Name, weapon.WeaponSkillDict[3][0]);
+
+        _attackOneSlot.AssignModifier(weapon, modifier);
+        _attackTwoSlot.AssignModifier(weapon, modifier);
+        _attackThreeSlot.AssignModifier(weapon, modifier);
+        _abilitySlot.AssignModifier(weapon, modifier);
+        _parrySlot.AssignModifier(weapon, modifier);
+        _dashSlot.AssignModifier(weapon, modifier);
+        _executionSlot.AssignModifier(weapon, modifier);
+    }
+
+    
 }

@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using System.Linq;
 using UnityUtils;
+using Unity.VisualScripting;
 
 public class Weapon : MonoBehaviour
 {
@@ -49,11 +50,7 @@ public class Weapon : MonoBehaviour
     {
         if (SkillDatabase.SkillDict.Count > SkillDict.Count)
         {
-            foreach (var key in SkillDatabase.SkillDict.Keys)
-            {
-                if (!SkillDict.ContainsKey(key))
-                    SkillDict.Add(key, SkillDatabase.SkillDict[key]);
-            }
+            SkillDict = new Dictionary<string, Skill>(SkillDatabase.SkillDict).CloneToRuntime(v => new Skill(v));
         }
     }
 
@@ -79,6 +76,8 @@ public class Weapon : MonoBehaviour
             else
                 WeaponSkillDict[key] = list;
         }
+
+        WeaponSkillDict = new Dictionary<int, List<string>>(WeaponSkillSO.SkillDict);
         RefreshAvailableSkills();
     }
 
@@ -129,9 +128,15 @@ public class Weapon : MonoBehaviour
         return _skill;
     }
 
-    public Skill GetRandomParrySkill()
+    public Skill GetParrySkill()
     {
-        _skill = SkillDict[WeaponSkillDict[1][Random.Range(0, WeaponSkillDict[1].Count)]];
+        _skill = SkillDict[WeaponSkillDict[1][0]];
+        return _skill;
+    }
+
+    public Skill GetDashSkill()
+    {
+        _skill = SkillDict[WeaponSkillDict[4][0]];
         return _skill;
     }
 

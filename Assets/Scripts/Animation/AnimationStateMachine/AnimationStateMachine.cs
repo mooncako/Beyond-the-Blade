@@ -37,6 +37,7 @@ public class AnimationStateMachine : MonoBehaviour
             _parryActionState = new ActionAnimationState(this, _animancer, "Parry");
             _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
             _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
+            _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
             _staggerState = new StaggerAnimationState(this, _animancer);
             SetOwner();
         }
@@ -52,6 +53,7 @@ public class AnimationStateMachine : MonoBehaviour
         _parryActionState = new ActionAnimationState(this, _animancer, "Parry");
         _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
         _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
+        _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
         _staggerState = new StaggerAnimationState(this, _animancer);
         SetOwner();
 
@@ -243,6 +245,10 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Execution:
                 _executionActionState.Clip = clip;
                 _executionActionState.UpdateModifiers(_currentModifiers);
+                break;
+            case AnimationStateType.Dash:
+                _dashActionState.Clip = clip;
+                _dashActionState.UpdateModifiers(_currentModifiers);
                 break;
         }
 
