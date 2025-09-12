@@ -1,14 +1,14 @@
 using MoreMountains.Tools;
 using UnityEngine;
 
-public struct SkillPickupInteractEvent
+public struct NewSkillEvent
 {
     public EventStateType Type;
     public PlayerController Controller;
     public Skill TargetSkill;
     public string SkillId;
 
-    public SkillPickupInteractEvent(EventStateType type, PlayerController controller, Skill targetSkill, string skillId)
+    public NewSkillEvent(EventStateType type, PlayerController controller, Skill targetSkill, string skillId)
     {
         Type = type;
         Controller = controller;
@@ -16,7 +16,7 @@ public struct SkillPickupInteractEvent
         SkillId = skillId;
     }
 
-    public static SkillPickupInteractEvent e;
+    public static NewSkillEvent e;
 
     public static void Trigger(EventStateType type, PlayerController controller, Skill targetSkill, string skillId)
     {

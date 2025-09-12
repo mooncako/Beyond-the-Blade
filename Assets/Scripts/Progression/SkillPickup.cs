@@ -12,12 +12,12 @@ public class SkillPickup : MonoBehaviour, IPickup
 
     void OnEnable()
     {
-        this.MMEventStartListening<PickupUsedEvent>();
+        this.MMEventStartListening<ProgressionCanvasCloseEvent>();
     }
 
     void OnDisable()
     {
-        this.MMEventStopListening<PickupUsedEvent>();
+        this.MMEventStopListening<ProgressionCanvasCloseEvent>();
     }
 
     void OnValidate()
@@ -40,7 +40,7 @@ public class SkillPickup : MonoBehaviour, IPickup
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
             PlayerController controller = other.GetComponent<PlayerController>();
-            SkillPickupInteractEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDict[SkillId], SkillId);
+            NewSkillEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDict[SkillId], SkillId);
         }
     }
 
@@ -48,11 +48,11 @@ public class SkillPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+            NewSkillEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
         }
     }
 
-    public void OnMMEvent(PickupUsedEvent e)
+    public void OnMMEvent(ProgressionCanvasCloseEvent e)
     {
         gameObject.SetActive(false);
     }

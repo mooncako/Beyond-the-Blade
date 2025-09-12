@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupInteractEvent>, MMEventListener<PickupUsedEvent>
+public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>, MMEventListener<ProgressionCanvasCloseEvent>
 {
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackOneSlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackTwoSlot;
@@ -30,18 +30,18 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupI
 
     void OnEnable()
     {
-        this.MMEventStartListening<SkillUpgradePickupInteractEvent>();
-        this.MMEventStartListening<PickupUsedEvent>();
+        this.MMEventStartListening<SkillUpgradeEvent>();
+        this.MMEventStartListening<ProgressionCanvasCloseEvent>();
     }
 
     void OnDisable()
     {
-        this.MMEventStopListening<SkillUpgradePickupInteractEvent>();
-        this.MMEventStopListening<PickupUsedEvent>();
+        this.MMEventStopListening<SkillUpgradeEvent>();
+        this.MMEventStopListening<ProgressionCanvasCloseEvent>();
         _alphaTween.Stop();
     }
 
-    public void OnMMEvent(SkillUpgradePickupInteractEvent e)
+    public void OnMMEvent(SkillUpgradeEvent e)
     {
         if (e.Type == EventStateType.OnEventStart)
         {
@@ -74,7 +74,7 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupI
             _canvasGroup.blocksRaycasts = false;
         }
     }
-    public void OnMMEvent(PickupUsedEvent e)
+    public void OnMMEvent(ProgressionCanvasCloseEvent e)
     {
         _alphaTween.Stop();
         _alphaTween = Tween.Alpha(_canvasGroup, 0, duration: .5f);

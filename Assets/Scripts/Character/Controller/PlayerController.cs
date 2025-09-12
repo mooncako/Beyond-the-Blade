@@ -49,6 +49,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [SerializeField] private EnemyController _musoTarget;
 
     [HideInInspector] public UnityEvent OnExecutionStarted;
+    [HideInInspector] public UnityEvent OnAbilityCycled;
     [ReadOnly] public bool IsNewSession = true;
 
     private Tween _iframeTween;
@@ -100,6 +101,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             CurrentAbility = CurrentWeapon.GetAbility();
         }
 
+        PlayerInitializedEvent.Trigger(this);
 
     }
 
@@ -346,6 +348,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             CurrentWeapon.UpdateAbilityIndex(true);
             CurrentAbility = CurrentWeapon.GetAbility();
+            OnAbilityCycled.Invoke();
         }
     }
 
@@ -356,6 +359,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             CurrentWeapon.UpdateAbilityIndex(false);
             CurrentAbility = CurrentWeapon.GetAbility();
+            OnAbilityCycled.Invoke();
         }
     }
 

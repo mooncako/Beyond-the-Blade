@@ -30,7 +30,7 @@ public class SkillUpgradeSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (_modifier.Item1 != "")
         {
             _weapon.AddModifier(_skillId, _modifier, true);
-            PickupUsedEvent.Trigger();
+            ProgressionCanvasCloseEvent.Trigger();
         }
     }
 

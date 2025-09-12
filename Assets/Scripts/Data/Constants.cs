@@ -56,3 +56,7 @@ public static class RARITYCOLOR
     public static readonly Color Legendary = new Color(248f / 255f, 210f / 255f, 125f / 255f);
 }
 
+public static class LIMIT
+{
+    public static int MaxAbilityCount = 3;
+}

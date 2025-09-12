@@ -3,14 +3,12 @@ using UnityEngine;
 using MoreMountains.Tools;
 
 [RequireComponent(typeof(SphereCollider))]
-public class SkillUpgradePickup : MonoBehaviour, IPickup
+public class AbilityPickup : MonoBehaviour, IPickup
 {
     [SerializeField, FoldoutGroup("References")] private SphereCollider _collider;
 
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
 
-    [SerializeField, BoxGroup("Settings")] private UpgradeSlotType _slotType;
-    [SerializeField, BoxGroup("Settings")] private string _modifierId;
 
     void OnEnable()
     {
@@ -41,7 +39,7 @@ public class SkillUpgradePickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            SkillUpgradeEvent.Trigger(EventStateType.OnEventStart, other.GetComponent<PlayerController>().CurrentWeapon, (_modifierId, _slotType));
+            NewAbilityEvent.Trigger(EventStateType.OnEventStart);
         }
     }
 
@@ -49,7 +47,7 @@ public class SkillUpgradePickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            SkillUpgradeEvent.Trigger(EventStateType.OnEventEnd, null, ("", UpgradeSlotType.Start));
+            NewAbilityEvent.Trigger(EventStateType.OnEventEnd);
         }
     }
 

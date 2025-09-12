@@ -1,55 +1,63 @@
 using System.Collections;
+using PrimeTween;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AbilityUIIcon : MonoBehaviour
 {
-    [SerializeField] private Image icon;
-    [SerializeField] private PlayerController _playerController;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField, BoxGroup("References")] private Image _icon;
+    [SerializeField, BoxGroup("References")] private Image _selection;
+    [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
+
+    private Tween _alphaTween;
+
+
     void OnValidate()
     {
-        if (_playerController == null) _playerController = GetComponentInParent<PlayerController>();
-    }
-    void Start()
-    {
+        if (_icon == null) _icon = GetComponent<Image>();
+        if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    void OnEnable()
-    {
-        if (_playerController != null)
-            _playerController.OnAbilityStartCooldown.AddListener(OnAbilityCooldownStarted);
-    }
+
     void OnDisable()
     {
-        if (_playerController != null)
-            _playerController.OnAbilityStartCooldown.RemoveListener(OnAbilityCooldownStarted);
+        _alphaTween.Stop();
     }
-    
-    private void OnAbilityCooldownStarted()
+
+    private void OnAbilityCooldownStarted(float cooldownTime)
     {
-        StartCoroutine(StartIconCooldownEffect());
+        StartCoroutine(StartIconCooldownEffect(cooldownTime));
     }
-    
-    private IEnumerator StartIconCooldownEffect()
+
+    private IEnumerator StartIconCooldownEffect(float cooldownTime)
     {
-        if (_playerController.CurrentAbility == null) 
-        {
-            yield break;
-        }
-        
-        float cooldownTime = _playerController.CurrentAbility.Cooldown;
+
         float elapsedTime = 0f;
-        
-        icon.fillAmount = 0f;
-        
+
+        _icon.fillAmount = 0f;
+
         while (elapsedTime < cooldownTime)
         {
             elapsedTime += Time.deltaTime;
-            icon.fillAmount = elapsedTime / cooldownTime;
+            _icon.fillAmount = elapsedTime / cooldownTime;
             yield return null;
         }
-        
-        icon.fillAmount = 1f;
+
+        _icon.fillAmount = 1f;
+    }
+
+    public void Select()
+    {
+        _selection.gameObject.SetActive(true);
+        _alphaTween.Stop();
+        _alphaTween = Tween.Alpha(_canvasGroup, 1, .5f);
+    }
+
+    public void Deselect()
+    {
+        _selection.gameObject.SetActive(false);
+        _alphaTween.Stop();
+        _alphaTween = Tween.Alpha(_canvasGroup, .5f, .5f);
     }
 }

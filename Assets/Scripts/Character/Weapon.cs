@@ -182,6 +182,11 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    public int GetCurrentAbilityIndex()
+    {
+        return _abilityIndex;
+    }
+
     public Skill GetAttackSkillWithCooldown(float cooldown)
     {
         if (cooldown.Approx(1.2f))
