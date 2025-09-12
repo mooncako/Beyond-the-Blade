@@ -340,6 +340,25 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         }
     }
 
+    public void InputAbilityCycleUpward(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            CurrentWeapon.UpdateAbilityIndex(true);
+            CurrentAbility = CurrentWeapon.GetAbility();
+        }
+    }
+
+
+    public void InputAbilityCycleDownward(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            CurrentWeapon.UpdateAbilityIndex(false);
+            CurrentAbility = CurrentWeapon.GetAbility();
+        }
+    }
+
     public void InputExecution(InputAction.CallbackContext context)
     {
         if (context.started)

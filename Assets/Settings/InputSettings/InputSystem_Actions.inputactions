@@ -94,6 +94,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "AbilityCycleUpward",
+                    "type": "Button",
+                    "id": "243cc535-6f33-4104-86b6-d65b2642fd5e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AbilityCycleDownward",
+                    "type": "Button",
+                    "id": "bdb34e1b-3771-462d-a5e8-6bc1cf990460",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -435,6 +453,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Execution",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b6b1eb9-cb9a-49d6-9455-2ed11a990dac",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AbilityCycleUpward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bd60cca0-1cf7-49a7-867f-bd80c030b7aa",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AbilityCycleDownward",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
