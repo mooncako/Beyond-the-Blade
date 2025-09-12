@@ -64,7 +64,7 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupI
                 case UpgradeSlotType.End:
                     _modifierSlotText.text = "III";
                     break;
-            }
+            } // Might need to change
         }
         else
         {
@@ -89,13 +89,13 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupI
 
     private void AssignData(Weapon weapon, (string, UpgradeSlotType) modifier)
     {
-        _attackOneSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[0][0]).Name, weapon.WeaponSkillDict[0][0]);
-        _attackTwoSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[0][1]).Name, weapon.WeaponSkillDict[0][1]);
-        _attackThreeSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[0][2]).Name, weapon.WeaponSkillDict[0][2]);
-        _abilitySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[2][0]).Name, weapon.WeaponSkillDict[2][0]);
-        _parrySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[1][0]).Name, weapon.WeaponSkillDict[1][0]);
-        _dashSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[4][0]).Name, weapon.WeaponSkillDict[4][0]);
-        _executionSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[3][0]).Name, weapon.WeaponSkillDict[3][0]);
+        _attackOneSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][0]);
+        _attackTwoSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][1]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][1]);
+        _attackThreeSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][2]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][2]);
+        _abilitySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][0]);
+        _parrySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]);
+        _dashSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]);
+        _executionSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]);
 
         _attackOneSlot.AssignModifier(weapon, modifier);
         _attackTwoSlot.AssignModifier(weapon, modifier);

@@ -43,7 +43,9 @@ public static class AVAILABLESKILLKEY
 {
     public const int Attack = 0;
     public const int Parry = 1;
-    public const int Skill = 2;
+    public const int Ability = 2;
+    public const int Execution = 3;
+    public const int Dash = 4;
 }
 
 public static class RARITYCOLOR
@@ -53,3 +55,4 @@ public static class RARITYCOLOR
     public static readonly Color Epic = new Color(179f / 255f, 125f / 255f, 248f / 255f);
     public static readonly Color Legendary = new Color(248f / 255f, 210f / 255f, 125f / 255f);
 }
+
