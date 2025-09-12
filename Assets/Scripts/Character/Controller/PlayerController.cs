@@ -10,7 +10,7 @@ using PrimeTween;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>, MMEventListener<SkillSwapEvent>
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>, MMEventListener<SkillSwapEvent>, MMEventListener<AddNewAbilityEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -148,6 +148,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
         this.MMEventStartListening<SkillSwapEvent>();
+        this.MMEventStartListening<AddNewAbilityEvent>();
     }
 
     protected override void OnDisable()
@@ -156,6 +157,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
         this.MMEventStopListening<SkillSwapEvent>();
+        this.MMEventStopListening<AddNewAbilityEvent>();
         _iframeTween.Stop();
     }
 
@@ -175,6 +177,20 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         CurrentWeapon.WeaponSkillDict[0][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
+    }
+
+    public void OnMMEvent(AddNewAbilityEvent e)
+    {
+        if (CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count < LIMIT.MaxAbilityCount)
+        {
+            CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Add(e.SkillId);
+            CurrentWeapon.RefreshAvailableSkills();
+            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, true);
+        }
+        else
+        {
+            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, false);
+        }
     }
 
     private void HandleRotation()

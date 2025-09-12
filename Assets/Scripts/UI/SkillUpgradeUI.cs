@@ -10,7 +10,6 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackOneSlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackTwoSlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _attackThreeSlot;
-    [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _abilitySlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _executionSlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _parrySlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _dashSlot;
@@ -92,7 +91,6 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
         _attackOneSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][0]);
         _attackTwoSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][1]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][1]);
         _attackThreeSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][2]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][2]);
-        _abilitySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][0]);
         _parrySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]);
         _dashSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]);
         _executionSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]);
@@ -100,7 +98,6 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
         _attackOneSlot.AssignModifier(weapon, modifier);
         _attackTwoSlot.AssignModifier(weapon, modifier);
         _attackThreeSlot.AssignModifier(weapon, modifier);
-        _abilitySlot.AssignModifier(weapon, modifier);
         _parrySlot.AssignModifier(weapon, modifier);
         _dashSlot.AssignModifier(weapon, modifier);
         _executionSlot.AssignModifier(weapon, modifier);

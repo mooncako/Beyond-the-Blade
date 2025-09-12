@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Linq;
 using UnityUtils;
 using Unity.VisualScripting;
+using MoreMountains.Tools;
 
 public class Weapon : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class Weapon : MonoBehaviour
 
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
-    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO; // Might need to change to a class or struct
+    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, Skill> SkillDict = new Dictionary<string, Skill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<int, List<string>> WeaponSkillDict = new Dictionary<int, List<string>>();
@@ -261,4 +262,6 @@ public class Weapon : MonoBehaviour
         }
 
     }
+
+
 }
