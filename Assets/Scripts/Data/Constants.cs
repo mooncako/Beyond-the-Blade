@@ -60,3 +60,11 @@ public static class LIMIT
 {
     public static int MaxAbilityCount = 3;
 }
+
+public static class RARITYPOSSIBILITY
+{
+    public static float Normal = .4f;
+    public static float Rare = .7f;
+    public static float Epic = .9f;
+    public static float Legendary = 1f;
+}

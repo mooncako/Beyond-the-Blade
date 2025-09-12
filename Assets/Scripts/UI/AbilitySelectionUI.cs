@@ -15,6 +15,9 @@ public class AbilitySelectionUI : MonoBehaviour, MMEventListener<NewAbilityEvent
     [SerializeField, BoxGroup("References")] private AbilityChoice _swapChoice;
     [SerializeField, BoxGroup("References")] private AbilityDatabaseSO _abilityDatabase;
     [SerializeField, BoxGroup("References")] private PlayerController _player;
+    [SerializeField, BoxGroup("Debug")] private string _abilityOne;
+    [SerializeField, BoxGroup("Debug")] private string _abilityTwo;
+    [SerializeField, BoxGroup("Debug")] private string _abilityThree;
     private List<PooledAbility> _abilities;
     private Tween _alphaTween;
 
@@ -65,7 +68,7 @@ public class AbilitySelectionUI : MonoBehaviour, MMEventListener<NewAbilityEvent
             _swapChoice.AssignData(_player.CurrentWeapon.GetSkill(e.SkillId));
             _swapPanel.SetActive(true);
         }
-        
+
 
     }
 
@@ -105,6 +108,11 @@ public class AbilitySelectionUI : MonoBehaviour, MMEventListener<NewAbilityEvent
 
         AbilityDatabaseUtil.UpdateProbabilities(_abilities, _player.CurrentWeapon.SkillDict);
 
+    }
+
+    private void AssignAbilities()
+    {
+        //TODO: Calculate the spawned abilities and assign it to the corresponding section 
     }
 
     
