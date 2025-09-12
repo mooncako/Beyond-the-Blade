@@ -1,4 +1,5 @@
 using MoreMountains.Tools;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class SkillUpgradeSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     private string _skillId;
     private (string, UpgradeSlotType) _modifier;
     private Weapon _weapon;
+    private Tween _alphaTween;
 
     void OnValidate()
     {

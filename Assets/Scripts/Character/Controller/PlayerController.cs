@@ -7,7 +7,6 @@ using System.Collections;
 using UnityEngine.VFX;
 using Animancer;
 using PrimeTween;
-using UnityEditor.Rendering.LookDev;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -50,6 +49,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [SerializeField] private EnemyController _musoTarget;
 
     [HideInInspector] public UnityEvent OnExecutionStarted;
+    [ReadOnly] public bool IsNewSession = true;
 
     private Tween _iframeTween;
 
@@ -69,7 +69,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     protected override void Awake()
     {
         base.Awake();
-        
+        if (IsNewSession)
+        {
+            Stats.Clear();
+            IsNewSession = false;
+        }
         InputProcessor = new InputProcessor();
 
         foreach (PlayerActionType actionType in System.Enum.GetValues(typeof(PlayerActionType)))

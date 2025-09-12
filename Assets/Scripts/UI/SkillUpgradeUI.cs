@@ -3,6 +3,7 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupInteractEvent>, MMEventListener<PickupUsedEvent>
 {
@@ -14,6 +15,11 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupI
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _parrySlot;
     [SerializeField, BoxGroup("References")] private SkillUpgradeSlotUI _dashSlot;
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _modifierNameText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _modifierDescText;
+    [SerializeField, BoxGroup("References")] private TextMeshProUGUI _modifierSlotText;
+    [SerializeField, BoxGroup("References")] private Image _modifierRarity;
+    [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _skillModifierDatabase;
 
     private Tween _alphaTween;
 
@@ -44,6 +50,21 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradePickupI
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
             AssignData(e.Weapon, e.Modifier);
+            _modifierNameText.text = _skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Name;
+            _modifierDescText.text = _skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Description;
+            _modifierRarity.color = RarityUtil.GetRarityColor(_skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Rarity);
+            switch (e.Modifier.Item2)
+            {
+                case UpgradeSlotType.Start:
+                    _modifierSlotText.text = "I";
+                    break;
+                case UpgradeSlotType.Mid:
+                    _modifierSlotText.text = "II";
+                    break;
+                case UpgradeSlotType.End:
+                    _modifierSlotText.text = "III";
+                    break;
+            }
         }
         else
         {
