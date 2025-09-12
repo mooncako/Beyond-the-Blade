@@ -1,10 +1,10 @@
 using MoreMountains.Tools;
 using UnityEngine;
 
-public struct PickupUsedEvent
+public struct ProgressionCanvasCloseEvent
 {
 
-    public static PickupUsedEvent e;
+    public static ProgressionCanvasCloseEvent e;
 
     public static void Trigger()
     {

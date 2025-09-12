@@ -1,20 +1,20 @@
 using MoreMountains.Tools;
 using UnityEngine;
 
-public struct SkillUpgradePickupInteractEvent
+public struct SkillUpgradeEvent
 {
     public EventStateType Type;
     public Weapon Weapon;
     public (string, UpgradeSlotType) Modifier;
 
-    public SkillUpgradePickupInteractEvent(EventStateType type, Weapon weapon, (string, UpgradeSlotType) modifier)
+    public SkillUpgradeEvent(EventStateType type, Weapon weapon, (string, UpgradeSlotType) modifier)
     {
         Type = type;
         Weapon = weapon;
         Modifier = modifier;
     }
 
-    public static SkillUpgradePickupInteractEvent e;
+    public static SkillUpgradeEvent e;
 
     public static void Trigger(EventStateType type, Weapon weapon, (string, UpgradeSlotType) modifier)
     {

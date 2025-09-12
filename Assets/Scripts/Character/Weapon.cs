@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Linq;
 using UnityUtils;
 using Unity.VisualScripting;
+using MoreMountains.Tools;
 
 public class Weapon : MonoBehaviour
 {
@@ -13,12 +14,13 @@ public class Weapon : MonoBehaviour
 
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
-    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO; // Might need to change to a class or struct
+    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, Skill> SkillDict = new Dictionary<string, Skill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<int, List<string>> WeaponSkillDict = new Dictionary<int, List<string>>();
 
     private Skill _skill;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private int _abilityIndex = 0;
 
 #if UNITY_EDITOR
     [ShowInInspector] List<string> _availableSkillIds => AvailableSkills.Keys.ToList();
@@ -113,7 +115,7 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDict[WeaponSkillDict[3][0]];
+        _skill = SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]];
         return _skill;
     }
 
@@ -130,13 +132,13 @@ public class Weapon : MonoBehaviour
 
     public Skill GetParrySkill()
     {
-        _skill = SkillDict[WeaponSkillDict[1][0]];
+        _skill = SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]];
         return _skill;
     }
 
     public Skill GetDashSkill()
     {
-        _skill = SkillDict[WeaponSkillDict[4][0]];
+        _skill = SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]];
         return _skill;
     }
 
@@ -157,23 +159,48 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        _skill = SkillDict[WeaponSkillDict[2][0]];
+        _skill = SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Ability][_abilityIndex]];
         return _skill;
+    }
+
+    public void UpdateAbilityIndex(bool isUpward)
+    {
+        if (isUpward)
+        {
+            _abilityIndex++;
+            if (_abilityIndex >= WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count)
+            {
+                _abilityIndex = 0;
+            }
+        }
+        else
+        {
+            _abilityIndex--;
+            if (_abilityIndex < 0)
+            {
+                _abilityIndex = WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count-1;
+            }
+        }
+    }
+
+    public int GetCurrentAbilityIndex()
+    {
+        return _abilityIndex;
     }
 
     public Skill GetAttackSkillWithCooldown(float cooldown)
     {
         if (cooldown.Approx(1.2f))
         {
-            return SkillDict[WeaponSkillDict[0][0]];
+            return SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Attack][0]];
         }
         else if (cooldown.Approx(1f))
         {
-            return SkillDict[WeaponSkillDict[0][1]];
+            return SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Attack][1]];
         }
         else if (cooldown.Approx(.7f))
         {
-            return SkillDict[WeaponSkillDict[0][2]];
+            return SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Attack][2]];
         }
 
         return null;
@@ -235,4 +262,6 @@ public class Weapon : MonoBehaviour
         }
 
     }
+
+
 }

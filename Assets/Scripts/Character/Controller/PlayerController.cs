@@ -7,11 +7,10 @@ using System.Collections;
 using UnityEngine.VFX;
 using Animancer;
 using PrimeTween;
-using UnityEditor.Rendering.LookDev;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>, MMEventListener<SkillSwapEvent>
+public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>, MMEventListener<SkillSwapEvent>, MMEventListener<AddNewAbilityEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -50,6 +49,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     [SerializeField] private EnemyController _musoTarget;
 
     [HideInInspector] public UnityEvent OnExecutionStarted;
+    [HideInInspector] public UnityEvent OnAbilityCycled;
+    [ReadOnly] public bool IsNewSession = true;
 
     private Tween _iframeTween;
 
@@ -69,7 +70,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     protected override void Awake()
     {
         base.Awake();
-        
+        if (IsNewSession)
+        {
+            Stats.Clear();
+            IsNewSession = false;
+        }
         InputProcessor = new InputProcessor();
 
         foreach (PlayerActionType actionType in System.Enum.GetValues(typeof(PlayerActionType)))
@@ -96,6 +101,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             CurrentAbility = CurrentWeapon.GetAbility();
         }
 
+        PlayerInitializedEvent.Trigger(this);
 
     }
 
@@ -142,6 +148,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
         this.MMEventStartListening<SkillSwapEvent>();
+        this.MMEventStartListening<AddNewAbilityEvent>();
     }
 
     protected override void OnDisable()
@@ -150,6 +157,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
         this.MMEventStopListening<SkillSwapEvent>();
+        this.MMEventStopListening<AddNewAbilityEvent>();
         _iframeTween.Stop();
     }
 
@@ -169,6 +177,20 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     {
         CurrentWeapon.WeaponSkillDict[0][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
+    }
+
+    public void OnMMEvent(AddNewAbilityEvent e)
+    {
+        if (CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count < LIMIT.MaxAbilityCount)
+        {
+            CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Add(e.SkillId);
+            CurrentWeapon.RefreshAvailableSkills();
+            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, true);
+        }
+        else
+        {
+            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, false);
+        }
     }
 
     private void HandleRotation()
@@ -333,6 +355,27 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
                 StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
             }
 
+        }
+    }
+
+    public void InputAbilityCycleUpward(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            CurrentWeapon.UpdateAbilityIndex(true);
+            CurrentAbility = CurrentWeapon.GetAbility();
+            OnAbilityCycled.Invoke();
+        }
+    }
+
+
+    public void InputAbilityCycleDownward(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            CurrentWeapon.UpdateAbilityIndex(false);
+            CurrentAbility = CurrentWeapon.GetAbility();
+            OnAbilityCycled.Invoke();
         }
     }
 

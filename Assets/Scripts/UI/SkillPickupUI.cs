@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractEvent>
+public class SkillPickupUI : MonoBehaviour, MMEventListener<NewSkillEvent>
 {
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
     [SerializeField, BoxGroup("References")] private Button _swapButton;
@@ -26,13 +26,13 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
 
     void OnEnable()
     {
-        this.MMEventStartListening<SkillPickupInteractEvent>();
+        this.MMEventStartListening<NewSkillEvent>();
         _swapButton.onClick.AddListener(SwapSkill);
     }
 
     void OnDisable()
     {
-        this.MMEventStopListening<SkillPickupInteractEvent>();
+        this.MMEventStopListening<NewSkillEvent>();
         _swapButton.onClick.RemoveListener(SwapSkill);
         _alphaTween.Stop();
     }
@@ -40,12 +40,12 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<SkillPickupInteractE
     private void SwapSkill()
     {
         SkillSwapEvent.Trigger(_targetSkill, _skillId);
-        SkillPickupInteractEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
-        PickupUsedEvent.Trigger();
+        NewSkillEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+        ProgressionCanvasCloseEvent.Trigger();
         gameObject.SetActive(false);
     }
 
-    public void OnMMEvent(SkillPickupInteractEvent e)
+    public void OnMMEvent(NewSkillEvent e)
     {
         if (e.Type == EventStateType.OnEventStart)
         {
