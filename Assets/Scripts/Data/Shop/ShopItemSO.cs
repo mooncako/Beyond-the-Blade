@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
-
+using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "New Shop Item", menuName = "Shop/Shop Item")]
 public class ShopItemSO : ScriptableObject
@@ -11,12 +11,155 @@ public class ShopItemSO : ScriptableObject
     public Sprite Icon;
     public int Cost;
 
-    [Header("Setting")]
-    public bool CanPurchaseMultiple= false;
+    [Header("Item Type & Effects")]
+    public ItemType ItemType = ItemType.Consumable;
+    public ItemEffectType EffectType = ItemEffectType.RestoreHealth;
+    
+    [Header("Effect Values")]
+    [ShowIf("@EffectType == ItemEffectType.RestoreHealth")]
+    public float HealthRestoreAmount = 25f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseMaxHealth")]
+    public float MaxHealthIncrease = 10f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseDamage")]
+    public float DamageIncrease = 0.1f; // 10% increase
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseAttackSpeed")]
+    public float AttackSpeedIncrease = 0.1f; // 10% increase
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseDamageReduction")]
+    public float DamageReductionIncrease = 0.05f; // 5% increase
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseMovementSpeed")]
+    public float MovementSpeedIncrease = 0.1f; // 10% increase
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseDashForce")]
+    public float DashForceIncrease = 100f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseMaxEnergy")]
+    public float MaxEnergyIncrease = 2f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseParryEnergyGain")]
+    public float ParryEnergyGainIncrease = 0.2f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseDashEnergyGain")]
+    public float DashEnergyGainIncrease = 0.1f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseResourceGainMultiplier")]
+    public float ResourceGainMultiplierIncrease = 0.1f; // 10% increase
+    
+    [ShowIf("@EffectType == ItemEffectType.DecreaseHitStunDuration")]
+    public float HitStunDurationDecrease = 0.1f;
+    
+    [ShowIf("@EffectType == ItemEffectType.IncreaseIframeDuration")]
+    public float IframeDurationIncrease = 0.05f;
+
+    [Header("Settings")]
+    public bool CanPurchaseMultiple = false;
     public int MaxPurchaseCount = 1;
 
-    public void ApplyEffect()
+    public virtual void ApplyEffect()
     {
-        Debug.Log($"Applying effect of {ItemName}");
+        PlayerController player = FindFirstObjectByType<PlayerController>();
+        if (player==null)
+        {
+            Debug.LogError($"Could not find PlayerController to apply effect of {ItemName}");
+            return;
+        }
+
+        ApplyEffectToPlayer(player);
+    }
+
+    private void ApplyEffectToPlayer(PlayerController player)
+    {
+        switch (EffectType)
+        {
+            case ItemEffectType.RestoreHealth:
+                RestorePlayerHealth(player, HealthRestoreAmount);
+                break;
+                
+            case ItemEffectType.IncreaseMaxHealth:
+                IncreasePlayerMaxHealth(player, MaxHealthIncrease);
+                break;
+                
+            case ItemEffectType.IncreaseDamage:
+                player.Stats.BaseDamageMultiplier += DamageIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseAttackSpeed:
+                player.Stats.BaseAttackSpeed += AttackSpeedIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseDamageReduction:
+                player.Stats.BaseDamageReduction += DamageReductionIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseMovementSpeed:
+                player.Stats.BaseMovementSpeedMultiplier += MovementSpeedIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseDashForce:
+                player.Stats.BaseDashForce += DashForceIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseMaxEnergy:
+                player.Stats.BaseMaxEnergy += MaxEnergyIncrease;
+                player.Energy.ApplyStats(player.Stats); // Update energy component
+                break;
+                
+            case ItemEffectType.IncreaseParryEnergyGain:
+                player.Stats.BaseParryEnergyGain += ParryEnergyGainIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseDashEnergyGain:
+                player.Stats.BaseDashEnergyGain += DashEnergyGainIncrease;
+                break;
+                
+            case ItemEffectType.IncreaseResourceGainMultiplier:
+                player.Stats.BaseResourceGainMultiplier += ResourceGainMultiplierIncrease;
+                break;
+                
+            case ItemEffectType.DecreaseHitStunDuration:
+                player.Stats.BaseHitStunDuration -= HitStunDurationDecrease;
+                break;
+                
+            case ItemEffectType.IncreaseIframeDuration:
+                player.Stats.BaseIframeDuration += IframeDurationIncrease;
+                break;
+                
+            default:
+                Debug.LogWarning($"Effect type {EffectType} not implemented for item {ItemName}");
+                break;
+        }
+
+        Debug.Log($"Applied {EffectType} effect from {ItemName} to player");
+    }
+
+    private void RestorePlayerHealth(PlayerController player, float amount)
+    {
+        Health playerHealth = player.GetComponent<Health>();
+        if (playerHealth != null)
+        {
+            playerHealth.Heal(amount);
+            Debug.Log($"Restored {amount} health to player");
+        }
+        else
+        {
+            Debug.LogError("Could not find Health component on player");
+        }
+    }
+
+    private void IncreasePlayerMaxHealth(PlayerController player, float amount)
+    {
+        player.Stats.BaseMaxHealth += amount;
+        
+        Health playerHealth = player.GetComponent<Health>();
+        if (playerHealth != null)
+        {
+            playerHealth.UpdateMaxHealth(player.Stats.MaxHealth);
+            // Also restore some health when max health increases
+            Debug.Log($"Increased player max health by {amount}");
+        }
     }
 }

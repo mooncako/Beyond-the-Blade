@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50bcfe205e07c344087d3c10646bdab0, type: 3}
-  m_Name: HealthPotion
+  m_Name: Defense
   m_EditorClassIdentifier: 
-  ItemName: HealthPotion
-  Description: Recover Health By 10
-  Icon: {fileID: 21300012, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
+  ItemName: 'Defense + '
+  Description: 'Defense + '
+  Icon: {fileID: 21300002, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
   Cost: 10
-  ItemType: 0
-  EffectType: 0
-  HealthRestoreAmount: 10
+  ItemType: 1
+  EffectType: 4
+  HealthRestoreAmount: 25
   MaxHealthIncrease: 10
   DamageIncrease: 0.1
   AttackSpeedIncrease: 0.1

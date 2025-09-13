@@ -37,6 +37,13 @@ public class Health : MonoBehaviour
         OnMaxHealthUpdated.Invoke();
     }
 
+    public void Heal(float amount)
+    {
+        _health = Mathf.Min(_health + amount, _maxHealth);
+        OnHealthRecovery.Invoke();
+        Debug.Log($"Healed {amount} health. Current health: {_health}/{_maxHealth}");
+    }
+
     public void Damage(DamageInfo info)
     {
         if (!IsDamageable)
