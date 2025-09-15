@@ -80,12 +80,13 @@ public class AbilitySelectionUI : MonoBehaviour,
             _canvasGroup.blocksRaycasts = false;
             _canvasGroup.interactable = false;
             UpdateAbilities();
+            ProgressionCanvasCloseEvent.Trigger();
         }
         else
         {
             _selectionPanel.SetActive(false);
             _tempSkillId = e.SkillId;
-            _swapChoice.AssignData( _player.CurrentWeapon.GetSkill(e.SkillId), e.SkillId);
+            _swapChoice.AssignData(_player.CurrentWeapon.GetSkill(e.SkillId), e.SkillId);
             _alphaTween.Stop();
             _alphaTween = Tween.Alpha(_swapPanel, 1, .5f);
             _swapPanel.blocksRaycasts = true;
