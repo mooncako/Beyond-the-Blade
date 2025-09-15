@@ -34,9 +34,15 @@ public enum ItemEffectType
     IncreaseMaxEnergy,
     IncreaseParryEnergyGain,
     IncreaseDashEnergyGain,
+
+    //Stamina Stats
+    IncreaseMaxStamina,
+    IncreaseStaminaRegenrate,
     
     // Special Stats
     IncreaseResourceGainMultiplier,
     DecreaseHitStunDuration,
     IncreaseIframeDuration
+
+
 }

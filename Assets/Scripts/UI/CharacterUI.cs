@@ -1,9 +1,10 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class CharacterUI : MonoBehaviour
 {
-    [SerializeField] protected Health _health;
-    [SerializeField] private ResourceBar _healthBar;
+    [BoxGroup("Stats"), SerializeField] protected Health _health;
+    [BoxGroup("UI"), SerializeField] private ResourceBar _healthBar;
 
     protected virtual void OnValidate()
     {

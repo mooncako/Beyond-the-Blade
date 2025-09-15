@@ -18,6 +18,20 @@ public class Stats : ScriptableObject
     [ReadOnly] public float TempMaxEnergy = 0f;
     [ShowInInspector, ReadOnly] public float MaxEnergy => BaseMaxEnergy + TempMaxEnergy;
 
+    public float BaseMaxStamina = 10f;
+    [ReadOnly] public float TempMaxStamina = 0f;
+    [ShowInInspector, ReadOnly] public float MaxStamina => BaseMaxStamina + TempMaxStamina;
+
+    public float BaseStaminaRegeneration = 1f;
+    [ReadOnly] public float TempStaminaRegeneration = 0f;
+    [ShowInInspector, ReadOnly] public float StaminaRegeneration => BaseStaminaRegeneration + TempStaminaRegeneration;
+    public float BaseDashStaminaCost = 3f;
+    [ReadOnly] public float TempDashStaminaCost = 0f;
+    [ShowInInspector, ReadOnly] public float DashStaminaCost => BaseDashStaminaCost - TempDashStaminaCost; // use minus? 
+    public float BaseParryStaminaCost = 2f;
+    [ReadOnly] public float TempParryStaminaCost = 0f;
+    [ShowInInspector, ReadOnly] public float ParryStaminaCost => BaseParryStaminaCost - TempParryStaminaCost; //  minus? 
+
     public float BaseMovementSpeedMultiplier = 1;
     [ReadOnly] public float TempMovementSpeedMultiplier = 0;
     [ShowInInspector, ReadOnly] public float MovementSpeedMultiplier => BaseMovementSpeedMultiplier + TempMovementSpeedMultiplier;
@@ -79,5 +93,6 @@ public class Stats : ScriptableObject
         TempIframeDuration = 0;
         TempRegulerStunDuration = 0;
         TempResourceGainMultiplier = 0;
+        TempStaminaRegeneration = 0;
     }
 }

@@ -23,6 +23,7 @@ public class PlayerController : Controller,
     [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Stamina Stamina;
     [Header("General Settings")]
     [SerializeField] private bool _isTutorial = false;
     [BoxGroup("Input")] public InputProcessor InputProcessor;
@@ -67,6 +68,7 @@ public class PlayerController : Controller,
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
         if (_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
         if (Energy == null) Energy = GetComponent<Energy>();
+        if (Stamina == null) Stamina = GetComponent<Stamina>();
         if ((_attackableMask & (1 << 8)) == 0)
         {
             _attackableMask |= 1 << 8;
@@ -326,11 +328,14 @@ public class PlayerController : Controller,
     {
         if (context.started && IsActionAvailable(AnimationStateType.Parry))
         {
-            Parry(GetAimPoint());
-            _currentSkill = CurrentWeapon.GetParrySkill();
-            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
-            _animationStateMachine.InterruptState(AnimationStateType.Parry);
-            Movement.Stop();
+            if (Stamina.ConsumeStamina(Stats.ParryStaminaCost))
+            {
+                Parry(GetAimPoint());
+                _currentSkill = CurrentWeapon.GetParrySkill();
+                _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
+                _animationStateMachine.InterruptState(AnimationStateType.Parry);
+                Movement.Stop();
+            }
         }
         else
         {
@@ -342,7 +347,8 @@ public class PlayerController : Controller,
     {
         if (context.started && IsActionAvailable(AnimationStateType.Dash))
         {
-            if (Movement.IsGrounded)
+            
+            if (Movement.IsGrounded && Stamina.ConsumeStamina(Stats.DashStaminaCost))
             {
 
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
@@ -583,12 +589,14 @@ public class PlayerController : Controller,
         Vision.ApplyStats(Stats);
         Health.ApplyStats(Stats);
         Energy.ApplyStats(Stats);
+        Stamina.ApplyStats(Stats);
     }
 
     public override void OnStatsUpdated()
     {
         base.OnStatsUpdated();
         Energy.ApplyStats(Stats);
+        Stamina.ApplyStats(Stats);
     }
 
 }

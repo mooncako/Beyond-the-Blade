@@ -56,6 +56,14 @@ public class ShopItemSO : ScriptableObject
     [ShowIf("@EffectType == ItemEffectType.IncreaseIframeDuration")]
     public float IframeDurationIncrease = 0.05f;
 
+    [ShowIf("@EffectType == ItemEffectType.IncreaseMaxStamina")]
+    public float MaxStaminaIncrease = 2f;
+
+    [ShowIf("@EffectType == ItemEffectType.IncreaseStaminaRegenrate")]
+    public float StaminaRegenerationIncrease = 0.2f;
+
+
+
     [Header("Settings")]
     public bool CanPurchaseMultiple = false;
     public int MaxPurchaseCount = 1;
@@ -161,7 +169,20 @@ public class ShopItemSO : ScriptableObject
                 else
                     player.Stats.BaseIframeDuration += IframeDurationIncrease;
                 break;
-                
+            case ItemEffectType.IncreaseMaxStamina:
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempMaxStamina += MaxEnergyIncrease;
+                else
+                    player.Stats.BaseMaxStamina += MaxEnergyIncrease;
+                player.Stamina.ApplyStats(player.Stats); 
+                break;
+            case ItemEffectType.IncreaseStaminaRegenrate:
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempStaminaRegeneration += MaxEnergyIncrease;
+                else
+                    player.Stats.BaseStaminaRegeneration += MaxEnergyIncrease;
+                player.Stamina.ApplyStats(player.Stats); 
+                break;
             default:
                 Debug.LogWarning($"Effect type {EffectType} not implemented for item {ItemName}");
                 break;
