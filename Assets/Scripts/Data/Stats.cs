@@ -63,6 +63,7 @@ public class Stats : ScriptableObject
     [ShowInInspector, ReadOnly] public float IframeDuration => BaseIframeDuration + TempIframeDuration;
 
 
+    [Button]
     public void Clear()
     {
         TempAttackSpeed = 0;

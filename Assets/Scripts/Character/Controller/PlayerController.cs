@@ -7,10 +7,16 @@ using System.Collections;
 using UnityEngine.VFX;
 using Animancer;
 using PrimeTween;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
-public class PlayerController : Controller, MMEventListener<PlayerAnimationStateChangeEvent>, MMEventListener<LevelRandomizeCompleteEvent>, MMEventListener<SkillSwapEvent>, MMEventListener<AddNewAbilityEvent>
+public class PlayerController : Controller,
+    MMEventListener<PlayerAnimationStateChangeEvent>,
+    MMEventListener<LevelRandomizeCompleteEvent>,
+    MMEventListener<SkillSwapEvent>,
+    MMEventListener<AbilitySwapEvent>,
+    MMEventListener<AddNewAbilityEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -27,7 +33,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
     [BoxGroup("Ability"), ReadOnly] public Skill CurrentAbility { get; private set; }
     [BoxGroup("Ability"), ReadOnly] private bool _abilityInCooldown;
-    [BoxGroup("Ability"), ReadOnly] public UnityEvent OnAbilityStartCooldown;
+    [BoxGroup("Ability"), ReadOnly] public UnityEvent<float> OnAbilityStartCooldown;
 
     [Header("VFX")]
     [FoldoutGroup("Slash")][SerializeField] private GameObject[] _slashVFXArray;
@@ -48,8 +54,8 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     public bool MusoReady { get; private set; }
     [SerializeField] private EnemyController _musoTarget;
 
-    [HideInInspector] public UnityEvent OnExecutionStarted;
-    [HideInInspector] public UnityEvent OnAbilityCycled;
+    [HideInInspector] public UnityEngine.Events.UnityEvent OnExecutionStarted;
+    [HideInInspector] public UnityEngine.Events.UnityEvent OnAbilityCycled;
     [ReadOnly] public bool IsNewSession = true;
 
     private Tween _iframeTween;
@@ -148,6 +154,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
         this.MMEventStartListening<SkillSwapEvent>();
+        this.MMEventStartListening<AbilitySwapEvent>();
         this.MMEventStartListening<AddNewAbilityEvent>();
     }
 
@@ -157,6 +164,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
         this.MMEventStopListening<SkillSwapEvent>();
+        this.MMEventStopListening<AbilitySwapEvent>();
         this.MMEventStopListening<AddNewAbilityEvent>();
         _iframeTween.Stop();
     }
@@ -175,8 +183,14 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
     }
     public void OnMMEvent(SkillSwapEvent e)
     {
-        CurrentWeapon.WeaponSkillDict[0][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
+        CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
+    }
+    public void OnMMEvent(AbilitySwapEvent e)
+    {
+        CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][e.Index] = e.SkillId;
+        CurrentWeapon.RefreshAvailableSkills();
+        NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, true, CurrentWeapon.SkillDict[e.SkillId]);
     }
 
     public void OnMMEvent(AddNewAbilityEvent e)
@@ -185,11 +199,11 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
         {
             CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Add(e.SkillId);
             CurrentWeapon.RefreshAvailableSkills();
-            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, true);
+            NewAbilityCallbackEvent.Trigger(e.SkillId, CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count - 1, true, CurrentWeapon.SkillDict[e.SkillId]);
         }
         else
         {
-            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, false);
+            NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, false, CurrentWeapon.SkillDict[e.SkillId]);
         }
     }
 
@@ -307,6 +321,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
 
         }
     }
+
     public void InputParry(InputAction.CallbackContext context)
     {
         if (context.started && IsActionAvailable(AnimationStateType.Parry))
@@ -351,7 +366,7 @@ public class PlayerController : Controller, MMEventListener<PlayerAnimationState
             _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
             if (_animationStateMachine.InterruptState(AnimationStateType.Ability))
             {
-                OnAbilityStartCooldown.Invoke();
+                OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
                 StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
             }
 

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class AbilityUIIcon : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private Image _icon;
+    [SerializeField, BoxGroup("References")] private Image _background;
     [SerializeField, BoxGroup("References")] private Image _selection;
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
 
@@ -15,8 +16,12 @@ public class AbilityUIIcon : MonoBehaviour
 
     void OnValidate()
     {
-        if (_icon == null) _icon = GetComponent<Image>();
         if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    void Start()
+    {
+        _canvasGroup.alpha = 0;
     }
 
 
@@ -25,7 +30,7 @@ public class AbilityUIIcon : MonoBehaviour
         _alphaTween.Stop();
     }
 
-    private void OnAbilityCooldownStarted(float cooldownTime)
+    public void OnAbilityCooldownStarted(float cooldownTime)
     {
         StartCoroutine(StartIconCooldownEffect(cooldownTime));
     }
@@ -59,5 +64,22 @@ public class AbilityUIIcon : MonoBehaviour
         _selection.gameObject.SetActive(false);
         _alphaTween.Stop();
         _alphaTween = Tween.Alpha(_canvasGroup, .5f, .5f);
+    }
+
+    public void AssignIcon(Sprite icon)
+    {
+        _icon.sprite = icon;
+        _background.sprite = icon;
+        if (_selection.gameObject.activeSelf)
+        {
+            _alphaTween.Stop();
+            _alphaTween = Tween.Alpha(_canvasGroup, 1, .5f);
+        }
+        else
+        {
+            _alphaTween.Stop();
+            _alphaTween = Tween.Alpha(_canvasGroup, .5f, .5f);
+        }
+        
     }
 }

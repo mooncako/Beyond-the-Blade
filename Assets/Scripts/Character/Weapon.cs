@@ -78,8 +78,7 @@ public class Weapon : MonoBehaviour
             else
                 WeaponSkillDict[key] = list;
         }
-
-        WeaponSkillDict = new Dictionary<int, List<string>>(WeaponSkillSO.SkillDict);
+        
         RefreshAvailableSkills();
     }
 

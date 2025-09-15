@@ -3,7 +3,9 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class AbilityUI : MonoBehaviour, MMEventListener<PlayerInitializedEvent>
+public class AbilityUI : MonoBehaviour,
+    MMEventListener<PlayerInitializedEvent>,
+    MMEventListener<NewAbilityCallbackEvent>
 {
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
     [SerializeField, BoxGroup("References")] private PlayerController _player;
@@ -23,15 +25,19 @@ public class AbilityUI : MonoBehaviour, MMEventListener<PlayerInitializedEvent>
     void OnEnable()
     {
         this.MMEventStartListening<PlayerInitializedEvent>();
+        this.MMEventStartListening<NewAbilityCallbackEvent>();
     }
 
     void OnDisable()
     {
         this.MMEventStopListening<PlayerInitializedEvent>();
+        this.MMEventStopListening<NewAbilityCallbackEvent>();
         if (_isInitialized)
         {
             _player.OnAbilityCycled.RemoveListener(CycleAbility);
+            _player.OnAbilityStartCooldown.RemoveListener(EnterCooldown);
         }
+
     }
 
     public void OnMMEvent(PlayerInitializedEvent e)
@@ -40,8 +46,19 @@ public class AbilityUI : MonoBehaviour, MMEventListener<PlayerInitializedEvent>
         _isInitialized = true;
         _alphaTween.Stop();
         _alphaTween = Tween.Alpha(_canvasGroup, 1, .5f);
+        UpdateIcons();
         _player.OnAbilityCycled.AddListener(CycleAbility);
         CycleAbility();
+
+        _player.OnAbilityStartCooldown.AddListener(EnterCooldown);
+    }
+
+    public void OnMMEvent(NewAbilityCallbackEvent e)
+    {
+        if (e.IsSuccessfullyAdded)
+        {
+            UpdateIcons();
+        }
     }
 
     private void CycleAbility()
@@ -49,6 +66,20 @@ public class AbilityUI : MonoBehaviour, MMEventListener<PlayerInitializedEvent>
         _abilityIcons[_currentAbilitySelection].Deselect();
         _currentAbilitySelection = _player.CurrentWeapon.GetCurrentAbilityIndex();
         _abilityIcons[_currentAbilitySelection].Select();
+    }
+
+    [Button]
+    private void UpdateIcons()
+    {
+        for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count; i++)
+        {
+            _abilityIcons[i].AssignIcon(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][i]].Icon);
+        }
+    }
+
+    private void EnterCooldown(float cooldown)
+    {
+        _abilityIcons[_currentAbilitySelection].OnAbilityCooldownStarted(cooldown);
     }
 
 }

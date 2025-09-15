@@ -8,6 +8,12 @@ public enum ItemType
     Utility
 }
 
+public enum UpgradeType
+{
+    InGame,
+    Meta
+}
+
 [Serializable]
 public enum ItemEffectType
 {

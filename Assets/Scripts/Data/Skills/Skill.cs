@@ -20,6 +20,7 @@ public class Skill
     public bool IsStartBuffed = false;
     public bool IsMidBuffed = false;
     public bool IsEndBuffed = false;
+    [PreviewField] public Sprite Icon;
 
     public Skill(Skill skill)
     {
@@ -45,6 +46,7 @@ public class Skill
         IsStartBuffed = skill.IsStartBuffed;
         IsMidBuffed = skill.IsMidBuffed;
         IsEndBuffed = skill.IsEndBuffed;
+        Icon = skill.Icon;
     }
 
     public Skill()

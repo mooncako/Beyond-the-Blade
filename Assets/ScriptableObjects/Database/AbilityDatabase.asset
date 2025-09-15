@@ -16,19 +16,27 @@ MonoBehaviour:
   Abilities:
   - SkillId: SWORD_TEST_ABILITY
     CanAppear: 0
-    PossibilityIndex: 0
   - SkillId: SWORD_TEST_ABILITY2
     CanAppear: 1
-    PossibilityIndex: 0.5
   - SkillId: SWORD_TEST_ABILITY3
     CanAppear: 1
-    PossibilityIndex: 0.5
   - SkillId: SWORD_TEST_ABILITY4
     CanAppear: 1
-    PossibilityIndex: 1
   - SkillId: SWORD_TEST_ABILITY5
     CanAppear: 1
-    PossibilityIndex: 1
   - SkillId: SWORD_TEST_ABILITY6
     CanAppear: 1
-    PossibilityIndex: 1
+  NormalAbilities: []
+  RareAbilities:
+  - SkillId: SWORD_TEST_ABILITY2
+    CanAppear: 1
+  - SkillId: SWORD_TEST_ABILITY5
+    CanAppear: 1
+  EpicAbilities:
+  - SkillId: SWORD_TEST_ABILITY3
+    CanAppear: 1
+  - SkillId: SWORD_TEST_ABILITY6
+    CanAppear: 1
+  LegendaryAbilities:
+  - SkillId: SWORD_TEST_ABILITY4
+    CanAppear: 1

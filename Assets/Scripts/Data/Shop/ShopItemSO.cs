@@ -14,6 +14,7 @@ public class ShopItemSO : ScriptableObject
     [Header("Item Type & Effects")]
     public ItemType ItemType = ItemType.Consumable;
     public ItemEffectType EffectType = ItemEffectType.RestoreHealth;
+    public UpgradeType UpgradeType = UpgradeType.InGame;
     
     [Header("Effect Values")]
     [ShowIf("@EffectType == ItemEffectType.RestoreHealth")]
@@ -80,52 +81,85 @@ public class ShopItemSO : ScriptableObject
                 break;
                 
             case ItemEffectType.IncreaseMaxHealth:
-                IncreasePlayerMaxHealth(player, MaxHealthIncrease);
+                IncreasePlayerMaxHealth(player, MaxHealthIncrease, UpgradeType);
                 break;
                 
             case ItemEffectType.IncreaseDamage:
-                player.Stats.BaseDamageMultiplier += DamageIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempDamageMultiplier += DamageIncrease;
+                else
+                    player.Stats.BaseDamageMultiplier += DamageIncrease;
                 break;
                 
             case ItemEffectType.IncreaseAttackSpeed:
-                player.Stats.BaseAttackSpeed += AttackSpeedIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempAttackSpeed += AttackSpeedIncrease;
+                else
+                    player.Stats.BaseAttackSpeed += AttackSpeedIncrease;
                 break;
                 
             case ItemEffectType.IncreaseDamageReduction:
-                player.Stats.BaseDamageReduction += DamageReductionIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempDamageReduction += DamageReductionIncrease;
+                else
+                    player.Stats.BaseDamageReduction += DamageReductionIncrease;
                 break;
                 
             case ItemEffectType.IncreaseMovementSpeed:
-                player.Stats.BaseMovementSpeedMultiplier += MovementSpeedIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempMovementSpeedMultiplier += MovementSpeedIncrease;
+                else
+                    player.Stats.BaseMovementSpeedMultiplier += MovementSpeedIncrease;
                 break;
                 
             case ItemEffectType.IncreaseDashForce:
-                player.Stats.BaseDashForce += DashForceIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempDashForce += DashForceIncrease;
+                else
+                    player.Stats.BaseDashForce += DashForceIncrease;
                 break;
                 
             case ItemEffectType.IncreaseMaxEnergy:
-                player.Stats.BaseMaxEnergy += MaxEnergyIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempMaxEnergy += MaxEnergyIncrease;
+                else
+                    player.Stats.BaseMaxEnergy += MaxEnergyIncrease;
                 player.Energy.ApplyStats(player.Stats); // Update energy component
                 break;
                 
             case ItemEffectType.IncreaseParryEnergyGain:
-                player.Stats.BaseParryEnergyGain += ParryEnergyGainIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempParryEnergyGain += ParryEnergyGainIncrease;
+                else
+                    player.Stats.BaseParryEnergyGain += ParryEnergyGainIncrease;
                 break;
                 
             case ItemEffectType.IncreaseDashEnergyGain:
-                player.Stats.BaseDashEnergyGain += DashEnergyGainIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempDashEnergyGain += DashEnergyGainIncrease;
+                else
+                    player.Stats.BaseDashEnergyGain += DashEnergyGainIncrease;
                 break;
                 
             case ItemEffectType.IncreaseResourceGainMultiplier:
-                player.Stats.BaseResourceGainMultiplier += ResourceGainMultiplierIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempResourceGainMultiplier += ResourceGainMultiplierIncrease;
+                else
+                    player.Stats.BaseResourceGainMultiplier += ResourceGainMultiplierIncrease;
                 break;
                 
             case ItemEffectType.DecreaseHitStunDuration:
-                player.Stats.BaseHitStunDuration -= HitStunDurationDecrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempHitStunDuration -= HitStunDurationDecrease;
+                else
+                    player.Stats.BaseHitStunDuration -= HitStunDurationDecrease;
                 break;
                 
             case ItemEffectType.IncreaseIframeDuration:
-                player.Stats.BaseIframeDuration += IframeDurationIncrease;
+                if(UpgradeType == UpgradeType.InGame)
+                    player.Stats.TempIframeDuration += IframeDurationIncrease;
+                else
+                    player.Stats.BaseIframeDuration += IframeDurationIncrease;
                 break;
                 
             default:
@@ -150,9 +184,12 @@ public class ShopItemSO : ScriptableObject
         }
     }
 
-    private void IncreasePlayerMaxHealth(PlayerController player, float amount)
+    private void IncreasePlayerMaxHealth(PlayerController player, float amount, UpgradeType upgradeType)
     {
-        player.Stats.BaseMaxHealth += amount;
+        if (upgradeType == UpgradeType.InGame)
+            player.Stats.TempMaxHealth += amount;
+        else
+            player.Stats.BaseMaxHealth += amount;
         
         Health playerHealth = player.GetComponent<Health>();
         if (playerHealth != null)

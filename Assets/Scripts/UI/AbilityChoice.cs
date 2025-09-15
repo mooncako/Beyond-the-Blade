@@ -19,7 +19,6 @@ public class AbilityChoice : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (_name == null) _name = GetComponentsInChildren<TextMeshProUGUI>()[0];
         if (_damage == null) _damage = GetComponentsInChildren<TextMeshProUGUI>()[1];
         if (_desc == null) _desc = GetComponentsInChildren<TextMeshProUGUI>()[2];
-        if (_rarity == null) _rarity = GetComponentInChildren<Image>();
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -37,11 +36,12 @@ public class AbilityChoice : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     }
 
-    public void AssignData(Skill skill)
+    public void AssignData(Skill skill, string SkillId)
     {
         _name.text = skill.Name;
         _desc.text = skill.Description;
         _damage.text = $"{skill.Damage}";
         _rarity.color = RarityUtil.GetRarityColor(skill.Rarity);
+        _skillId = SkillId;
     }
 }
