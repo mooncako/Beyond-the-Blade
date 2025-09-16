@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : MMSingleton<LevelManager>, MMEventListener<LevelRandomizeCompleteEvent>
+public class LevelManager : MMSingleton<LevelManager>,
+    MMEventListener<LevelRandomizeCompleteEvent>,
+    MMEventListener<RoomClearedEvent>
 {
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableNormalLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableShopLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableRecoveryLevelPrefabs;
+    [SerializeField, BoxGroup("References")] private PickupFactory _pickupFactory;
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
     [SerializeField, BoxGroup("Settings")] private LevelType _defaultLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private BiomeType _currentBiome;
@@ -18,6 +21,11 @@ public class LevelManager : MMSingleton<LevelManager>, MMEventListener<LevelRand
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
+
+    void OnValidate()
+    {
+        if (_pickupFactory == null) _pickupFactory = GetComponent<PickupFactory>();
+    }
 
     protected override void Awake()
     {
@@ -131,5 +139,10 @@ public class LevelManager : MMSingleton<LevelManager>, MMEventListener<LevelRand
         {
             CalculateExitTypes();
         }
+    }
+
+    public void OnMMEvent(RoomClearedEvent e)
+    {
+        _pickupFactory.SpawnPickup(Vector3.zero);
     }
 }

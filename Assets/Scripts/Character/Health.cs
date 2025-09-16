@@ -66,6 +66,7 @@ public class Health : MonoBehaviour
     public void Death(DamageInfo info)
     {
         OnDeath.Invoke(info);
+        gameObject.SetActive(false);
     }
 
     [Button, BoxGroup("Debug")]

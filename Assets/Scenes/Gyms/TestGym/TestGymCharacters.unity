@@ -585,7 +585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2352203424212552441, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: _poolConfigs.Array.size
@@ -1262,6 +1262,10 @@ PrefabInstance:
     - target: {fileID: 3956247775234095569, guid: f0f11ab5221c13b40ae6d2114ecc2a96, type: 3}
       propertyPath: m_Name
       value: ItemPickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 3956247775234095569, guid: f0f11ab5221c13b40ae6d2114ecc2a96, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

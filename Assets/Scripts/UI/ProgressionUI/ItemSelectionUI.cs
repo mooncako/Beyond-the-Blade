@@ -44,7 +44,6 @@ public class ItemSelectionUI : MonoBehaviour, MMEventListener<NewItemSelectionEv
             _alphaTween = Tween.Alpha(_canvasGroup, 0, .5f);
             _canvasGroup.blocksRaycasts = false;
             _canvasGroup.interactable = false;
-            ProgressionCanvasCloseEvent.Trigger();
         }
     }
 
