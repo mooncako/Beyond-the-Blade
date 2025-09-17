@@ -8,7 +8,7 @@ public class SkillPickup : MonoBehaviour, IPickup
     [SerializeField, FoldoutGroup("References")] private SphereCollider _collider;
 
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
-    [SerializeField, BoxGroup("Settings")] public string SkillId;
+    [SerializeField, BoxGroup("Settings")] private string _skillId;
 
     void OnEnable()
     {
@@ -40,7 +40,7 @@ public class SkillPickup : MonoBehaviour, IPickup
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
             PlayerController controller = other.GetComponent<PlayerController>();
-            NewSkillEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDict[SkillId], SkillId);
+            NewSkillEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDict[_skillId], _skillId);
         }
     }
 
@@ -55,5 +55,10 @@ public class SkillPickup : MonoBehaviour, IPickup
     public void OnMMEvent(ProgressionCanvasCloseEvent e)
     {
         gameObject.SetActive(false);
+    }
+
+    public void AssignId(string id)
+    {
+        _skillId = id;
     }
 }

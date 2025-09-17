@@ -57,4 +57,9 @@ public class SkillUpgradePickup : MonoBehaviour, IPickup
     {
         gameObject.SetActive(false);
     }
+
+    public void AssignId(string id)
+    {
+        _modifierId = id;
+    }
 }
