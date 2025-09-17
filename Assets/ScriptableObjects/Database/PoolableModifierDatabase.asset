@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d208eb8c61f7a64db7ca32daf9f6411, type: 3}
+  m_Name: PoolableModifierDatabase
+  m_EditorClassIdentifier: 
+  _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
+  Modifiers:
+  - SkillId: TELEPORT
+    CanAppear: 1
+  NormalModifiers: []
+  RareModifiers: []
+  EpicModifiers:
+  - SkillId: TELEPORT
+    CanAppear: 1
+  LegendaryModifiers: []

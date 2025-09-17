@@ -50,18 +50,21 @@ public class LevelManager : MMSingleton<LevelManager>,
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStartListening<RoomClearedEvent>();
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<RoomClearedEvent>();
     }
 
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<RoomClearedEvent>();
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
@@ -130,7 +133,7 @@ public class LevelManager : MMSingleton<LevelManager>,
             {
                 _exitsLevelType.Add(LevelType.Shop);
             }
-        }  
+        }
     }
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
@@ -143,6 +146,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     public void OnMMEvent(RoomClearedEvent e)
     {
-        _pickupFactory.SpawnPickup(Vector3.zero);
+        _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
     }
+    
 }

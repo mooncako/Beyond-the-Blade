@@ -48,6 +48,7 @@ MonoBehaviour:
   _availableNormalLevelPrefabs: []
   _availableShopLevelPrefabs: []
   _availableRecoveryLevelPrefabs: []
+  _pickupFactory: {fileID: 8365107671556267791}
   _defaultBiome: 0
   _defaultLevelType: 0
   _currentBiome: 0
@@ -72,3 +73,6 @@ MonoBehaviour:
   _abilityPickup: {fileID: 5697058923683154770, guid: 2b17619109f30984bbe48b04df0d0640, type: 3}
   _skillPickup: {fileID: 238574854914431234, guid: 24c1f47cca116744ea0499635aeeb946, type: 3}
   _skillUpgradePickup: {fileID: 4796167489179356368, guid: b099aa33b793dda4bbaa7cd8182a01e0, type: 3}
+  _poolableSkillDatabase: {fileID: 11400000, guid: 040b487941e9db2479a8238ee165fb85, type: 2}
+  _poolableModifierDatabase: {fileID: 11400000, guid: d933e9fc4a63b4b42825effcd61a1166, type: 2}
+  _player: {fileID: 0}

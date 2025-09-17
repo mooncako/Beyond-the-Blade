@@ -8,11 +8,11 @@ using UnityEngine;
 public class AbilityDatabaseSO : ScriptableObject
 {
     [SerializeField] private PlayerSkillsSO _playerSkillDatabase;
-    public List<PooledAbility> Abilities = new List<PooledAbility>();
-    public List<PooledAbility> NormalAbilities = new List<PooledAbility>();
-    public List<PooledAbility> RareAbilities = new List<PooledAbility>();
-    public List<PooledAbility> EpicAbilities = new List<PooledAbility>();
-    public List<PooledAbility> LegendaryAbilities = new List<PooledAbility>();
+    public List<PoolableSkill> Abilities = new List<PoolableSkill>();
+    public List<PoolableSkill> NormalAbilities = new List<PoolableSkill>();
+    public List<PoolableSkill> RareAbilities = new List<PoolableSkill>();
+    public List<PoolableSkill> EpicAbilities = new List<PoolableSkill>();
+    public List<PoolableSkill> LegendaryAbilities = new List<PoolableSkill>();
 
 
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -17,15 +18,17 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardTypes;
     [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
     [SerializeField, BoxGroup("Settings")] public ExitsProbability ExitsProbability;
+    [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
     [field: SerializeField, BoxGroup("Settings")] public SpawnPos[] SpawnPositions { get; private set; }
     [field: SerializeField, BoxGroup("Settings")] public ExitPos[] ExitPositions { get; private set; }
 
     [SerializeField, BoxGroup("Debug")] public SpawnPos SpawnPos;
+    [SerializeField, BoxGroup("Debug")] public PlayerController _player;
     [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList;
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -44,6 +47,7 @@ public class LevelSystem : MonoBehaviour
         if (_navMeshSurface == null) _navMeshSurface = GetComponent<NavMeshSurface>();
         if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
     }
+
 
     void Awake()
     {
@@ -69,7 +73,7 @@ public class LevelSystem : MonoBehaviour
         LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform);
 
         // Generate Player
-        
+
     }
 
     private void SelectSpawnExitLocations()
@@ -170,8 +174,5 @@ public class LevelSystem : MonoBehaviour
         return ints;
 
     }
-
-
-
-
 }
+    
