@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
 using MoreMountains.Tools;
+using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using UnityEngine;
 
 public class SaveLoadManager : MMSingleton<SaveLoadManager>,
@@ -23,11 +26,35 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
 
     public void OnMMEvent(SaveEvent e)
     {
-        
+        List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+
+        for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+        {
+            playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+        }
+
+        Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.JSON);
+        File.WriteAllBytes($"{Application.persistentDataPath}\\{e.SaveName}", bytes);
+    }
+
+    [Button]
+    private void TestSave()
+    {
+        List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+
+        for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+        {
+            playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+        }
+
+        Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.JSON);
+        File.WriteAllBytes($"{Application.persistentDataPath}\\Test", bytes);
     }
 
     public void OnMMEvent(LoadEvent e)
     {
-        
+
     }
 }

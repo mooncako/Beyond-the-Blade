@@ -16,9 +16,9 @@ public class Vision : MonoBehaviour
 
     public void ApplyStats(Stats stats)
     {
-        Range = stats.Range;
-        AlertRange = stats.AlertRange;
-        FieldOfView = stats.FieldOfView;
+        Range = stats.StatsData.Range;
+        AlertRange = stats.StatsData.AlertRange;
+        FieldOfView = stats.StatsData.FieldOfView;
     }
 
     public bool TestVisibility(Vector3 point)

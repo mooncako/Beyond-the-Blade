@@ -4,77 +4,70 @@ using UnityEngine;
 
 public class Stats : ScriptableObject
 {
-    [Header("Vision")]
-    public float Range = 4f;
-    public float AlertRange = 6f;
-    public float FieldOfView = 140f;
 
-    [Header("Stats")]
-    public float BaseMaxHealth = 100f;
+    public StatsData StatsData;
+
     [ReadOnly] public float TempMaxHealth = 0;
-    [ShowInInspector, ReadOnly] public float MaxHealth => BaseMaxHealth + TempMaxHealth;
+    [ShowInInspector, ReadOnly] public float MaxHealth => StatsData.BaseMaxHealth + TempMaxHealth;
 
-    public float BaseMaxEnergy = 10f;
     [ReadOnly] public float TempMaxEnergy = 0f;
-    [ShowInInspector, ReadOnly] public float MaxEnergy => BaseMaxEnergy + TempMaxEnergy;
+    [ShowInInspector, ReadOnly] public float MaxEnergy => StatsData.BaseMaxEnergy + TempMaxEnergy;
 
-    public float BaseMaxStamina = 10f;
     [ReadOnly] public float TempMaxStamina = 0f;
-    [ShowInInspector, ReadOnly] public float MaxStamina => BaseMaxStamina + TempMaxStamina;
+    [ShowInInspector, ReadOnly] public float MaxStamina => StatsData.BaseMaxStamina + TempMaxStamina;
 
-    public float BaseStaminaRegeneration = 1f;
     [ReadOnly] public float TempStaminaRegeneration = 0f;
-    [ShowInInspector, ReadOnly] public float StaminaRegeneration => BaseStaminaRegeneration + TempStaminaRegeneration;
-    public float BaseDashStaminaCost = 3f;
+    [ShowInInspector, ReadOnly] public float StaminaRegeneration => StatsData.BaseStaminaRegeneration + TempStaminaRegeneration;
+
     [ReadOnly] public float TempDashStaminaCost = 0f;
-    [ShowInInspector, ReadOnly] public float DashStaminaCost => BaseDashStaminaCost - TempDashStaminaCost; // use minus? 
-    public float BaseParryStaminaCost = 2f;
+    [ShowInInspector, ReadOnly] public float DashStaminaCost => StatsData.BaseDashStaminaCost - TempDashStaminaCost; // use minus? 
+
     [ReadOnly] public float TempParryStaminaCost = 0f;
-    [ShowInInspector, ReadOnly] public float ParryStaminaCost => BaseParryStaminaCost - TempParryStaminaCost; //  minus? 
+    [ShowInInspector, ReadOnly] public float ParryStaminaCost => StatsData.BaseParryStaminaCost - TempParryStaminaCost; //  minus? 
 
-    public float BaseMovementSpeedMultiplier = 1;
+
     [ReadOnly] public float TempMovementSpeedMultiplier = 0;
-    [ShowInInspector, ReadOnly] public float MovementSpeedMultiplier => BaseMovementSpeedMultiplier + TempMovementSpeedMultiplier;
+    [ShowInInspector, ReadOnly] public float MovementSpeedMultiplier => StatsData.BaseMovementSpeedMultiplier + TempMovementSpeedMultiplier;
 
-    public float BaseDamageMultiplier = 1;
+
     [ReadOnly] public float TempDamageMultiplier = 0;
-    [ShowInInspector, ReadOnly] public float DamageMultiplier => BaseDamageMultiplier + TempDamageMultiplier;
+    [ShowInInspector, ReadOnly] public float DamageMultiplier => StatsData.BaseDamageMultiplier + TempDamageMultiplier;
 
-    public float BaseDamageReduction = 0;
+
     [ReadOnly] public float TempDamageReduction = 0f;
-    [ShowInInspector, ReadOnly] public float DamageReduction => BaseDamageReduction + TempDamageReduction;
+    [ShowInInspector, ReadOnly] public float DamageReduction => StatsData.BaseDamageReduction + TempDamageReduction;
 
-    public float BaseAttackSpeed = 1f;
+
     [ReadOnly] public float TempAttackSpeed = 0f;
-    [ShowInInspector, ReadOnly] public float AttackSpeed => BaseAttackSpeed + TempAttackSpeed;
+    [ShowInInspector, ReadOnly] public float AttackSpeed => StatsData.BaseAttackSpeed + TempAttackSpeed;
 
-    public float BaseParryEnergyGain = 1.5f;
+
     [ReadOnly] public float TempParryEnergyGain = 0f;
-    [ShowInInspector, ReadOnly] public float ParryEnergyGain => BaseParryEnergyGain + TempParryEnergyGain;
+    [ShowInInspector, ReadOnly] public float ParryEnergyGain => StatsData.BaseParryEnergyGain + TempParryEnergyGain;
 
-    public float BaseDashEnergyGain = .8f;
+
     [ReadOnly] public float TempDashEnergyGain = 0f;
-    [ShowInInspector, ReadOnly] public float DashEnergyGain => BaseDashEnergyGain + TempDashEnergyGain;
+    [ShowInInspector, ReadOnly] public float DashEnergyGain => StatsData.BaseDashEnergyGain + TempDashEnergyGain;
 
-    public float BaseHitStunDuration = .5f;
+
     [ReadOnly] public float TempHitStunDuration = 0f;
-    [ShowInInspector, ReadOnly] public float HitStunDuration => BaseHitStunDuration + TempHitStunDuration;
+    [ShowInInspector, ReadOnly] public float HitStunDuration => StatsData.BaseHitStunDuration + TempHitStunDuration;
 
-    public float BaseRegulerStunDuration = 3f;
+
     [ReadOnly] public float TempRegulerStunDuration = 0f;
-    [ShowInInspector, ReadOnly] public float RegulerStunDuration => BaseRegulerStunDuration + TempRegulerStunDuration;
+    [ShowInInspector, ReadOnly] public float RegulerStunDuration => StatsData.BaseRegulerStunDuration + TempRegulerStunDuration;
 
-    public float BaseResourceGainMultiplier = 1f;
+
     [ReadOnly] public float TempResourceGainMultiplier = 0f;
-    [ShowInInspector, ReadOnly] public float ResourceGainMultiplier => BaseResourceGainMultiplier + TempResourceGainMultiplier;
+    [ShowInInspector, ReadOnly] public float ResourceGainMultiplier => StatsData.BaseResourceGainMultiplier + TempResourceGainMultiplier;
 
-    public float BaseDashForce = 1000f;
+
     [ReadOnly] public float TempDashForce = 0f;
-    [ShowInInspector, ReadOnly] public float DashForce => BaseDashForce + TempDashForce;
+    [ShowInInspector, ReadOnly] public float DashForce => StatsData.BaseDashForce + TempDashForce;
 
-    public float BaseIframeDuration = .2f;
+
     [ReadOnly] public float TempIframeDuration = 0f;
-    [ShowInInspector, ReadOnly] public float IframeDuration => BaseIframeDuration + TempIframeDuration;
+    [ShowInInspector, ReadOnly] public float IframeDuration => StatsData.BaseIframeDuration + TempIframeDuration;
 
 
     [Button]
@@ -96,26 +89,26 @@ public class Stats : ScriptableObject
         TempStaminaRegeneration = 0;
     }
 
-    public void CopyValue(Stats stats)
+    public void CopyValue(StatsData stats)
     {
-        Range = stats.Range;
-        AlertRange = stats.AlertRange;
-        FieldOfView = stats.FieldOfView;
-        BaseMaxHealth = stats.BaseMaxHealth;
-        BaseMaxEnergy = stats.BaseMaxEnergy;
-        BaseMaxStamina = stats.BaseMaxStamina;
-        BaseStaminaRegeneration = stats.BaseStaminaRegeneration;
-        BaseAttackSpeed = stats.BaseAttackSpeed;
-        BaseDamageMultiplier = stats.BaseDamageMultiplier;
-        BaseDamageReduction = stats.BaseDamageReduction;
-        BaseMovementSpeedMultiplier = stats.BaseMovementSpeedMultiplier;
-        BaseParryEnergyGain = stats.BaseParryEnergyGain;
-        BaseDashEnergyGain = stats.BaseDashEnergyGain;
-        BaseDashForce = stats.BaseDashForce;
-        BaseHitStunDuration = stats.BaseHitStunDuration;
-        BaseIframeDuration = stats.BaseIframeDuration;
-        BaseRegulerStunDuration = stats.BaseRegulerStunDuration;
-        BaseResourceGainMultiplier = stats.BaseRegulerStunDuration;
+        StatsData.Range = stats.Range;
+        StatsData.AlertRange = stats.AlertRange;
+        StatsData.FieldOfView = stats.FieldOfView;
+        StatsData.BaseMaxHealth = stats.BaseMaxHealth;
+        StatsData.BaseMaxEnergy = stats.BaseMaxEnergy;
+        StatsData.BaseMaxStamina = stats.BaseMaxStamina;
+        StatsData.BaseStaminaRegeneration = stats.BaseStaminaRegeneration;
+        StatsData.BaseAttackSpeed = stats.BaseAttackSpeed;
+        StatsData.BaseDamageMultiplier = stats.BaseDamageMultiplier;
+        StatsData.BaseDamageReduction = stats.BaseDamageReduction;
+        StatsData.BaseMovementSpeedMultiplier = stats.BaseMovementSpeedMultiplier;
+        StatsData.BaseParryEnergyGain = stats.BaseParryEnergyGain;
+        StatsData.BaseDashEnergyGain = stats.BaseDashEnergyGain;
+        StatsData.BaseDashForce = stats.BaseDashForce;
+        StatsData.BaseHitStunDuration = stats.BaseHitStunDuration;
+        StatsData.BaseIframeDuration = stats.BaseIframeDuration;
+        StatsData.BaseRegulerStunDuration = stats.BaseRegulerStunDuration;
+        StatsData.BaseResourceGainMultiplier = stats.BaseRegulerStunDuration;
         Clear();
     }
 

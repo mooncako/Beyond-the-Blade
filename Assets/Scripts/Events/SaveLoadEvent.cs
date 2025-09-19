@@ -5,27 +5,17 @@ using UnityEngine;
 public struct SaveEvent
 {
     public string SaveName;
-    public PlayerSkillsSO PlayerSkillDatabase;
-    public PlayerStatsSO PlayerStats;
-    public List<AvailableSkillSO> PlayerWeaponSkills;
     // Need to add stuffs related to the meta progression as well as story
 
-    public SaveEvent(string saveName, PlayerSkillsSO playerSkillDatabase, PlayerStatsSO playerStats, List<AvailableSkillSO> playerWeaponSkills)
+    public SaveEvent(string saveName)
     {
         SaveName = saveName;
-        PlayerSkillDatabase = playerSkillDatabase;
-        PlayerStats = playerStats;
-        PlayerWeaponSkills = playerWeaponSkills;
     }
 
     public static SaveEvent e;
 
-    public static void Trigger(string saveName, PlayerSkillsSO playerSkillDatabase, PlayerStatsSO playerStats, List<AvailableSkillSO> playerWeaponSkills)
+    public static void Trigger(string saveName)
     {
-        e.SaveName = saveName;
-        e.PlayerSkillDatabase = playerSkillDatabase;
-        e.PlayerStats = playerStats;
-        e.PlayerWeaponSkills = playerWeaponSkills;
         MMEventManager.TriggerEvent(e);
     }
 }

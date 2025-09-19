@@ -96,42 +96,42 @@ public class ShopItemSO : ScriptableObject
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempDamageMultiplier += DamageIncrease;
                 else
-                    player.Stats.BaseDamageMultiplier += DamageIncrease;
+                    player.Stats.StatsData.BaseDamageMultiplier += DamageIncrease;
                 break;
                 
             case ItemEffectType.IncreaseAttackSpeed:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempAttackSpeed += AttackSpeedIncrease;
                 else
-                    player.Stats.BaseAttackSpeed += AttackSpeedIncrease;
+                    player.Stats.StatsData.BaseAttackSpeed += AttackSpeedIncrease;
                 break;
                 
             case ItemEffectType.IncreaseDamageReduction:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempDamageReduction += DamageReductionIncrease;
                 else
-                    player.Stats.BaseDamageReduction += DamageReductionIncrease;
+                    player.Stats.StatsData.BaseDamageReduction += DamageReductionIncrease;
                 break;
                 
             case ItemEffectType.IncreaseMovementSpeed:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempMovementSpeedMultiplier += MovementSpeedIncrease;
                 else
-                    player.Stats.BaseMovementSpeedMultiplier += MovementSpeedIncrease;
+                    player.Stats.StatsData.BaseMovementSpeedMultiplier += MovementSpeedIncrease;
                 break;
                 
             case ItemEffectType.IncreaseDashForce:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempDashForce += DashForceIncrease;
                 else
-                    player.Stats.BaseDashForce += DashForceIncrease;
+                    player.Stats.StatsData.BaseDashForce += DashForceIncrease;
                 break;
                 
             case ItemEffectType.IncreaseMaxEnergy:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempMaxEnergy += MaxEnergyIncrease;
                 else
-                    player.Stats.BaseMaxEnergy += MaxEnergyIncrease;
+                    player.Stats.StatsData.BaseMaxEnergy += MaxEnergyIncrease;
                 player.Energy.ApplyStats(player.Stats); // Update energy component
                 break;
                 
@@ -139,48 +139,48 @@ public class ShopItemSO : ScriptableObject
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempParryEnergyGain += ParryEnergyGainIncrease;
                 else
-                    player.Stats.BaseParryEnergyGain += ParryEnergyGainIncrease;
+                    player.Stats.StatsData.BaseParryEnergyGain += ParryEnergyGainIncrease;
                 break;
                 
             case ItemEffectType.IncreaseDashEnergyGain:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempDashEnergyGain += DashEnergyGainIncrease;
                 else
-                    player.Stats.BaseDashEnergyGain += DashEnergyGainIncrease;
+                    player.Stats.StatsData.BaseDashEnergyGain += DashEnergyGainIncrease;
                 break;
                 
             case ItemEffectType.IncreaseResourceGainMultiplier:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempResourceGainMultiplier += ResourceGainMultiplierIncrease;
                 else
-                    player.Stats.BaseResourceGainMultiplier += ResourceGainMultiplierIncrease;
+                    player.Stats.StatsData.BaseResourceGainMultiplier += ResourceGainMultiplierIncrease;
                 break;
                 
             case ItemEffectType.DecreaseHitStunDuration:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempHitStunDuration -= HitStunDurationDecrease;
                 else
-                    player.Stats.BaseHitStunDuration -= HitStunDurationDecrease;
+                    player.Stats.StatsData.BaseHitStunDuration -= HitStunDurationDecrease;
                 break;
                 
             case ItemEffectType.IncreaseIframeDuration:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempIframeDuration += IframeDurationIncrease;
                 else
-                    player.Stats.BaseIframeDuration += IframeDurationIncrease;
+                    player.Stats.StatsData.BaseIframeDuration += IframeDurationIncrease;
                 break;
             case ItemEffectType.IncreaseMaxStamina:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempMaxStamina += MaxEnergyIncrease;
                 else
-                    player.Stats.BaseMaxStamina += MaxEnergyIncrease;
+                    player.Stats.StatsData.BaseMaxStamina += MaxEnergyIncrease;
                 player.Stamina.ApplyStats(player.Stats); 
                 break;
             case ItemEffectType.IncreaseStaminaRegenrate:
                 if(UpgradeType == UpgradeType.InGame)
                     player.Stats.TempStaminaRegeneration += MaxEnergyIncrease;
                 else
-                    player.Stats.BaseStaminaRegeneration += MaxEnergyIncrease;
+                    player.Stats.StatsData.BaseStaminaRegeneration += MaxEnergyIncrease;
                 player.Stamina.ApplyStats(player.Stats); 
                 break;
             default:
@@ -210,7 +210,7 @@ public class ShopItemSO : ScriptableObject
         if (upgradeType == UpgradeType.InGame)
             player.Stats.TempMaxHealth += amount;
         else
-            player.Stats.BaseMaxHealth += amount;
+            player.Stats.StatsData.BaseMaxHealth += amount;
         
         Health playerHealth = player.GetComponent<Health>();
         if (playerHealth != null)

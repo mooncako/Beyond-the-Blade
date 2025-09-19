@@ -12,8 +12,7 @@ public static class ANIMKEY
 
 public static class DIRECTORY
 {
-    //Really Important -by Xwen
-    public const string SavePath = "\\Save";
+
     public const string SettingsPath = "\\Settings.json";
 }
 
