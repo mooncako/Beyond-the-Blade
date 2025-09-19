@@ -154,6 +154,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         }
         else
         {
+            Debug.Log("Room Cleared");
             RoomClearedEvent.Trigger();
             return;
         }

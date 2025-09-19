@@ -7,12 +7,12 @@ public class PickupFactory : MonoBehaviour,
     MMEventListener<PlayerInitializedEvent>
 {
     [SerializeField, BoxGroup("References")] private GameObject _itemPickup;
-    
+
     [SerializeField, BoxGroup("References")] private GameObject _abilityPickup;
     [SerializeField, BoxGroup("References")] private SkillPickup _skillPickup;
     [SerializeField, BoxGroup("References")] private SkillUpgradePickup _skillUpgradePickup;
     [SerializeField, BoxGroup("References")] private PoolableSkillDatabaseSO _poolableSkillDatabase;
-    [SerializeField, BoxGroup(("References"))] private AbilityDatabaseSO _abilityDatabase;
+    [SerializeField, BoxGroup("References")] private AbilityDatabaseSO _abilityDatabase;
     [SerializeField, BoxGroup("References")] private PoolableModifierDatabaseSO _poolableModifierDatabase;
     [SerializeField, BoxGroup("References")] private PlayerController _player;
 
@@ -332,4 +332,6 @@ public class PickupFactory : MonoBehaviour,
         UpdateModifiers();
         UpdateAbilities();
     }
+
+
 }

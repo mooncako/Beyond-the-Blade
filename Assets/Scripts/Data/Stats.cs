@@ -95,4 +95,28 @@ public class Stats : ScriptableObject
         TempResourceGainMultiplier = 0;
         TempStaminaRegeneration = 0;
     }
+
+    public void CopyValue(Stats stats)
+    {
+        Range = stats.Range;
+        AlertRange = stats.AlertRange;
+        FieldOfView = stats.FieldOfView;
+        BaseMaxHealth = stats.BaseMaxHealth;
+        BaseMaxEnergy = stats.BaseMaxEnergy;
+        BaseMaxStamina = stats.BaseMaxStamina;
+        BaseStaminaRegeneration = stats.BaseStaminaRegeneration;
+        BaseAttackSpeed = stats.BaseAttackSpeed;
+        BaseDamageMultiplier = stats.BaseDamageMultiplier;
+        BaseDamageReduction = stats.BaseDamageReduction;
+        BaseMovementSpeedMultiplier = stats.BaseMovementSpeedMultiplier;
+        BaseParryEnergyGain = stats.BaseParryEnergyGain;
+        BaseDashEnergyGain = stats.BaseDashEnergyGain;
+        BaseDashForce = stats.BaseDashForce;
+        BaseHitStunDuration = stats.BaseHitStunDuration;
+        BaseIframeDuration = stats.BaseIframeDuration;
+        BaseRegulerStunDuration = stats.BaseRegulerStunDuration;
+        BaseResourceGainMultiplier = stats.BaseRegulerStunDuration;
+        Clear();
+    }
+
 }
