@@ -34,8 +34,20 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         }
 
         Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
-        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.JSON);
+        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
         File.WriteAllBytes($"{Application.persistentDataPath}\\{e.SaveName}", bytes);
+    }
+
+    public void OnMMEvent(LoadEvent e)
+    {
+        byte[] bytes = File.ReadAllBytes($"{Application.persistentDataPath}\\{e.SaveName}");
+        Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary);
+        PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
+        PlayerStats.CopyValue(save.StatsData);
+        for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+        {
+            PlayerWeaponSkills[i].SkillDict = save.PlayerWeaponSkills[i].CloneToRuntime(v => new List<string>(v));
+        }
     }
 
     [Button]
@@ -49,12 +61,22 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         }
 
         Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
-        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.JSON);
+        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
         File.WriteAllBytes($"{Application.persistentDataPath}\\Test", bytes);
     }
 
-    public void OnMMEvent(LoadEvent e)
+    [Button]
+    private void TestLoad()
     {
-
+        byte[] bytes = File.ReadAllBytes($"{Application.persistentDataPath}\\Test");
+        Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary);
+        PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
+        PlayerStats.CopyValue(save.StatsData);
+        for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+        {
+            PlayerWeaponSkills[i].SkillDict = save.PlayerWeaponSkills[i].CloneToRuntime(v => new List<string>(v));
+        }
     }
+
+    
 }
