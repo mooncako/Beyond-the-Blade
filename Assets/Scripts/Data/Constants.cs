@@ -12,7 +12,7 @@ public static class ANIMKEY
 
 public static class DIRECTORY
 {
-
+    public static string SavePath = $"{Application.persistentDataPath}\\Saves\\";
     public const string SettingsPath = "\\Settings.json";
 }
 

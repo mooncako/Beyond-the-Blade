@@ -13,6 +13,10 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     public PlayerStatsSO PlayerStats;
     public List<AvailableSkillSO> PlayerWeaponSkills;
 
+    public PlayerSkillsSO DefaultPlayerSkillDatabase;
+    public PlayerStatsSO DefaultPlayerStats;
+    public List<AvailableSkillSO> DefaultWeaponSkills;
+
 
     void OnEnable()
     {
@@ -26,21 +30,55 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
 
     public void OnMMEvent(SaveEvent e)
     {
-        List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+        byte[] bytes;
 
-        for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+        if (File.Exists($"{DIRECTORY.SavePath}{e.SaveName}.save"))
         {
-            playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
-        }
+            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
 
-        Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
-        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
-        File.WriteAllBytes($"{Application.persistentDataPath}\\{e.SaveName}", bytes);
+            for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+            {
+                playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+            }
+
+            Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
+
+            if (!Directory.Exists(DIRECTORY.SavePath))
+            {
+                Directory.CreateDirectory(DIRECTORY.SavePath);
+            }
+
+            File.WriteAllBytes($"{DIRECTORY.SavePath}{e.SaveName}.save", bytes);
+        }
+        else
+        {
+            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+
+            for (int i = 0; i < DefaultWeaponSkills.Count; i++)
+            {
+                playerWeaponSkills.Add(DefaultWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+            }
+
+            Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, playerWeaponSkills);
+            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
+
+            if (!Directory.Exists(DIRECTORY.SavePath))
+            {
+                Directory.CreateDirectory(DIRECTORY.SavePath);
+            }
+
+            File.WriteAllBytes($"{DIRECTORY.SavePath}{e.SaveName}.save", bytes);
+
+            // Load function
+        }
+        
+        
     }
 
     public void OnMMEvent(LoadEvent e)
     {
-        byte[] bytes = File.ReadAllBytes($"{Application.persistentDataPath}\\{e.SaveName}");
+        byte[] bytes = File.ReadAllBytes($"{DIRECTORY.SavePath}{e.SaveName}.save");
         Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary);
         PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
         PlayerStats.CopyValue(save.StatsData);
@@ -53,22 +91,45 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     [Button]
     private void TestSave()
     {
-        List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+        byte[] bytes;
 
-        for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+        if (File.Exists($"{DIRECTORY.SavePath}Test.save"))
         {
-            playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+
+            for (int i = 0; i < PlayerWeaponSkills.Count; i++)
+            {
+                playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+            }
+
+            Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
+        }
+        else
+        {
+            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+
+            for (int i = 0; i < DefaultWeaponSkills.Count; i++)
+            {
+                playerWeaponSkills.Add(DefaultWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
+            }
+
+            Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, playerWeaponSkills);
+            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
+        }
+        
+        if (!Directory.Exists(DIRECTORY.SavePath))
+        {
+            Directory.CreateDirectory(DIRECTORY.SavePath);
         }
 
-        Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
-        byte[] bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
-        File.WriteAllBytes($"{Application.persistentDataPath}\\Test", bytes);
+        File.WriteAllBytes($"{DIRECTORY.SavePath}Test.save", bytes);
     }
 
     [Button]
     private void TestLoad()
     {
-        byte[] bytes = File.ReadAllBytes($"{Application.persistentDataPath}\\Test");
+        byte[] bytes = File.ReadAllBytes($"{DIRECTORY.SavePath}Test.Save");
         Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary);
         PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
         PlayerStats.CopyValue(save.StatsData);
