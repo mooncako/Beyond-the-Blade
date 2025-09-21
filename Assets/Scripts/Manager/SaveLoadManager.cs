@@ -17,7 +17,6 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     public PlayerStatsSO DefaultPlayerStats;
     public List<AvailableSkillSO> DefaultWeaponSkills;
 
-
     void OnEnable()
     {
         this.MMEventStartListening<SaveEvent>();
@@ -26,6 +25,12 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     void OnDisable()
     {
         this.MMEventStopListening<SaveEvent>();
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(this);
     }
 
     public void OnMMEvent(SaveEvent e)
@@ -72,8 +77,8 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
 
             // Load function
         }
-        
-        
+
+
     }
 
     public void OnMMEvent(LoadEvent e)
