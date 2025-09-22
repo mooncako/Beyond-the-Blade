@@ -3,6 +3,7 @@ using System.IO;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using UnityEngine;
 
 public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     MMEventListener<SaveEvent>,
@@ -15,6 +16,8 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     public PlayerSkillsSO DefaultPlayerSkillDatabase;
     public PlayerStatsSO DefaultPlayerStats;
     public List<AvailableSkillSO> DefaultWeaponSkills;
+
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private string _currentSaveName; 
 
     void OnEnable()
     {
@@ -82,13 +85,14 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
                 Directory.CreateDirectory(DIRECTORY.SavePath);
             }
 
-            
+
 
             File.WriteAllBytes($"{DIRECTORY.SavePath}{e.SaveName}.save", bytes);
 
             // Load function
         }
 
+        _currentSaveName = e.SaveName;
 
     }
 
@@ -104,6 +108,8 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         {
             PlayerWeaponSkills[i].SkillDict = save.PlayerWeaponSkills[i].CloneToRuntime(v => new List<string>(v));
         }
+
+        _currentSaveName = e.SaveName;
     }
 
     [Button]
