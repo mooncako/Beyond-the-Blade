@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class SaveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _saveName;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsSaved;
 
     [HideInInspector] public UnityEvent<SaveSlot> OnSaveSlotSelected;
 
@@ -22,16 +23,22 @@ public class SaveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        throw new System.NotImplementedException();
+
     }
 
-    public void AssignData(string name)
+    public void ToggleSave(bool toggle, string name)
     {
+        IsSaved = toggle;
         _saveName.text = name;
+    }
+
+    public string GetSaveName()
+    {
+        return _saveName.text;
     }
 }

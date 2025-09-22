@@ -16,6 +16,7 @@ public struct SaveEvent
 
     public static void Trigger(string saveName)
     {
+        e.SaveName = saveName;
         MMEventManager.TriggerEvent(e);
     }
 }

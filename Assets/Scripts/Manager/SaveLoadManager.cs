@@ -3,7 +3,6 @@ using System.IO;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-using UnityEngine;
 
 public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     MMEventListener<SaveEvent>,
@@ -47,7 +46,12 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
             }
 
             Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
-            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
+
+            var context = new SerializationContext();
+            var resolver = new UnityReferenceResolver();
+            context.Config.SerializationPolicy = SerializationPolicies.Everything;
+            context.IndexReferenceResolver = resolver;
+            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary, context);
 
             if (!Directory.Exists(DIRECTORY.SavePath))
             {
@@ -66,12 +70,19 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
             }
 
             Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, playerWeaponSkills);
-            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
+
+            var context = new SerializationContext();
+            var resolver = new UnityReferenceResolver();
+            context.Config.SerializationPolicy = SerializationPolicies.Everything;
+            context.IndexReferenceResolver = resolver;
+            bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary, context);
 
             if (!Directory.Exists(DIRECTORY.SavePath))
             {
                 Directory.CreateDirectory(DIRECTORY.SavePath);
             }
+
+            
 
             File.WriteAllBytes($"{DIRECTORY.SavePath}{e.SaveName}.save", bytes);
 
@@ -84,7 +95,9 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     public void OnMMEvent(LoadEvent e)
     {
         byte[] bytes = File.ReadAllBytes($"{DIRECTORY.SavePath}{e.SaveName}.save");
-        Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary);
+        var context = new DeserializationContext();
+        context.IndexReferenceResolver = new UnityReferenceResolver();
+        Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary, context);
         PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
         PlayerStats.CopyValue(save.StatsData);
         for (int i = 0; i < PlayerWeaponSkills.Count; i++)
@@ -98,7 +111,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     {
         byte[] bytes;
 
-        if (File.Exists($"{DIRECTORY.SavePath}Test.save"))
+        if (File.Exists($"{DIRECTORY.SavePath}Save01.save"))
         {
             List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
 
@@ -108,6 +121,8 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
             }
 
             Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+
+            
             bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
         }
         else
@@ -128,13 +143,13 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
             Directory.CreateDirectory(DIRECTORY.SavePath);
         }
 
-        File.WriteAllBytes($"{DIRECTORY.SavePath}Test.save", bytes);
+        File.WriteAllBytes($"{DIRECTORY.SavePath}Save01.save", bytes);
     }
 
     [Button]
     private void TestLoad()
     {
-        byte[] bytes = File.ReadAllBytes($"{DIRECTORY.SavePath}Test.Save");
+        byte[] bytes = File.ReadAllBytes($"{DIRECTORY.SavePath}Save01.Save");
         Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary);
         PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
         PlayerStats.CopyValue(save.StatsData);
