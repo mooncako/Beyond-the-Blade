@@ -8,8 +8,10 @@ public class SaveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _saveName;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsSaved;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public SaveLoadEventType CurrentType; 
 
-    [HideInInspector] public UnityEvent<SaveSlot> OnSaveSlotSelected;
+    [HideInInspector] public UnityEvent<SaveSlot> OnSaveSelected;
+    [HideInInspector] public UnityEvent<SaveSlot> OnLoadSelected;
 
     void OnValidate()
     {
@@ -18,7 +20,17 @@ public class SaveSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnSaveSlotSelected.Invoke(this);
+        if (CurrentType == SaveLoadEventType.Save)
+        {
+            OnSaveSelected.Invoke(this);
+        }
+        else
+        {
+            if (IsSaved)
+            {
+                OnLoadSelected.Invoke(this);
+            }
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

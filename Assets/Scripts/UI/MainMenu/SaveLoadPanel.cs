@@ -5,6 +5,7 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class SaveLoadPanel : MonoBehaviour,
     MMEventListener<MainMenuSaveLoadTriggerEvent>
@@ -12,6 +13,7 @@ public class SaveLoadPanel : MonoBehaviour,
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
     [SerializeField, BoxGroup("References")] private SaveSlot[] _saveSlots;
     [SerializeField, BoxGroup("References")] private SavePrompt _savePrompt;
+    [SerializeField, BoxGroup("References")] private Button _cancelButton;
     [SerializeField, BoxGroup("Debug")] private SaveSlot _currentSelectedSave;
 
     private Tween _alphaTween;
@@ -21,6 +23,7 @@ public class SaveLoadPanel : MonoBehaviour,
     {
         if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
         if (_savePrompt == null) _savePrompt = GetComponentInChildren<SavePrompt>();
+        if (_cancelButton == null) _cancelButton = GetComponentsInChildren<Button>()[2];
         if (_saveSlots.Length == 0) _saveSlots = GetComponentsInChildren<SaveSlot>();
     }
 
@@ -29,9 +32,11 @@ public class SaveLoadPanel : MonoBehaviour,
         this.MMEventStartListening<MainMenuSaveLoadTriggerEvent>();
         for (int i = 0; i < _saveSlots.Length; i++)
         {
-            _saveSlots[i].OnSaveSlotSelected.AddListener(OnSaveSlotSelected);
+            _saveSlots[i].OnSaveSelected.AddListener(OnSaveSelected);
+            _saveSlots[i].OnLoadSelected.AddListener(OnLoadSelected);
         }
 
+        _cancelButton.onClick.AddListener(ClosePanel);
     }
 
     void OnDisable()
@@ -39,8 +44,11 @@ public class SaveLoadPanel : MonoBehaviour,
         this.MMEventStopListening<MainMenuSaveLoadTriggerEvent>();
         for (int i = 0; i < _saveSlots.Length; i++)
         {
-            _saveSlots[i].OnSaveSlotSelected.RemoveListener(OnSaveSlotSelected);
+            _saveSlots[i].OnSaveSelected.RemoveListener(OnSaveSelected);
+            _saveSlots[i].OnLoadSelected.RemoveListener(OnLoadSelected);
         }
+
+        _cancelButton.onClick.RemoveListener(ClosePanel);
 
         _alphaTween.Stop();
     }
@@ -77,9 +85,24 @@ public class SaveLoadPanel : MonoBehaviour,
                 _saveSlots[i].ToggleSave(false, "");
             }
         }
+
+        if (e.EventType == SaveLoadEventType.Save)
+        {
+            for (int i = 0; i < _saveSlots.Length; i++)
+            {
+                _saveSlots[i].CurrentType = SaveLoadEventType.Save;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _saveSlots.Length; i++)
+            {
+                _saveSlots[i].CurrentType = SaveLoadEventType.Load;
+            }
+        }
     }
 
-    private void OnSaveSlotSelected(SaveSlot slot)
+    private void OnSaveSelected(SaveSlot slot)
     {
         _currentSelectedSave = slot;
         if (!_currentSelectedSave.IsSaved)
@@ -92,6 +115,20 @@ public class SaveLoadPanel : MonoBehaviour,
         {
             _savePrompt.EnablePrompt(_currentSelectedSave.GetSaveName());
         }
+    }
+
+    private void OnLoadSelected(SaveSlot slot)
+    {
+        _currentSelectedSave = slot;
+        StartGameManager.Instance.StartGame(_currentSelectedSave.GetSaveName());
+    }
+
+    private void ClosePanel()
+    {
+        _alphaTween.Stop();
+        _alphaTween = Tween.Alpha(_canvasGroup, 0, .5f);
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
     }
 
 }
