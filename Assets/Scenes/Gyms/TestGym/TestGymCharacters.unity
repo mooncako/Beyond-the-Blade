@@ -585,7 +585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2352203424212552441, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3006745432163856006, guid: 910f9f084248ed945b0908c66c1a5ae5, type: 3}
       propertyPath: _poolConfigs.Array.size
@@ -1141,6 +1141,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6509017619537120799, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1324,6 +1328,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DropRateManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8969546170591032600, guid: 759e2374674588244a4b1025730f3d0b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1340,6 +1348,10 @@ PrefabInstance:
     - target: {fileID: 6046184785311084990, guid: db28c5e08016619429519c2b1b7e6534, type: 3}
       propertyPath: m_Name
       value: SaveLoadManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6046184785311084990, guid: db28c5e08016619429519c2b1b7e6534, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8489970026834415520, guid: db28c5e08016619429519c2b1b7e6534, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1449,6 +1461,10 @@ PrefabInstance:
     - target: {fileID: 3613968466715312480, guid: 3cc19a2b463d5f94ea1b29f03be20e3d, type: 3}
       propertyPath: m_Name
       value: LevelManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3613968466715312480, guid: 3cc19a2b463d5f94ea1b29f03be20e3d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
