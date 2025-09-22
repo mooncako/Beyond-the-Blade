@@ -17,7 +17,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
     public PlayerStatsSO DefaultPlayerStats;
     public List<AvailableSkillSO> DefaultWeaponSkills;
 
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private string _currentSaveName; 
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private string _currentSaveName;
 
     void OnEnable()
     {
@@ -128,7 +128,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
 
             Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
 
-            
+
             bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
         }
         else
@@ -143,7 +143,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
             Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, playerWeaponSkills);
             bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
         }
-        
+
         if (!Directory.Exists(DIRECTORY.SavePath))
         {
             Directory.CreateDirectory(DIRECTORY.SavePath);
@@ -165,5 +165,9 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         }
     }
 
-    
+    public string GetCurrentSaveName()
+    {
+        return _currentSaveName;
+    }
+
 }
