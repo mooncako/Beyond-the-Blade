@@ -38,8 +38,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         base.Awake();
 
 
-        UpdateEnemyList();
-
+        
 
     }
 
@@ -111,6 +110,9 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         {
             ResetManager();
         }
+
+        UpdateEnemyList();
+
     }
 
     private void SetupWaveInfo()

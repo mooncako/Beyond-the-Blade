@@ -11,6 +11,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableNormalLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableShopLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableRecoveryLevelPrefabs;
+    [SerializeField, BoxGroup("References")] private GameObject _gatePrefab;
     [SerializeField, BoxGroup("References")] private PickupFactory _pickupFactory;
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
     [SerializeField, BoxGroup("Settings")] private LevelType _defaultLevelType;
@@ -31,17 +32,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     {
         base.Awake();
 
-        CurrentLevelIndex++;
-
-        if (!_isSetupComplete)
-        {
-            _currentBiome = _defaultBiome;
-            CurrentLevelType = _defaultLevelType;
-            _isSetupComplete = true;
-        }
-
-        // Choose the current level based on CurrentLeveltype and biome
-        SelectLevel();
+        
     }
 
     private void OnEnable()
@@ -71,6 +62,18 @@ public class LevelManager : MMSingleton<LevelManager>,
         {
             ResetManager();
         }
+        
+        CurrentLevelIndex++;
+
+        if (!_isSetupComplete)
+        {
+            _currentBiome = _defaultBiome;
+            CurrentLevelType = _defaultLevelType;
+            _isSetupComplete = true;
+        }
+
+        // Choose the current level based on CurrentLeveltype and biome
+        SelectLevel();
     }
 
     private void ResetManager()
