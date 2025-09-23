@@ -14,7 +14,7 @@ public class Health : MonoBehaviour
 
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDamage;
     [FoldoutGroup("Events")] public UnityEvent<float> OnIframe;
-    [FoldoutGroup("Events")] public UnityEvent OnHealthRecovery;
+    [FoldoutGroup("Events")] public UnityEvent<float> OnHealthRecovery;
     [FoldoutGroup("Events")] public UnityEvent OnMaxHealthUpdated;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
@@ -39,7 +39,7 @@ public class Health : MonoBehaviour
     public void Heal(float amount)
     {
         _health = Mathf.Min(_health + amount, _maxHealth);
-        OnHealthRecovery.Invoke();
+        OnHealthRecovery.Invoke(amount);
         Debug.Log($"Healed {amount} health. Current health: {_health}/{_maxHealth}");
     }
 

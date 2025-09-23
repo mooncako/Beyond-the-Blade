@@ -46,6 +46,7 @@ public class FloatingTextController : MonoBehaviour
         if(_controller != null && _controller.Health != null)
         {
             _controller.Health.OnDamage.AddListener(PlayDamageFloatingText);
+            _controller.Health.OnHealthRecovery.AddListener(PlayHealingFloatingText);
         }
     }
     
@@ -57,6 +58,8 @@ public class FloatingTextController : MonoBehaviour
         if(_controller != null && _controller.Health != null)
         {
             _controller.Health.OnDamage.RemoveListener(PlayDamageFloatingText);
+            _controller.Health.OnHealthRecovery.RemoveListener(PlayHealingFloatingText);
+
         }
     }
 
