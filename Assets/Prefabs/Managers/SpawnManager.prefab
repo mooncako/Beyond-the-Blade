@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1122594088445526732}
   - component: {fileID: 3006745432163856006}
   - component: {fileID: 7752234703304687231}
+  - component: {fileID: 6367100317657364676}
   m_Layer: 0
   m_Name: SpawnManager
   m_TagString: Untagged
@@ -67,6 +68,20 @@ MonoBehaviour:
   _gameDifficultySettings: {fileID: 11400000, guid: eea63413195d4d743b29001ed94d565e, type: 2}
   _minDifficulty: 0
   _maxDifficulty: 0
-  _currentLevelIndex: 0
   _maxEnemyCountPerWave: 0
   _canSpawn: 1
+--- !u!114 &6367100317657364676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2352203424212552441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35b454ea1a22b2649b5a3042e908c256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectID: 
+  _destroySceneNames:
+  - TestHub

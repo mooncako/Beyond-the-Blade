@@ -15,7 +15,6 @@ public class Health : MonoBehaviour
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDamage;
     [FoldoutGroup("Events")] public UnityEvent<float> OnIframe;
     [FoldoutGroup("Events")] public UnityEvent OnHealthRecovery;
-    [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDeath;
     [FoldoutGroup("Events")] public UnityEvent OnMaxHealthUpdated;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
@@ -65,7 +64,10 @@ public class Health : MonoBehaviour
 
     public void Death(DamageInfo info)
     {
-        OnDeath.Invoke(info);
+        if (_controller is EnemyController)
+        {
+            EnemyDeathEvent.Trigger(info);
+        }
         gameObject.SetActive(false);
     }
 

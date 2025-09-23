@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Animancer;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class EnemyPack : MonoBehaviour, MMEventListener<EnemySpawnedEvent>, MMEventListener<EncounterStartEvent>
+public class EnemyPack : MonoBehaviour,
+    MMEventListener<EnemySpawnedEvent>,
+    MMEventListener<EncounterStartEvent>,
+    MMEventListener<EnemySpawnStoppedEvent>,
+    MMEventListener<EnemyDeathEvent>
 {
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<Health> _enemies = new List<Health>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _defaultTimer;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentTimer;
-    private readonly HashSet<Health> _tracked = new();
     private WaitForSeconds _waitOneSec = new WaitForSeconds(1);
     private bool _isTimerRunning = false;
+    private bool _noExtraEnemies = false;
 
     public void OnMMEvent(EnemySpawnedEvent e)
     {
@@ -19,9 +24,8 @@ public class EnemyPack : MonoBehaviour, MMEventListener<EnemySpawnedEvent>, MMEv
         {
             StartCoroutine(TimerCO());
         }
+
         _enemies.Add(e.Health);
-        _tracked.Add(e.Health);
-        e.Health.OnDeath.AddListener(OnEnemyDeath);
     }
 
     public void OnMMEvent(EncounterStartEvent e)
@@ -32,26 +36,30 @@ public class EnemyPack : MonoBehaviour, MMEventListener<EnemySpawnedEvent>, MMEv
         StartCoroutine(TimerCO());
     }
 
+    public void OnMMEvent(EnemySpawnStoppedEvent e)
+    {
+        _noExtraEnemies = true;
+    }
+
+    public void OnMMEvent(EnemyDeathEvent e)
+    {
+        OnEnemyDeath(e.Info);
+    }
+
     private void OnEnable()
     {
         this.MMEventStartListening<EnemySpawnedEvent>();
         this.MMEventStartListening<EncounterStartEvent>();
+        this.MMEventStartListening<EnemySpawnStoppedEvent>();
+        this.MMEventStartListening<EnemyDeathEvent>();
     }
 
     private void OnDisable()
     {
         this.MMEventStopListening<EnemySpawnedEvent>();
         this.MMEventStopListening<EncounterStartEvent>();
-        foreach (var h in _tracked)
-        {
-            if (h != null)
-            {
-                h.OnDeath.RemoveListener(OnEnemyDeath);
-            }
-        }
-
-        _tracked.Clear();
-
+        this.MMEventStopListening<EnemySpawnStoppedEvent>();
+        this.MMEventStopListening<EnemyDeathEvent>();
     }
 
     private IEnumerator TimerCO()
@@ -70,14 +78,25 @@ public class EnemyPack : MonoBehaviour, MMEventListener<EnemySpawnedEvent>, MMEv
 
     private void OnEnemyDeath(DamageInfo info)
     {
-        _enemies.Remove(info.Health);
+        var h = info.Health != null ? info.Health : info.Victim?.GetComponent<Health>();
+        if (h != null)
+        {
+            _enemies.Remove(h);
+        }
 
         if (_enemies.Count == 0)
         {
-            RefreshTimer();
-            StopCoroutine(TimerCO());
-            _isTimerRunning = false;
-            EnemyClearedEvent.Trigger();
+            if (!_noExtraEnemies)
+            {
+                RefreshTimer();
+                StopCoroutine(TimerCO());
+                EnemyClearedEvent.Trigger();
+            }
+        }
+
+        if (_noExtraEnemies)
+        {
+            RoomClearedEvent.Trigger();
         }
     }
 

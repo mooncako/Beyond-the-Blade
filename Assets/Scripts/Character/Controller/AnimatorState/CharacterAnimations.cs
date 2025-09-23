@@ -22,10 +22,10 @@ public class CharacterAnimations : MonoBehaviour
     private void Start()
     {
         // add listener to health OnDeath event
-        if (TryGetComponent(out Health health))
-        {
-            health.OnDeath.AddListener(Death);
-        }
+        // if (TryGetComponent(out Health health))
+        // {
+        //     health.OnDeath.AddListener(Death);
+        // }
     }
 
     private void Death(DamageInfo damageInfo)

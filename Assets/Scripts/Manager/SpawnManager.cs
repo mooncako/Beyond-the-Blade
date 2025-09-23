@@ -13,7 +13,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     [SerializeField, BoxGroup("Settings")] private GameDifficultyDataSO _gameDifficultySettings;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
-    
+
     [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCountPerWave;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<(string enemyName, float timeOffset)> _picks = new List<(string, float)>();
@@ -37,8 +37,9 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     {
         base.Awake();
 
+
         UpdateEnemyList();
-        DontDestroyOnLoad(this);
+
 
     }
 
@@ -63,7 +64,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
     }
 
-    
+
 
     public void OnMMEvent(EnemyClearedEvent e)
     {
@@ -80,7 +81,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
                 SetupWaveInfo();
             }
         }
-        
+
     }
 
     [Button]
@@ -106,7 +107,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name == "MainMenu")
+        if (scene.name == "TestMainMenu" || scene.name == "TestHub")
         {
             ResetManager();
         }
@@ -121,7 +122,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
             profile.NextEligibleTime = 0;
             enemies.Add(profile);
         }
-        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex-1));
+        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex - 1));
         _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex));
         float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
         _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
@@ -154,8 +155,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         }
         else
         {
-            Debug.Log("Room Cleared");
-            RoomClearedEvent.Trigger();
+            EnemySpawnStoppedEvent.Trigger();
             return;
         }
 
@@ -163,7 +163,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
         {
             GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
             SpawnEnemy(enemy);
-            EnemySpawnedEvent.Trigger(enemy.GetComponent<Health>());
+            
         }
     }
 
@@ -171,12 +171,18 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     private void SpawnEnemy(GameObject prefab)
     {
         CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
+        EnemySpawnedEvent.Trigger(movement.GetComponent<Health>());
         movement.Teleport(AIUtil.GetRandomPointOnNavMesh());
     }
-    
+
     private void ResetManager()
     {
         _minDifficulty = 0;
+    }
+
+    public void ToggleSpawn(bool toggle)
+    {
+        _canSpawn = toggle;
     }
 
     
