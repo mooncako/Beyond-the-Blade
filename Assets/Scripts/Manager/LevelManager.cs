@@ -31,8 +31,6 @@ public class LevelManager : MMSingleton<LevelManager>,
     {
         base.Awake();
 
-        DontDestroyOnLoad(this);
-
         CurrentLevelIndex++;
 
         if (!_isSetupComplete)
@@ -69,7 +67,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name == "MainMenu")
+        if (scene.name == "TestMainMenu" || scene.name == "TestHub")
         {
             ResetManager();
         }
@@ -146,7 +144,13 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     public void OnMMEvent(RoomClearedEvent e)
     {
-        _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
+        switch (CurrentLevelType)
+        {
+            case LevelType.Reguler:
+                _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
+                break;
+        }
+        //TODO: Spawn exits
     }
     
 }

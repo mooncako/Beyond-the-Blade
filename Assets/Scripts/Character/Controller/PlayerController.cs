@@ -8,6 +8,8 @@ using UnityEngine.VFX;
 using Animancer;
 using PrimeTween;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using System;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -99,17 +101,7 @@ public class PlayerController : Controller,
         //{
         //    AbilityList.Add(skillId, new PlayableSkill(skillId));
         //}
-        if (CurrentAbility == null)
-        {
-            //foreach (string abilityId in AbilityList.Keys)
-            //{
-            //    if (AbilityList.ContainsKey(abilityId))
-            //        _currentAbility = AbilityList[abilityId];
-            //}
-            CurrentAbility = CurrentWeapon.GetAbility();
-        }
-
-        PlayerInitializedEvent.Trigger(this);
+       
 
     }
 
@@ -158,6 +150,7 @@ public class PlayerController : Controller,
         this.MMEventStartListening<SkillSwapEvent>();
         this.MMEventStartListening<AbilitySwapEvent>();
         this.MMEventStartListening<AddNewAbilityEvent>();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     protected override void OnDisable()
@@ -168,7 +161,23 @@ public class PlayerController : Controller,
         this.MMEventStopListening<SkillSwapEvent>();
         this.MMEventStopListening<AbilitySwapEvent>();
         this.MMEventStopListening<AddNewAbilityEvent>();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+         if (CurrentAbility == null)
+        {
+            CurrentAbility = CurrentWeapon.GetAbility();
+        }
+
+        PlayerInitializedEvent.Trigger(this);
     }
 
     public void OnMMEvent(PlayerAnimationStateChangeEvent e)
@@ -315,7 +324,7 @@ public class PlayerController : Controller,
                 _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
                 _animationStateMachine.InterruptState(AnimationStateType.Attack);
             }
-            
+
             Movement.Stop();
         }
         else
@@ -347,7 +356,7 @@ public class PlayerController : Controller,
     {
         if (context.started && IsActionAvailable(AnimationStateType.Dash))
         {
-            
+
             if (Movement.IsGrounded && Stamina.ConsumeStamina(Stats.DashStaminaCost))
             {
 
@@ -494,7 +503,7 @@ public class PlayerController : Controller,
             _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.HitStunDuration); // TODO: Add Stats regarding parry and stagger
         }
 
-        
+
     }
 
     private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
@@ -597,6 +606,11 @@ public class PlayerController : Controller,
         base.OnStatsUpdated();
         Energy.ApplyStats(Stats);
         Stamina.ApplyStats(Stats);
+    }
+
+    public void StartNewSession()
+    {
+        IsNewSession = true;
     }
 
 }

@@ -28,7 +28,7 @@ GameObject:
   - component: {fileID: 5714234775079022647}
   - component: {fileID: 5731174687414150010}
   - component: {fileID: 3803588526810832982}
-  - component: {fileID: 4989217093824127222}
+  - component: {fileID: 2607786019991395328}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -452,6 +452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37ac4145b246d1e45add28972ce77ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPersistent: 1
 --- !u!114 &9112547462766832494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -584,9 +585,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnHealthRecovery:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
     m_PersistentCalls:
       m_Calls: []
   OnMaxHealthUpdated:
@@ -988,7 +986,7 @@ MonoBehaviour:
   OnStaminaFull:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4989217093824127222
+--- !u!114 &2607786019991395328
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -997,9 +995,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6509017619537120799}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6dc6bc8e4bb2834e80531c648886d13, type: 3}
+  m_Script: {fileID: 11500000, guid: 35b454ea1a22b2649b5a3042e908c256, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObjectID: 
+  _destroySceneNames:
+  - TestMainMenu
 --- !u!1 &7761241864927025980
 GameObject:
   m_ObjectHideFlags: 0
