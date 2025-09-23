@@ -377,6 +377,9 @@ MonoBehaviour:
   OnHealthRecovery:
     m_PersistentCalls:
       m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
   OnMaxHealthUpdated:
     m_PersistentCalls:
       m_Calls: []
@@ -878,7 +881,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.7694609
+      value: -0.76946104
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -886,7 +889,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.11435795
+      value: 0.114358306
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1060,7 +1063,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c77f12c21edfbd642819241408d4ab15, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.12316704
+      value: 0.12316668
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c77f12c21edfbd642819241408d4ab15, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1217,6 +1220,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4034926405133228867}
     m_Modifications:
+    - target: {fileID: 1025174091979409250, guid: 57ab50ade7ca2d4479036198ee3676ed, type: 3}
+      propertyPath: AlwaysFaceCamera
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1190613043769396319, guid: 57ab50ade7ca2d4479036198ee3676ed, type: 3}
       propertyPath: m_Name
       value: FloatingText
