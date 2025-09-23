@@ -20,8 +20,11 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
+    private LevelSystem _selectedSystemPrefab;
+    
 
     void OnValidate()
     {
@@ -62,18 +65,24 @@ public class LevelManager : MMSingleton<LevelManager>,
         {
             ResetManager();
         }
-        
-        CurrentLevelIndex++;
 
-        if (!_isSetupComplete)
+
+        if (_doOnce)
         {
-            _currentBiome = _defaultBiome;
-            CurrentLevelType = _defaultLevelType;
-            _isSetupComplete = true;
-        }
+            _doOnce = false;
+            CurrentLevelIndex++;
 
-        // Choose the current level based on CurrentLeveltype and biome
-        SelectLevel();
+            if (!_isSetupComplete)
+            {
+                _currentBiome = _defaultBiome;
+                CurrentLevelType = _defaultLevelType;
+                _isSetupComplete = true;
+            }
+
+            // Choose the current level based on CurrentLeveltype and biome
+            SelectLevel();
+        }
+        
     }
 
     private void ResetManager()
@@ -83,19 +92,20 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     private void SelectLevel()
     {
+        
         switch (CurrentLevelType)
         {
             case LevelType.Reguler:
-                _currentLevel = PickPossibleLevel(_availableNormalLevelPrefabs);
-                Instantiate(_currentLevel, Vector3.zero, Quaternion.identity);
+                _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
+                _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
             case LevelType.Recover:
-                _currentLevel = PickPossibleLevel(_availableRecoveryLevelPrefabs);
-                Instantiate(_currentLevel, Vector3.zero, Quaternion.identity);
+                _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
+                _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
             case LevelType.Shop:
-                _currentLevel = PickPossibleLevel(_availableShopLevelPrefabs);
-                Instantiate(_currentLevel, Vector3.zero, Quaternion.identity);
+                _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
+                _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
         }
     }
@@ -147,6 +157,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     public void OnMMEvent(RoomClearedEvent e)
     {
+        _doOnce = true;
         switch (CurrentLevelType)
         {
             case LevelType.Reguler:
@@ -154,6 +165,12 @@ public class LevelManager : MMSingleton<LevelManager>,
                 break;
         }
         //TODO: Spawn exits
+
+        for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
+        {
+            Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[i].transform.position, _currentLevel.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
+            gate.SetLevelName(SceneManager.GetActiveScene().name);
+        }
     }
     
 }

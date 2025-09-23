@@ -72,7 +72,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
-        if (e.State == EventStateType.OnEventStart)
+        if (e.State == EventStateType.OnEventEnd)
         {
 
             if (_canSpawn)

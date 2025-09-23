@@ -16,7 +16,7 @@ public class EnemyPack : MonoBehaviour,
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentTimer;
     private WaitForSeconds _waitOneSec = new WaitForSeconds(1);
     private bool _isTimerRunning = false;
-    private bool _noExtraEnemies = false;
+    [ShowInInspector, ReadOnly] private bool _noExtraEnemies = false;
 
     public void OnMMEvent(EnemySpawnedEvent e)
     {

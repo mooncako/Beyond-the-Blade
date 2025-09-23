@@ -16,9 +16,21 @@ MonoBehaviour:
   Modifiers:
   - SkillId: TELEPORT
     CanAppear: 1
-  NormalModifiers: []
-  RareModifiers: []
+  - SkillId: TESTLEGENDARY
+    CanAppear: 1
+  - SkillId: TESTNORMAL
+    CanAppear: 1
+  - SkillId: TESTRARE
+    CanAppear: 1
+  NormalModifiers:
+  - SkillId: TESTNORMAL
+    CanAppear: 1
+  RareModifiers:
+  - SkillId: TESTRARE
+    CanAppear: 1
   EpicModifiers:
   - SkillId: TELEPORT
     CanAppear: 1
-  LegendaryModifiers: []
+  LegendaryModifiers:
+  - SkillId: TESTLEGENDARY
+    CanAppear: 1

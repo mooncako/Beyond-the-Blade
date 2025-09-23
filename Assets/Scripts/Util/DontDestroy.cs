@@ -34,6 +34,7 @@ public class DontDestroy : MonoBehaviour
                 if (objects[i].ObjectID == ObjectID)
                 {
                     Destroy(gameObject);
+                    Debug.Log("Destroyed");
                 }
             }
         }

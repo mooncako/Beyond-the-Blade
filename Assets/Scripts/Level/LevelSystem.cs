@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -24,7 +25,7 @@ public class LevelSystem : MonoBehaviour
 
     [SerializeField, BoxGroup("Debug")] public SpawnPos SpawnPos;
     [SerializeField, BoxGroup("Debug")] public PlayerController _player;
-    [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList;
+    [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList = new List<ExitPos>();
 
 #if UNITY_EDITOR
     [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
@@ -55,9 +56,6 @@ public class LevelSystem : MonoBehaviour
         float y = Random.Range(-180, 180);
         transform.Rotate(new Vector3(0, y, 0));
 
-        // Select Spawn/Exit Locations
-        SelectSpawnExitLocations();
-
         // Generate Environmental Props
         GenerateEnvironmentalProps();
 
@@ -67,13 +65,14 @@ public class LevelSystem : MonoBehaviour
         // Rebuild Navmesh
         RebuildNavmesh();
 
-        LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform);
+        // Select Spawn/Exit Locations
+        SelectSpawnExitLocations();
 
-        // Generate Enemies
-        LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform);
-
-        // Generate Player
-
+        Tween.Delay(.5f).OnComplete(() => {
+            
+            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform);
+            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform);
+        });
     }
 
     private void SelectSpawnExitLocations()
@@ -113,6 +112,8 @@ public class LevelSystem : MonoBehaviour
                 }
             }
         }
+
+        
     }
 
     private void GenerateEnvironmentalProps()
@@ -148,6 +149,8 @@ public class LevelSystem : MonoBehaviour
     private void RebuildNavmesh()
     {
         _navMeshSurface.BuildNavMesh();
+        // Generate Enemies
+        
     }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)
