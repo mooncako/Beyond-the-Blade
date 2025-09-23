@@ -27,4 +27,10 @@ public class Gate : MonoBehaviour
             LoadSceneEvent.Trigger(_levelName);
         }
     }
+
+    public void SetLevelName(string levelName, bool isNewSession = false)
+    {
+        _levelName = levelName;
+        _isNewSession = isNewSession;
+    }
 }

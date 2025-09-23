@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class CameraFocusOnAwake : MonoBehaviour
 {
-    [SerializeField, BoxGroup("Settings")] private bool _isPersistant;
+    [SerializeField, BoxGroup("Settings")] private bool _isPersistent;
 
     void OnEnable()
     {
-        if (_isPersistant)
+        if (_isPersistent)
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -17,7 +17,7 @@ public class CameraFocusOnAwake : MonoBehaviour
 
     void OnDisable()
     {
-        if (_isPersistant)
+        if (_isPersistent)
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
@@ -25,7 +25,7 @@ public class CameraFocusOnAwake : MonoBehaviour
 
     void OnDestroy()
     {
-        if (_isPersistant)
+        if (_isPersistent)
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
@@ -33,7 +33,7 @@ public class CameraFocusOnAwake : MonoBehaviour
 
     void Awake()
     {
-        if (!_isPersistant)
+        if (!_isPersistent)
             AssignCamTargetEvent.Trigger(transform);
     }
     
