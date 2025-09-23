@@ -96,7 +96,8 @@ public class EnemyPack : MonoBehaviour,
 
         if (_noExtraEnemies)
         {
-            RoomClearedEvent.Trigger();
+            if(_enemies.Count == 0)
+                RoomClearedEvent.Trigger();
         }
     }
 
