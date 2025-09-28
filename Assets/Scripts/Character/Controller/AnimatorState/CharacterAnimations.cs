@@ -7,10 +7,7 @@ public class CharacterAnimations : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private CustomCharacterMovement _characterMovement;
-    [SerializeField] private Rig ArmIKRig;
-    [SerializeField] private Rig DeflectRig;
     [SerializeField] private AnimationCurve _deflectCurve;
-    [SerializeField] private int _lowerBodyLayer=1;
     private int _currentDeflectVar;
 
     private void OnValidate()
@@ -51,10 +48,7 @@ public class CharacterAnimations : MonoBehaviour
             _animator.SetBool("IsMoving", false);
         }
     }
-    public void SetLowerAnimationLayerWeight(int weight)
-    {
-        _animator.SetLayerWeight(_lowerBodyLayer, weight);
-    }
+
     public void ToggleParameter(string parameterName)
     {
         _animator.SetBool(parameterName, true);
