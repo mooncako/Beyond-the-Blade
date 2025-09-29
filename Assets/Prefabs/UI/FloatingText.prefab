@@ -89,7 +89,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   AnimateY: 1
   RemapYZero: {x: 0, y: 0}
-  RemapYOne: {x: 5, y: 5}
+  RemapYOne: {x: 1, y: 1}
   AnimateYCurve:
     serializedVersion: 2
     m_Curve:
@@ -477,7 +477,7 @@ MonoBehaviour:
   DebugActive: 0
   InScriptDrivenPause: 0
   FeedbacksList:
-  - rid: 5413542779866316910
+  - rid: 5413542915823894640
   KeepPlayModeChanges: 0
   PerformanceMode: 0
   RestoreInitialValuesOnDisable: 0
@@ -486,11 +486,11 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 5413542779866316910
+    - rid: 5413542915823894640
       type: {class: MMF_FloatingText, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
         Active: 1
-        UniqueID: 972841809
+        UniqueID: 1995177047
         Label: Floating Text
         OriginalLabel: Floating Text
         ChannelMode: 0
@@ -507,7 +507,7 @@ MonoBehaviour:
           NumberOfRepeats: 0
           RepeatForever: 0
           DelayBetweenRepeats: 1
-          PlayCount: 0
+          PlayCount: 26
           LimitPlayCount: 0
           MaxPlayCount: 3
           SetPlayCountToZeroOnReset: 0
@@ -524,10 +524,10 @@ MonoBehaviour:
         AutomatedTargetAcquisition:
           Mode: 0
           ChildIndex: 0
-        RandomizeOutput: 0
-        RandomMultiplier: {x: 0.8, y: 1}
-        RandomizeDuration: 0
-        RandomDurationMultiplier: {x: 0.5, y: 2}
+        RandomizeOutput: 1
+        RandomMultiplier: {x: 0.1, y: 1}
+        RandomizeDuration: 1
+        RandomDurationMultiplier: {x: 0.1, y: 2}
         UseRange: 0
         RangeDistance: 5
         UseRangeFalloff: 0
@@ -561,13 +561,13 @@ MonoBehaviour:
         Owner: {fileID: 3998069807359085223}
         DebugActive: 0
         Intensity: 1
-        Value: 100
+        Value: 25
         UseIntensityAsValue: 0
-        RoundingMethod: 0
-        ForceColor: 0
+        RoundingMethod: 1
+        ForceColor: 1
         AnimateColorGradient:
           serializedVersion: 2
-          key0: {r: 1, g: 1, b: 1, a: 1}
+          key0: {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 1}
           key1: {r: 1, g: 1, b: 1, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 0}
           key3: {r: 0, g: 0, b: 0, a: 0}
@@ -595,8 +595,8 @@ MonoBehaviour:
           m_ColorSpace: -1
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
-        ForceLifetime: 0
-        Lifetime: 0.5
+        ForceLifetime: 1
+        Lifetime: 0.7
         PositionMode: 1
         TargetTransform: {fileID: 0}
         Direction: {x: 0, y: 0, z: 0}
