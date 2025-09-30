@@ -16,6 +16,7 @@ public class Stamina : MonoBehaviour
     [FoldoutGroup("Events")] public UnityEvent<float> OnStaminaGain;
     [FoldoutGroup("Events")] public UnityEvent OnStaminaEmpty;
     [FoldoutGroup("Events")] public UnityEvent OnStaminaFull;
+    [FoldoutGroup("Events")] public UnityEvent OnStatsUpdated;
 
 
 
@@ -36,6 +37,7 @@ public class Stamina : MonoBehaviour
         _maxStamina = stats.MaxStamina;
         _staminaRegenRate = stats.StaminaRegeneration;
         _stamina = _maxStamina;
+        OnStatsUpdated.Invoke();
     }
 
     public bool ConsumeStamina(float amount)
@@ -51,7 +53,7 @@ public class Stamina : MonoBehaviour
     {
         return _stamina >= amount;
     }
-    public float GetCurrentStaminaPercentage()
+    public float GetCurrentPercentage()
     {
         return _stamina / _maxStamina;
     }

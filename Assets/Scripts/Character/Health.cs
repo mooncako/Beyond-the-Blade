@@ -16,18 +16,20 @@ public class Health : MonoBehaviour
     [FoldoutGroup("Events")] public UnityEvent<float> OnIframe;
     [FoldoutGroup("Events")] public UnityEvent<float> OnHealthRecovery;
     [FoldoutGroup("Events")] public UnityEvent OnMaxHealthUpdated;
+    [FoldoutGroup("Events")] public UnityEvent OnStatsUpdated;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
 
     void OnValidate()
     {
         if (_controller == null) _controller = GetComponent<Controller>();
-    } 
+    }
 
     public void ApplyStats(Stats stats)
     {
         _maxHealth = stats.MaxHealth;
         _health = _maxHealth;
+        OnStatsUpdated.Invoke();
     }
 
     public void UpdateMaxHealth(float maxHealth)
@@ -67,8 +69,16 @@ public class Health : MonoBehaviour
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
+            gameObject.SetActive(false);
+            //TODO: Actual dying
         }
-        gameObject.SetActive(false);
+        else if (_controller is PlayerController player)
+        {
+            LoadSceneEvent.Trigger("TestHub");
+            player.Reset();
+            //TODO: Reset player stats
+        }
+        
     }
 
     [Button, BoxGroup("Debug")]

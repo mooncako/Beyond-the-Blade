@@ -4,7 +4,7 @@ using UnityEngine;
 public class CharacterUI : MonoBehaviour
 {
     [BoxGroup("Stats"), SerializeField] protected Health _health;
-    [BoxGroup("UI"), SerializeField] private ResourceBar _healthBar;
+    [BoxGroup("UI"), SerializeField] protected ResourceBar _healthBar;
 
     protected virtual void OnValidate()
     {

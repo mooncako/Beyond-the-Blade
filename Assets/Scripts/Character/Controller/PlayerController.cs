@@ -101,7 +101,7 @@ public class PlayerController : Controller,
         //{
         //    AbilityList.Add(skillId, new PlayableSkill(skillId));
         //}
-       
+
 
     }
 
@@ -172,7 +172,7 @@ public class PlayerController : Controller,
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-         if (CurrentAbility == null)
+        if (CurrentAbility == null)
         {
             CurrentAbility = CurrentWeapon.GetAbility();
         }
@@ -613,4 +613,9 @@ public class PlayerController : Controller,
         IsNewSession = true;
     }
 
+    public void Reset()
+    {
+        Stats.Clear();
+        ApplyStats();
+    }
 }
