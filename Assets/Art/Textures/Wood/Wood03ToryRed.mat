@@ -8,19 +8,20 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Wood03ToryRed
-  m_Shader: {fileID: -6465566751694194690, guid: f4638931901d6364bb803d166fab2d27,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
+  - _REFLECTIONTYPE_REGULER
+  - _RIMLIGHTDIRECTION_NONE
+  m_InvalidKeywords:
   - _DISABLE_SSR_TRANSPARENT
   - _ENABLED_LAYERS_BASE
-  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2475
+  m_CustomRenderQueue: 2450
   stringTagMap:
     MotionVector: User
     RenderType: TransparentCutout
@@ -82,6 +83,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HeightMap:
+        m_Texture: {fileID: 2800000, guid: 26bc5e227773a364993d5583c49d68af, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _LEGC_Mask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -118,6 +123,26 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleMaps_2dc405656fc54db4b45dfa7dbaaa301d_Mask_3630088023_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_2dc405656fc54db4b45dfa7dbaaa301d_Normal_4159734400_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_79c74189697245219bce99b8cfb852ec_Color_117152814_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_917f418ecaa146d3a77fccef62996eb5_Mask_3630088023_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_917f418ecaa146d3a77fccef62996eb5_Normal_4159734400_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -136,6 +161,7 @@ Material:
     - _AlphaCutoffEnable: 1
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
+    - _Amplitude: 0.05
     - _Base_Displacement_Amount: 1
     - _Base_Normal_Strength: 1
     - _BlendMode: 0
@@ -168,29 +194,49 @@ Material:
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
     - _ExcludeFromTUAndAA: 0
+    - _Exponent: 1
+    - _HasReflectionLight: 0
     - _Height_Blend_Strength: 0.9
+    - _IsHighlighted: 0
+    - _IsIframe: 0
+    - _LightStrength: 1
     - _MaterialID: 1
     - _MaterialTypeMask: 2
+    - _MinorLightStrength: 1
+    - _NoisePower: 1
+    - _NormalMapStrength: 40
+    - _OnDamage: 0
     - _OpaqueCullMode: 2
+    - _OverallLightStrength: 2.07
     - _PREVIEW_VERTEX_COLORS: 0
     - _PerPixelSorting: 0
+    - _REFLECTIONTYPE: 2
+    - _RIMLIGHTDIRECTION: 0
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
+    - _ReflectionPower: 1
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
+    - _RimLightCameraRelativePitch: 45
+    - _RimLightCameraRelativeYaw: 45
+    - _RimLightHardness: 0.311
+    - _RimPower: 8
+    - _ShadowEdge1: 0.4
+    - _ShadowEdge2: 0.6
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 8
+    - _StencilRefDepth: 1
     - _StencilRefDistortionVec: 4
     - _StencilRefGBuffer: 10
-    - _StencilRefMV: 40
+    - _StencilRefMV: 33
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
     - _StencilWriteMaskGBuffer: 15
-    - _StencilWriteMaskMV: 41
+    - _StencilWriteMaskMV: 43
+    - _SubLightStrength: 1
     - _Subdisivion_Amount: 1
     - _SupportDecals: 1
     - _SurfaceType: 0
@@ -211,6 +257,7 @@ Material:
     - _TransparentSortPriority: 0
     - _TransparentWritingMotionVec: 0
     - _TransparentZWrite: 0
+    - _UseNormalMap: 1
     - _UseShadowThreshold: 0
     - _Use_LEGC_Mask_1: 0
     - _Use_LEGC_Mask_2: 0
@@ -225,6 +272,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
+    - _AmbientColor: {r: 1, g: 1, b: 1, a: 0}
     - _Base_HSV_Adjustment: {r: 0, g: 0, b: 0, a: 0}
     - _Base_Height_Remap: {r: 0, g: 1, b: 0, a: 0}
     - _Base_Metal_Remap: {r: 0, g: 1, b: 0, a: 0}
@@ -252,6 +300,17 @@ Material:
     - _EmissiveColor_2: {r: 0, g: 0, b: 0, a: 0}
     - _EmissiveColor_3: {r: 0, g: 0, b: 0, a: 0}
     - _EmissiveColor_4: {r: 0, g: 0, b: 0, a: 0}
+    - _LightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _LightDirection: {r: 0, g: 0, b: 0, a: 0}
+    - _MainLightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _MinorLightDirection: {r: 0, g: 0, b: 0, a: 0}
+    - _ReflectionColor: {r: 0.021784332, g: 0, b: 0, a: 0}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 0}
+    - _SubLightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _SubLightDirection: {r: 0, g: 0, b: 0, a: 0}
+    - _TextureColor: {r: 1, g: 1, b: 1, a: 0}
+    - _Tiling: {r: 1.3, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &52078963481389280
