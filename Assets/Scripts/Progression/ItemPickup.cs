@@ -53,6 +53,7 @@ public class ItemPickup : MonoBehaviour, IPickup
 
     public void OnMMEvent(ProgressionCanvasCloseEvent e)
     {
+        GateOpenEvent.Trigger();
         gameObject.SetActive(false);
     }
 }

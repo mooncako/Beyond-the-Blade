@@ -325,6 +325,14 @@ public class PickupFactory : MonoBehaviour,
         }
     }
 
+    [Button]
+    private void DebugSpawnAbility()
+    {
+        UpdateAbilities();
+        CalculateAndAssignAbilities();
+        Instantiate(_abilityPickup, Vector3.zero, Quaternion.identity);
+    }
+
     public void OnMMEvent(PlayerInitializedEvent e)
     {
         _player = e.Player;

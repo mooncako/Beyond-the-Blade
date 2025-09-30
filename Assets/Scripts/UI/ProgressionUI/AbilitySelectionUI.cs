@@ -7,13 +7,14 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class AbilitySelectionUI : MonoBehaviour,
+    MMEventListener<PlayerInitializedEvent>,
     MMEventListener<NewAbilityEvent>,
     MMEventListener<ProgressionCanvasCloseEvent>,
     MMEventListener<NewAbilityCallbackEvent>,
     MMEventListener<PoolableAbilityAssignDataEvent>
 {
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
-    [SerializeField, BoxGroup("References")] private AbilityChoice[] _abilityChoices;
+    [SerializeField, BoxGroup("References")] private AbilityChoice[] _abilityChoices = new AbilityChoice[3];
     [SerializeField, BoxGroup("References")] private AbilitySwapUI[] _abilitySwapUIs;
     [SerializeField, BoxGroup("References")] private GameObject _selectionPanel;
     [SerializeField, BoxGroup("References")] private CanvasGroup _swapPanel;
@@ -34,6 +35,7 @@ public class AbilitySelectionUI : MonoBehaviour,
         this.MMEventStartListening<ProgressionCanvasCloseEvent>();
         this.MMEventStartListening<NewAbilityCallbackEvent>();
         this.MMEventStartListening<PoolableAbilityAssignDataEvent>();
+        this.MMEventStartListening<PlayerInitializedEvent>();
         for (int i = 0; i < _abilitySwapUIs.Length; i++)
         {
             _abilitySwapUIs[i].OnClick.AddListener(SwapSkill);
@@ -46,10 +48,16 @@ public class AbilitySelectionUI : MonoBehaviour,
         this.MMEventStopListening<ProgressionCanvasCloseEvent>();
         this.MMEventStopListening<NewAbilityCallbackEvent>();
         this.MMEventStopListening<PoolableAbilityAssignDataEvent>();
+        this.MMEventStopListening<PlayerInitializedEvent>();
         for (int i = 0; i < _abilitySwapUIs.Length; i++)
         {
             _abilitySwapUIs[i].OnClick.RemoveListener(SwapSkill);
         }
+    }
+
+    public void OnMMEvent(PlayerInitializedEvent e)
+    {
+        _player = e.Player;
     }
 
     public void OnMMEvent(ProgressionCanvasCloseEvent e)
