@@ -5,6 +5,7 @@ using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AbilitySelectionUI : MonoBehaviour,
     MMEventListener<PlayerInitializedEvent>,
@@ -21,6 +22,7 @@ public class AbilitySelectionUI : MonoBehaviour,
     [SerializeField, BoxGroup("References")] private AbilityChoice _swapChoice;
     [SerializeField, BoxGroup("References")] private AbilityDatabaseSO _abilityDatabase;
     [SerializeField, BoxGroup("References")] private PlayerController _player;
+    [SerializeField, BoxGroup("References")] private Button _discardButton;
     [SerializeField, BoxGroup("Debug")] private string _abilityOne;
     [SerializeField, BoxGroup("Debug")] private string _abilityTwo;
     [SerializeField, BoxGroup("Debug")] private string _abilityThree;
@@ -36,6 +38,7 @@ public class AbilitySelectionUI : MonoBehaviour,
         this.MMEventStartListening<NewAbilityCallbackEvent>();
         this.MMEventStartListening<PoolableAbilityAssignDataEvent>();
         this.MMEventStartListening<PlayerInitializedEvent>();
+        _discardButton.onClick.AddListener(Discard);
         for (int i = 0; i < _abilitySwapUIs.Length; i++)
         {
             _abilitySwapUIs[i].OnClick.AddListener(SwapSkill);
@@ -49,6 +52,7 @@ public class AbilitySelectionUI : MonoBehaviour,
         this.MMEventStopListening<NewAbilityCallbackEvent>();
         this.MMEventStopListening<PoolableAbilityAssignDataEvent>();
         this.MMEventStopListening<PlayerInitializedEvent>();
+        _discardButton.onClick.RemoveListener(Discard);
         for (int i = 0; i < _abilitySwapUIs.Length; i++)
         {
             _abilitySwapUIs[i].OnClick.RemoveListener(SwapSkill);
@@ -66,6 +70,12 @@ public class AbilitySelectionUI : MonoBehaviour,
         _alphaTween = Tween.Alpha(_canvasGroup, 0, .5f);
         _canvasGroup.blocksRaycasts = false;
         _canvasGroup.interactable = false;
+    }
+
+    private void Discard()
+    {
+        ProgressionCanvasCloseEvent.Trigger();
+        gameObject.SetActive(false);
     }
 
     public void OnMMEvent(NewAbilityCallbackEvent e)
@@ -150,7 +160,7 @@ public class AbilitySelectionUI : MonoBehaviour,
     private void SwapSkill(int index)
     {
         AbilitySwapEvent.Trigger(_tempSkillId, index);
-
+        
     }
 
     

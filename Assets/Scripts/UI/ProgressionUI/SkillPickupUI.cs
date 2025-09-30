@@ -1,3 +1,4 @@
+using System;
 using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
@@ -10,6 +11,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<NewSkillEvent>
 {
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
     [SerializeField, BoxGroup("References")] private Button _swapButton;
+    [SerializeField, BoxGroup("References")] private Button _discardButton;
     [SerializeField, BoxGroup("References")] private Image _currentRarity;
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _currentDamageText;
     [SerializeField, BoxGroup("References")] private Image _newRarity;
@@ -28,12 +30,16 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<NewSkillEvent>
     {
         this.MMEventStartListening<NewSkillEvent>();
         _swapButton.onClick.AddListener(SwapSkill);
+        _discardButton.onClick.AddListener(Discard);
     }
+
+    
 
     void OnDisable()
     {
         this.MMEventStopListening<NewSkillEvent>();
         _swapButton.onClick.RemoveListener(SwapSkill);
+        _discardButton.onClick.RemoveListener(Discard);
         _alphaTween.Stop();
     }
 
@@ -41,6 +47,12 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<NewSkillEvent>
     {
         SkillSwapEvent.Trigger(_targetSkill, _skillId);
         NewSkillEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+        ProgressionCanvasCloseEvent.Trigger();
+        gameObject.SetActive(false);
+    }
+
+    private void Discard()
+    {
         ProgressionCanvasCloseEvent.Trigger();
         gameObject.SetActive(false);
     }

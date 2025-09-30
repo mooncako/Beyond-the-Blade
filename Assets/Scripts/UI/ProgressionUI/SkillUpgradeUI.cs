@@ -19,6 +19,7 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _modifierSlotText;
     [SerializeField, BoxGroup("References")] private Image _modifierRarity;
     [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _skillModifierDatabase;
+    [SerializeField, BoxGroup("References")] private Button _discardButton;
 
     private Tween _alphaTween;
 
@@ -31,12 +32,14 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
     {
         this.MMEventStartListening<SkillUpgradeEvent>();
         this.MMEventStartListening<ProgressionCanvasCloseEvent>();
+        _discardButton.onClick.AddListener(Discard);
     }
 
     void OnDisable()
     {
         this.MMEventStopListening<SkillUpgradeEvent>();
         this.MMEventStopListening<ProgressionCanvasCloseEvent>();
+        _discardButton.onClick.RemoveListener(Discard);
         _alphaTween.Stop();
     }
 
@@ -103,5 +106,9 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
         _executionSlot.AssignModifier(weapon, modifier);
     }
 
-    
+    private void Discard()
+    {
+        ProgressionCanvasCloseEvent.Trigger();
+        gameObject.SetActive(false);
+    }
 }
