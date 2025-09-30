@@ -1097,6 +1097,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1151076456639864175, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.021623492
+      objectReference: {fileID: 0}
     - target: {fileID: 2770192959741835255, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.317
@@ -1137,13 +1141,81 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3271175843507646604, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.11696303
+      objectReference: {fileID: 0}
+    - target: {fileID: 5731174687414150010, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashActionState.Clip._Clip
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6509017619537120799, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6509017619537120799, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashSFX.Path
+      value: event:/SFX/PlayerDash
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _attackSFX.Path
+      value: event:/SFX/PlayerAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _footstepSFX.Path
+      value: event:/SFX/Footstep
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashSFX.Guid.Data1
+      value: -790243909
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashSFX.Guid.Data2
+      value: 1123366995
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashSFX.Guid.Data3
+      value: 471752356
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashSFX.Guid.Data4
+      value: 644619416
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _attackSFX.Guid.Data1
+      value: -242908779
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _attackSFX.Guid.Data2
+      value: 1115343970
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _attackSFX.Guid.Data3
+      value: 177798824
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _attackSFX.Guid.Data4
+      value: 1170233016
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _footstepSFX.Guid.Data1
+      value: 44596553
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _footstepSFX.Guid.Data2
+      value: 1227294806
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _footstepSFX.Guid.Data3
+      value: 795252128
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _footstepSFX.Guid.Data4
+      value: 1976150765
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
