@@ -6,7 +6,9 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClearedEvent>, MMEventListener<LevelRandomizeCompleteEvent>
+public class SpawnManager : MMSingleton<SpawnManager>,
+    MMEventListener<EnemyClearedEvent>,
+    MMEventListener<LevelRandomizeCompleteEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
@@ -36,10 +38,6 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     protected override void Awake()
     {
         base.Awake();
-
-
-        
-
     }
 
     void OnEnable()
@@ -106,10 +104,6 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name == "TestMainMenu" || scene.name == "TestHub")
-        {
-            ResetManager();
-        }
 
         UpdateEnemyList();
 
