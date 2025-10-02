@@ -70,7 +70,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
-        if (e.State == EventStateType.OnEventEnd)
+        if (e.State == EventStateType.OnEventStart)
         {
 
             if (_canSpawn)
