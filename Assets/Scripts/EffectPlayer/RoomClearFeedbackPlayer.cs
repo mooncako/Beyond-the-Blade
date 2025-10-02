@@ -25,7 +25,10 @@ public class RoomClearFeedbackPlayer : MonoBehaviour,
     {
         CameraFocusEvent.Trigger(new CameraLensSetting(10));
         _timeScaleTween.Stop();
-        _timeScaleTween = Tween.Custom(0, 1, 1, onValueChange: newVal => Time.timeScale = _timeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true);
+        _timeScaleTween = Tween.Custom(0, 1, 1, onValueChange: newVal => Time.timeScale = _timeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true).OnComplete(() =>
+        {
+            SpawnRewardEvent.Trigger();
+        });
     }
 
     [Button]
