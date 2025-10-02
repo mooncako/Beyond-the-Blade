@@ -35,9 +35,9 @@ public class CameraLensFocus : MonoBehaviour,
     public void OnMMEvent(CameraFocusEvent e)
     {
         _fovTween.Stop();
-        _fovTween = Tween.Custom(_defaultFov, e.Setting.Fov, duration: 1f, onValueChange: fov => _cineCam.Lens.FieldOfView = fov, useUnscaledTime: true).OnComplete(() =>
+        _fovTween = Tween.Custom(_defaultFov, e.Setting.Fov, duration: .2f, onValueChange: fov => _cineCam.Lens.FieldOfView = fov, useUnscaledTime: true).OnComplete(() =>
         {
-            _fovTween = Tween.Custom(_cineCam.Lens.FieldOfView, _defaultFov, duration: .4f, onValueChange: fov => _cineCam.Lens.FieldOfView = fov, useUnscaledTime: true);
+            _fovTween = Tween.Custom(_cineCam.Lens.FieldOfView, _defaultFov, duration: 1f, onValueChange: fov => _cineCam.Lens.FieldOfView = fov);
         });
 
     }

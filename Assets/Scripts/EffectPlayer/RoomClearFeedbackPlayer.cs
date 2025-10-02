@@ -23,7 +23,7 @@ public class RoomClearFeedbackPlayer : MonoBehaviour,
 
     public void OnMMEvent(RoomClearedEvent e)
     {
-        CameraFocusEvent.Trigger(new CameraLensSetting(10));
+        CameraFocusEvent.Trigger(new CameraLensSetting(18));
         _timeScaleTween.Stop();
         _timeScaleTween = Tween.Custom(0, 1, 1, onValueChange: newVal => Time.timeScale = _timeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true).OnComplete(() =>
         {
@@ -34,7 +34,7 @@ public class RoomClearFeedbackPlayer : MonoBehaviour,
     [Button]
     private void TestFeedback()
     {
-        CameraFocusEvent.Trigger(new CameraLensSetting(10));
+        CameraFocusEvent.Trigger(new CameraLensSetting(18));
         _timeScaleTween.Stop();
         _timeScaleTween = Tween.Custom(0, 1, 1, onValueChange: newVal => Time.timeScale = _timeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true);
     }
