@@ -16,14 +16,20 @@ namespace sc.splines.spawner.editor
     {
         private SplineInstanceContainer component;
 
+        private SerializedProperty usePooling;
+        private SerializedProperty linkedPrefabs;
+
         private void OnEnable()
         {
             component = (SplineInstanceContainer)target;
+
+            usePooling = serializedObject.FindProperty("usePooling");
+            linkedPrefabs = serializedObject.FindProperty("linkedPrefabs");
         }
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
+            //base.OnInspectorGUI();
             
             using (new EditorGUI.DisabledGroupScope(true))
             {
@@ -34,21 +40,38 @@ namespace sc.splines.spawner.editor
                 EditorGUILayout.HelpBox("This container does not appear to belong to any Spline Spawner component, it has been orphaned", MessageType.Warning);
             }
             
-            EditorGUILayout.Space();
+            serializedObject.Update();
             
-            EditorGUILayout.HelpBox($"Instance count: {component.InstanceCount}", MessageType.None);
-            EditorGUILayout.HelpBox($"Pool size: {component.PoolSize}", MessageType.None);
+            EditorGUI.BeginChangeCheck();
+            
+            EditorGUILayout.PropertyField(usePooling);
 
-            foreach (KeyValuePair<GameObject, Queue<GameObject>> pool in component.prefabPools)
+            if (usePooling.boolValue)
             {
-                EditorGUILayout.LabelField($"Pool Key: {pool.Key} ({(pool.Key)})");
-                EditorGUILayout.LabelField($"Pool Size: {pool.Value.Count}");
+                EditorGUILayout.HelpBox($"Pool size: {component.PoolSize}", MessageType.None);
 
-                foreach (GameObject queue in pool.Value)
+                foreach (KeyValuePair<GameObject, Queue<GameObject>> pool in component.prefabPools)
                 {
-                    
+                    EditorGUILayout.LabelField($"Pool Key: {pool.Key.name}");
+                    EditorGUILayout.LabelField($"Pool Size: {pool.Value.Count}");
+
+                    foreach (GameObject queue in pool.Value)
+                    {
+
+                    }
                 }
             }
+
+            EditorGUILayout.PropertyField(linkedPrefabs);
+            
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
+            
+            EditorGUILayout.Space();
+            
+            EditorGUILayout.LabelField($"Instances ({component.InstanceCount})", EditorStyles.miniBoldLabel);
         }
     }
 }

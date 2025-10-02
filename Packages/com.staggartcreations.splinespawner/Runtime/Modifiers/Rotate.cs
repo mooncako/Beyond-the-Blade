@@ -25,6 +25,9 @@ namespace sc.splines.spawner.runtime
         public Vector3 randomMax;
         public float randomnessFrequency = 10f;
         
+        [Tooltip("Set the angle axis to lock. If set, the value of the previous rotation is used")]
+        public bool3 angleLock;
+        
         [BurstCompile]
         private struct Job : IJobParallelFor
         {
@@ -35,6 +38,7 @@ namespace sc.splines.spawner.runtime
             private readonly float3 randomMax;
 
             private readonly float randomnessFrequency;
+            private readonly bool3 angleLock;
             
             [NativeDisableParallelForRestriction]
             private NativeList<SpawnPoint> spawnPoints;
@@ -49,6 +53,7 @@ namespace sc.splines.spawner.runtime
                 this.randomMin = settings.randomMin;
                 this.randomMax = settings.randomMax;
                 this.randomnessFrequency = settings.randomnessFrequency;
+                this.angleLock = settings.angleLock;
             }
 
             public void Execute(int i)
@@ -66,12 +71,6 @@ namespace sc.splines.spawner.runtime
                 float r = noise;
                 
                 if (randomMode == RandomMode.Alternate) r = (i/(int)math.max(1, randomnessFrequency)) % 2 == 0 ? 0 : 1;
-
-                //Alternate every 'randomnessFrequency'
-                //if (randomMode == RandomMode.Alternate) r = math.select(0f, 1f, (i / randomnessFrequency) % 2 == 0);
-                
-                //Square curve
-                //if (randomMode == RandomMode.Alternate) r = (int)math.sign(math.sin(i % 2 == 0 ? 1 : 0 * math.PI * 2 * randomnessFrequency));
                 
                 float3 randomRotation = math.lerp(randomMin, randomMax, r);
                 
@@ -114,6 +113,8 @@ namespace sc.splines.spawner.runtime
                 newRotation = math.mul(baseRotation, quaternion.AxisAngle(right, angleX));
                 newRotation = math.mul(newRotation, quaternion.AxisAngle(up, angleY));
                 newRotation = math.mul(newRotation, quaternion.AxisAngle(forward, angleZ));
+
+                newRotation = SplineFunctions.LockRotationAngle(spawnPoint.rotation, newRotation, angleLock);
                 
                 spawnPoint.rotation = newRotation;
                 

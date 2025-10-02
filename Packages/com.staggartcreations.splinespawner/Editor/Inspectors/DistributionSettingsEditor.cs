@@ -192,10 +192,14 @@ namespace sc.splines.spawner.editor
         {
             private SerializedProperty settings;
             
+            private SerializedProperty minRadialSpacing;
             private SerializedProperty radialSpacing;
+            private SerializedProperty angleRange;
             private SerializedProperty offset;
+            private SerializedProperty heightOffset;
             private SerializedProperty spacing;
             private SerializedProperty center;
+            private SerializedProperty borderAccuracy;
             
             public static RadialEditor Create(SerializedProperty property)
             {
@@ -209,20 +213,37 @@ namespace sc.splines.spawner.editor
             
             void OnEnable()
             {
+                minRadialSpacing = settings.FindPropertyRelative("minRadialSpacing");
                 radialSpacing = settings.FindPropertyRelative("radialSpacing");
+                angleRange = settings.FindPropertyRelative("angleRange");
                 offset = settings.FindPropertyRelative("offset");
+                heightOffset = settings.FindPropertyRelative("heightOffset");
                 spacing = settings.FindPropertyRelative("spacing");
                 center = settings.FindPropertyRelative("center");
+                borderAccuracy = settings.FindPropertyRelative("borderAccuracy");
             }
             
             public void OnInspectorGUI(ref bool changed)
             {
                 EditorGUI.BeginChangeCheck();
                 
-                EditorGUILayout.PropertyField(radialSpacing);
+                EditorGUILayout.PropertyField(minRadialSpacing, new GUIContent("Min Radius", radialSpacing.tooltip));
+                EditorGUILayout.PropertyField(radialSpacing, new GUIContent("Ring Spacing", radialSpacing.tooltip));
+                
+                EditorGUILayout.Separator();
+                
+                EditorGUILayout.PropertyField(angleRange);
+                
+                EditorGUILayout.Separator();
+                
                 EditorGUILayout.PropertyField(offset);
+                EditorGUILayout.PropertyField(heightOffset);
                 EditorGUILayout.PropertyField(spacing);
                 EditorGUILayout.PropertyField(center);
+                
+                EditorGUILayout.Separator();
+                
+                EditorGUILayout.PropertyField(borderAccuracy);
                 
                 changed = EditorGUI.EndChangeCheck();
             }
@@ -308,8 +329,8 @@ namespace sc.splines.spawner.editor
                 EditorGUILayout.Space();
                 
                 EditorGUILayout.PropertyField(margin);
-                //EditorGUILayout.PropertyField(angle);
                 EditorGUILayout.PropertyField(minimumLength);
+                //EditorGUILayout.PropertyField(angle);
                 
                 EditorGUILayout.Space();
                 

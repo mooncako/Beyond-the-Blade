@@ -33,24 +33,23 @@ namespace sc.splines.spawner.editor
                 }
             }
 
+            if (names.Count == LayerCount) return "(Everything)";
+
             return names.Count > 0 ? $"({string.Join(", ", names)})" : string.Empty;
         }
         
-        [FilePath(FILE_PATH, FilePathAttribute.Location.ProjectFolder)]
+        [FilePath("ProjectSettings/SplineSpawnerMaskLayers.asset", FilePathAttribute.Location.ProjectFolder)]
         public class MaskLayerSettings : ScriptableSingleton<MaskLayerSettings>
         {
-            private const string FILE_PATH = "ProjectSettings/SplineSpawnerMaskLayers.asset";
-            
             [SerializeField]
-            public string[] LayerNames = new[]
+            public string[] layerNames = new[]
             {
                 "Layer 1", "Layer 2", "Layer 3", "Layer 4", "Layer 5", "Layer 6", "Layer 7", "Layer 8"
             };
+            public string[] LayerNames => layerNames;
             
-            public void Save()
-            {
-                Save(true);
-            }
+            internal void Save() { Save(true); }
+            private void OnDisable() { Save(); }
         }
         
         [CustomPropertyDrawer(typeof(SplineSpawnerMask.MaskLayerAttribute))]
@@ -97,13 +96,13 @@ namespace sc.splines.spawner.editor
         private class MaskLayerSettingsEditor : Editor
         {
             private MaskLayerSettings settings;
-            private SerializedProperty LayerNames;
+            private SerializedProperty layerNames;
             
             private Vector2 scrollPos;
             private void OnEnable()
             {
                 settings = (MaskLayerSettings)target;
-                LayerNames = serializedObject.FindProperty("LayerNames");
+                layerNames = serializedObject.FindProperty("layerNames");
             }
 
             public override void OnInspectorGUI()
@@ -111,16 +110,26 @@ namespace sc.splines.spawner.editor
                 serializedObject.Update();
                 EditorGUI.BeginChangeCheck();
 
-                LayerNames.isExpanded = true;
+                layerNames.isExpanded = true;
                 
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-                EditorGUILayout.PropertyField(LayerNames);
+                EditorGUILayout.PropertyField(layerNames);
                 EditorGUILayout.EndScrollView();
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    serializedObject.ApplyModifiedProperties();
+                    int layerCount = layerNames.arraySize;
+                    for (int i = 0; i < layerCount; i++)
+                    {
+                        SerializedProperty property = layerNames.GetArrayElementAtIndex(i);
+                        string value = property.stringValue;
+
+                        if (value == string.Empty) value = $"Layer {i+1}";
+
+                        property.stringValue = value;
+                    }
                     
+                    serializedObject.ApplyModifiedProperties();
                     settings.Save();
                 }
             }

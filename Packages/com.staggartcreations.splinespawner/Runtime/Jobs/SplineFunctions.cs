@@ -153,6 +153,33 @@ namespace sc.splines.spawner.runtime
             return false;
         }
 
+        public static quaternion LockRotationAngle(quaternion rotation, quaternion targetRotation, bool3 angles)
+        {
+            math.RotationOrder rotationOrder = math.RotationOrder.ZXY;
+            
+            float3 prevEuler = math.Euler(rotation, rotationOrder);
+            float3 newEuler = math.Euler(targetRotation, rotationOrder);
+                
+            //Note: Angles are in radians
+            
+            if (angles.x)
+            {
+                newEuler.x = prevEuler.x;
+            }
+            if (angles.y)
+            {
+                newEuler.y = prevEuler.y;
+            }
+            if (angles.z)
+            {
+                newEuler.z = prevEuler.z;
+            }
+                
+            quaternion newRotation = quaternion.Euler(newEuler, rotationOrder);
+
+            return newRotation;
+        }
+
         public static Bounds BoundsFromKnots(this ISpline spline, float4x4 localToWorld)
         {
             Vector3 min = Vector3.one * float.MaxValue;

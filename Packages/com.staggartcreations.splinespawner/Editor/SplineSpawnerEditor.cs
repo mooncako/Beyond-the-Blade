@@ -83,7 +83,7 @@ namespace sc.splines.spawner.editor
                     splineContainer.Spline = spline;
                 }
 
-                component.splineContainer = splineContainer;
+                component.SetSplineContainer(splineContainer);
 
                 Selection.activeGameObject = splineContainer.gameObject;
                 //EditorApplication.ExecuteMenuItem("GameObject/Move To View");
@@ -145,7 +145,7 @@ namespace sc.splines.spawner.editor
             
             Undo.RegisterCreatedObjectUndo(component, $"Add Spline Spawner to {splineContainer.name}");
             
-            component.splineContainer = splineContainer;
+            component.SetSplineContainer(splineContainer);
             
             EditorUtility.SetDirty(splineContainer.gameObject);
         }
@@ -184,7 +184,7 @@ namespace sc.splines.spawner.editor
             if (mask) return;
 
             mask = Undo.AddComponent<SplineSpawnerMask>(splineContainer.gameObject);
-            mask.splineContainer = splineContainer;
+            mask.SetSplineContainer(splineContainer);;
         }
         #endregion
         
@@ -223,6 +223,25 @@ namespace sc.splines.spawner.editor
             spline.SetTangentMode(new SplineRange(0, spline.Count), TangentMode.AutoSmooth);
 
             return spline;
+        }
+
+        //Verification for distribution method that work with closed splines
+        public static bool HasOpenSplines(SplineContainer splineContainer, out int count)
+        {
+            count = 0;
+
+            if (!splineContainer) return false;
+
+            int splineCount = splineContainer.Splines.Count;
+            for (int i = 0; i < splineCount; i++)
+            {
+                if (splineContainer.Splines[i].Closed == false)
+                {
+                    count++;
+                }
+            }
+            
+            return count > 0;
         }
 
         public static void DrawPrefabDataPopup(Rect rect, SplineSpawner.SpawnableObject prefab)

@@ -29,21 +29,13 @@ namespace sc.splines.spawner.runtime
         private Dictionary<GameObject, GameObject> instanceToPrefab = new Dictionary<GameObject, GameObject>();
         
         [SerializeField]
+        [Tooltip("Make use of object pooling")]
         private bool usePooling = true;
+        [Tooltip("Link spawned objects to their source prefab. Disable for best performance.")]
         public bool linkedPrefabs = true;
 
         public int InstanceCount => instances.Count;
         public int PoolSize => prefabPools.Count;
-
-        [SerializeField]
-        private bool isPartOfPrefab;
-
-        private void OnValidate()
-        {
-#if UNITY_EDITOR
-            isPartOfPrefab = PrefabUtility.IsPartOfPrefabInstance(this.gameObject);
-#endif
-        }
 
         public static SplineInstanceContainer Create(SplineSpawner spawner, int splineIndex)
         {
@@ -69,7 +61,7 @@ namespace sc.splines.spawner.runtime
 
         private void OnDisable()
         {
-            ClearUnusedObjects();
+            //if(owner.IsAllowedToSpawn()) ClearUnusedObjects();
         }
 
         public void DestroyInstances()
@@ -97,22 +89,14 @@ namespace sc.splines.spawner.runtime
             instances.Clear();
             instanceToPrefab.Clear();
         }
-
+        
         public GameObject SpawnObject(SpawnPoint spawnPoint, GameObject prefab, Transform root, bool hide)
         {
-            Transform parent = root;
-#if UNITY_EDITOR
-            if (!isPartOfPrefab)
-#endif
-            {
-                parent = this.transform;
-            }
-
             GameObject instance = usePooling ? GetPooledObject(prefab) : null;
 
             if (!instance)
             {
-                instance = InstantiateObject(prefab, parent);
+                instance = InstantiateObject(prefab, this.transform);
             }
 
             if (!instance)
@@ -124,9 +108,9 @@ namespace sc.splines.spawner.runtime
             #if UNITY_EDITOR
             //Amazing slow!
             //UnityEditor.SceneVisibilityManager.instance.DisablePicking(transform.gameObject, false);
-
+            
             //Support static batching if this object is marked static
-            if (root.gameObject.isStatic)
+            if (root && root.gameObject.isStatic)
             {
                 StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.gameObject);
                 //staticFlags |= StaticEditorFlags.BatchingStatic;
@@ -164,18 +148,18 @@ namespace sc.splines.spawner.runtime
 
         private GameObject InstantiateObject(GameObject source, Transform parent)
         {
+#if UNITY_EDITOR
             bool sourceIsPrefab = false;
 
-#if UNITY_EDITOR
             if (linkedPrefabs)
             {
                 PrefabAssetType prefabAssetType = PrefabUtility.GetPrefabAssetType(source);
 
-                sourceIsPrefab = prefabAssetType is PrefabAssetType.Regular;
+                sourceIsPrefab = prefabAssetType is PrefabAssetType.Regular or PrefabAssetType.Variant or PrefabAssetType.Model;
 
                 if (sourceIsPrefab)
                 {
-                    GameObject prefabSource = PrefabUtility.GetCorrespondingObjectFromOriginalSource(source);
+                    GameObject prefabSource = prefabAssetType != PrefabAssetType.Variant ? PrefabUtility.GetCorrespondingObjectFromOriginalSource(source) : source;
 
                     if (prefabSource)
                     {
@@ -188,18 +172,15 @@ namespace sc.splines.spawner.runtime
                     }
                 }
             }
-#endif
             
-#if UNITY_EDITOR
             if (sourceIsPrefab)
             {
                 return (GameObject)PrefabUtility.InstantiatePrefab(source, parent);
             }
-            else
 #endif
-            {
-                return Instantiate(source, parent);
-            }
+            
+            //Runtime, or if not a prefab
+            return Instantiate(source, parent);
         }
 
         private void Recycle(GameObject instance)
@@ -279,7 +260,7 @@ namespace sc.splines.spawner.runtime
                 }
             }
 
-            // Check stray children
+            //Check stray children
             Transform[] allObjects = GetComponentsInChildren<Transform>(true);
 
             for (int i = 1; i < allObjects.Length; i++)
@@ -307,6 +288,7 @@ namespace sc.splines.spawner.runtime
                 if (instances[i] && instances[i].activeSelf)
                 {
                     instances[i].SetActive(false);
+                    instances[i].hideFlags = HideFlags.DontSave;
                 }
             }
         }

@@ -40,6 +40,30 @@ namespace sc.splines.spawner.runtime
             center = min + size * 0.5f;
         }
 
+        public bool Intersects(Bounds bounds)
+        {
+            float3 boundsMin = bounds.min;
+            float3 boundsMax = bounds.max;
+
+            bool overlapX = (min.x <= boundsMax.x) && (max.x >= boundsMin.x);
+            bool overlapY = (min.y <= boundsMax.y) && (max.y >= boundsMin.y);
+            bool overlapZ = (min.z <= boundsMax.z) && (max.z >= boundsMin.z);
+            
+            return overlapX && overlapY && overlapZ;
+        }
+        
+        public bool Intersects(Vector3 m_center, Vector3 m_size)
+        {
+            float3 boundsMin = m_center - (m_size * 0.5f);
+            float3 boundsMax = m_center + (m_size * 0.5f);
+
+            bool overlapX = (min.x <= boundsMax.x) && (max.x >= boundsMin.x);
+            //bool overlapY = (min.y <= boundsMax.y) && (max.y >= boundsMin.y);
+            bool overlapZ = (min.z <= boundsMax.z) && (max.z >= boundsMin.z);
+            
+            return overlapX && overlapZ;
+        }
+
         public static NativeBounds Create(NativeSpline spline, float sampleDistance = 1f)
         {
             NativeArray<NativeBounds> bounds = new NativeArray<NativeBounds>(1, Allocator.TempJob);

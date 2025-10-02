@@ -76,7 +76,7 @@ namespace sc.splines.spawner.runtime
                 }
             }
 
-            MeshFilter[]  meshes = target.GetComponentsInChildren<MeshFilter>();
+            MeshFilter[] meshes = target.GetComponentsInChildren<MeshFilter>();
 
             int meshCount = meshes.Length;
             if (meshCount > 0)
@@ -89,8 +89,8 @@ namespace sc.splines.spawner.runtime
                         return;
                     }
 
-                    minSum = Vector3.Min(minSum, meshes[i].sharedMesh.bounds.min);
-                    maxSum = Vector3.Max(maxSum, meshes[i].sharedMesh.bounds.max);
+                    minSum = Vector3.Min(minSum, meshes[i].transform.TransformVector(meshes[i].sharedMesh.bounds.min));
+                    maxSum = Vector3.Max(maxSum, meshes[i].transform.TransformVector(meshes[i].sharedMesh.bounds.max));
                 }
                 bounds.SetMinMax(minSum, maxSum);
             }
@@ -104,8 +104,8 @@ namespace sc.splines.spawner.runtime
                     {
                         if (colliders[i].isTrigger) continue;
 
-                        minSum = Vector3.Min(minSum, colliders[i].bounds.min);
-                        maxSum = Vector3.Max(maxSum, colliders[i].bounds.max);
+                        minSum = Vector3.Min(minSum, colliders[i].transform.TransformVector(colliders[i].bounds.min));
+                        maxSum = Vector3.Max(maxSum, colliders[i].transform.TransformVector(colliders[i].bounds.max));
                     }
                     bounds.SetMinMax(minSum, maxSum);
                 }
@@ -164,17 +164,29 @@ namespace sc.splines.spawner.runtime
 
         public quaternion GetForwardRotation(float3 forward, float3 right, float3 up)
         {
-            if (forwardDirection == ForwardDirection.PositiveX || forwardDirection == ForwardDirection.NegativeX)
+            if (forwardDirection == ForwardDirection.PositiveX)
             {
                 return quaternion.LookRotation(right, up);
             }
-            if (forwardDirection == ForwardDirection.PositiveY || forwardDirection == ForwardDirection.NegativeY)
+            if (forwardDirection == ForwardDirection.NegativeX)
+            {
+                return quaternion.LookRotation(-right, up);
+            }
+            if (forwardDirection == ForwardDirection.PositiveY)
             {
                 return quaternion.LookRotation(up, forward);
             }
-            if (forwardDirection == ForwardDirection.PositiveZ || forwardDirection == ForwardDirection.NegativeZ)
+            if (forwardDirection == ForwardDirection.NegativeY)
+            {
+                return quaternion.LookRotation(-up, forward);
+            }
+            if (forwardDirection == ForwardDirection.PositiveZ)
             {
                 return quaternion.LookRotation(forward, up);
+            }
+            if (forwardDirection == ForwardDirection.NegativeZ)
+            {
+                return quaternion.LookRotation(-forward, up);
             }
             
             return quaternion.identity;

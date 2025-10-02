@@ -1,4 +1,31 @@
-1.0.0
+1.1.0 (September 24th 2025)
+
+Added:
+- Look At modifier, rotates objects towards a specific target.
+- SetSplineContainer() functions to correctly handle changing the spline container of a Spline Spawner component.
+- Improved support for usage in prefabs. Respawning is now disallowed for prefab instances, but possible for prefab source objects.
+- Radial distribution: Min Radius, Angle Range and Height Offset parameters
+- Rotation modifier: Option to lock X/Y/Z rotation axis.
+- Offset modifier: Noise-based offsetting.
+- Radial distribution, added "Border Accuracy" performance balancing option.
+
+Changed:
+- The minimum required version of the Mathematics package is now 1.3.2 (will auto-upgrade).
+- The 'splineContainer' field on the Spline Spawner and Spline Spawner Mask components can no longer be set manually. Use the SetSplineContainer() function instead.
+- Spline Instance Container, polished inspector UI and added tooltips to options.
+- Implemented safety check when attempting to spawn prefabs with one or more Spline Spawner Mask components.
+- Optimized performance regarding masks. They'll now only respawn spawners physically intersecting with the mask.
+- Radial distribution, changing the 'Center' parameter no longer clips objects from the opposite end.
+
+Fixed:
+- Leak Detection console messages cropping up in some cases.
+- Grid distribution, default object rotation not aligned with row/column direction.
+- Script error when no spawning Root transform was set.
+- Duplicating a Spline Spawner without a Root transform assigned would not duplicate the objects correctly.
+- Spawning prefab variants didn't correctly link the objects to the source prefab.
+- Scaled child objects in prefabs did not correctly contribute to the calculated size of the prefab.
+
+1.0.0 (August 11th 2025)
 Note: Updating from the preview version is not supported, delete it before importing.
 All component settings and configurations will be lost due to data structure changes.
 

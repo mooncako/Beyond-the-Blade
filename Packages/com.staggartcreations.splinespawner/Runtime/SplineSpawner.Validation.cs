@@ -15,9 +15,25 @@ namespace sc.splines.spawner.runtime
         {
             containers.RemoveAll(item => !item || item.transform.parent != root);
 
+            int adopted = 0;
+            //If the root is empty, containers will not be children of the spawner.
+            //Duplicating a spawner would mean the containers aren't duplicated
+            for (int i = 0; i < containers.Count; i++)
+            {
+                //Belongs to the original, manually duplicate and adopt it
+                if (containers[i].owner != this)
+                {
+                    SplineInstanceContainer newContainer = GameObject.Instantiate(containers[i], root);
+                    newContainer.owner = this;
+                    
+                    containers[i] = newContainer;
+
+                    adopted++;
+                }
+            }
+            
             SplineInstanceContainer[] childContainers = this.gameObject.GetComponentsInChildren<SplineInstanceContainer>();
 
-            int adopted = 0;
             for (int i = 0; i < childContainers.Length; i++)
             {
                 SplineInstanceContainer container = childContainers[i];
@@ -28,8 +44,11 @@ namespace sc.splines.spawner.runtime
                     adopted++;
                 }
             }
-            
-            if(adopted > 0) Debug.Log($"[Spline Spawner] {adopted} orphaned instances containers were found under {this.name}. So they have been adopted. This may happen when duplicating a Spline Spawner");
+
+            if (adopted > 0)
+            {
+                Debug.Log($"[Spline Spawner] {adopted} orphaned instances containers were found under {this.name}. So they have been adopted. This may happen when duplicating a Spline Spawner");
+            }
             
             if (splineCount != containers.Count)
             {

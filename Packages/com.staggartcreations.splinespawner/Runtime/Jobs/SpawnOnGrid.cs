@@ -26,7 +26,6 @@ namespace sc.splines.spawner.runtime
         private float3 maxBounds;
         private float3 boundsCenter;
         private float centerheight;
-        private float3 origin;
         
         [ReadOnly] private NativeList<PrefabData> prefabData;
         [WriteOnly] public NativeList<SpawnPoint> spawnPoints;
@@ -84,8 +83,6 @@ namespace sc.splines.spawner.runtime
             this.boundsCenter = minBounds - maxBounds;
             
             rotationMatrix = float4x4.TRS(boundsCenter, rotation, new float3(1f));
-
-            origin = minBounds;
             
             random = new Random(distributionSettings.GetSeed());
             totalChanceWeights = SplineFunctions.CalculateProbabilitySum(prefabData);
@@ -183,7 +180,7 @@ namespace sc.splines.spawner.runtime
             
             for (int i = startIndex; i <= endIndex; i++)
             {
-                float3 start = origin + (axis * (i * spacing));
+                float3 start = (minBounds) + (axis * (i * spacing));
                 float3 end = start + (direction * length);
 
                 bool startInside = true;
@@ -266,9 +263,9 @@ namespace sc.splines.spawner.runtime
                         //spawnPoint.context.forward = math.normalize(spawnPos - nearestPosition);
                         spawnPoint.context.forward = direction;
                         spawnPoint.context.right = math.cross(spawnPoint.context.forward, math.up());
-                        ;
                         spawnPoint.context.up = math.up();
-
+                        
+                        spawnPoint.rotation = quaternion.LookRotationSafe(spawnPoint.context.forward, spawnPoint.context.up);
                         spawnPoint.context.position = nearestPosition;
 
                         spawnPoints.Add(spawnPoint);

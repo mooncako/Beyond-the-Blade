@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Splines;
@@ -22,13 +23,19 @@ namespace sc.splines.spawner.runtime
     {
         [SerializeField]
         private int splineCount; //Change tracking
+        /// <summary>
+        /// The number of tracked and cached Splines
+        /// </summary>
+        public int SplineCount => splineCount;
         private int containerID;
         
         //Creating a NativeSpline is costly, and isn't necessary if only spawning parameters are changed
         //Hence they are cached and rebuild when they change.
         private List<NativeSpline> nativeSplines = new List<NativeSpline>();
+        public readonly List<NativeBounds> bounds = new List<NativeBounds>();
+        private const float BOUNDS_SAMPLE_DISTANCE = 2f;
         
-        //TODO: Further improve by caching Bounds and Length of splines, since calculating these involves resampling the entire spline
+        //TODO: Further improve by caching Length of splines, since calculating these involves resampling the entire spline
 
         public enum RespawningMode
         {
@@ -66,31 +73,50 @@ namespace sc.splines.spawner.runtime
         {
             RebuildSplineCache();
         }
+
+        /// <summary>
+        /// Sets the source spline container and forces the cache to be rebuilt.
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="forceCacheRebuild">Force the cache for all the splines to be rebuilt</param>
+        public void SetSplineContainer(SplineContainer container, bool forceCacheRebuild = true)
+        {
+            this.splineContainer = container;
+            if(forceCacheRebuild) RebuildSplineCache();
+        }
         
-        void RebuildSplineCache()
+        /// <summary>
+        /// Disposes and rebuilds the cached spline data
+        /// </summary>
+        [ContextMenu("Rebuild Spline Cache")]
+        public void RebuildSplineCache()
         {
             if (!splineContainer) return;
             
             //When first adding the component, ensure count is updated
             splineCount = splineContainer.Splines.Count;
+
+            DisposeSplineCache();
             
             nativeSplines = new List<NativeSpline>();
-            
-            DisposeSplineCache();
             
             foreach (var spline in splineContainer.Splines)
             {
                 CacheSpline(spline);
             }
         }
-
-        void DisposeSplineCache()
+        
+        private void DisposeSplineCache()
         {
-            foreach (var nativeSpline in nativeSplines)
+            if (nativeSplines != null)
             {
-                nativeSpline.Dispose();
+                foreach (var nativeSpline in nativeSplines)
+                {
+                    nativeSpline.Dispose();
+                }
+                nativeSplines.Clear();
+                bounds.Clear();
             }
-            nativeSplines.Clear();
         }
 
         private void RemoveSpline(int index)
@@ -99,6 +125,8 @@ namespace sc.splines.spawner.runtime
             
             nativeSplines[index].Dispose();
             nativeSplines.RemoveAt(index);
+            
+            bounds.RemoveAt(index);
         }
 
         private NativeSpline CreateNativeSpline(ISpline spline)
@@ -109,15 +137,20 @@ namespace sc.splines.spawner.runtime
         private void UpdateSpline(Spline spline, int index)
         {
             if (index >= nativeSplines.Count) return;
-
+            
             nativeSplines[index].Dispose();
             nativeSplines[index] = CreateNativeSpline(spline);
+            
+            bounds[index] = NativeBounds.Create(nativeSplines[index], BOUNDS_SAMPLE_DISTANCE);
         }
         
         private void CacheSpline(Spline spline)
         {
             NativeSpline nativeSpline = CreateNativeSpline(spline);
             nativeSplines.Add(nativeSpline);
+            
+            NativeBounds nativeBounds = NativeBounds.Create(nativeSpline, BOUNDS_SAMPLE_DISTANCE);
+            bounds.Add(nativeBounds);
         }
         
         private Spline lastEditedSpline;

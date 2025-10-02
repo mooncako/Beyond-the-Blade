@@ -33,7 +33,14 @@ namespace sc.splines.spawner.runtime
         
         //Public properties
         [Tooltip("The SplineContainer that defines the shape of the mask")]
-        public SplineContainer splineContainer;
+        [SerializeField]
+        private SplineContainer splineContainer;
+        public SplineContainer SplineContainer
+        {
+            get => splineContainer;
+            set => SetSplineContainer(value);
+        }
+
         public enum Precision
         {
             VeryLow,
@@ -123,16 +130,24 @@ namespace sc.splines.spawner.runtime
             Spline.Changed += OnSplineChanged;
             SplineContainer.SplineAdded += OnSplineCountChanged;
             SplineContainer.SplineRemoved += OnSplineCountChanged;
-
+            
             if (RequiresUpdate())
             {
                 //Debug.Log($"SplineSpawnerMask requires rendering its SDF {RequiresUpdate()} OnEnable");
                 //RenderSDFIfNeeded();
             }
+            
+            if (gameObject.scene.isLoaded) RespawnAffectedSpawners();
         }
 
+        public void SetSplineContainer(SplineContainer container, bool forceUpdate = true)
+        {
+            this.splineContainer = container;
 
-        void UpdateBounds()
+            if(forceUpdate) ForceUpdate();
+        }
+
+        private void UpdateBounds()
         {
             int splineCount = splineContainer.Splines.Count;
             
@@ -165,7 +180,7 @@ namespace sc.splines.spawner.runtime
             boundsSize.y = 0f;
         }
 
-        public void Setup()
+        private void Setup()
         {
             UpdateBounds();
 
@@ -232,6 +247,9 @@ namespace sc.splines.spawner.runtime
             return isDirty || !sdf || boundsSize == Vector3.zero;
         }
         
+        /// <summary>
+        /// Updates the mask according to the Spline Container, also respawns any Spline Spawner components affected by it
+        /// </summary>
         public void ForceUpdate()
         {
             isDirty = true;
@@ -243,6 +261,11 @@ namespace sc.splines.spawner.runtime
         
         public void RenderSDFIfNeeded()
         {
+            if (!computeShader)
+            {
+                throw new Exception("[Spline Spawner Mask] Compute shader not referenced on component. Ensure it is not missing from the project. If purely creating this object from script in a build, assign the ComputeShader field");
+            }
+            
             if (RequiresUpdate() == false || !splineContainer || !computeShader) return;
 
             //Do this immediately
@@ -428,26 +451,35 @@ namespace sc.splines.spawner.runtime
             List<SplineSpawner> affected = new List<SplineSpawner>();
             for (int i = 0; i < spawners.Length; i++)
             {
-                if(spawners[i].enabled == false || spawners[i].gameObject.activeSelf == false) continue;
+                SplineSpawner spawner = spawners[i];
+                
+                if(spawner.enabled == false || spawner.gameObject.activeSelf == false) continue;
                 
                 //Could not possibly spawn using a spline already used for masking
-                if(spawners[i].splineContainer == splineContainer) continue;
-                
-                //TODO: Check for overlap first
+                if(spawner.SplineContainer == splineContainer) continue;
 
+                //Check if spawner is on any of the configured layers
                 var hasLayer = false;
-                for (int j = 0; j < spawners[i].maskRules.Length; j++)
+                for (int j = 0; j < spawner.maskRules.Length; j++)
                 {
-                    SplineSpawner.MaskRule rule = spawners[i].maskRules[j];
+                    SplineSpawner.MaskRule rule = spawner.maskRules[j];
 
                     //Check this mask is on the layer configured on the spawner
                     hasLayer |= IsOnLayer(rule.layer);
                 }
+                if(!hasLayer) continue;
                 
-                if (hasLayer)
+                //Check if the bounds intersect with any of its splines
+                bool intersects = false;
+                for (int j = 0; j < spawner.bounds.Count; j++)
                 {
-                    affected.Add(spawners[i]);
+                    NativeBounds splineBounds = spawner.bounds[j];
+
+                    intersects |= splineBounds.Intersects(boundsCenter, boundsSize);
                 }
+                if(!intersects) continue;
+                
+                affected.Add(spawner);
             }
 
             return affected;
@@ -473,6 +505,9 @@ namespace sc.splines.spawner.runtime
             SplineContainer.SplineAdded -= OnSplineCountChanged;
             SplineContainer.SplineRemoved -= OnSplineCountChanged;
 
+            //Don't respawn during cleanup
+            if (!gameObject.scene.isLoaded) return;
+
             RespawnAffectedSpawners();
         }
 
@@ -489,9 +524,10 @@ namespace sc.splines.spawner.runtime
                 this.transform.hasChanged = false;
                 
                 ForceUpdate();
+                RespawnAffectedSpawners();
             }
             
-            Gizmos.DrawWireCube(boundsCenter, boundsSize);
+            //Gizmos.DrawWireCube(boundsCenter, boundsSize);
 
             if (overlay > 0f && sdf)
             {
@@ -531,25 +567,6 @@ namespace sc.splines.spawner.runtime
                 
                 Graphics.ExecuteCommandBuffer(overlayCommandBuffer);
                 overlayCommandBuffer.Clear();
-                
-                /*
-                GL.PushMatrix();
-                GL.Begin(GL.QUADS);
-
-                
-
-                GL.TexCoord2(0f, 1f);
-                GL.Vertex(p3);
-                GL.TexCoord2(1f, 1f);
-                GL.Vertex(p2);
-                GL.TexCoord2(1f, 0f);
-                GL.Vertex(p1);
-                GL.TexCoord2(0f, 0f);
-                GL.Vertex(p0);
-
-                GL.End();
-                GL.PopMatrix();
-                */
             }
         }
     }
