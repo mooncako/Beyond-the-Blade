@@ -166,9 +166,9 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [Button]
     private void SpawnEnemy(GameObject prefab)
     {
-        CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
-        EnemySpawnedEvent.Trigger(movement.GetComponent<Health>());
-        movement.Teleport(AIUtil.GetRandomPointOnNavMesh());
+        EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
+        spawner.transform.position = AIUtil.GetRandomPointOnNavMesh();
+        spawner.StartSpawn();
     }
 
     private void ResetManager()

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2337733285032224906}
   - component: {fileID: 6697331992899714693}
+  - component: {fileID: 300662152722487496}
   m_Layer: 0
   m_Name: DropRateManager
   m_TagString: Untagged
@@ -48,3 +49,22 @@ MonoBehaviour:
   Rare: 0.7
   Epic: 0.9
   Legendary: 1
+  Skill: 0.2
+  Modifier: 0.4
+  Ability: 0.6
+  Item: 1
+--- !u!114 &300662152722487496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8969546170591032600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35b454ea1a22b2649b5a3042e908c256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectID: 
+  _destroySceneNames:
+  - TestHub
