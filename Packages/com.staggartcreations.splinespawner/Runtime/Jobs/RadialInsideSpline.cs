@@ -31,12 +31,17 @@ namespace sc.splines.spawner.runtime
         
         [ReadOnly] Random random;
         
+        private float minRadialSpacing;
         private float radialSpacing;
+        private float2 angleRange;
         private float spacing;
         private float angleOffset;
+        private float heightOffset;
         private float2 centerOffset;
+        private DistributionSettings.Accuracy borderAccuracy;
 
         private float totalChanceWeights;
+        private float searchIntervalScalar;
 
         public RadialInsideSpline(NativeSpline targetSpline, float4x4 localToWorld, DistributionSettings distributionSettings, NativeList<PrefabData> prefabData,
             ref NativeList<SpawnPoint> spawnPoints)
@@ -55,12 +60,27 @@ namespace sc.splines.spawner.runtime
 
             random = new Random(distributionSettings.GetSeed());
 
+            this.minRadialSpacing = settings.minRadialSpacing;
             this.radialSpacing = settings.radialSpacing;
+            this.angleRange = settings.angleRange;
             this.spacing = settings.spacing;
             this.angleOffset = settings.offset;
+            this.heightOffset = settings.heightOffset;
             this.centerOffset = settings.center;
+            this.borderAccuracy = settings.borderAccuracy;
 
             totalChanceWeights = SplineFunctions.CalculateProbabilitySum(prefabData);
+
+            searchIntervalScalar = 1f;
+            searchIntervalScalar = borderAccuracy switch
+            {
+                DistributionSettings.Accuracy.BestPerformance => 10f,
+                DistributionSettings.Accuracy.PreferPerformance => 7f,
+                DistributionSettings.Accuracy.Balanced => 5f,
+                DistributionSettings.Accuracy.PreferAccuracy => 2f,
+                DistributionSettings.Accuracy.HighestAccuracy => 1f,
+                _ => searchIntervalScalar
+            };
             
             this.prefabData = prefabData;
             this.spawnPoints = spawnPoints;
@@ -75,21 +95,24 @@ namespace sc.splines.spawner.runtime
             center.z += centerOffset.y;
             
             float radius = math.max(boundsSize.x, boundsSize.z) * 0.5f;
+            radius += math.abs(centerOffset.x);
+            radius += math.abs(centerOffset.y);
 
-            int rings = (int)math.ceil(radius / radialSpacing);
-
+            float effectiveRadius = radius - minRadialSpacing;
+            int rings = (int)math.ceil(effectiveRadius / radialSpacing);
+            
             for (int s = 0; s <= rings; s++)
             {
                 float tStep = (float)s / (float)rings;
 
-                float dist = (tStep + 0.01f) * radius;
+                float dist = minRadialSpacing + (tStep * effectiveRadius);
 
-                if(dist <= 0.1f) continue;
+                if(dist <= minRadialSpacing) continue;
                 
                 float circumference = (2f * Mathf.PI * dist);
                 int samplesPerRing = (int)math.ceil(circumference / spacing);
                 
-                float stepRotation = angleOffset * s;
+                float stepRotation = angleRange.x + (-angleOffset * s);
 
                 for (int b = 0; b < samplesPerRing; b++)
                 {
@@ -99,13 +122,15 @@ namespace sc.splines.spawner.runtime
                     
                     angle += stepRotation;
                     
+                    if(angle > angleRange.y) continue;
+                    
                     angle *= Mathf.Deg2Rad;
-                    float3 offset = new float3(math.sin(angle), 0f, math.cos(angle)) * dist;
-                    float3 spawnPos = center + offset;
+                    float3 position = new float3(math.sin(angle), 0, math.cos(angle)) * dist;
+                    float3 spawnPos = center + position;
 
                     if (!SplineFunctions.IsInsideBounds(spawnPos, minBounds, maxBounds)) continue;
 
-                    if (spline.IsInsideSpline(splineLength, spawnPos, spacing * 2f, 0f, out float3 nearest) == false)
+                    if (spline.IsInsideSpline(splineLength, spawnPos, spacing * searchIntervalScalar, 0f, out float3 nearest) == false)
                     {
                         continue;
                     }
@@ -115,12 +140,14 @@ namespace sc.splines.spawner.runtime
 
                     if (prefabIndex >= 0)
                     {
+                        spawnPos.y = centerheight + (tStep * heightOffset);
                         SpawnPoint point = CreateSpawnPoint(spawnPos, prefabIndex);
                         point.context.position = nearest;
                         point.context.random01 = r;
-                        point.context.noiseCoord = new float2(spawnPos.x * 0.1f, spawnPos.z * 0.1f);
+                        point.context.noiseCoord = new float2(t, tStep);
                         
                         point.context.forward = math.normalize(center - spawnPos);
+                        
                         point.rotation = quaternion.LookRotationSafe(point.context.forward, math.up());
                         point.context.right = math.cross(point.context.forward, math.up());
                         point.context.up = math.up();
@@ -135,8 +162,6 @@ namespace sc.splines.spawner.runtime
         private SpawnPoint CreateSpawnPoint(float3 spawnPos, int prefabIndex)
         {
             PrefabData data = prefabData[prefabIndex];
-            
-            spawnPos.y = centerheight;
             
             SpawnPoint p = new SpawnPoint
             {

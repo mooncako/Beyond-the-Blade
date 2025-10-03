@@ -4,49 +4,73 @@ using UnityEngine;
 
 public class PlayerUI : CharacterUI
 {
-    [BoxGroup("UI"), SerializeField] private ResourceBar _eneryBar;
+    [BoxGroup("UI"), SerializeField] private ResourceBar _energyBar;
     [BoxGroup("UI"), SerializeField] private ResourceBar _staminaBar;
 
     [BoxGroup("Stats"), SerializeField] private Energy _energy;
-    [BoxGroup("Stats"), SerializeField] private Stamina _stanima;
+    [BoxGroup("Stats"), SerializeField] private Stamina _stamina;
     protected override void OnValidate()
     {
-        if(_energy == null) _energy = GetComponentInParent<Energy>();
+        if (_energy == null) _energy = GetComponentInParent<Energy>();
         if (_health == null) _health = GetComponentInParent<Health>();
-        if(_stanima == null) _stanima = GetComponentInParent<Stamina>();
+        if (_stamina == null) _stamina = GetComponentInParent<Stamina>();
     }
 
     protected override void OnEnable()
     {
         base.OnEnable();
+        if (_health != null)
+        {
+            _health.OnStatsUpdated.AddListener(OnReset);
+        }
         if (_energy != null)
         {
             _energy.OnEnergyGain.AddListener(OnEnergyChanged);
-            _energy.OnExecution.AddListener(() => OnEnergyChanged(_energy.GetCurrentEnergyPercentage()));
+            _energy.OnExecution.AddListener(() => OnEnergyChanged(_energy.GetCurrentPercentage()));
+            _energy.OnStatsUpdated.AddListener(OnReset);
         }
-        if (_stanima != null)
+        if (_stamina != null)
         {
-            _stanima.OnConsumption.AddListener(OnStaminaChanged);
-            _stanima.OnStaminaGain.AddListener(OnStaminaChanged);
+            _stamina.OnConsumption.AddListener(OnStaminaChanged);
+            _stamina.OnStaminaGain.AddListener(OnStaminaChanged);
+            _stamina.OnStatsUpdated.AddListener(OnReset);
         }
     }
     protected override void OnDisable()
     {
         base.OnDisable();
-        if(_energy != null)
+        if (_health != null)
         {
-            _energy.OnEnergyGain.RemoveListener(OnEnergyChanged);
-            _energy.OnExecution.RemoveListener(()=>OnEnergyChanged(_energy.GetCurrentEnergyPercentage()));
+            _health.OnStatsUpdated.RemoveListener(OnReset);
+        }
+        if (_energy != null)
+            {
+                _energy.OnEnergyGain.RemoveListener(OnEnergyChanged);
+                _energy.OnExecution.RemoveListener(() => OnEnergyChanged(_energy.GetCurrentPercentage()));
+                _energy.OnStatsUpdated.RemoveListener(OnReset);
+            }
+        if (_stamina != null)
+        {
+            _stamina.OnConsumption.RemoveListener(OnStaminaChanged);
+            _stamina.OnStaminaGain.RemoveListener(OnStaminaChanged);
+            _stamina.OnStatsUpdated.RemoveListener(OnReset);
         }
     }
 
     private void OnEnergyChanged(float fillAmount)
     {
-        _eneryBar.UpdateFillAmount(_energy.GetCurrentEnergyPercentage());
+        _energyBar.UpdateFillAmount(_energy.GetCurrentPercentage());
     }
     private void OnStaminaChanged(float fillAmount)
     {
-        _staminaBar.UpdateFillAmount(_stanima.GetCurrentStaminaPercentage());
+        _staminaBar.UpdateFillAmount(_stamina.GetCurrentPercentage());
+    }
+
+    private void OnReset()
+    {
+        _energyBar.UpdateFillAmount(_energy.GetCurrentPercentage());
+        _staminaBar.UpdateFillAmount(_stamina.GetCurrentPercentage());
+        _healthBar.UpdateFillAmount(_health.HealthPercentage);
     }
 
 

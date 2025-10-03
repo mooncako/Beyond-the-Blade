@@ -2,12 +2,14 @@ using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemSelectionUI : MonoBehaviour, MMEventListener<NewItemSelectionEvent>, MMEventListener<NewProgressionDropEvent>
 {
     [SerializeField, BoxGroup("References")] private ShopItemDatabaseSO _shopItemDatabase;
     [SerializeField, BoxGroup("References")] private CanvasGroup _canvasGroup;
     [SerializeField, BoxGroup("References")] private ItemUI[] _itemUis;
+    [SerializeField, BoxGroup("References")] private Button _discardButton;
 
     private Tween _alphaTween;
 
@@ -20,12 +22,14 @@ public class ItemSelectionUI : MonoBehaviour, MMEventListener<NewItemSelectionEv
     {
         this.MMEventStartListening<NewItemSelectionEvent>();
         this.MMEventStartListening<NewProgressionDropEvent>();
+        _discardButton.onClick.AddListener(Discard);
     }
 
     void OnDisable()
     {
         this.MMEventStopListening<NewItemSelectionEvent>();
         this.MMEventStopListening<NewProgressionDropEvent>();
+        _discardButton.onClick.RemoveListener(Discard);
         _alphaTween.Stop();
     }
 
@@ -54,7 +58,7 @@ public class ItemSelectionUI : MonoBehaviour, MMEventListener<NewItemSelectionEv
             AssignItems();
         }
     }
-    
+
     [Button]
     private void AssignItems()
     {
@@ -66,5 +70,10 @@ public class ItemSelectionUI : MonoBehaviour, MMEventListener<NewItemSelectionEv
         }
     }
 
+    private void Discard()
+    {
+        ProgressionCanvasCloseEvent.Trigger();
+        gameObject.SetActive(false);
+    }
     
 }

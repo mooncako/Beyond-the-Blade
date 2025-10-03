@@ -12,10 +12,12 @@ public class Energy : MonoBehaviour
 
     [FoldoutGroup("Events")] public UnityEvent OnExecution;
     [FoldoutGroup("Events")] public UnityEvent<float> OnEnergyGain;
+    [FoldoutGroup("Events")] public UnityEvent OnStatsUpdated;
 
     public void ApplyStats(Stats stats)
     {
         _maxEnergy = stats.MaxEnergy;
+        OnStatsUpdated.Invoke();
     }
 
     public void Execute()
@@ -23,7 +25,7 @@ public class Energy : MonoBehaviour
         _energy = 0;
         OnExecution.Invoke();
     }
-    public float GetCurrentEnergyPercentage()
+    public float GetCurrentPercentage()
     {
         return _energy / _maxEnergy;
     }

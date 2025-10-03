@@ -269,6 +269,7 @@ public class ObjectPool : MonoBehaviour
     public void InitializeRuntimePool(List<GameObject> prefabs)
     {
         ClearAllPools();
+        _poolConfigs.Clear();
         foreach (GameObject go in prefabs)
         {
             var config = new PoolConfig

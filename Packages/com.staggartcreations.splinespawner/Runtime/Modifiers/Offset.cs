@@ -20,6 +20,9 @@ namespace sc.splines.spawner.runtime
         public Space direction = Space.SplineCurve;
         
         public Vector3 offset;
+        
+        public Vector3 noiseAmplitude;
+        public Vector3 noiseFrequency = new Vector3(1f, 1f, 1f);
         public Vector3 noiseOffset;
 
         public RandomMode randomMode = RandomMode.RandomBetween;
@@ -31,7 +34,11 @@ namespace sc.splines.spawner.runtime
         private struct Job : IJobParallelFor
         {
             private readonly float3 offset;
+            
+            private readonly float3 noiseAmplitude;
+            private float3 noiseFrequency;
             private readonly float3 noiseOffset;
+            
             private readonly RandomMode randomMode;
             private readonly float3 randomMin;
             private readonly float3 randomMax;
@@ -48,7 +55,11 @@ namespace sc.splines.spawner.runtime
                 this.spawnPoints = spawnPoints;
 
                 this.offset = settings.offset;
+                
+                this.noiseAmplitude = settings.noiseAmplitude;
+                this.noiseFrequency = settings.noiseFrequency;
                 this.noiseOffset = settings.noiseOffset;
+                
                 this.randomMin = settings.randomMin;
                 this.randomMax = settings.randomMax;
                 this.randomnessFrequency = settings.randomnessFrequency;
@@ -67,11 +78,17 @@ namespace sc.splines.spawner.runtime
                 
                 SpawnPoint.Context context = spawnPoint.context;
                 
-                float2 noiseCoord = (context.noiseCoord) * randomnessFrequency;
-                float noise = Unity.Mathematics.noise.cnoise(noiseCoord);
+                float noise = Unity.Mathematics.noise.cnoise(context.noiseCoord * randomnessFrequency);
                 float r = noise * 0.5f + 0.5f;
 
-                float offsetNoise = Unity.Mathematics.noise.pnoise(context.noiseCoord * randomnessFrequency, new float2(1, 1));
+                float3 offsetNoise = 0f;
+
+                if (math.any(noiseAmplitude))
+                {
+                    if(noiseAmplitude.x > 0) offsetNoise.x = Unity.Mathematics.noise.cnoise((context.noiseCoord.xyy * noiseFrequency.x) + noiseOffset.x) * noiseAmplitude.x;
+                    if(noiseAmplitude.y > 0) offsetNoise.y = Unity.Mathematics.noise.cnoise((context.noiseCoord.xyy * noiseFrequency.y) + noiseOffset.y) * noiseAmplitude.y;
+                    if(noiseAmplitude.y > 0) offsetNoise.z = Unity.Mathematics.noise.cnoise((context.noiseCoord.xyy * noiseFrequency.z) + noiseOffset.z) * noiseAmplitude.z;
+                }
 
                 if (randomMode == RandomMode.Alternate) r = (i/(int)math.max(1, randomnessFrequency)) % 2 == 0 ? 0 : 1;
                 
@@ -82,7 +99,7 @@ namespace sc.splines.spawner.runtime
                     if (direction == Space.World) right = math.right();
                     
                     float x = offset.x + (randomOffset.x);
-                    x += noise * noiseOffset.x;
+                    x += offsetNoise.x;
                     spawnPoint.position += right * x;
                 }
                 
@@ -92,7 +109,7 @@ namespace sc.splines.spawner.runtime
                     if (direction == Space.World) up = math.up();
                     
                     float y = offset.y + (randomOffset.y);
-                    y += noise * noiseOffset.y;
+                    y += offsetNoise.y;
                     spawnPoint.position += up * y;
                 }
                 
@@ -102,7 +119,7 @@ namespace sc.splines.spawner.runtime
                     if (direction == Space.World) forward = math.forward();
                     
                     float z = offset.z + (randomOffset.z);
-                    z += noise * noiseOffset.z;
+                    z += offsetNoise.z;
                     spawnPoint.position += forward * z;
                 }
 

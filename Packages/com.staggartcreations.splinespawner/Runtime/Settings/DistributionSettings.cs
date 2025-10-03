@@ -97,8 +97,9 @@ namespace sc.splines.spawner.runtime
             [Min(0f)]
             public float padding = 1f;
             
-            [Tooltip("Controls performance accuracy of internal area calculations.")]
+            [Tooltip("Controls accuracy of overlap checking of a spawn point against nearby spawn points. Lower accuracy may result in a few empty gaps.")]
             public Accuracy overlapAccuracy = Accuracy.Balanced;
+            [Tooltip("Controls accuracy of checking if a spawn point is still within the spline curve. Lower accuracy may result in spawn points just outside of the curve.")]
             public Accuracy borderAccuracy;
         }
         [Tooltip("Settings for uniform distribution inside a bounded area.")]
@@ -139,16 +140,27 @@ namespace sc.splines.spawner.runtime
         public class Radial
         {
             [Tooltip("Spacing radius between instances in radial distribution.")]
+            [Min(0f)]
+            public float minRadialSpacing = 0f;
+            [Tooltip("Spacing radius between instances in radial distribution.")]
             public float radialSpacing = 3f;
 
+            [Modifier.MinMaxSlider(0f, 360f)]
+            public Vector2 angleRange = new Vector2(0f, 360f);
+            
             [Tooltip("Angular offset in degrees applied between instances.")]
-            public float offset = 137.5f;
+            public float offset = 0;
+            [Tooltip("Max height of objects as it gradually increases with every ring")]
+            public float heightOffset = 0;
 
             [Tooltip("General spacing multiplier for radial arrangement.")]
             public float spacing = 5;
 
             [Tooltip("Center point of the radial distribution.")]
             public Vector2 center;
+
+            [Tooltip("Controls accuracy of checking if a spawn point is still within the spline curve. Lower accuracy may result in spawn points just outside of the curve.")]
+            public Accuracy borderAccuracy = Accuracy.Balanced;
         }
         [Tooltip("Settings for radial pattern object distribution.")]
         public Radial radial = new Radial();

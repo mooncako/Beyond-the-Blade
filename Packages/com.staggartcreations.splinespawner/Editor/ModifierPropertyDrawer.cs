@@ -33,7 +33,13 @@ namespace Dev.Scripts
             
             EditorGUILayout.PropertyField(property.FindPropertyRelative("direction"), new GUIContent("Direction"));
             EditorGUILayout.PropertyField(property.FindPropertyRelative("offset"), new GUIContent("Offset"));
-            //EditorGUILayout.PropertyField(property.FindPropertyRelative("noiseOffset"), new GUIContent("Noise Offset"));
+            
+            EditorGUILayout.Separator();
+            
+            EditorGUILayout.LabelField("Noise", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("noiseAmplitude"), new GUIContent("Amplitude"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("noiseFrequency"), new GUIContent("Frequency"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("noiseOffset"), new GUIContent("Offset"));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Randomization", EditorStyles.boldLabel);
@@ -67,6 +73,7 @@ namespace Dev.Scripts
             SerializedProperty randomMin = property.FindPropertyRelative("randomMin");
             SerializedProperty randomMax = property.FindPropertyRelative("randomMax");
             SerializedProperty randomnessFrequency = property.FindPropertyRelative("randomnessFrequency");
+            SerializedProperty angleLock = property.FindPropertyRelative("angleLock");
 
             EditorGUILayout.PropertyField(direction, new GUIContent("Direction"));
             EditorGUILayout.PropertyField(rotation, new GUIContent("Rotation"));
@@ -81,6 +88,10 @@ namespace Dev.Scripts
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(randomnessFrequency, new GUIContent("Frequency"));
+            
+            EditorGUILayout.Space();
+            
+            EditorGUILayout.PropertyField(angleLock, new GUIContent("Lock Angle"), GUILayout.MaxWidth(EditorGUIUtility.labelWidth + 100f));
 
             EditorGUI.EndProperty();
         }
@@ -352,6 +363,52 @@ namespace Dev.Scripts
             EditorGUILayout.PropertyField(noiseCutoffProperty);
             SerializedProperty noiseFalloff = property.FindPropertyRelative("noiseFalloff");
             EditorGUILayout.PropertyField(noiseFalloff);
+        }
+    }
+    
+    [CustomPropertyDrawer(typeof(LookAt))]
+    public class LookAtPropertyDrawer : PropertyDrawer
+    {
+        private bool isEnabled;
+        
+        SerializedProperty target;
+        SerializedProperty targetTransform;
+        SerializedProperty reverse;
+        SerializedProperty angleLock;
+        
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            if (!isEnabled)
+            {
+                angleLock = property.FindPropertyRelative("angleLock");
+                target = property.FindPropertyRelative("target");
+                targetTransform = property.FindPropertyRelative("targetTransform");
+                reverse = property.FindPropertyRelative("reverse");
+                
+                isEnabled = true;
+            }
+            
+            EditorGUI.BeginProperty(position, label, property);
+            
+            using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
+            {
+                ModifierAttribute attributes = ModifierAttribute.GetFor(property);
+                EditorGUILayout.LabelField(new GUIContent(attributes.displayName, attributes.description), EditorStyles.boldLabel);
+            }
+            
+            EditorGUILayout.PropertyField(target, new GUIContent("Target"));
+
+            if ((LookAt.Target)target.intValue == LookAt.Target.Transform)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(targetTransform, new GUIContent("Transform"));
+                EditorGUI.indentLevel--;
+            }
+            
+            EditorGUILayout.PropertyField(reverse);
+            EditorGUILayout.PropertyField(angleLock, GUILayout.MaxWidth(EditorGUIUtility.labelWidth + 100f));
+            
+            EditorGUI.EndProperty();
         }
     }
 }

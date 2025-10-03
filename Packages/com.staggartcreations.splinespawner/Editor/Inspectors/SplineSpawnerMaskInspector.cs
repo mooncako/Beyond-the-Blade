@@ -44,7 +44,7 @@ namespace sc.splines.spawner.editor
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.LabelField($"Spline Spawner - v{SplineSpawner.VERSION}", EditorStyles.centeredGreyMiniLabel);
+                EditorGUILayout.LabelField($"Spline Spawner - v{AssetInfo.VERSION}", EditorStyles.centeredGreyMiniLabel);
             }
             EditorGUILayout.Space();
 
@@ -118,7 +118,11 @@ namespace sc.splines.spawner.editor
             {
                 EditorGUILayout.Space();
 
-                EditorGUILayout.PropertyField(layers);
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    EditorGUILayout.PropertyField(layers);
+                    requiresUpdate |= check.changed;
+                }
 
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);

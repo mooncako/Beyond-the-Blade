@@ -18,7 +18,6 @@ public class DropRateManager : MMSingleton<DropRateManager>
     protected override void Awake()
     {
         base.Awake();
-        DontDestroyOnLoad(this);
     }
 
     public Rarity GetRarity(float index)

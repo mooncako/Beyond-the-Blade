@@ -61,13 +61,13 @@ namespace sc.splines.spawner.editor
                         if (AssetInfo.VersionChecking.UPDATE_AVAILABLE == false)
                         {
                             GUI.contentColor = UI.GreenColor;
-                            EditorGUILayout.LabelField(SplineSpawner.VERSION + " (Latest)");
+                            EditorGUILayout.LabelField(AssetInfo.VERSION + " (Latest)");
                             GUI.contentColor = defaultColor;
                         }
                         else
                         {
                             GUI.contentColor = UI.OrangeColor;
-                            EditorGUILayout.LabelField(SplineSpawner.VERSION + " (Update available)", EditorStyles.boldLabel);
+                            EditorGUILayout.LabelField(AssetInfo.VERSION + " (Update available)", EditorStyles.boldLabel);
                             GUI.contentColor = defaultColor;
                         }
                     }

@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MMSingleton<LevelManager>,
     MMEventListener<LevelRandomizeCompleteEvent>,
-    MMEventListener<RoomClearedEvent>
+    MMEventListener<RoomClearedEvent>,
+    MMEventListener<SpawnRewardEvent>
 {
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableNormalLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableShopLevelPrefabs;
@@ -24,7 +25,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
     private LevelSystem _selectedSystemPrefab;
-    
+
 
     void OnValidate()
     {
@@ -35,7 +36,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     {
         base.Awake();
 
-        
+
     }
 
     private void OnEnable()
@@ -43,6 +44,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         SceneManager.sceneLoaded += OnSceneLoaded;
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
         this.MMEventStartListening<RoomClearedEvent>();
+        this.MMEventStartListening<SpawnRewardEvent>();
     }
 
     private void OnDisable()
@@ -50,6 +52,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
         this.MMEventStopListening<RoomClearedEvent>();
+        this.MMEventStopListening<SpawnRewardEvent>();
     }
 
     private void OnDestroy()
@@ -82,7 +85,7 @@ public class LevelManager : MMSingleton<LevelManager>,
             // Choose the current level based on CurrentLeveltype and biome
             SelectLevel();
         }
-        
+
     }
 
     private void ResetManager()
@@ -92,7 +95,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     private void SelectLevel()
     {
-        
+
         switch (CurrentLevelType)
         {
             case LevelType.Reguler:
@@ -158,18 +161,22 @@ public class LevelManager : MMSingleton<LevelManager>,
     public void OnMMEvent(RoomClearedEvent e)
     {
         _doOnce = true;
-        switch (CurrentLevelType)
-        {
-            case LevelType.Reguler:
-                _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
-                break;
-        }
         //TODO: Spawn exits
 
         for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
         {
             Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[i].transform.position, _currentLevel.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
             gate.SetLevelName(SceneManager.GetActiveScene().name);
+        }
+    }
+
+    public void OnMMEvent(SpawnRewardEvent e)
+    {
+        switch (CurrentLevelType)
+        {
+            case LevelType.Reguler:
+                _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
+                break;
         }
     }
     

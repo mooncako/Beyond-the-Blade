@@ -6,7 +6,9 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClearedEvent>, MMEventListener<LevelRandomizeCompleteEvent>
+public class SpawnManager : MMSingleton<SpawnManager>,
+    MMEventListener<EnemyClearedEvent>,
+    MMEventListener<LevelRandomizeCompleteEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
@@ -36,10 +38,6 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     protected override void Awake()
     {
         base.Awake();
-
-
-        
-
     }
 
     void OnEnable()
@@ -72,7 +70,7 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
-        if (e.State == EventStateType.OnEventEnd)
+        if (e.State == EventStateType.OnEventStart)
         {
 
             if (_canSpawn)
@@ -106,10 +104,6 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name == "TestMainMenu" || scene.name == "TestHub")
-        {
-            ResetManager();
-        }
 
         UpdateEnemyList();
 
@@ -172,9 +166,9 @@ public class SpawnManager : MMSingleton<SpawnManager>, MMEventListener<EnemyClea
     [Button]
     private void SpawnEnemy(GameObject prefab)
     {
-        CustomCharacterMovement movement = _pool.Get(prefab).GetComponent<CustomCharacterMovement>();
-        EnemySpawnedEvent.Trigger(movement.GetComponent<Health>());
-        movement.Teleport(AIUtil.GetRandomPointOnNavMesh());
+        EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
+        spawner.transform.position = AIUtil.GetRandomPointOnNavMesh();
+        spawner.StartSpawn();
     }
 
     private void ResetManager()

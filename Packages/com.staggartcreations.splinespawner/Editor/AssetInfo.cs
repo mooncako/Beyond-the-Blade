@@ -14,6 +14,7 @@ namespace sc.splines.spawner.editor
     {
         public const int ASSET_ID = 305974;
         public const string ASSET_NAME = "Spline Spawner";
+        public const string VERSION = "1.1.0";
         
         public const string DOC_URL = "https://staggart.xyz/support/documentation/spline-spawner/";
         public const string FORUM_URL = "https://discussions.unity.com/t/1659478";
@@ -65,7 +66,7 @@ namespace sc.splines.spawner.editor
                 set => SessionState.SetBool("SPLINE_SPAWNER_UPDATE_AVAILABLE", value);
             }
             
-            public static string latestVersion = SplineSpawner.VERSION;
+            public static string latestVersion = VERSION;
             private static string apiResult;
 
             public static void CheckForUpdate()
@@ -104,7 +105,7 @@ namespace sc.splines.spawner.editor
                     latestVersion = asset.version;
 
                     Version remoteVersion = new Version(asset.version);
-                    Version installedVersion = new Version(SplineSpawner.VERSION);
+                    Version installedVersion = new Version(VERSION);
 
                     UPDATE_AVAILABLE = remoteVersion > installedVersion;
 

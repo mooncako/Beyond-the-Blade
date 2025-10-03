@@ -21,8 +21,6 @@ namespace sc.splines.spawner.editor
     public class SplineSpawnerInspector : Editor
     {
         SplineSpawner spawner;
-
-        private SerializedProperty id;
         
         private SerializedProperty splineContainer;
         private SerializedProperty respawningMode;
@@ -80,15 +78,16 @@ namespace sc.splines.spawner.editor
         }
 
         private bool inspectingPrefab;
-
+        private bool isAbleToSpawn;
+        private int openSplineCount;
         
         private ReorderableList modifierList;
         private void OnEnable()
         {
             spawner = (SplineSpawner)target;
-            inspectingPrefab = PrefabUtility.GetPrefabAssetType(target) != PrefabAssetType.NotAPrefab;
+            isAbleToSpawn = spawner.IsAllowedToSpawn();
             
-            id = serializedObject.FindProperty("id");
+            inspectingPrefab = PrefabUtility.IsPartOfPrefabInstance(spawner.gameObject) && spawner.gameObject.scene == null;
             
             splineContainer = serializedObject.FindProperty("splineContainer");
             respawningMode = serializedObject.FindProperty("respawningMode");
@@ -244,7 +243,7 @@ namespace sc.splines.spawner.editor
             using (new EditorGUILayout.HorizontalScope())
             {
                 GUILayout.Space(60f);
-                EditorGUILayout.LabelField($"Version {SplineSpawner.VERSION} " + (AssetInfo.VersionChecking.UPDATE_AVAILABLE ? "(update available)" : "(latest)"), EditorStyles.centeredGreyMiniLabel);
+                EditorGUILayout.LabelField($"Version {AssetInfo.VERSION} " + (AssetInfo.VersionChecking.UPDATE_AVAILABLE ? "(update available)" : "(latest)"), EditorStyles.centeredGreyMiniLabel);
                 if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent(UI.iconPrefix + "Help").image, "Help window"), GUILayout.Width(30f), GUILayout.Height(21f)))
                 {
                     HelpWindow.ShowWindow();
@@ -264,6 +263,14 @@ namespace sc.splines.spawner.editor
             {
                 EditorGUILayout.HelpBox("Inspecting a prefab, spawning has been disabled to avoid objects leaking into the current scene", MessageType.Info);
                 EditorGUILayout.Separator();
+            }            
+            
+            if (isAbleToSpawn == false)
+            {
+                EditorGUILayout.HelpBox("Spawning is not possible." +
+                                        "\n\nThis spawner is part of a prefab instance, destroying objects that are part of a prefab instance is not allowed." +
+                                        "\n\nEdit the source prefab, or set the \"Root\" to an external object.", MessageType.Error);
+                EditorGUILayout.Separator();
             }
             
             #if !UNITY_2022_3_OR_NEWER
@@ -277,6 +284,8 @@ namespace sc.splines.spawner.editor
             
             serializedObject.Update();
             
+            SplineSpawnerEditor.HasOpenSplines(spawner.SplineContainer, out openSplineCount);
+            
             using (new EditorGUILayout.HorizontalScope())
             {
                 EditorGUI.BeginChangeCheck();
@@ -286,7 +295,7 @@ namespace sc.splines.spawner.editor
                 {
                     foreach (var m_target in targets)
                     {
-                        ((SplineSpawner)m_target).WarmupSplineCache();
+                        ((SplineSpawner)m_target).RebuildSplineCache();
                     }
                     ValidateTargets();
                 }
@@ -295,7 +304,7 @@ namespace sc.splines.spawner.editor
                 {
                     if (GUILayout.Button("Edit", EditorStyles.miniButton, GUILayout.Width(50f)))
                     {
-                        Selection.activeGameObject = spawner.splineContainer.gameObject;
+                        Selection.activeGameObject = spawner.SplineContainer.gameObject;
                         EditorApplication.delayCall += ToolManager.SetActiveContext<SplineToolContext>;
                     }
                 }
@@ -349,6 +358,11 @@ namespace sc.splines.spawner.editor
                 DistributionSettings.DistributionMode distributionMode = (DistributionSettings.DistributionMode)distributionSettings.FindPropertyRelative("mode").enumValueIndex;
                 ExpandDistribution = UI.DrawFoldout(ExpandDistribution, "Distribution", () =>
                 {
+                    if (openSplineCount > 0 && (distributionMode != DistributionSettings.DistributionMode.OnCurve && distributionMode != DistributionSettings.DistributionMode.OnKnots))
+                    {
+                        EditorGUILayout.HelpBox($"The Spline Container has {openSplineCount} {(openSplineCount > 1 ? "splines" : "spline")} that {(openSplineCount > 1 ? "aren't" : "isn't")} closed, this is required for the {distributionMode} distribution mode", MessageType.Warning);
+                        EditorGUILayout.Separator();
+                    }
                     distributionSettingsEditor.OnInspectorGUI();
                 }, $"({System.Text.RegularExpressions.Regex.Replace(distributionMode.ToString(), "(\\B[A-Z])", " $1")})");
                 
@@ -540,7 +554,7 @@ namespace sc.splines.spawner.editor
                                     {
                                         EditorGUILayout.Separator();
                                         
-                                        //Expiremental
+                                        //Experimental
                                         //EditorGUILayout.PropertyField(prefab.FindPropertyRelative("forwardDirection"));
                                         //EditorGUILayout.PropertyField(prefab.FindPropertyRelative("pivot"));
 
@@ -788,7 +802,16 @@ namespace sc.splines.spawner.editor
             }
         }
         #endif
-        
+
+        private void OnDisable()
+        {
+            //Keep editor memory performance healthy. Dispose of allocated resources when user interaction is done
+            foreach (var m_target in targets)
+            {
+                ((SplineSpawner)m_target).Dispose();
+            }
+        }
+
         string GetMaskLayerNames()
         {
             List<string> names = new List<string>();

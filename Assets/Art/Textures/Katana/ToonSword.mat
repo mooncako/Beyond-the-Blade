@@ -8,8 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ToonSword
-  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -124,7 +123,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleMaps_2dc405656fc54db4b45dfa7dbaaa301d_Mask_3630088023_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_2dc405656fc54db4b45dfa7dbaaa301d_Normal_4159734400_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleMaps_79c74189697245219bce99b8cfb852ec_Color_117152814_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_917f418ecaa146d3a77fccef62996eb5_Mask_3630088023_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_917f418ecaa146d3a77fccef62996eb5_Normal_4159734400_Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -189,9 +204,10 @@ Material:
     - _MaterialTypeMask: 2
     - _MinorLightStrength: 1
     - _NoisePower: 1
+    - _NormalMapStrength: 1
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 0.3
+    - _OverallLightStrength: 2.03
     - _PREVIEW_VERTEX_COLORS: 0
     - _PerPixelSorting: 0
     - _REFLECTIONTYPE: 0

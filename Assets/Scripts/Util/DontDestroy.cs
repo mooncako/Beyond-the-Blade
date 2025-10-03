@@ -12,15 +12,17 @@ public class DontDestroy : MonoBehaviour
 
     private void OnEnable()
     {
+        SceneManager.sceneLoaded += CheckDestroy;
     }
 
     private void OnDisable()
     {
-    
+        SceneManager.sceneLoaded -= CheckDestroy;
     }
 
     void OnDestroy()
     {
+        SceneManager.sceneLoaded -= CheckDestroy;
     }
 
     private void Awake()
@@ -34,11 +36,17 @@ public class DontDestroy : MonoBehaviour
                 if (objects[i].ObjectID == ObjectID)
                 {
                     Destroy(gameObject);
-                    Debug.Log("Destroyed");
                 }
             }
         }
 
+
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void CheckDestroy(Scene scene, LoadSceneMode mode)
+    {
         if (_destroySceneNames.Count > 0)
         {
             for (int i = 0; i < _destroySceneNames.Count; i++)
@@ -49,10 +57,6 @@ public class DontDestroy : MonoBehaviour
                 }
             }
         }
-
-        
-
-        DontDestroyOnLoad(gameObject);
     }
 }
 

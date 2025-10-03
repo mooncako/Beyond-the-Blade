@@ -187,7 +187,7 @@ PrefabInstance:
     - target: {fileID: 575563289218849831, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: m_outputTexture
       value: 
-      objectReference: {fileID: 414830415}
+      objectReference: {fileID: 0}
     - target: {fileID: 575563289218849831, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: 'm_HDRPDirectionalLightList.Array.data[0]'
       value: 
@@ -479,43 +479,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b79b76a6e38b19c4fa84c72c8316ce31, type: 3}
---- !u!84 &414830415
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &696217425
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -585,6 +548,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.021623373
       objectReference: {fileID: 0}
+    - target: {fileID: 1819054777117709933, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ec35432a91068fb488fd06b3d1d4ec53, type: 2}
+    - target: {fileID: 2002683136705009724, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _stamina
+      value: 
+      objectReference: {fileID: 1204092974}
     - target: {fileID: 2770192959741835255, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -695,6 +666,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6790eee50f3aa8b4b9ea1b6c2a40a9b4, type: 3}
+--- !u!114 &1204092974 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3803588526810832982, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+  m_PrefabInstance: {fileID: 930218448}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a171453dbe210f248accbc1432b2d3a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1312715436
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,6 +917,43 @@ MonoBehaviour:
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
   m_ObsoleteContactShadows: 0
+--- !u!84 &2095004556
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1499420506883385331
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -945,7 +964,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 162051183469332586, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_Name
-      value: LoadSceneManager
+      value: SceneTransitionManager
       objectReference: {fileID: 0}
     - target: {fileID: 3937517316926448123, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1045,6 +1064,10 @@ PrefabInstance:
       value: Gate
       objectReference: {fileID: 0}
     - target: {fileID: 6211866894236314263, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
+      propertyPath: _alwaysOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6211866894236314263, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
       propertyPath: _levelName
       value: TestGymLighting
       objectReference: {fileID: 0}
@@ -1052,6 +1075,10 @@ PrefabInstance:
       propertyPath: _isNewSession
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8244582143402012688, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: eb36a7d45ee86bf4891fa71e1eb886a7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

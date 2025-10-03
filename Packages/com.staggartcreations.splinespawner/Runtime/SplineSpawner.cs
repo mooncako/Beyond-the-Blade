@@ -20,20 +20,24 @@ using Object = UnityEngine.Object;
 namespace sc.splines.spawner.runtime
 {
     [ExecuteAlways]
-    [Icon(SplineSpawner.kPackageRoot + "/Editor/Resources/spline-spawner-icon-64px.psd")]
+    [Icon(kPackageRoot + "/Editor/Resources/spline-spawner-icon-64px.psd")]
     [SelectionBase] //Select this object when selecting spawned objects instead
     [HelpURL("https://staggart.xyz/support/documentation/spline-spawner/")]
-    public partial class SplineSpawner : MonoBehaviour
+    public partial class SplineSpawner : MonoBehaviour, IDisposable
     {
-        public const string VERSION = "1.0.0";
-
         public const string kPackageRoot = "Packages/com.staggartcreations.splinespawner";
         public const int CAPACITY = 8192;
         private const string PROFILER_PREFIX = "Spline Spawner: ";
 
         [Tooltip("The spline container that defines the curves for spawning")]
-        public SplineContainer splineContainer;
-
+        [SerializeField]
+        private SplineContainer splineContainer;
+        public SplineContainer SplineContainer
+        {
+            get => splineContainer;
+            set => SetSplineContainer(value);
+        }
+        
         [Tooltip("The root transform under which spawned objects will be placed")]
         public Transform root;
 
@@ -128,7 +132,7 @@ namespace sc.splines.spawner.runtime
         [Tooltip("Whether to actually spawn GameObjects (disable to use spawn points only)")]
         public bool spawnObjects = true;
 
-        public void CreatePrefabData()
+        private void UpdatePrefabData()
         {
             if (prefabData.IsCreated) prefabData.Dispose();
 
@@ -142,6 +146,13 @@ namespace sc.splines.spawner.runtime
 
                 if (input.prefab)
                 {
+                    SplineSpawnerMask[] masks = input.prefab.GetComponentsInChildren<SplineSpawnerMask>(true);
+
+                    if (masks.Length > 0)
+                    {
+                        throw new Exception($"Prefab \"{input.prefab.name}\" contains {masks.Length} spline spawner mask(s). Masks may never be spawned by a Spline Spawner component, as this can lead to infinite respawning loops.");
+                    }
+
                     prefabData.Add(pd);
                 }
             }
@@ -178,6 +189,24 @@ namespace sc.splines.spawner.runtime
             ValidateContainers();
         }
 
+        /// <summary>
+        /// Editor only, check if the spawner is part of a prefab. If so, spawning (and thus destroying) operations are only allowed in the prefab editor itself.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAllowedToSpawn()
+        {
+            #if UNITY_EDITOR
+            var isPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(this.gameObject);
+
+            //Child objects involved that cannot be destroyed
+            if (isPrefabInstance && root == this.transform) return false;
+            
+            return isPrefabInstance == false;
+            #else
+            return true;
+            #endif
+        }
+
         private SpawnOnCurve spawnOnCurveJob;
         private SpawnInArea spawnInSplineJob;
         private SpawnOnKnots spawnOnKnotsJob;
@@ -199,7 +228,7 @@ namespace sc.splines.spawner.runtime
         /// </summary>
         public void Respawn()
         {
-            if (!splineContainer) return;
+            if (!splineContainer || !IsAllowedToSpawn()) return;
 
             splineCount = splineContainer.Splines.Count;
 
@@ -216,7 +245,7 @@ namespace sc.splines.spawner.runtime
                 Respawn(splineIndex);
             }
         }
-
+        
         /// <summary>
         /// Respawn using a specific spline
         /// </summary>
@@ -230,6 +259,11 @@ namespace sc.splines.spawner.runtime
                 //return;
             }
 
+            //Required, since disabling the component disposes of resources. But disabling a Mask may attempt to respawn this instance, leading to NativeArray leaks
+            if (this.enabled == false) return;
+            
+            if (IsAllowedToSpawn() == false) return;
+            
             onPreRespawn?.Invoke(this, splineIndex);
             
             SplineInstanceContainer container = containers[splineIndex];
@@ -259,7 +293,7 @@ namespace sc.splines.spawner.runtime
                 //Delete current first, to ensure no colliders are in the way
                 container.DestroyInstances();
 
-                CreatePrefabData();
+                UpdatePrefabData();
 
                 //No prefab objects assigned
                 if (prefabData.Length == 0)
@@ -269,12 +303,15 @@ namespace sc.splines.spawner.runtime
 
                     return;
                 }
-
+                
                 if (spawnPoints.IsCreated == false)
                 {
                     spawnPoints = new NativeList<SpawnPoint>(CAPACITY, Allocator.Persistent);
                 }
-                spawnPoints.Clear();
+                else
+                {
+                    spawnPoints.Clear();
+                }
             }
             Profiler.EndSample();
 
@@ -284,13 +321,14 @@ namespace sc.splines.spawner.runtime
 
             Profiler.BeginSample($"{PROFILER_PREFIX} Distribution ({distributionSettings.mode})");
             {
-                NativeBounds splineBounds = nativeSplines[splineIndex].GetNativeBounds(2f);
+                NativeBounds splineBounds = bounds[splineIndex];
+                NativeSpline spline = nativeSplines[splineIndex];
                 //Debug.Log($"Calculate bounds: Center: {splineBounds.center}, Size: {splineBounds.size}. Length: {nativeSplines[splineIndex].GetLength()}");
 
                 if (distributionSettings.mode == DistributionSettings.DistributionMode.OnCurve)
                 {
                     //Spawn on spline
-                    spawnOnCurveJob = new SpawnOnCurve(nativeSplines[splineIndex], splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
+                    spawnOnCurveJob = new SpawnOnCurve(spline, splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
 
                     spawnPointJobHandle = spawnOnCurveJob.Schedule();
                 }
@@ -298,14 +336,14 @@ namespace sc.splines.spawner.runtime
                 {
                     if (knotCount < 3)
                     {
-                        Debug.LogWarning($"Cannot spawn within Spline #{splineIndex} area. It requires more than 3 knots (has {knotCount}).");
+                        //Debug.LogWarning($"Cannot spawn within Spline #{splineIndex} area. It requires more than 3 knots (has {knotCount}).");
                         return;
                     }
 
                     //Safety clamping
                     distributionSettings.insideArea.spacing = Mathf.Max(0.5f, distributionSettings.insideArea.spacing);
 
-                    spawnInSplineJob = new SpawnInArea(nativeSplines[splineIndex], splineBounds, distributionSettings, prefabData, ref spawnPoints);
+                    spawnInSplineJob = new SpawnInArea(spline, splineBounds, distributionSettings, prefabData, ref spawnPoints);
 
                     spawnPointJobHandle = spawnInSplineJob.Schedule();
                 }
@@ -313,33 +351,33 @@ namespace sc.splines.spawner.runtime
                 {
                     if (knotCount < 3)
                     {
-                        Debug.LogWarning($"Cannot spawn within Spline #{splineIndex}. It requires more than 3 knots (has {knotCount}).");
+                        //Debug.LogWarning($"Cannot spawn within Spline #{splineIndex}. It requires more than 3 knots (has {knotCount}).");
                         return;
                     }
 
-                    radialJob = new RadialInsideSpline(nativeSplines[splineIndex], splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
+                    radialJob = new RadialInsideSpline(spline, splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
                     spawnPointJobHandle = radialJob.Schedule();
                 }
                 else if (distributionSettings.mode == DistributionSettings.DistributionMode.Grid)
                 {
                     if (knotCount < 3)
                     {
-                        Debug.LogWarning($"Cannot spawn within Spline #{splineIndex}. It requires more than 3 knots (has {knotCount}).");
+                        //Debug.LogWarning($"Cannot spawn within Spline #{splineIndex}. It requires more than 3 knots (has {knotCount}).");
                         return;
                     }
 
-                    gridJob = new SpawnOnGrid(nativeSplines[splineIndex], splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
+                    gridJob = new SpawnOnGrid(spline, splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
                     spawnPointJobHandle = gridJob.Schedule();
                 }
                 else if (distributionSettings.mode == DistributionSettings.DistributionMode.OnKnots)
                 {
                     if (knotCount <= 1)
                     {
-                        Debug.LogWarning($"Cannot spawn within Spline #{splineIndex}. It requires more than 1 knot (has {knotCount})");
+                        //Debug.LogWarning($"Cannot spawn within Spline #{splineIndex}. It requires more than 1 knot (has {knotCount})");
                         return;
                     }
                     
-                    spawnOnKnotsJob = new SpawnOnKnots(nativeSplines[splineIndex], splineContainer, splineIndex, splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
+                    spawnOnKnotsJob = new SpawnOnKnots(spline, splineContainer, splineIndex, splineContainer.transform.localToWorldMatrix, distributionSettings, prefabData, ref spawnPoints);
 
                     spawnPointJobHandle = spawnOnKnotsJob.Schedule();
                 }
@@ -501,10 +539,17 @@ namespace sc.splines.spawner.runtime
             prefabData.Dispose();
         }
         
-        private void Dispose()
+        /// <summary>
+        /// Dispose of any allocated resources. This is normally done when the component is disabled.
+        /// </summary>
+        public void Dispose()
         {
             if(spawnPoints.IsCreated) spawnPoints.Dispose();
             if(prefabData.IsCreated) prefabData.Dispose();
+            
+            //Mark as disposed
+            spawnPoints = default;
+            prefabData = default;
         }
         
         public void AddModifier(Modifier modifier)
@@ -566,6 +611,19 @@ namespace sc.splines.spawner.runtime
                     if(inputObject.prefab) container.WarmUpObjectPool(inputObject.prefab, capacity);
                 }
             }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            /*
+            if (bounds != null)
+            {
+                foreach (NativeBounds m_bounds in bounds)
+                {
+                    Gizmos.DrawWireCube(m_bounds.center, m_bounds.size);
+                }
+            }
+            */
         }
     }
 }

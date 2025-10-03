@@ -103,7 +103,6 @@ namespace sc.splines.spawner.runtime
 
                 int prefabIndex = SplineFunctions.GetRandomPrefabIndex(r, totalChanceWeights, prefabData);
                 
-                
                 if (prefabIndex >= 0)
                 {
                     PrefabData prefab = this.prefabData[prefabIndex];
@@ -130,9 +129,10 @@ namespace sc.splines.spawner.runtime
                     */
                     
                     float offsetT = (offset / splineLength);
-
+                    t += offsetT;
+                    
                     //Spline sampling
-                    spline.Evaluate(math.clamp(t + offsetT, 0.00001f, 0.99999f), out float3 position, out float3 tangent, out float3 up);
+                    spline.Evaluate(math.clamp(t, 0.00001f, 0.99999f), out float3 position, out float3 tangent, out float3 up);
                     float3 forward = math.normalize(tangent);
                     float3 right = math.normalize(math.cross(forward, up));
 
@@ -143,15 +143,16 @@ namespace sc.splines.spawner.runtime
                         isValid = true,
                         prefabIndex = prefabIndex,
                         position = position,
+                        rotation = quaternion.identity,
                         pivotOffset = prefab.GetPivotOffset(),
                         scale = prefab.gameObjectScale
                     };
 
-                    float stride = lengthAlongSpline/splineLength;
+                    float stride = (lengthAlongSpline/splineLength);
 
                     //Calculate the turning factor
                     float3 currentTangentXZ = tangent;
-                    float3 nextTangentXZ = spline.EvaluateTangent(t + offsetT + stride);
+                    float3 nextTangentXZ = spline.EvaluateTangent(t + stride);
                     
                     currentTangentXZ = math.normalize(currentTangentXZ);
                     nextTangentXZ = math.normalize(nextTangentXZ);
@@ -172,18 +173,20 @@ namespace sc.splines.spawner.runtime
                         invertDistance = false
                     };
                     
-                    //spawnPoint.rotation = prefab.GetForwardRotation(forward, right, up);
                     spawnPoint.rotation = quaternion.LookRotationSafe(spawnPoint.context.forward, spawnPoint.context.up);
-
+                    //WIP
+                    //spawnPoint.rotation = prefab.GetForwardRotation(forward, right, up);
+                    
                     //Calculate the rotation needed to position the object so that both its tip and end sit on the spline
                     //Particularly useful for fences or other long objects
                     if (rotateToFitAxis != DistributionSettings.RotateToFitAxis.Disabled)
                     {
                         float3 startPosition = position;
                         
-                        float endT = t + offsetT + stride;
+                        float endT = t + stride;
                         float3 endPosition = spline.EvaluatePosition(endT);
 
+                        //High accuracy
                         //SplineUtility.GetNearestPoint(spline, endPosition, out endPosition, out var _, SplineUtility.PickResolutionDefault, 1);
 
                         float3 delta = endPosition - startPosition;
@@ -206,7 +209,6 @@ namespace sc.splines.spawner.runtime
 
                         //Recalculate occupied length
                         lengthAlongSpline = math.length(delta);
-                    	
                     }
 
                     spawnPoints.Add(spawnPoint);
@@ -228,7 +230,8 @@ namespace sc.splines.spawner.runtime
             float siny_cosp = 2f * (q.value.w * q.value.y + q.value.z * q.value.x);
             float cosy_cosp = 1f - 2f * (q.value.y * q.value.y + q.value.x * q.value.x);
 
-            float yaw = math.atan2(siny_cosp, cosy_cosp); // Radians
+            float yaw = math.atan2(siny_cosp, cosy_cosp); //Radians
+            
             return math.degrees(yaw);
         }
 

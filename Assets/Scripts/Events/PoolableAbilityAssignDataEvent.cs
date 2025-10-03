@@ -1,4 +1,5 @@
 using System;
+using MoreMountains.Tools;
 using UnityEngine;
 
 public struct PoolableAbilityAssignDataEvent
@@ -21,5 +22,6 @@ public struct PoolableAbilityAssignDataEvent
         e.AbilityOne = abilityOne;
         e.AbilityTwo = abilityTwo;
         e.AbilityThree = abilityThree;
+        MMEventManager.TriggerEvent(e);
     }
 }

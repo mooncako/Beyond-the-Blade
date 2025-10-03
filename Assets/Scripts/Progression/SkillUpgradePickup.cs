@@ -55,6 +55,7 @@ public class SkillUpgradePickup : MonoBehaviour, IPickup
 
     public void OnMMEvent(ProgressionCanvasCloseEvent e)
     {
+        GateOpenEvent.Trigger();
         gameObject.SetActive(false);
     }
 

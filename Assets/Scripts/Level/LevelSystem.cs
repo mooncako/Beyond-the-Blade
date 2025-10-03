@@ -68,10 +68,15 @@ public class LevelSystem : MonoBehaviour
         // Select Spawn/Exit Locations
         SelectSpawnExitLocations();
 
-        Tween.Delay(.5f).OnComplete(() => {
+        Tween.Delay(.1f).OnComplete(() => {
             
             LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform);
-            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform);
+
+            Tween.Delay(.5f).OnComplete(() =>
+            {
+                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform);
+            });
+            
         });
     }
 

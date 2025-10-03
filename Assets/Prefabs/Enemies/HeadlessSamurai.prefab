@@ -52,7 +52,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5061576002193979983
 MonoBehaviour:
@@ -380,6 +380,9 @@ MonoBehaviour:
   OnMaxHealthUpdated:
     m_PersistentCalls:
       m_Calls: []
+  OnStatsUpdated:
+    m_PersistentCalls:
+      m_Calls: []
   IsDamageable: 1
 --- !u!114 &2515946022723110387
 MonoBehaviour:
@@ -631,15 +634,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 6233116775064065168}
   _characterMovement: {fileID: 3418439087366576687}
-  ArmIKRig: {fileID: 0}
-  DeflectRig: {fileID: 0}
   _deflectCurve:
     serializedVersion: 2
     m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _lowerBodyLayer: 1
 --- !u!114 &8335018461307400012
 MonoBehaviour:
   m_ObjectHideFlags: 0
