@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 196415430}
   - component: {fileID: 196415432}
   - component: {fileID: 196415431}
+  - component: {fileID: 196415433}
   m_Layer: 0
   m_Name: VFXManager
   m_TagString: Untagged
@@ -353,6 +354,21 @@ MonoBehaviour:
   _turnOnDebugLog: 0
   _initializeOnStart: 0
   _initializeAsChild: 0
+--- !u!114 &196415433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196415429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35b454ea1a22b2649b5a3042e908c256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectID: 
+  _destroySceneNames:
+  - TestMainMenu
 --- !u!1001 &229468787
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -770,43 +786,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
---- !u!84 &782961206
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &930218448
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1045,6 +1024,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1031402252
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.138835
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.24143696
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3635012178520130074, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5900867347964096896, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
+      propertyPath: m_Name
+      value: PlayerKatanaRoundSlash
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: edbb1c4bdd71df648b9156849546fee4, type: 3}
 --- !u!1 &1059092922
 GameObject:
   m_ObjectHideFlags: 0
@@ -1461,6 +1497,43 @@ MonoBehaviour:
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
   m_ObsoleteContactShadows: 0
+--- !u!84 &1519367148
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1683852718
 GameObject:
   m_ObjectHideFlags: 0
@@ -1985,3 +2058,4 @@ SceneRoots:
   - {fileID: 1864403899}
   - {fileID: 8894311549917742070}
   - {fileID: 196415430}
+  - {fileID: 1031402252}
