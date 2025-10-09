@@ -1,3 +1,4 @@
+using System.Collections;
 using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
@@ -49,14 +50,18 @@ public class VFXManager : MonoBehaviour,
             {
                 go.transform.position = e.Info.Pos;
             }
-            
+
             go.transform.rotation = e.Info.Rot;
             go.transform.localScale = e.Info.Scale;
             go.GetComponent<VisualEffect>().Play();
-            Tween.Delay(.1f).OnComplete(() => go.transform.SetParent(null));
+            Tween.Delay(.1f).OnComplete(() =>
+            {
+                if (go != null)
+                    go.transform.SetParent(null);
+            });
             go.GetComponent<VFXFinishedEventHandler>().OnSpawnFinished.AddListener(() => ReturnVFX(go));
         }
-        
+
     }
 
     private void ReturnVFX(GameObject go)

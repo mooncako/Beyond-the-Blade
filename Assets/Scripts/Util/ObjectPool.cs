@@ -188,7 +188,7 @@ public class ObjectPool : MonoBehaviour
 
         // Reset object state
         obj.SetActive(false);
-        
+
         // Return to pool
         _pools[prefab].Enqueue(obj);
         _activeCount[prefab]--;
