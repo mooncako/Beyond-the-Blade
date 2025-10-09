@@ -78,7 +78,7 @@ public class Weapon : MonoBehaviour
             else
                 WeaponSkillDict[key] = list;
         }
-        
+
         RefreshAvailableSkills();
     }
 
@@ -177,7 +177,7 @@ public class Weapon : MonoBehaviour
             _abilityIndex--;
             if (_abilityIndex < 0)
             {
-                _abilityIndex = WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count-1;
+                _abilityIndex = WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count - 1;
             }
         }
     }
@@ -242,7 +242,7 @@ public class Weapon : MonoBehaviour
                     SkillDict[skillId].IsEndBuffed = true;
                     break;
             }
-            
+
         }
         else
         {
@@ -262,5 +262,11 @@ public class Weapon : MonoBehaviour
 
     }
 
+    public void ResetSkills()
+    {
+        RefreshSkillDatabase();
+        RefreshAvailableWeaponSkills();
+        AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
+    }
 
 }

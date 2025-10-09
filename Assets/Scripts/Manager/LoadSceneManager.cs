@@ -14,6 +14,7 @@ public class LoadSceneManager : MonoBehaviour,
     [SerializeField, BoxGroup("Settings")] private float _endStrength = 6;
     [SerializeField, BoxGroup("Settings")] private float _duration = .5f;
 
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isTransitioning = false;
     private Tween _strengthTween;
 
     void OnValidate()
@@ -40,22 +41,28 @@ public class LoadSceneManager : MonoBehaviour,
 
     public void OnMMEvent(LoadSceneEvent e)
     {
-        _transitionVolume.enabled = true;
-        _strengthTween.Stop();
-        LevelTransitionEvent.Trigger(EventStateType.OnEventStart);
-        _strengthTween = Tween.Custom(_startStrength, _endStrength, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", newVal)).OnComplete(() =>
+        if (!_isTransitioning)
         {
-            SceneManager.LoadScene(e.SceneName);
-            Tween.Delay(.1f).OnComplete(() =>
+            _isTransitioning = true;
+            _transitionVolume.enabled = true;
+            _strengthTween.Stop();
+            LevelTransitionEvent.Trigger(EventStateType.OnEventStart);
+            _strengthTween = Tween.Custom(_startStrength, _endStrength, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", newVal)).OnComplete(() =>
             {
-                LevelTransitionEvent.Trigger(EventStateType.OnEventEnd);
-                _strengthTween = Tween.Custom(_endStrength, _startStrength, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", newVal)).OnComplete(() =>
+                SceneManager.LoadScene(e.SceneName);
+                Tween.Delay(.1f).OnComplete(() =>
                 {
-                    _transitionVolume.enabled = false;
-                    
+                    _isTransitioning = false;
+                    LevelTransitionEvent.Trigger(EventStateType.OnEventEnd);
+                    _strengthTween = Tween.Custom(_endStrength, _startStrength, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", newVal)).OnComplete(() =>
+                    {
+                        _transitionVolume.enabled = false;
+
+                    });
                 });
             });
-        });
+        }
+        
         
     }
 }

@@ -178,6 +178,10 @@ public class PlayerController : Controller,
         }
 
         PlayerInitializedEvent.Trigger(this);
+        if(scene.name == "TestHub")
+        {
+            Reset();
+        }
     }
 
     public void OnMMEvent(PlayerAnimationStateChangeEvent e)
@@ -618,5 +622,6 @@ public class PlayerController : Controller,
     {
         Stats.Clear();
         ApplyStats();
+        CurrentWeapon.ResetSkills();
     }
 }

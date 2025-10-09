@@ -75,7 +75,7 @@ public class Health : MonoBehaviour
         else if (_controller is PlayerController player)
         {
             LoadSceneEvent.Trigger("TestHub");
-            player.Reset();
+            
             //TODO: Reset player stats
         }
         
