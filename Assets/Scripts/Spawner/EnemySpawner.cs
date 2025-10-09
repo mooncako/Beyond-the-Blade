@@ -5,13 +5,13 @@ using UnityEngine.VFX;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private VisualEffect _spawnVFX;
-    [SerializeField, BoxGroup("References")] private EnemySpawnVFXEventHandler _spawnVFXEventHandler;
+    [SerializeField, BoxGroup("References")] private VFXFinishedEventHandler _spawnVFXEventHandler;
     [SerializeField, BoxGroup("References")] private GameObject _spawnedEntity;
 
     void OnValidate()
     {
         if (_spawnVFX == null) _spawnVFX = GetComponentInChildren<VisualEffect>();
-        if (_spawnVFXEventHandler == null) _spawnVFXEventHandler = GetComponentInChildren<EnemySpawnVFXEventHandler>();
+        if (_spawnVFXEventHandler == null) _spawnVFXEventHandler = GetComponentInChildren<VFXFinishedEventHandler>();
     }
 
     void OnEnable()

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1564791185530304628}
   - component: {fileID: 746199517588085796}
   m_Layer: 0
-  m_Name: PlayerKatanaSlash
+  m_Name: PlayerKatanaRoundSlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,10 @@ VisualEffect:
     m_Gradient:
       m_Array: []
     m_NamedObject:
-      m_Array: []
+      m_Array:
+      - m_Value: {fileID: -2026799186594837928, guid: 507c404997d8cc44c9d67625249fb818, type: 3}
+        m_Name: Mesh
+        m_Overridden: 1
     m_Bool:
       m_Array: []
 --- !u!73398921 &1564791185530304628

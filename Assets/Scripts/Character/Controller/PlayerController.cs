@@ -321,6 +321,7 @@ public class PlayerController : Controller,
             _currentSkill = CurrentWeapon.LoopBasicAttack();
             if (_currentSkill != null)
             {
+                SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
                 _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
                 _animationStateMachine.InterruptState(AnimationStateType.Attack);
             }
