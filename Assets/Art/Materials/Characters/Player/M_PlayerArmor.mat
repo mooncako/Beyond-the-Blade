@@ -30,7 +30,7 @@ Material:
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _DISABLE_SSR_TRANSPARENT
-  - _REFLECTIONTYPE_HAIR
+  - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
   - _NORMALMAP_TANGENT_SPACE
@@ -285,7 +285,7 @@ Material:
     - _Gloss: 31
     - _HairReflection: 0
     - _HasHighlight: 0
-    - _HasReflectionLight: 1
+    - _HasReflectionLight: 0
     - _HasRimLight: 1
     - _HeightAmplitude: 0.02
     - _HeightCenter: 0.5
@@ -309,6 +309,7 @@ Material:
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
     - _MaterialTypeMask: 2
+    - _Metalic: 2.13
     - _Metallic: 0
     - _MetallicRemapMax: 1
     - _MetallicRemapMin: 0
@@ -329,7 +330,7 @@ Material:
     - _PPDPrimitiveWidth: 1
     - _PerPixelSorting: 0
     - _Power: 3
-    - _REFLECTIONTYPE: 1
+    - _REFLECTIONTYPE: 0
     - _RIMLIGHTDIRECTION: 2
     - _RayTracing: 0
     - _ReceivesSSR: 1
@@ -345,7 +346,7 @@ Material:
     - _ShadowEdge1: 0.437
     - _ShadowEdge2: 0.59
     - _ShadowMatteFilter: 5.919e-42
-    - _Smoothness: 0.5
+    - _Smoothness: 0.56
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1

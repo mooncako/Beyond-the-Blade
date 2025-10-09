@@ -3705,8 +3705,8 @@
         },
         {
             "id": 1,
-            "displayName": "Hair",
-            "referenceName": "HAIR"
+            "displayName": "Aniso",
+            "referenceName": "ANISO"
         },
         {
             "id": 2,
@@ -4745,30 +4745,6 @@
     },
     "m_Property": {
         "m_Id": "47eac55efeff4ffabe593ac55fdd0904"
-    }
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
-    "m_ObjectId": "46748da16ee8484d8b56f3681dc7c09f",
-    "m_Id": 1,
-    "m_DisplayName": "Hair",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "HAIR",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
     }
 }
 
@@ -6140,7 +6116,7 @@
             "m_Id": "e4d916d20e7a493ca8dddfa1224f1884"
         },
         {
-            "m_Id": "46748da16ee8484d8b56f3681dc7c09f"
+            "m_Id": "899e98e205f843c09c44eae5471f4600"
         },
         {
             "m_Id": "df4b9b08237741748ca57e0ef2080c30"
@@ -7628,6 +7604,30 @@
     "useTilingAndOffset": false,
     "m_Modifiable": true,
     "m_DefaultType": 0
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
+    "m_ObjectId": "899e98e205f843c09c44eae5471f4600",
+    "m_Id": 1,
+    "m_DisplayName": "Aniso",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "ANISO",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    }
 }
 
 {
