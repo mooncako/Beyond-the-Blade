@@ -29,7 +29,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
-  - _REFLECTIONTYPE_NONE
+  - _REFLECTIONTYPE_HAIR
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
   - _DISABLE_SSR_TRANSPARENT
@@ -241,7 +241,7 @@ Material:
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
     - _ExcludeFromTUAndAA: 0
-    - _Exponent: 20
+    - _Exponent: 3
     - _Gloss: 20
     - _HairReflection: 0
     - _HasHighlight: 0
@@ -289,12 +289,12 @@ Material:
     - _PPDPrimitiveWidth: 1
     - _PerPixelSorting: 0
     - _Power: 1
-    - _REFLECTIONTYPE: 0
+    - _REFLECTIONTYPE: 1
     - _RIMLIGHTDIRECTION: 2
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
-    - _ReflectionPower: 1
+    - _ReflectionPower: 0.7
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
@@ -377,7 +377,7 @@ Material:
     - _MainLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionColor: {r: 1, g: 0, b: 0, a: 0}
+    - _ReflectionColor: {r: 0.009433985, g: 0.009433985, b: 0.009433985, a: 0}
     - _ReflectionColor_1: {r: 1, g: 0, b: 0, a: 0}
     - _RimColor: {r: 0.8584906, g: 0.27054545, b: 0, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
