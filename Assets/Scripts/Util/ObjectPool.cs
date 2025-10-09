@@ -59,7 +59,7 @@ public class ObjectPool : MonoBehaviour
         // Initialize each pool
         foreach (var config in _poolConfigs)
         {
-            if (config.prefab != null)
+            if (config.Prefab != null)
             {
                 CreatePool(config);
             }
@@ -73,7 +73,7 @@ public class ObjectPool : MonoBehaviour
 
     private void CreatePool(PoolConfig config)
     {
-        var prefab = config.prefab;
+        var prefab = config.Prefab;
         var queue = new Queue<GameObject>();
         
         // Store config and initialize counters
@@ -81,7 +81,7 @@ public class ObjectPool : MonoBehaviour
         _activeCount[prefab] = 0;
 
         // Pre-instantiate objects
-        for (int i = 0; i < config.initialSize; i++)
+        for (int i = 0; i < config.InitialSize; i++)
         {
             GameObject obj = CreatePooledObject(prefab);
             queue.Enqueue(obj);
@@ -132,7 +132,7 @@ public class ObjectPool : MonoBehaviour
             obj = pool.Dequeue();
         }
         // Expand pool if allowed and under max size
-        else if (config.canExpand && (config.maxSize == 0 || GetTotalCount(prefab) < config.maxSize))
+        else if (config.CanExpand && (config.MaxSize == 0 || GetTotalCount(prefab) < config.MaxSize))
         {
             obj = CreatePooledObject(prefab);
         }
@@ -221,7 +221,7 @@ public class ObjectPool : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            if (config.maxSize > 0 && GetTotalCount(prefab) >= config.maxSize)
+            if (config.MaxSize > 0 && GetTotalCount(prefab) >= config.MaxSize)
                 break;
 
             GameObject obj = CreatePooledObject(prefab);
@@ -266,19 +266,14 @@ public class ObjectPool : MonoBehaviour
     /// Clear the current pool, and build a new pool at runtime based on the prefabs
     /// </summary>
     /// <param name="prefabs"></param>
-    public void InitializeRuntimePool(List<GameObject> prefabs)
+    public void InitializeRuntimePool(List<GameObject> prefabs, int initialSize = 20, int maxSize = 40, bool canExpand = true)
     {
         ClearAllPools();
         _poolConfigs.Clear();
         foreach (GameObject go in prefabs)
         {
-            var config = new PoolConfig
-            {
-                prefab = go,
-                initialSize = 20,
-                maxSize = 40,
-                canExpand = true
-            };
+            var config = new PoolConfig(go, initialSize, 40, true);
+
             _poolConfigs.Add(config);
         }
 
@@ -319,13 +314,7 @@ public class ObjectPool : MonoBehaviour
 
     private void CreateRuntimePool(GameObject prefab)
     {
-        var config = new PoolConfig
-        {
-            prefab = prefab,
-            initialSize = 5,
-            maxSize = 20,
-            canExpand = true
-        };
+        var config = new PoolConfig(prefab, 5, 20, true);
         CreatePool(config);
     }
 

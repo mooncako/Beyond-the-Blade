@@ -21,6 +21,7 @@ public class Skill
     public bool IsMidBuffed = false;
     public bool IsEndBuffed = false;
     [PreviewField] public Sprite Icon;
+    public VFXInfo VFXInfo = new VFXInfo(Vector3.zero, Quaternion.identity, Vector3.one);
 
     public Skill(Skill skill)
     {
@@ -47,6 +48,7 @@ public class Skill
         IsMidBuffed = skill.IsMidBuffed;
         IsEndBuffed = skill.IsEndBuffed;
         Icon = skill.Icon;
+        VFXInfo = skill.VFXInfo;
     }
 
     public Skill()
