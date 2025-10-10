@@ -186,6 +186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 181618187}
   - component: {fileID: 181618186}
+  - component: {fileID: 181618189}
   - component: {fileID: 181618188}
   m_Layer: 0
   m_Name: FeedbackVolume
@@ -241,6 +242,23 @@ MonoBehaviour:
   ObjectID: 
   _destroySceneNames:
   - TestMainMenu
+--- !u!114 &181618189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181618185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4645c5bc66e236548981e4861956d5ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _profile: {fileID: 11400000, guid: fb96cc8b7b8fd7349a847dd4cbb44d13, type: 2}
+  _startVignetteIntensity: 0
+  _maxVignetteIntensity: 0.4
+  _vignette: {fileID: 0}
+  _chromaticAberration: {fileID: 0}
 --- !u!1001 &229468787
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -151,6 +151,7 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnParried(duration);
         _brain.Stagger(duration);
+        _animationStateMachine.SwitchState(AnimationStateType.Stagger);
         _staggerTween = Tween.Delay(duration).OnComplete(() =>
         {
             _animationStateMachine.SwitchState(AnimationStateType.Idle);

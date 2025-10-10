@@ -1,7 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class ScreenFeedbackController : MonoBehaviour
+public class CharacterFeedbackController : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private Health _health;
 

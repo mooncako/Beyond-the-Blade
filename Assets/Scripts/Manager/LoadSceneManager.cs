@@ -26,6 +26,11 @@ public class LoadSceneManager : MonoBehaviour,
         }
     }
 
+    void Start()
+    {
+        _strengthTween.Stop();
+        _transitionMaterial.SetFloat("_RealmStrength", _startStrength);
+    }
 
     void OnEnable()
     {
@@ -35,6 +40,10 @@ public class LoadSceneManager : MonoBehaviour,
     void OnDisable()
     {
         this.MMEventStopListening<LoadSceneEvent>();
+    }
+
+    void OnApplicationQuit()
+    {
         _strengthTween.Stop();
         _transitionMaterial.SetFloat("_RealmStrength", _startStrength);
     }

@@ -43,7 +43,7 @@ public class Health : MonoBehaviour
     {
         _health = Mathf.Min(_health + amount, _maxHealth);
         OnHealthRecovery.Invoke(amount);
-        Debug.Log($"Healed {amount} health. Current health: {_health}/{_maxHealth}");
+        PlayerOnHealthChangeEvent.Trigger(this);
     }
 
     public void Damage(DamageInfo info)
@@ -58,6 +58,11 @@ public class Health : MonoBehaviour
         }
         _health -= info.Amount * (1 - _controller.Stats.DamageReduction);
         OnDamage.Invoke(info);
+
+        if (_controller is PlayerController)
+        {
+            PlayerOnHealthChangeEvent.Trigger(this);
+        }
 
         if (_health <= 0)
         {
