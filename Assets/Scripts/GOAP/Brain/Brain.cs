@@ -1,3 +1,4 @@
+using System;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.GenTest;
@@ -15,6 +16,7 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
     [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
+    [SerializeField, BoxGroup("Settings")] public bool IsTank = false;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
@@ -76,7 +78,7 @@ public class Brain : MonoBehaviour
     }
 
     [Sirenix.OdinInspector.Button]
-    public virtual void Stagger(float duration)
+    public virtual void Stagger(float duration, Action onComplete = null)
     {
         IAction action = _agent.ActionState.Action;
         _provider.ClearGoal();
@@ -86,6 +88,10 @@ public class Brain : MonoBehaviour
         {
             _agent.IsPaused = false;
             OnActionEnd(action);
+            if(onComplete != null)
+            {
+                onComplete.Invoke();
+            }
         });
     }
 }

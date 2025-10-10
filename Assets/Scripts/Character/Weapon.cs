@@ -264,6 +264,7 @@ public class Weapon : MonoBehaviour
 
     public void ResetSkills()
     {
+        SkillDict.Clear();
         RefreshSkillDatabase();
         RefreshAvailableWeaponSkills();
         AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);

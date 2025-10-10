@@ -51,6 +51,8 @@ public class EnemyController : Controller, IPoolable
             Movement.LookInMoveDirection = false;
         };
 
+        Health.OnDamage.AddListener(DamageFeedback);
+
     }
 
     protected override void OnDisable()
@@ -64,6 +66,8 @@ public class EnemyController : Controller, IPoolable
             CurrentTargetTransform = playerTransform;
             Movement.LookInMoveDirection = false;
         };
+
+        Health.OnDamage.RemoveListener(DamageFeedback);
 
         _attackDelayTween.Stop();
     }
@@ -159,6 +163,14 @@ public class EnemyController : Controller, IPoolable
         {
             CanAttack = true;
         });
+    }
+
+    private void DamageFeedback(DamageInfo info)
+    {
+        if (!_brain.IsTank)
+        {
+            _brain.Stagger(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
+        }
     }
 
     public void OnPoolGet()
