@@ -30,11 +30,12 @@ Material:
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _DISABLE_SSR_TRANSPARENT
+  - _MATERIAL_FEATURE_CLEAR_COAT
   - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
   - _NORMALMAP_TANGENT_SPACE
-  m_LightmapFlags: 4
+  m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2475
@@ -83,12 +84,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HalfLambert_dafeea6debd244eea2020680abd86d49_RaytracedHardShadow_2246608029_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Height:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 3e79a1674c84b31458db03eb68d97325, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _IridescenceMaskMap:
@@ -100,7 +105,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 0bda87bd1a1eb5f489274837db9af313, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
@@ -108,7 +113,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 7f50271798c159f4f902cd6422c1ca76, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -175,6 +180,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ToonColorLit_af15a910bb5d4ca48586b8663e9edc91_RayTracedHardShadow_199466193_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _TransmissionMaskMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -215,6 +224,7 @@ Material:
     - _Amplitude: 0.05
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _ClearCoatEnabled: 1
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _Crack: 0
@@ -290,7 +300,7 @@ Material:
     - _ObjectSpaceUVMappingEmissive: 0
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 1.25
+    - _OverallLightStrength: 1
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -314,7 +324,7 @@ Material:
     - _ShadowEdge1: 0.437
     - _ShadowEdge2: 0.59
     - _ShadowMatteFilter: 5.919e-42
-    - _Smoothness: 0
+    - _Smoothness: 0.51
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -359,7 +369,7 @@ Material:
     - _UVDetail: 0
     - _UVEmissive: 0
     - _UseEmissiveIntensity: 0
-    - _UseNormalMap: 0
+    - _UseNormalMap: 1
     - _UseShadowThreshold: 0
     - _Vertical: 1.5
     - _Verticle: 0
@@ -393,7 +403,7 @@ Material:
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _SubLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _SubLightDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _TextureColor: {r: 0.3301887, g: 0.31305626, b: 0.31305626, a: 0}
+    - _TextureColor: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 0}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}

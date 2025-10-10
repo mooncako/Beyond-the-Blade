@@ -30,6 +30,7 @@ Material:
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _DISABLE_SSR_TRANSPARENT
+  - _MATERIAL_FEATURE_CLEAR_COAT
   - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
@@ -80,6 +81,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HalfLambert_ce380b7de72847baac2911e306e82ee7_RaytracedHardShadow_2246608029_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HalfLambert_dafeea6debd244eea2020680abd86d49_RaytracedHardShadow_2246608029_Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -215,6 +220,7 @@ Material:
     - _Amplitude: 0.05
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _ClearCoatEnabled: 1
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _Crack: 0
@@ -290,7 +296,7 @@ Material:
     - _ObjectSpaceUVMappingEmissive: 0
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 1.25
+    - _OverallLightStrength: 1
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5

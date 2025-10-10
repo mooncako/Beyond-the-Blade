@@ -30,7 +30,8 @@ Material:
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _DISABLE_SSR_TRANSPARENT
-  - _REFLECTIONTYPE_ANISO
+  - _MATERIAL_FEATURE_CLEAR_COAT
+  - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
   - _NORMALMAP_TANGENT_SPACE
@@ -81,6 +82,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HalfLambert_ce380b7de72847baac2911e306e82ee7_RaytracedHardShadow_2246608029_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HalfLambert_dafeea6debd244eea2020680abd86d49_RaytracedHardShadow_2246608029_Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -212,6 +217,7 @@ Material:
     - _Amplitude: 0.05
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _ClearCoatEnabled: 1
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _Crack: 0
@@ -246,7 +252,7 @@ Material:
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
     - _ExcludeFromTUAndAA: 0
-    - _Exponent: 7
+    - _Exponent: 526
     - _Gloss: 20
     - _HairReflection: 0
     - _HasHighlight: 0
@@ -287,7 +293,7 @@ Material:
     - _ObjectSpaceUVMappingEmissive: 0
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 1.25
+    - _OverallLightStrength: 1
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -295,12 +301,12 @@ Material:
     - _PPDPrimitiveWidth: 1
     - _PerPixelSorting: 0
     - _Power: 3
-    - _REFLECTIONTYPE: 1
+    - _REFLECTIONTYPE: 0
     - _RIMLIGHTDIRECTION: 2
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
-    - _ReflectionPower: 0.5
+    - _ReflectionPower: 0.03
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
@@ -383,7 +389,7 @@ Material:
     - _MainLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionColor: {r: 0.037916515, g: 0.037916515, b: 0.037916515, a: 0}
+    - _ReflectionColor: {r: 0.01886791, g: 0.01886791, b: 0.01886791, a: 0}
     - _ReflectionColor_1: {r: 1, g: 0, b: 0, a: 0}
     - _RimColor: {r: 0.8584906, g: 0.27054545, b: 0, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}

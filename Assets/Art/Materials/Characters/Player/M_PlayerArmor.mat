@@ -30,6 +30,7 @@ Material:
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _DISABLE_SSR_TRANSPARENT
+  - _MATERIAL_FEATURE_CLEAR_COAT
   - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
@@ -88,6 +89,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HalfLambert_ce380b7de72847baac2911e306e82ee7_RaytracedHardShadow_2246608029_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HalfLambert_dafeea6debd244eea2020680abd86d49_RaytracedHardShadow_2246608029_Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -191,6 +196,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ToonColorLit_af15a910bb5d4ca48586b8663e9edc91_RayTracedHardShadow_199466193_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ToonColor_ed330ffa02ac4d9b8f9ddf5354315604_Height_4014016160_Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -247,6 +256,7 @@ Material:
     - _Amplitude: 0
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _ClearCoatEnabled: 1
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _Crack: 0
@@ -316,13 +326,13 @@ Material:
     - _MinorLightStrength: 1
     - _NoisePower: 0.963
     - _NormalMapSpace: 0
-    - _NormalMapStrength: 1
+    - _NormalMapStrength: 0
     - _NormalScale: 1
     - _ObjectSpaceUVMapping: 0
     - _ObjectSpaceUVMappingEmissive: 0
     - _OnDamage: 1
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 1.25
+    - _OverallLightStrength: 0.18
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -346,7 +356,7 @@ Material:
     - _ShadowEdge1: 0.437
     - _ShadowEdge2: 0.59
     - _ShadowMatteFilter: 5.919e-42
-    - _Smoothness: 0.56
+    - _Smoothness: 0.6
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -416,18 +426,20 @@ Material:
     - _LightColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightDirection: {r: 0, g: 0, b: 0, a: 0}
     - _MainLightColor: {r: 1, g: 1, b: 1, a: 0.99215686}
+    - _MetalRemap: {r: 0, g: 24.78, b: 0, a: 0}
     - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightDirection: {r: -0.03, g: -0.71, b: 1.97, a: 0}
     - _ReflectionColor: {r: 0.74901974, g: 0.74901974, b: 0.74901974, a: 0}
     - _ReflectionColor_1: {r: 1, g: 0, b: 0, a: 0}
     - _RimColor: {r: 0.8584906, g: 0.27054545, b: 0, a: 1}
+    - _RoughRemap: {r: 0, g: 1, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _SubLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _SubLightDirection: {r: 0, g: 0, b: 0, a: 0}
     - _TextureColor: {r: 0.23325826, g: 0, b: 0.0013757569, a: 0}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _Tiling: {r: 10, g: 10, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
