@@ -371,6 +371,9 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
   OnIframe:
     m_PersistentCalls:
       m_Calls: []
@@ -1478,6 +1481,7 @@ MonoBehaviour:
   - {fileID: 4539617701613372010}
   - {fileID: 1792556165278653851}
   _health: {fileID: 2640687494238271249}
+  _damageFlash: {fileID: 2100000, guid: 0f8e0a3602c90484d81303c2f80dee1f, type: 2}
 --- !u!114 &3287818600021082339
 MonoBehaviour:
   m_ObjectHideFlags: 0

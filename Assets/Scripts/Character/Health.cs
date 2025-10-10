@@ -13,6 +13,7 @@ public class Health : MonoBehaviour
     [SerializeField, BoxGroup("Stats"), ReadOnly] public float HealthPercentage => _health / _maxHealth;
 
     [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDamage;
+    [FoldoutGroup("Events")] public UnityEvent<DamageInfo> OnDeath;
     [FoldoutGroup("Events")] public UnityEvent<float> OnIframe;
     [FoldoutGroup("Events")] public UnityEvent<float> OnHealthRecovery;
     [FoldoutGroup("Events")] public UnityEvent OnMaxHealthUpdated;
@@ -66,6 +67,7 @@ public class Health : MonoBehaviour
 
     public void Death(DamageInfo info)
     {
+        OnDeath.Invoke(info);
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
@@ -74,7 +76,7 @@ public class Health : MonoBehaviour
         }
         else if (_controller is PlayerController player)
         {
-            LoadSceneEvent.Trigger("TestHub");
+            
             
             //TODO: Reset player stats
         }

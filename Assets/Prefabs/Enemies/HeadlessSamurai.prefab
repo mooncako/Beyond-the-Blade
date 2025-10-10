@@ -371,6 +371,9 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
   OnIframe:
     m_PersistentCalls:
       m_Calls: []
@@ -1314,6 +1317,7 @@ MonoBehaviour:
   - {fileID: 6901243730267538038}
   - {fileID: 2419853125137207810}
   _health: {fileID: 2640687494238271249}
+  _damageFlash: {fileID: 2100000, guid: 0f8e0a3602c90484d81303c2f80dee1f, type: 2}
 --- !u!4 &5499631464580268321 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8619019761582548157, guid: fc905643dea34d54a98f97fb5b8d59c8, type: 3}
