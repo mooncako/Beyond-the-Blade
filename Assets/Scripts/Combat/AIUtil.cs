@@ -52,4 +52,11 @@ public static class AIUtil
 
         return NavMesh.SamplePosition(p, out var hit, 0.5f, areaMask) ? hit.position : p;
     }
+
+    public static Vector3 GetRandomSpawnPos(EnemySpawnPos[] spawnPositions)
+    {
+        int index = Random.Range(0, spawnPositions.Length);
+        Vector2 offset = Random.insideUnitCircle * spawnPositions[index].Radius;
+        return new Vector3(spawnPositions[index].transform.position.x + offset.x, spawnPositions[index].transform.position.y, spawnPositions[index].transform.position.z + offset.y);
+    }
 }

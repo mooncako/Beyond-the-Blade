@@ -21,6 +21,7 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Settings")] public ExitsProbability ExitsProbability;
     [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
     [field: SerializeField, BoxGroup("Settings")] public SpawnPos[] SpawnPositions { get; private set; }
+    [field: SerializeField, BoxGroup("Settings")] public EnemySpawnPos[] EnemySpawnPositions { get; private set; }
     [field: SerializeField, BoxGroup("Settings")] public ExitPos[] ExitPositions { get; private set; }
 
     [SerializeField, BoxGroup("Debug")] public SpawnPos SpawnPos;
@@ -28,8 +29,8 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList = new List<ExitPos>();
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -37,6 +38,7 @@ public class LevelSystem : MonoBehaviour
         _environmentalObjectSpawners = GetComponentsInChildren<EnvironmentalObjectSpawner>();
         _gameplayObjectSpawners = GetComponentsInChildren<GameplayObjectSpawner>();
         SpawnPositions = GetComponentsInChildren<SpawnPos>();
+        EnemySpawnPositions = GetComponentsInChildren<EnemySpawnPos>();
         ExitPositions = GetComponentsInChildren<ExitPos>();
         _navMeshSurface = GetComponent<NavMeshSurface>();
         _levelMesh = GetComponentInChildren<LevelMesh>();
@@ -70,11 +72,11 @@ public class LevelSystem : MonoBehaviour
 
         Tween.Delay(.1f).OnComplete(() => {
             
-            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform);
+            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, EnemySpawnPositions);
 
             Tween.Delay(.5f).OnComplete(() =>
             {
-                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform);
+                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, EnemySpawnPositions);
             });
             
         });

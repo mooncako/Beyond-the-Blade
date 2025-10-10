@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MoreMountains.Tools;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,22 +15,28 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
     [SerializeField, BoxGroup("Settings")] private GameDifficultyDataSO _gameDifficultySettings;
+    [SerializeField, BoxGroup("Settings")] private float _minSpawnDelay = .1f;
+    [SerializeField, BoxGroup("Settings")] private float _maxSpawnDelay = .4f;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCountPerWave;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<(string enemyName, float timeOffset)> _picks = new List<(string, float)>();
+
+    [field: SerializeField] private Dictionary<EnemyProfile, GameObject> _currentEnemyDict = new Dictionary<EnemyProfile, GameObject>();
+
 #if UNITY_EDITOR
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> CurrentSpawningEnemies => _currentSpawningEnemies.ToList();
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> EnemiesWaitingForSpawn => _enemiesWaitingForSpawn.ToList();
 #endif
-    [field: SerializeField] private Dictionary<EnemyProfile, GameObject> _currentEnemyDict = new Dictionary<EnemyProfile, GameObject>();
 
     private int _budget;
 
     private Queue<string> _currentSpawningEnemies = new Queue<string>();
     private Queue<string> _enemiesWaitingForSpawn = new Queue<string>();
+
+    private EnemySpawnPos[] _enemySpawnPos;
 
     private void OnValidate()
     {
@@ -75,6 +83,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
             if (_canSpawn)
             {
+                _enemySpawnPos = e.EnemySpawnPositions;
                 SetupWaveInfo();
             }
         }
@@ -155,19 +164,25 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             return;
         }
 
+        StartCoroutine(SpawnEnemyCO());
+    }
+    
+    private IEnumerator SpawnEnemyCO()
+    {
         while (_currentSpawningEnemies.Count > 0)
         {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(_minSpawnDelay, _maxSpawnDelay));
             GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
             SpawnEnemy(enemy);
-            
         }
+        
     }
 
     [Button]
     private void SpawnEnemy(GameObject prefab)
     {
         EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
-        spawner.transform.position = AIUtil.GetRandomPointOnNavMesh();
+        spawner.transform.position = AIUtil.GetRandomSpawnPos(_enemySpawnPos);
         spawner.StartSpawn();
     }
 
