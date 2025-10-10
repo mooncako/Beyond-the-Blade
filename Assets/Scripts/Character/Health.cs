@@ -62,6 +62,7 @@ public class Health : MonoBehaviour
         if (_controller is PlayerController)
         {
             PlayerOnHealthChangeEvent.Trigger(this);
+            PlayerOnDamageEvent.Trigger(this);
         }
 
         if (_health <= 0)
