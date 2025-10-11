@@ -27,6 +27,7 @@ public class Controller : MonoBehaviour
     [SerializeField, FoldoutGroup("Base Reference")] protected ParryCollider _parryCollider;
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
     [SerializeField, BoxGroup("Settings")] protected LayerMask _attackableMask;
+    [HideInInspector] public LayerMask AttackableMask => _attackableMask;
     [SerializeField, BoxGroup("Settings")] protected LayerMask _parryMask;
     [SerializeField, BoxGroup("Settings")] protected float _hitStopDuration;
     [SerializeField, BoxGroup("Settings")] protected float _attackKnockbackForce;
@@ -37,8 +38,6 @@ public class Controller : MonoBehaviour
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isSkillPlaying = false;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected List<GameObject> _hitTargets = new List<GameObject>();
-
-    [HideInInspector] public Skill CurrentSkill => _currentSkill;
 
     protected Tween _hitStopTween;
     protected ModifierContext _context;

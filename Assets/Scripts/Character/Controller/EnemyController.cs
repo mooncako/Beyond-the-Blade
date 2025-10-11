@@ -151,12 +151,7 @@ public class EnemyController : Controller, IPoolable
     protected override void OnParried(float duration)
     {
         base.OnParried(duration);
-        _brain.Stagger(duration);
-        _animationStateMachine.SwitchState(AnimationStateType.Stagger);
-        _staggerTween = Tween.Delay(duration).OnComplete(() =>
-        {
-            _animationStateMachine.SwitchState(AnimationStateType.Idle);
-        });
+        Stun(duration);
     }
 
     public override void StartAttackCooldown()
@@ -171,13 +166,18 @@ public class EnemyController : Controller, IPoolable
     {
         if (!_brain.IsTank)
         {
-            _brain.Stagger(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
+            Stun(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
         }
     }
 
     public void Stun(float duration, Action onComplete = null)
     {
-        _brain.Stagger(duration, onComplete);
+        _brain.Stun(duration, onComplete);
+        _animationStateMachine.SwitchState(AnimationStateType.Stagger);
+        _staggerTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            _animationStateMachine.SwitchState(AnimationStateType.Idle);
+        });
     }
 
     public void OnPoolGet()

@@ -383,6 +383,7 @@ public class PlayerController : Controller,
             if (CurrentAbility == null) return;
             if (_abilityInCooldown) return;
 
+            _currentSkill = CurrentAbility;
             _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
             if (_animationStateMachine.InterruptState(AnimationStateType.Ability))
             {
@@ -612,5 +613,11 @@ public class PlayerController : Controller,
         Stats.Clear();
         ApplyStats();
         CurrentWeapon.ResetSkills();
+    }
+
+    public void Stun(float duration)
+    {
+        _input.SwitchCurrentActionMap("UI");
+        Tween.Delay(duration).OnComplete(() => _input.SwitchCurrentActionMap("Player"));
     }
 }
