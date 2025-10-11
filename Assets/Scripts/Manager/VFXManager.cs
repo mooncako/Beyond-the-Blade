@@ -64,6 +64,12 @@ public class VFXManager : MonoBehaviour,
 
     }
 
+    [Button]
+    private void TestManagerFunction(string id, VFXInfo info)
+    {
+        SpawnVFXEvent.Trigger(null, id, info);
+    }
+
     private void ReturnVFX(GameObject go)
     {
         _pool.Return(go);
