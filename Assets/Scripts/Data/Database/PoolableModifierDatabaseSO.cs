@@ -18,7 +18,10 @@ public class PoolableModifierDatabaseSO : ScriptableObject
     [Button]
     public void UpdateProbabilities()
     {
-
+        NormalModifiers.Clear();
+        RareModifiers.Clear();
+        EpicModifiers.Clear();
+        LegendaryModifiers.Clear();
         for (int i = 0; i < Modifiers.Count; i++)
         {
             if (Modifiers[i].CanAppear)

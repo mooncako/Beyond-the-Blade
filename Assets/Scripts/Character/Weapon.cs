@@ -230,7 +230,7 @@ public class Weapon : MonoBehaviour
             switch (modifier.Item2)
             {
                 case UpgradeSlotType.Start:
-                    SkillDict[skillId].Buffs.Add((modifier.Item1, 0));
+                    SkillDict[skillId].Buffs.Add((modifier.Item1, 0f));
                     SkillDict[skillId].IsStartBuffed = true;
                     break;
                 case UpgradeSlotType.Mid:
