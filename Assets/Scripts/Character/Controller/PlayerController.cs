@@ -559,17 +559,6 @@ public class PlayerController : Controller,
         Health.OnIframe.Invoke(Stats.IframeDuration);
     }
 
-    public void SlashEffect(int Index)
-    {
-        _slashVFXArray[Index].GetComponent<ParticleSystem>().Play();
-        StartCoroutine(DisableSlashVFXCO(Index));
-    }
-
-    private IEnumerator DisableSlashVFXCO(int index)
-    {
-        yield return new WaitForSeconds(_slashVFXDuration);
-        _slashVFXArray[index].GetComponent<ParticleSystem>().Stop();
-    }
     public void EndParry()
     {
         _isPerfectParryWindowActive = false;

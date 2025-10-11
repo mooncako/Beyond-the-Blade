@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Animancer;
@@ -172,6 +173,11 @@ public class EnemyController : Controller, IPoolable
         {
             _brain.Stagger(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
         }
+    }
+
+    public void Stun(float duration, Action onComplete = null)
+    {
+        _brain.Stagger(duration, onComplete);
     }
 
     public void OnPoolGet()
