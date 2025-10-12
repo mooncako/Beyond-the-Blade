@@ -617,6 +617,7 @@ public class PlayerController : Controller,
 
     public void Stun(float duration)
     {
+        if (IsStunImmune) return;
         _input.SwitchCurrentActionMap("UI");
         Tween.Delay(duration).OnComplete(() => _input.SwitchCurrentActionMap("Player"));
     }

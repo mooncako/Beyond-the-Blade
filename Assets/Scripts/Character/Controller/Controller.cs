@@ -38,6 +38,7 @@ public class Controller : MonoBehaviour
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isSkillPlaying = false;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected List<GameObject> _hitTargets = new List<GameObject>();
+    [BoxGroup("Debug"), ReadOnly] public bool IsStunImmune = false;
 
     protected Tween _hitStopTween;
     protected ModifierContext _context;
