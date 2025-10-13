@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CustomCharacterMovement : CharacterMovement3D
 {
-    public float CurrentSpeedMultiplier { get; set; } = 1f;
     public void Teleport(Vector3 position)
     {
         transform.position = position;
@@ -32,14 +31,14 @@ public class CustomCharacterMovement : CharacterMovement3D
             Rigidbody.AddForce(direction.normalized * dashForce);
     }
 
-    public void ResetSpeed() => CurrentSpeedMultiplier = 1f;
+    public void ResetSpeed() => MoveSpeedMultiplier = 1f;
     public void SetSpeedMultiplier(float multiplier)
     {
-        CurrentSpeedMultiplier = multiplier;
+        MoveSpeedMultiplier = multiplier;
     }
 
 
-    public void SetMoveInput(Vector3 input)
+    public override void SetMoveInput(Vector3 input)
     {
         MoveInput = input;
     }

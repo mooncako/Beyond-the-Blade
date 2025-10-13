@@ -10,14 +10,7 @@ public class AccelerationBuff : ModifierSO
 
     public override void Perform(in ModifierContext context)
     {
-        if (context.Caster is PlayerController p)
-        {
-            ApplyAccelerationBuff(p);
-        }
-        else if (context.Caster is EnemyController e)
-        {
-            ApplyAccelerationBuff(e);
-        }
+        ApplyAccelerationBuff(context.Caster);
     }
 
     private void ApplyAccelerationBuff(Controller controller)
