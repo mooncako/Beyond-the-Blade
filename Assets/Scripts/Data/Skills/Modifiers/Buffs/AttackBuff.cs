@@ -10,14 +10,7 @@ public class AttackBuff : ModifierSO
 
     public override void Perform(in ModifierContext context)
     {
-        if (context.Caster is PlayerController p)
-        {
-            ApplyAttackBuff(p);
-        }
-        else if (context.Caster is EnemyController e)
-        {
-            ApplyAttackBuff(e);
-        }
+        ApplyAttackBuff(context.Caster);
     }
 
     private void ApplyAttackBuff(Controller controller)
