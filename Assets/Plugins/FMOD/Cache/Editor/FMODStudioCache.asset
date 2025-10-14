@@ -27,6 +27,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 100
   Length: 298
+--- !u!114 &-3810115227202331774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/EnemyOnHitSFX
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/EnemyOnHitSFX
+  Guid:
+    Data1: 1742837162
+    Data2: 1201194138
+    Data3: 1635568018
+    Data4: 1653407886
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 95
+  Length: 280
 --- !u!114 &-2061505266707235154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,10 +96,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638949092826515165
+  lastModified: 638960434263540993
   FileSizes:
   - Name: Desktop
-    Value: 864
+    Value: 908
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -93,12 +120,13 @@ MonoBehaviour:
   - {fileID: -2061505266707235154}
   - {fileID: -4554938467197485602}
   - {fileID: 1823962624617289361}
+  - {fileID: -3810115227202331774}
   EditorParameters: []
   MasterBanks:
   - {fileID: 1667499214880025089}
   StringsBanks:
   - {fileID: -1138822804711436300}
-  cacheTime: 638949092826515165
+  cacheTime: 638960434263540993
   cacheVersion: 131632
 --- !u!114 &1667499214880025089
 MonoBehaviour:
@@ -115,10 +143,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638949092826515165
+  lastModified: 638960434263521036
   FileSizes:
   - Name: Desktop
-    Value: 12064
+    Value: 16992
   Exists: 1
 --- !u!114 &1823962624617289361
 MonoBehaviour:
