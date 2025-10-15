@@ -30,12 +30,13 @@ public class Controller : MonoBehaviour
     [HideInInspector] public LayerMask AttackableMask => _attackableMask;
     [SerializeField, BoxGroup("Settings")] protected LayerMask _parryMask;
     [SerializeField, BoxGroup("Settings")] protected float _hitStopDuration;
+    [HideInInspector] public float HitStopDuration => _hitStopDuration;
     [SerializeField, BoxGroup("Settings")] protected float _attackKnockbackForce;
     [BoxGroup("Weapon")] public Weapon CurrentWeapon;
     [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
     [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Skill _currentSkill;
-    [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected Vector3 _targetPos;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Vector3 TargetPos;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isSkillPlaying = false;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] protected List<GameObject> _hitTargets = new List<GameObject>();
     [BoxGroup("Debug"), ReadOnly] public bool IsStunImmune = false;
@@ -138,7 +139,7 @@ public class Controller : MonoBehaviour
         _hitTargets.Clear();
         if (_currentSkill.IsTargetedGroundAOE)
         {
-            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, TargetPos, _attackableMask);
         }
         else
         {
@@ -171,7 +172,7 @@ public class Controller : MonoBehaviour
 
     public virtual void SetTargetPos(Vector3 position)
     {
-        _targetPos = position;
+        TargetPos = position;
     }
 
     public bool IsSkillPlaying()

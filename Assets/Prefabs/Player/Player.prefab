@@ -536,6 +536,35 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  _onHitSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _onSpawnSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _onDeathSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _dissolveDeathSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _health: {fileID: 68828148833966052}
   _heavyAttackSFX:
     Guid:
       Data1: 0
@@ -754,7 +783,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 0}
       Scale: {x: 0, y: 0, z: 0}
-  _targetPos: {x: 0, y: 0, z: 0}
+  TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
   IsStunImmune: 0
@@ -1024,6 +1053,9 @@ MonoBehaviour:
     _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 0}
   _directionalMovementAnimations: {fileID: 0}
+  OnStateExit:
+    m_PersistentCalls:
+      m_Calls: []
   references:
     version: 2
     RefIds: []
