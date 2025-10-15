@@ -124,13 +124,23 @@ public class Controller : MonoBehaviour
 
 
 
-    protected virtual void ApplySkillEffect()
+    protected virtual void ApplySkillEffect(Skill skill = null)
     {
 
         //TODO buffs & debuffs
-        AOEApplier.X = _currentSkill.SkillRange.X;
-        AOEApplier.Y = _currentSkill.SkillRange.Y;
-        AOEApplier.Z = _currentSkill.SkillRange.Z;
+        if (skill == null)
+        {
+            AOEApplier.X = _currentSkill.SkillRange.X;
+            AOEApplier.Y = _currentSkill.SkillRange.Y;
+            AOEApplier.Z = _currentSkill.SkillRange.Z;
+        }
+        else
+        {
+            AOEApplier.X = skill.SkillRange.X;
+            AOEApplier.Y = skill.SkillRange.Y;
+            AOEApplier.Z = skill.SkillRange.Z;
+        }
+        
 
     }
 
@@ -226,6 +236,11 @@ public class Controller : MonoBehaviour
     {
         Movement.SetSpeedMultiplier(Stats.MovementSpeedMultiplier);
         Health.UpdateMaxHealth(Stats.MaxHealth);
+    }
+
+    public bool IsAttacking()
+    {
+        return _animationStateMachine.IsInAttackActionState() || _animationStateMachine.IsInAbilityActionState();
     }
 
 }

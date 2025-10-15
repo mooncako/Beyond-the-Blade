@@ -15,22 +15,44 @@ MonoBehaviour:
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   Modifiers:
   - SkillId: TELEPORT
+    CanAppear: 0
+  - SkillId: DOPPELGANGER
     CanAppear: 1
-  - SkillId: TESTLEGENDARY
+  - SkillId: ACCELERATION
     CanAppear: 1
-  - SkillId: TESTNORMAL
+  - SkillId: ATTACK
     CanAppear: 1
-  - SkillId: TESTRARE
+  - SkillId: BACKSTEP
+    CanAppear: 1
+  - SkillId: DASH
+    CanAppear: 1
+  - SkillId: DEFENSE
+    CanAppear: 1
+  - SkillId: INVINCIBLE
+    CanAppear: 1
+  - SkillId: SHOCKWAVE
+    CanAppear: 1
+  - SkillId: STUN
     CanAppear: 1
   NormalModifiers:
-  - SkillId: TESTNORMAL
+  - SkillId: ACCELERATION
+    CanAppear: 1
+  - SkillId: ATTACK
+    CanAppear: 1
+  - SkillId: BACKSTEP
+    CanAppear: 1
+  - SkillId: DASH
+    CanAppear: 1
+  - SkillId: DEFENSE
     CanAppear: 1
   RareModifiers:
-  - SkillId: TESTRARE
+  - SkillId: SHOCKWAVE
     CanAppear: 1
   EpicModifiers:
-  - SkillId: TELEPORT
+  - SkillId: INVINCIBLE
+    CanAppear: 1
+  - SkillId: STUN
     CanAppear: 1
   LegendaryModifiers:
-  - SkillId: TESTLEGENDARY
+  - SkillId: DOPPELGANGER
     CanAppear: 1

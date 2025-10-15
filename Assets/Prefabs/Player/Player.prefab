@@ -104,6 +104,7 @@ Transform:
   - {fileID: 6924282412590564708}
   - {fileID: 550617823255356032}
   - {fileID: 7370007690619364898}
+  - {fileID: 5684617190904970969}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &8603676096848177205
@@ -1104,6 +1105,75 @@ MonoBehaviour:
   ObjectID: 
   _destroySceneNames:
   - TestMainMenu
+--- !u!1 &7498923644987429484
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5684617190904970969}
+  - component: {fileID: 2249281809116004315}
+  - component: {fileID: 3504205706068074173}
+  m_Layer: 7
+  m_Name: DoppelgangerSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5684617190904970969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7498923644987429484}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2770192959741835255}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2249281809116004315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7498923644987429484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2349187df8c786f4a9bb0367733cbfb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _poolConfigs: []
+  _logPoolStats: 0
+  _turnOnDebugLog: 0
+  _initializeOnStart: 0
+  _initializeAsChild: 0
+--- !u!114 &3504205706068074173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7498923644987429484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb02c78c8caa15e48ab679379ccf6f3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _doppelgangerPrefab: {fileID: 5848411256206769682, guid: e56c6e720777a5748a6d0f47229ae2e5, type: 3}
+  _pool: {fileID: 2249281809116004315}
+  _poolConfig:
+    Prefab: {fileID: 0}
+    InitialSize: 4
+    MaxSize: 15
+    CanExpand: 1
 --- !u!1 &7761241864927025980
 GameObject:
   m_ObjectHideFlags: 0
