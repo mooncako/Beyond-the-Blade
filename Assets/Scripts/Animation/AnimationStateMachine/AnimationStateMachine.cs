@@ -4,6 +4,7 @@ using UnityEngine;
 using Animancer.TransitionLibraries;
 using FMOD.Studio;
 using System.Collections.Generic;
+using UnityEngine.Events;
 public class AnimationStateMachine : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _modifierDatabase;
@@ -19,6 +20,8 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
+
+    [HideInInspector] public UnityEvent<AnimationStateType, AnimationStateType> OnStateExit;
 
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState CurrentState;
     [ReadOnly, BoxGroup("Debug"), ShowInInspector] public AnimationState PreviousState;
@@ -121,7 +124,7 @@ public class AnimationStateMachine : MonoBehaviour
     public void SwitchState(AnimationStateType type)
     {
         CurrentState.OnExitState();
-
+        OnStateExit.Invoke(_currentState, type);
         switch (type)
         {
             case AnimationStateType.Idle:
@@ -257,24 +260,47 @@ public class AnimationStateMachine : MonoBehaviour
         
     }
 
-    private void SetOwner()
+    public void SetOwner(Controller owner = null)
     {
-        if (_idleState != null)
-            _idleState.Owner = GetComponent<Controller>();
-        if (_moveState != null)
-            _moveState.Owner = GetComponent<Controller>();
-        if (_attackActionState != null)
-            _attackActionState.Owner = GetComponent<Controller>();
-        if (_parryActionState != null)
-            _parryActionState.Owner = GetComponent<Controller>();
-        if (_abilityActionState != null)
-            _abilityActionState.Owner = GetComponent<Controller>();
-        if (_executionActionState != null)
-            _executionActionState.Owner = GetComponent<Controller>();
-        if (_dashActionState != null)
-            _dashActionState.Owner = GetComponent<Controller>();
-        if (_staggerState != null)
-            _staggerState.Owner = GetComponent<Controller>();
+        if (owner == null)
+        {
+            if (_idleState != null)
+                _idleState.Owner = GetComponent<Controller>();
+            if (_moveState != null)
+                _moveState.Owner = GetComponent<Controller>();
+            if (_attackActionState != null)
+                _attackActionState.Owner = GetComponent<Controller>();
+            if (_parryActionState != null)
+                _parryActionState.Owner = GetComponent<Controller>();
+            if (_abilityActionState != null)
+                _abilityActionState.Owner = GetComponent<Controller>();
+            if (_executionActionState != null)
+                _executionActionState.Owner = GetComponent<Controller>();
+            if (_dashActionState != null)
+                _dashActionState.Owner = GetComponent<Controller>();
+            if (_staggerState != null)
+                _staggerState.Owner = GetComponent<Controller>();
+        }
+        else
+        {
+            if (_idleState != null)
+                _idleState.Owner = owner;
+            if (_moveState != null)
+                _moveState.Owner = owner;
+            if (_attackActionState != null)
+                _attackActionState.Owner = owner;
+            if (_parryActionState != null)
+                _parryActionState.Owner = owner;
+            if (_abilityActionState != null)
+                _abilityActionState.Owner = owner;
+            if (_executionActionState != null)
+                _executionActionState.Owner = owner;
+            if (_dashActionState != null)
+                _dashActionState.Owner = owner;
+            if (_staggerState != null)
+                _staggerState.Owner = owner;
+        }
+        
 
     }
 

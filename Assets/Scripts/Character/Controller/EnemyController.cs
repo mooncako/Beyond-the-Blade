@@ -108,7 +108,7 @@ public class EnemyController : Controller, IPoolable
 
         if (_currentSkill.IsTargetedGroundAOE)
         {
-            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos, _attackableMask);
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, TargetPos, _attackableMask);
         }
         else
         {

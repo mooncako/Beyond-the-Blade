@@ -24,7 +24,7 @@ public class PlayerSoundController : SoundController
 
     }
 
-     public override  void PlayAttackSFX()
+    public override  void PlayAttackSFX()
     {
 
         FMODUnity.RuntimeManager.PlayOneShot(_attackSFX, transform.position);

@@ -501,7 +501,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 0}
       Scale: {x: 0, y: 0, z: 0}
-  _targetPos: {x: 0, y: 0, z: 0}
+  TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
   IsStunImmune: 0
@@ -903,6 +903,9 @@ MonoBehaviour:
     _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
   _directionalMovementAnimations: {fileID: 11400000, guid: bd82bddf3ec44d74aa1ea3a1e83377cf, type: 2}
+  OnStateExit:
+    m_PersistentCalls:
+      m_Calls: []
   references:
     version: 2
     RefIds: []

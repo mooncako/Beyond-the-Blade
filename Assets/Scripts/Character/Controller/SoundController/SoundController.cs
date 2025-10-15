@@ -21,14 +21,20 @@ public class SoundController : MonoBehaviour
 
     void OnEnable()
     {
-        _health.OnDamage.AddListener(PlayOnHitSFX);
-        _health.OnDeath.AddListener(PlayOnDeathSFX);
+        if (_health != null)
+        {
+            _health.OnDamage.AddListener(PlayOnHitSFX);
+            _health.OnDeath.AddListener(PlayOnDeathSFX);
+        }
     }
 
     void OnDisable()
     {
-        _health.OnDamage.RemoveListener(PlayOnHitSFX);
-        _health.OnDeath.RemoveListener(PlayOnDeathSFX);
+        if (_health != null)
+        {
+            _health.OnDamage.RemoveListener(PlayOnHitSFX);
+            _health.OnDeath.RemoveListener(PlayOnDeathSFX);
+        }
     }
 
     public virtual void PlayFootstep()
