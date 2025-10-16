@@ -10,6 +10,7 @@ public class SoundController : MonoBehaviour
     [SerializeField] protected FMODUnity.EventReference _onSpawnSFX;
     [SerializeField] protected FMODUnity.EventReference _onDeathSFX;
     [SerializeField] protected FMODUnity.EventReference _dissolveDeathSFX;
+    [SerializeField] protected FMODUnity.EventReference _onHealthRecoverySFX    ;
 
     [Header("References")]
     [SerializeField] protected Health _health;
@@ -25,6 +26,7 @@ public class SoundController : MonoBehaviour
         {
             _health.OnDamage.AddListener(PlayOnHitSFX);
             _health.OnDeath.AddListener(PlayOnDeathSFX);
+            _health.OnHealthRecovery.AddListener(PlayOnHealthRecoverySFX);
         }
     }
 
@@ -34,6 +36,7 @@ public class SoundController : MonoBehaviour
         {
             _health.OnDamage.RemoveListener(PlayOnHitSFX);
             _health.OnDeath.RemoveListener(PlayOnDeathSFX);
+            _health.OnHealthRecovery.RemoveListener(PlayOnHealthRecoverySFX);
         }
     }
 
