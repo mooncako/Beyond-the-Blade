@@ -74,4 +74,8 @@ public class SoundController : MonoBehaviour
     {
         FMODUnity.RuntimeManager.PlayOneShot(_dissolveDeathSFX, transform.position);
     }
+    public virtual void PlayOnHealthRecoverySFX(float amount)
+    {
+        FMODUnity.RuntimeManager.PlayOneShot(_onHealthRecoverySFX, transform.position);
+    }
 }
