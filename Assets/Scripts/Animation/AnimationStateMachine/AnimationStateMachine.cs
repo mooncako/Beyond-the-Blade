@@ -20,6 +20,9 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
+    [SerializeField] public AvatarMask UpperBodyMask;
+    public AnimancerLayer BaseLayer;
+    public AnimancerLayer UpperBodyLayer;
 
     [HideInInspector] public UnityEvent<AnimationStateType, AnimationStateType> OnStateExit;
 
@@ -67,6 +70,15 @@ public class AnimationStateMachine : MonoBehaviour
     {
         CurrentState = _idleState;
         SetOwner();
+        BaseLayer = _animancer.Layers[0];
+        BaseLayer.SetDebugName("Base Layer");
+        BaseLayer.Weight = 1;
+        UpperBodyLayer = _animancer.Layers[1];
+        UpperBodyLayer.Mask = UpperBodyMask;
+        UpperBodyLayer.SetDebugName("Upper Body Layer");
+        UpperBodyLayer.Weight = 0;
+
+
     }
 
     void OnEnable()

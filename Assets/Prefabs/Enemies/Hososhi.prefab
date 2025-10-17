@@ -788,6 +788,15 @@ MonoBehaviour:
     _parameterSmoothTime: 0.15
     _stopProximity: 0.1
     _characterMovement: {fileID: 0}
+    UpperBodyClip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 1827226128182048838, guid: 4bb4416193a8b2949a691e1cec79722d, type: 3}
+      _NormalizedStartTime: NaN
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -910,6 +919,7 @@ MonoBehaviour:
     _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
   _directionalMovementAnimations: {fileID: 11400000, guid: bd82bddf3ec44d74aa1ea3a1e83377cf, type: 2}
+  UpperBodyMask: {fileID: 31900000, guid: 3bb8c1934e898ea46af7f86f215a8d84, type: 2}
   OnStateExit:
     m_PersistentCalls:
       m_Calls: []

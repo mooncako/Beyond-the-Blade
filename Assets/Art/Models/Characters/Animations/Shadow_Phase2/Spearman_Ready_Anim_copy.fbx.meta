@@ -17,11 +17,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: RIG/Root
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'LeftShoulder' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'RightShoulder' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -58,14 +54,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 00000000010000000100000000000000000000000000000001000000000000000100000000000000000000000000000001000000
       curves: []
-      events:
-      - time: 0
-        functionName: ToggleStrafe
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 1
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -974,8 +963,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: ebfba52750c2abd4582e99a2b777b06c,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: ebfba52750c2abd4582e99a2b777b06c, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1

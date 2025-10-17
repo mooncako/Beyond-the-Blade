@@ -16,7 +16,7 @@ public class MoveAnimationState : AnimationState
 
     [Header("Movement Reference")]
     [SerializeField, ShowIf("_isDirectionalMovement")] private CustomCharacterMovement _characterMovement;
-
+    public ClipTransition UpperBodyClip;
     // Directional movement components
     private SmoothedVector2Parameter _smoothedParameter;
     private MixerTransition2D _mixerTransition;
@@ -55,13 +55,28 @@ public class MoveAnimationState : AnimationState
 
     public override void OnEnterState()
     {
+        // Handle upper body layer
+        if (UpperBodyClip != null)
+        {
+            
+            _stateMachine.UpperBodyLayer.Weight = 1;
+            _stateMachine.UpperBodyLayer.Play(UpperBodyClip, 0.1f);
+        }
+        else
+        {
+            // No upper body override, fade out the layer
+            _stateMachine.UpperBodyLayer.StartFade(0, 0.1f);
+        }
         if (_isDirectionalMovement)
         {
             EnterDirectionalMovement();
         }
         else
         {
-            base.OnEnterState();
+            // Play base layer (full body or lower body locomotion)
+            _stateMachine.BaseLayer.Play(Clip);
+            
+            
         }
     }
 
@@ -105,6 +120,11 @@ public class MoveAnimationState : AnimationState
 
     public override void OnExitState()
     {
+        if (_stateMachine.UpperBodyLayer.Weight > 0)
+        {
+            _stateMachine.UpperBodyLayer.StartFade(0, 0.15f);
+        }
+        
         if (_isDirectionalMovement)
         {
             // Clean up smoothed parameter
