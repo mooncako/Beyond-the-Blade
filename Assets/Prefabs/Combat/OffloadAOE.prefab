@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7048150584546912865}
   - component: {fileID: 1022352919807219013}
   - component: {fileID: 8681886410992619547}
+  - component: {fileID: 1439294527119779357}
   m_Layer: 0
   m_Name: OffloadAOE
   m_TagString: Untagged
@@ -126,6 +127,10 @@ MonoBehaviour:
   _meshFilter: {fileID: 6216767281724037028}
   _meshRenderer: {fileID: 5358674995871748189}
   _meshCollider: {fileID: 7048150584546912865}
+  _aoeApplier: {fileID: 1439294527119779357}
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 256
   _range:
     AreaType: 3
     X: 2.5
@@ -133,6 +138,9 @@ MonoBehaviour:
     Z: 160
   _damage: 0
   _enabled: 0
+  OnAOETriggered:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8681886410992619547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,3 +156,21 @@ MonoBehaviour:
   ObjectID: 
   _destroySceneNames:
   - TestMainMenu
+--- !u!114 &1439294527119779357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944172096809165114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7782171cce6423943ada7ebb9b18734e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  X: 0
+  Y: 0
+  Z: 0
+  _coneHeight: Infinity
+  _type: 0
+  _attackPoint: {fileID: 0}

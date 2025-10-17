@@ -27,6 +27,7 @@ public class OffloadAOESpawner : MonoBehaviour,
     public void OnMMEvent(SpawnOffloadAOEEvent e)
     {
         OffloadAOE aoe = _objectPool.Get(_offLoadAOEPrefab).GetComponent<OffloadAOE>();
+        aoe.OnAOETriggered.AddListener(() => _objectPool.Return(aoe.gameObject));
         aoe.AssignData(e.Skill);
         aoe.transform.position = new Vector3(e.Transform.position.x, e.Transform.position.y+.05f, e.Transform.position.z);
         aoe.transform.rotation = e.Transform.rotation;
