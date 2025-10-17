@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AOEApplier))]
 public class OffloadAOE : MonoBehaviour, IPoolable
@@ -15,6 +17,7 @@ public class OffloadAOE : MonoBehaviour, IPoolable
     [SerializeField, BoxGroup("Debug")] private float _damage;
     [SerializeField, BoxGroup("Debug")] private bool _enabled = false;
     [HideInInspector] public UnityEvent OnAOETriggered;
+    [HideInInspector] public ObjectPool ObjectPool;
 
 
     void OnValidate()
@@ -23,6 +26,29 @@ public class OffloadAOE : MonoBehaviour, IPoolable
         if (_meshRenderer == null) _meshRenderer = GetComponent<MeshRenderer>();
         if (_meshCollider == null) _meshCollider = GetComponent<MeshCollider>();
         if (_aoeApplier == null) _aoeApplier = GetComponent<AOEApplier>();
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        if(ObjectPool != null)
+        {
+            ObjectPool.Return(gameObject);
+        }
     }
 
     [Button]
@@ -45,10 +71,18 @@ public class OffloadAOE : MonoBehaviour, IPoolable
         }
         _meshCollider.sharedMesh = _meshFilter.sharedMesh;
         _meshCollider.isTrigger = true;
+        _aoeApplier.X = _range.X;
+        _aoeApplier.Y = _range.Y;
+        _aoeApplier.Z = _range.Z;
         _enabled = true;
     }
 
-    private void OnTriggerStay(Collider other)
+    void Update()
+    {
+        
+    }
+
+    void OnTriggerStay(Collider other)
     {
         if (_enabled)
         {
@@ -60,11 +94,9 @@ public class OffloadAOE : MonoBehaviour, IPoolable
                     gameObjects[i].GetComponent<Health>().Damage(new DamageInfo(_damage, gameObjects[i], gameObjects[i].GetComponent<Health>(), gameObject, DamageType.Regular));
                 }
                 _enabled = false;
+                OnAOETriggered.Invoke();
             }
-
-            OnAOETriggered.Invoke();
         }
-        
     }
 
     public void AssignData(Skill skill)
