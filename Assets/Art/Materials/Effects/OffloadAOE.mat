@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Offload
-  m_Shader: {fileID: -6465566751694194690, guid: 908af0c003062b7429b75e6ebf9f7f39, type: 3}
+  m_Name: OffloadAOE
+  m_Shader: {fileID: -6465566751694194690, guid: 5631d5b5b73c12b49a17a8548924fe2c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -16,6 +16,7 @@ Material:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
   - _DOUBLESIDED_ON
+  - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
@@ -32,8 +33,16 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 53d9ca26583edb7428bc64e1ce6b604f, type: 3}
+    - _RimLight_22e85435fd924408862c0fbb03f83cc2_Height_2734748443_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RimLight_22e85435fd924408862c0fbb03f83cc2_Normal_3643966307_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_79c74189697245219bce99b8cfb852ec_Color_117152814_Texture2D:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -67,12 +76,15 @@ Material:
     - _EnableBlendModePreserveSpecularLighting: 0
     - _EnableFogOnTransparent: 1
     - _ExcludeFromTUAndAA: 0
-    - _NoiseScale: 1.66
     - _OpaqueCullMode: 2
     - _PerPixelSorting: 0
-    - _Power: 0.6
+    - _RIMLIGHTDIRECTION: 2
     - _RenderQueueType: 4
-    - _Speed: 5.76
+    - _RimLightCameraRelativePitch: 0
+    - _RimLightCameraRelativeYaw: 0
+    - _RimLightHardness: 1
+    - _RimPower: 1
+    - _Speed: 1.5
     - _SrcBlend: 1
     - _StencilRef: 0
     - _StencilRefDepth: 1
@@ -95,12 +107,14 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1.857156, g: 0.16619828, b: 0.010512051, a: 0}
+    - _Color: {r: 205.51155, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OuterRingColor: {r: 0, g: 0, b: 0, a: 0}
+    - _RimColor: {r: 36.46119, g: 15.055517, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &1296691967637468007
+--- !u!114 &5948706084935419265
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
