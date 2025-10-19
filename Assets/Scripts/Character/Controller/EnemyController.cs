@@ -171,7 +171,7 @@ public class EnemyController : Controller, IPoolable
         }
         else
         {
-            Movement.KnockBack(info.Instigator.transform, 100);
+            Movement.KnockBack(info.Instigator.transform, 500);
         }
     }
 
