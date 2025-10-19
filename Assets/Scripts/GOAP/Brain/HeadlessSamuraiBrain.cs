@@ -42,7 +42,7 @@ public class HeadlessSamuraiBrain : Brain
 
     protected override void Start()
     {
-        _provider.RequestGoal<WanderGoal>(false);
+        _provider.RequestGoal<KillPlayerGoal>(false);
         _playerSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 

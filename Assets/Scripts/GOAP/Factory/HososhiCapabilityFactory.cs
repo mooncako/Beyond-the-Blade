@@ -51,7 +51,7 @@ public class HososhiCapabilityFactory : CapabilityFactory
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
-            .SetStoppingDistance(1)
+            .SetStoppingDistance(2)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
