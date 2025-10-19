@@ -41,7 +41,18 @@ public class HososhiBrain : Brain
     {
         if (_isPlayerDetected)
         {
-            _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+            switch (Personality)
+            {
+                case PersonalityType.Aggressive:
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                    break;
+                case PersonalityType.Cautious:
+                    _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
+                    break;
+                case PersonalityType.Evasive:
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
+                    break;
+            }
         }
         else
         {
@@ -52,7 +63,18 @@ public class HososhiBrain : Brain
     protected override void OnPlayerEnter(Transform player)
     {
         _provider.ClearGoal();
-        _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+        switch(Personality)
+        {
+            case PersonalityType.Aggressive:
+                _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                break;
+            case PersonalityType.Cautious:
+                _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
+                break;
+            case PersonalityType.Evasive:
+                _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
+                break;
+        }
         _isPlayerInRange = true;
         _isPlayerDetected = true;
     }
