@@ -71,6 +71,7 @@ public class EnemyController : Controller, IPoolable
         Health.OnDamage.RemoveListener(DamageFeedback);
 
         _attackDelayTween.Stop();
+        _staggerTween.Stop();
     }
 
     private void FixedUpdate()
@@ -167,6 +168,10 @@ public class EnemyController : Controller, IPoolable
         if (!_brain.IsTank)
         {
             Stun(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
+        }
+        else
+        {
+            Movement.KnockBack(info.Instigator.transform, 100);
         }
     }
 
