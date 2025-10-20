@@ -4,5 +4,6 @@ public enum LevelType
 {
     Reguler,
     Recover,
-    Shop
+    Shop,
+    Boss
 }

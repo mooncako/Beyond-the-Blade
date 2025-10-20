@@ -7,11 +7,13 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MMSingleton<LevelManager>,
     MMEventListener<LevelRandomizeCompleteEvent>,
     MMEventListener<RoomClearedEvent>,
-    MMEventListener<SpawnRewardEvent>
+    MMEventListener<SpawnRewardEvent>,
+    MMEventListener<EnterNewLevelEvent>
 {
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableNormalLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableShopLevelPrefabs;
     [SerializeField, BoxGroup("References")] private LevelSystem[] _availableRecoveryLevelPrefabs;
+    [SerializeField, BoxGroup("References")] private LevelSystem[] _bossLevelPrefabs;
     [SerializeField, BoxGroup("References")] private GameObject _gatePrefab;
     [SerializeField, BoxGroup("References")] private PickupFactory _pickupFactory;
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
@@ -22,6 +24,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isBossLevel = false;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
     private LevelSystem _selectedSystemPrefab;
@@ -45,6 +48,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
         this.MMEventStartListening<RoomClearedEvent>();
         this.MMEventStartListening<SpawnRewardEvent>();
+        this.MMEventStartListening<EnterNewLevelEvent>();
     }
 
     private void OnDisable()
@@ -53,6 +57,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
         this.MMEventStopListening<RoomClearedEvent>();
         this.MMEventStopListening<SpawnRewardEvent>();
+        this.MMEventStopListening<EnterNewLevelEvent>();
     }
 
     private void OnDestroy()
@@ -60,11 +65,13 @@ public class LevelManager : MMSingleton<LevelManager>,
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
         this.MMEventStopListening<RoomClearedEvent>();
+        this.MMEventStopListening<SpawnRewardEvent>();
+        this.MMEventStopListening<EnterNewLevelEvent>();
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name == "TestMainMenu" || scene.name == "TestHub")
+        if (scene.name == SCENENAME.Menu || scene.name == SCENENAME.Hub)
         {
             ResetManager();
         }
@@ -110,7 +117,10 @@ public class LevelManager : MMSingleton<LevelManager>,
                 _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
                 _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
+            case LevelType.Boss:
+                break;
         }
+
     }
 
     private LevelSystem PickPossibleLevel(LevelSystem[] levels)
@@ -158,6 +168,11 @@ public class LevelManager : MMSingleton<LevelManager>,
         }
     }
 
+    public void OnMMEvent(EnterNewLevelEvent e)
+    {
+        CurrentLevelType = e.LevelType;
+    }
+
     public void OnMMEvent(RoomClearedEvent e)
     {
         _doOnce = true;
@@ -166,7 +181,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
         {
             Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[i].transform.position, _currentLevel.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
-            gate.SetLevelName(SceneManager.GetActiveScene().name);
+            gate.SetLevelName(SceneManager.GetActiveScene().name, _exitsLevelType[i]);
         }
     }
 

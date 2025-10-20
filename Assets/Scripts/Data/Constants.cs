@@ -16,6 +16,12 @@ public static class DIRECTORY
     public const string SettingsPath = "\\Settings.json";
 }
 
+public static class SCENENAME
+{
+    public const string Menu = "TestMainMenu";
+    public const string Hub = "TestHub";
+}
+
 public static class AUDIO
 {
     public const string MasterVolume = "MasterVolume";

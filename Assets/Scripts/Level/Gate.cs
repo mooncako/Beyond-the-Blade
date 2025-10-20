@@ -7,6 +7,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
 {
     [SerializeField, BoxGroup("Settings")] private string _levelName;
     [SerializeField, BoxGroup("Settings")] private bool _isNewSession;
+    [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
@@ -46,14 +47,16 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
             {
                 other.GetComponent<PlayerController>().StartNewSession();
             }
+            EnterNewLevelEvent.Trigger(_levelType);
             LoadSceneEvent.Trigger(_levelName);
         }
     }
 
-    public void SetLevelName(string levelName, bool isNewSession = false)
+    public void SetLevelName(string levelName, LevelType levelType, bool isNewSession = false)
     {
         _levelName = levelName;
         _isNewSession = isNewSession;
+        _levelType = levelType;
     }
 
     public void OnMMEvent(GateOpenEvent e)
