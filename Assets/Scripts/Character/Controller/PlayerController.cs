@@ -320,11 +320,12 @@ public class PlayerController : Controller,
     public void InputAttack(InputAction.CallbackContext context)
     {
         if (context.started && IsActionAvailable(AnimationStateType.Attack))
-        {
+        { 
             ExecuteLightAttack(GetAimPoint());
             _currentSkill = CurrentWeapon.LoopBasicAttack();
             if (_currentSkill != null)
             {
+                CameraRotateEvent.Trigger();
                 SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
                 _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
                 _animationStateMachine.InterruptState(AnimationStateType.Attack);

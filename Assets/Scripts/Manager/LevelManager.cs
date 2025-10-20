@@ -107,19 +107,30 @@ public class LevelManager : MMSingleton<LevelManager>,
         {
             case LevelType.Reguler:
                 _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
-                _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
             case LevelType.Recover:
                 _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
-                _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
             case LevelType.Shop:
                 _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
-                _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
                 break;
             case LevelType.Boss:
+                switch (CurrentLevelIndex)
+                {
+                    case 4:
+                        _selectedSystemPrefab = _bossLevelPrefabs[0];
+                        break;
+                    case 9:
+                        _selectedSystemPrefab = _bossLevelPrefabs[1];
+                        break;
+                    case 14:
+                        _selectedSystemPrefab = _bossLevelPrefabs[2];
+                        break;
+                }
                 break;
         }
+        
+        _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
 
     }
 
