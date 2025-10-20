@@ -6,10 +6,10 @@ using UnityEngine;
 public class CameraRotator : MonoBehaviour,
     MMEventListener<CameraRotateEvent>
 {
-    [SerializeField, BoxGroup("Settings")] private float _startDuration = 1f;
+    [SerializeField, BoxGroup("Settings")] private float _startDuration = .1f;
     [SerializeField, BoxGroup("Settings")] private float _recoverDuration = .3f;
-    [SerializeField, BoxGroup("Settings")] private float _xOffsetRange = 5f;
-    [SerializeField, BoxGroup("Settings")] private float _yOffsetRange = 5f;
+    [SerializeField, BoxGroup("Settings")] private float _xOffsetRange = .5f;
+    [SerializeField, BoxGroup("Settings")] private float _yOffsetRange = 1f;
     [SerializeField, BoxGroup("Settings")] private float _zOffsetRange = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _defaultRotation;
     
