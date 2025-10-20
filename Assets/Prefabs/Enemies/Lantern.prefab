@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 6420835648838700933}
   - component: {fileID: 2652234782751008208}
   - component: {fileID: 7628456600314050354}
+  - component: {fileID: 3011173388331776581}
   - component: {fileID: 5667961458422474831}
   - component: {fileID: 2533455327338582168}
   - component: {fileID: 8335018461307400012}
@@ -186,6 +187,7 @@ Transform:
   - {fileID: 2728210941605041345}
   - {fileID: 1560458968914386357}
   - {fileID: 7418412447263860572}
+  - {fileID: 8026705290931286831}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &4191314971418661949
@@ -348,8 +350,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _controller: {fileID: 4962864894029839974}
-  _maxHealth: 100
-  _health: 100
+  _maxHealth: 80
+  _health: 80
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -383,7 +385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Range: 4
   AlertRange: 6
-  FieldOfView: 200
+  FieldOfView: 140
   _occlusionMask:
     serializedVersion: 2
     m_Bits: 768
@@ -446,9 +448,10 @@ MonoBehaviour:
   <Vision>k__BackingField: {fileID: 2515946022723110387}
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
-  _weapons: []
+  _weapons:
+  - {fileID: 2746137905501011285}
   _parryCollider: {fileID: 797566862508417072}
-  <Stats>k__BackingField: {fileID: 0}
+  <Stats>k__BackingField: {fileID: 11400000, guid: 6ac54f7457858c843ac482b61c8b1af8, type: 2}
   _attackableMask:
     serializedVersion: 2
     m_Bits: 128
@@ -457,7 +460,7 @@ MonoBehaviour:
     m_Bits: 2048
   _hitStopDuration: 0
   _attackKnockbackForce: 0
-  CurrentWeapon: {fileID: 0}
+  CurrentWeapon: {fileID: 2746137905501011285}
   CanMove: 1
   CanAttack: 1
   _currentSkill:
@@ -487,7 +490,7 @@ MonoBehaviour:
   _hitTargets: []
   IsStunImmune: 0
   _playerSensor: {fileID: 5061576002193979983}
-  _brain: {fileID: 0}
+  _brain: {fileID: 3011173388331776581}
   _attackCooldown: 0.3
   CurrentTargetTransform: {fileID: 0}
 --- !u!114 &6524476659326703885
@@ -555,6 +558,29 @@ MonoBehaviour:
     <MaxLogSize>k__BackingField: 20
   <AgentTypeBehaviour>k__BackingField: {fileID: 0}
   <DistanceMultiplier>k__BackingField: 1
+--- !u!114 &3011173388331776581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede10cb5a5eecbc44bce55d4602e821c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _agent: {fileID: 6420835648838700933}
+  _provider: {fileID: 7628456600314050354}
+  _goap: {fileID: 2652234782751008208}
+  _playerSensor: {fileID: 5061576002193979983}
+  _attackSensorConfigSO: {fileID: 11400000, guid: cfbe3a311fea9814a806689341af2304, type: 2}
+  _movement: {fileID: 3418439087366576687}
+  _spanwDelay: 0.2
+  IsTank: 0
+  Personality: 0
+  _isPlayerInRange: 0
+  _isPlayerDetected: 0
 --- !u!114 &5667961458422474831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,8 +626,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99175a5b17ee97842a73e038bcc3da6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackSensorConfig: {fileID: 0}
-  StrafeSensorConfig: {fileID: 0}
+  AttackSensorConfig: {fileID: 11400000, guid: cfbe3a311fea9814a806689341af2304, type: 2}
+  StrafeSensorConfig: {fileID: 11400000, guid: c972d4cb7bf68674bb2e2397956143cb, type: 2}
 --- !u!114 &7909133857443672914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -979,4 +1005,81 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
   m_PrefabInstance: {fileID: 2181347178224773652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9120035830686689198
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4034926405133228867}
+    m_Modifications:
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -24.933552
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -12.845753
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 17.231638
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6380718470727031547, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: _controller
+      value: 
+      objectReference: {fileID: 4962864894029839974}
+    - target: {fileID: 6985952433721055015, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+      propertyPath: m_Name
+      value: EnemyLanternWeapon
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+--- !u!114 &2746137905501011285 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6380718470727031547, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+  m_PrefabInstance: {fileID: 9120035830686689198}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8709718e55188964b963235baf41f255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &8026705290931286831 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1293788373825033345, guid: 326a994dc7c552c438d77920bc7721ea, type: 3}
+  m_PrefabInstance: {fileID: 9120035830686689198}
   m_PrefabAsset: {fileID: 0}
