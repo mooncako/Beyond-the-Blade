@@ -44,7 +44,7 @@ public class VFXManager : MonoBehaviour,
             if (e.Owner != null)
             {
                 go.transform.SetParent(e.Owner, false);
-                if(e.Info.StayInParent)
+                if(e.Info.IsPersistent)
                     e.Owner.GetComponent<Controller>().AddPersistentVFX(vfx);
                 go.transform.position = e.Owner.position;
                 go.transform.localPosition = new Vector3(go.transform.localPosition.x + e.Info.Pos.x, go.transform.localPosition.y + e.Info.Pos.y, go.transform.localPosition.z + e.Info.Pos.z);
@@ -58,7 +58,7 @@ public class VFXManager : MonoBehaviour,
             go.transform.localRotation = e.Info.Rot;
             go.transform.localScale = e.Info.Scale;
             vfx.Play();
-            if (!e.Info.StayInParent)
+            if (!e.Info.IsPersistent)
             {
                 Tween.Delay(.1f).OnComplete(() =>
                 {

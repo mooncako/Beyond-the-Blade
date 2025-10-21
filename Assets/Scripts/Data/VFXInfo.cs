@@ -7,7 +7,7 @@ public struct VFXInfo
     public Vector3 Pos;
     public Quaternion Rot;
     public Vector3 Scale;
-    public bool StayInParent;
+    public bool IsPersistent;
 
 
     public VFXInfo(Vector3 pos, Quaternion rot, Vector3 scale, bool stayInParent)
@@ -15,6 +15,6 @@ public struct VFXInfo
         Pos = pos;
         Rot = rot;
         Scale = scale;
-        StayInParent = stayInParent;
+        IsPersistent = stayInParent;
     }
 }
