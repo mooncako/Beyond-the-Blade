@@ -503,7 +503,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 0}
       Scale: {x: 0, y: 0, z: 0}
-      StayInParent: 0
+      IsPersistent: 0
   TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -749,6 +749,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
+  _owner: {fileID: 4962864894029839974}
   _idleState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}

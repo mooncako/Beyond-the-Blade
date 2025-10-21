@@ -11,6 +11,7 @@ public class SkillUpgradeSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     [SerializeField, BoxGroup("References")] private CanvasGroup _midSlotCanvasGroup;
     [SerializeField, BoxGroup("References")] private CanvasGroup _endSlotCanvasGroup;
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _skillText;
+    [SerializeField, BoxGroup("Settings")] private bool _isAttackSlot = false;
 
     private string _skillId;
     private (string, UpgradeSlotType) _modifier;
@@ -29,7 +30,10 @@ public class SkillUpgradeSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (_modifier.Item1 != "")
         {
-            _weapon.AddModifier(_skillId, _modifier, true);
+            if (!_isAttackSlot)
+                _weapon.AddModifierDirect(_skillId, _modifier, true);
+            else
+                _weapon.AddUniversalAttackModifier(_modifier, true);
             ProgressionCanvasCloseEvent.Trigger();
         }
     }
@@ -48,44 +52,87 @@ public class SkillUpgradeSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
 
         _modifier = ("", UpgradeSlotType.Start);
-        switch (modifier.Item2)
+        if (!_isAttackSlot)
         {
-            case UpgradeSlotType.Start:
-                if (!weapon.GetSkill(_skillId).IsStartBuffed)
-                {
-                    _modifier = modifier;
-                    _startSlotCanvasGroup.alpha = 0;
-                }
-                else
-                {
-                    _startSlotCanvasGroup.alpha = 1;
-                }
-                    
-                break;
-            case UpgradeSlotType.Mid:
-                if (!weapon.GetSkill(_skillId).IsMidBuffed)
-                {
-                    _modifier = modifier;
-                    _startSlotCanvasGroup.alpha = 0;
-                }
-                else
-                {
-                    _startSlotCanvasGroup.alpha = 1;
-                }
-                break;
-            case UpgradeSlotType.End:
-                if (!weapon.GetSkill(_skillId).IsEndBuffed)
-                {
-                    _modifier = modifier;
-                    _startSlotCanvasGroup.alpha = 0;
-                }
-                else
-                {
-                    _startSlotCanvasGroup.alpha = 1;
-                }
-                break;
-        }
+            switch (modifier.Item2)
+            {
+                case UpgradeSlotType.Start:
+                    if (!weapon.GetSkill(_skillId).IsStartBuffed)
+                    {
+                        _modifier = modifier;
+                        _startSlotCanvasGroup.alpha = 0;
+                    }
+                    else
+                    {
+                        _startSlotCanvasGroup.alpha = 1;
+                    }
 
+                    break;
+                case UpgradeSlotType.Mid:
+                    if (!weapon.GetSkill(_skillId).IsMidBuffed)
+                    {
+                        _modifier = modifier;
+                        _startSlotCanvasGroup.alpha = 0;
+                    }
+                    else
+                    {
+                        _startSlotCanvasGroup.alpha = 1;
+                    }
+                    break;
+                case UpgradeSlotType.End:
+                    if (!weapon.GetSkill(_skillId).IsEndBuffed)
+                    {
+                        _modifier = modifier;
+                        _startSlotCanvasGroup.alpha = 0;
+                    }
+                    else
+                    {
+                        _startSlotCanvasGroup.alpha = 1;
+                    }
+                    break;
+            }
+
+        }
+        else
+        {
+            switch (modifier.Item2)
+            {
+                case UpgradeSlotType.Start:
+                    if (!weapon.IsStartBuffed())
+                    {
+                        _modifier = modifier;
+                        _startSlotCanvasGroup.alpha = 0;
+                    }
+                    else
+                    {
+                        _startSlotCanvasGroup.alpha = 1;
+                    }
+                    break;
+                case UpgradeSlotType.Mid:
+                    if (!weapon.IsMidBuffed())
+                    {
+                        _modifier = modifier;
+                        _startSlotCanvasGroup.alpha = 0;
+                    }
+                    else
+                    {
+                        _startSlotCanvasGroup.alpha = 1;
+                    }
+                    break;
+                case UpgradeSlotType.End:
+                    if (!weapon.IsEndBuffed())
+                    {
+                        _modifier = modifier;
+                        _startSlotCanvasGroup.alpha = 0;
+                    }
+                    else
+                    {
+                        _startSlotCanvasGroup.alpha = 1;
+                    }
+                    break;
+            }
+        }
+        
         _weapon = weapon;
 
     }

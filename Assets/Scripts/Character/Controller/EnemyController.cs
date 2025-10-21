@@ -141,13 +141,18 @@ public class EnemyController : Controller, IPoolable
         if (!IsSkillPlaying())
         {
             _currentSkill = CurrentWeapon.LoopBasicAttack();
-            SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
-            ApplySkillEffect();
+            if (_currentSkill != null)
+            {
+                SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
+                ApplySkillEffect();
+                _isSkillPlaying = true;
+            }
+            
             // swapout animation in AnimationStateMachine
             //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
             
 
-            _isSkillPlaying = true;
+            
         }
     }
 

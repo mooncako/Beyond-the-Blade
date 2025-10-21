@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using System.Linq;
 using UnityUtils;
-using Unity.VisualScripting;
 using MoreMountains.Tools;
 
 public class Weapon : MonoBehaviour
@@ -21,6 +20,7 @@ public class Weapon : MonoBehaviour
 
     private Skill _skill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private int _abilityIndex = 0;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] public List<(string, UpgradeSlotType, bool)> UniversalAttackModifiers = new List<(string, UpgradeSlotType, bool)>();
 
 #if UNITY_EDITOR
     [ShowInInspector] List<string> _availableSkillIds => AvailableSkills.Keys.ToList();
@@ -223,7 +223,7 @@ public class Weapon : MonoBehaviour
         return -1;
     }
 
-    public void AddModifier(string skillId, (string, UpgradeSlotType) modifier, bool isBuff)
+    public void AddModifierDirect(string skillId, (string, UpgradeSlotType) modifier, bool isBuff)
     {
         if (isBuff)
         {
@@ -262,12 +262,54 @@ public class Weapon : MonoBehaviour
 
     }
 
+    public void AddUniversalAttackModifier((string, UpgradeSlotType) modifier, bool isBuff)
+    {
+        UniversalAttackModifiers.Add((modifier.Item1, modifier.Item2, isBuff));
+    }
+
+    public bool IsStartBuffed()
+    {
+        for (int i = 0; i < UniversalAttackModifiers.Count; i++)
+        {
+            if (UniversalAttackModifiers[i].Item2 == UpgradeSlotType.Start)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsMidBuffed()
+    {
+        for (int i = 0; i < UniversalAttackModifiers.Count; i++)
+        {
+            if (UniversalAttackModifiers[i].Item2 == UpgradeSlotType.Mid)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsEndBuffed()
+    {
+        for (int i = 0; i < UniversalAttackModifiers.Count; i++)
+        {
+            if (UniversalAttackModifiers[i].Item2 == UpgradeSlotType.End)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void ResetSkills()
     {
         SkillDict.Clear();
         RefreshSkillDatabase();
         RefreshAvailableWeaponSkills();
         AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
+        UniversalAttackModifiers.Clear();
     }
 
 }

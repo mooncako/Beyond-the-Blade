@@ -9,6 +9,7 @@ public class AnimationStateMachine : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _modifierDatabase;
     [SerializeField, BoxGroup("References")] private AnimancerComponent _animancer;
+    [SerializeField, BoxGroup("References")] private Controller _owner;
     [SerializeField] private IdleAnimationState _idleState;
     [SerializeField] private MoveAnimationState _moveState;
     [SerializeField] private ActionAnimationState _attackActionState;
@@ -34,6 +35,7 @@ public class AnimationStateMachine : MonoBehaviour
 
     void OnValidate()
     {
+        if (_owner == null) _owner = GetComponent<Controller>();
         if (_animancer == null)
         {
             _animancer = GetComponent<AnimancerComponent>();
@@ -241,6 +243,25 @@ public class AnimationStateMachine : MonoBehaviour
         for (int i = 0; i < skill.Debuffs.Count; i++)
         {
             _currentModifiers.Add((skill.Debuffs[i].Item2, _modifierDatabase.SkillModifierDict[skill.Debuffs[i].Item1]));
+        }
+
+        if (type == AnimationStateType.Attack)
+        {
+            for(int i = 0; i < _owner.CurrentWeapon.UniversalAttackModifiers.Count; i++)
+            {
+                switch(_owner.CurrentWeapon.UniversalAttackModifiers[i].Item2)
+                {
+                    case UpgradeSlotType.Start:
+                        _currentModifiers.Add((0, _modifierDatabase.SkillModifierDict[_owner.CurrentWeapon.UniversalAttackModifiers[i].Item1]));
+                        break;
+                    case UpgradeSlotType.Mid:
+                        _currentModifiers.Add((0.5f, _modifierDatabase.SkillModifierDict[_owner.CurrentWeapon.UniversalAttackModifiers[i].Item1]));
+                        break;
+                    case UpgradeSlotType.End:
+                        _currentModifiers.Add((1, _modifierDatabase.SkillModifierDict[_owner.CurrentWeapon.UniversalAttackModifiers[i].Item1]));
+                        break;
+                }
+            }
         }
 
         switch (type)
