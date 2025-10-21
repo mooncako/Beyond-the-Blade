@@ -17,6 +17,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private ActionAnimationState _abilityActionState;
     [SerializeField] private ActionAnimationState _executionActionState;
     [SerializeField] private StaggerAnimationState _staggerState;
+    [SerializeField] private DeathAnimationState _deathState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
@@ -45,6 +46,7 @@ public class AnimationStateMachine : MonoBehaviour
             _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
             _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
             _staggerState = new StaggerAnimationState(this, _animancer);
+            _deathState = new DeathAnimationState(this, _animancer);
             SetOwner();
         }
     }
@@ -61,6 +63,7 @@ public class AnimationStateMachine : MonoBehaviour
         _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
         _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
         _staggerState = new StaggerAnimationState(this, _animancer);
+        _deathState = new DeathAnimationState(this, _animancer);
         SetOwner();
 
     }
@@ -171,6 +174,10 @@ public class AnimationStateMachine : MonoBehaviour
                 CurrentState = _staggerState;
                 _currentState = AnimationStateType.Stagger;
                 break;
+            case AnimationStateType.Death:
+                CurrentState = _deathState;
+                _currentState = AnimationStateType.Death;
+                break;
         }
 
         CurrentState.OnEnterState();
@@ -223,6 +230,10 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Stagger:
                 CurrentState = _staggerState;
                 _currentState = AnimationStateType.Stagger;
+                break;
+            case AnimationStateType.Death:
+                CurrentState = _deathState;
+                _currentState = AnimationStateType.Death;
                 break;
         }
         CurrentState.OnEnterState();
@@ -292,6 +303,8 @@ public class AnimationStateMachine : MonoBehaviour
                 _dashActionState.Owner = GetComponent<Controller>();
             if (_staggerState != null)
                 _staggerState.Owner = GetComponent<Controller>();
+            if (_deathState != null)
+                _deathState.Owner = GetComponent<Controller>();
         }
         else
         {
@@ -311,6 +324,8 @@ public class AnimationStateMachine : MonoBehaviour
                 _dashActionState.Owner = owner;
             if (_staggerState != null)
                 _staggerState.Owner = owner;
+            if (_deathState != null)
+                _deathState.Owner = owner;
         }
         
 
@@ -359,6 +374,11 @@ public class AnimationStateMachine : MonoBehaviour
     public bool IsInStaggerState()
     {
         return CurrentState == _staggerState;
+    }
+
+    public bool IsInDeathState()
+    {
+        return CurrentState == _deathState;
     }
 
     public bool IsMovable()

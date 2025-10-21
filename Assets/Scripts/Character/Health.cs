@@ -74,19 +74,23 @@ public class Health : MonoBehaviour
     public void Death(DamageInfo info)
     {
         OnDeath.Invoke(info);
+        
+        // Trigger death animation state
+        if (_controller != null && _controller.AnimationStateMachine != null)
+        {
+            _controller.AnimationStateMachine.SwitchState(AnimationStateType.Death);
+        }
+        
+        // Handle death logic based on controller type
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
             gameObject.SetActive(false);
-            //TODO: Actual dying
         }
         else if (_controller is PlayerController player)
         {
-            
-            
             //TODO: Reset player stats
         }
-        
     }
 
     [Button, BoxGroup("Debug")]
