@@ -54,7 +54,7 @@ public class EnemyController : Controller, IPoolable
         };
 
         Health.OnDamage.AddListener(DamageFeedback);
-
+        Health.OnDeath.AddListener(OnDeath);
     }
 
     protected override void OnDisable()
@@ -70,6 +70,7 @@ public class EnemyController : Controller, IPoolable
         };
 
         Health.OnDamage.RemoveListener(DamageFeedback);
+        Health.OnDeath.RemoveListener(OnDeath);
 
         _attackDelayTween.Stop();
         _staggerTween.Stop();
@@ -200,12 +201,14 @@ public class EnemyController : Controller, IPoolable
 
     public void OnPoolReturn()
     {
-
+        Movement.CanMove = true;
+        _canRotate = true;
+        gameObject.layer = LayerMask.NameToLayer("Character");
     }
-    
+
     public void ToggleRotationAnimEvent(int toggle)
     {
-        if(toggle == 0)
+        if (toggle == 0)
         {
             _canRotate = true;
         }
@@ -213,6 +216,16 @@ public class EnemyController : Controller, IPoolable
         {
             _canRotate = false;
         }
-        
+
+    }
+    
+    public void OnDeath(DamageInfo info)
+    {
+        _persistentVFXHelper.StopPersistentEffects();
+        _brain.Dead();
+        Movement.Stop();
+        Movement.CanMove = false;
+        _canRotate = false;
+        gameObject.layer = LayerMask.NameToLayer("Corpse");
     }
 }

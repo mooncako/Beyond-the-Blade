@@ -135,11 +135,13 @@ public class AnimationStateMachine : MonoBehaviour
     }
 
     /// <summary>
-    /// Forcifully switching to another state, does not care whether the current state can transfer to the target state
+    /// Forcifully switching to another state, does not care whether the current state can transfer to the target state, unless dead
     /// </summary>
     /// <param name="type"></param>
     public void SwitchState(AnimationStateType type)
     {
+        if (IsInDeathState()) return;
+
         CurrentState.OnExitState();
         OnStateExit.Invoke(_currentState, type);
         switch (type)

@@ -39,6 +39,7 @@ public class Brain : MonoBehaviour
         _playerSensor.OnPlayerEnter += OnPlayerEnter;
         _playerSensor.OnPlayerExit += OnPlayerExit;
         _agent.Events.OnActionEnd += OnActionEnd;
+        _agent.IsPaused = false;
         _isPlayerDetected = false;
         _provider.ClearGoal();
         _provider.RequestGoal<WanderGoal>(false);
@@ -89,10 +90,17 @@ public class Brain : MonoBehaviour
         {
             _agent.IsPaused = false;
             OnActionEnd(action);
-            if(onComplete != null)
+            if (onComplete != null)
             {
                 onComplete.Invoke();
             }
         });
+    }
+
+    public virtual void Dead()
+    {
+        _agent.IsPaused = true;
+        _staggerDelayTween.Stop();
+        _spawnDelayTween.Stop();
     }
 }

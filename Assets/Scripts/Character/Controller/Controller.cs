@@ -92,7 +92,7 @@ public class Controller : MonoBehaviour
     protected virtual void Update()
     {
 
-        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState())
+        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
         {
             if (Movement.MoveInput != Vector3.zero)
             {

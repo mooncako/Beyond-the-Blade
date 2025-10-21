@@ -48,6 +48,8 @@ public class Health : MonoBehaviour
 
     public void Damage(DamageInfo info)
     {
+        if (_health <= 0) return;
+        
         if (!IsDamageable)
         {
             if (_controller is PlayerController p)
@@ -85,7 +87,7 @@ public class Health : MonoBehaviour
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
-            gameObject.SetActive(false);
+            // gameObject.SetActive(false);
         }
         else if (_controller is PlayerController player)
         {
