@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e5f3215a6f3cd842a174c3da3155044, type: 3}
+  m_Name: Lantern
+  m_EditorClassIdentifier: 
+  StatsData:
+    Range: 4
+    AlertRange: 6
+    FieldOfView: 140
+    BaseMaxHealth: 80
+    BaseMaxEnergy: 10
+    BaseMaxStamina: 10
+    BaseStaminaRegeneration: 1
+    BaseDashStaminaCost: 3
+    BaseParryStaminaCost: 2
+    BaseMovementSpeedMultiplier: 1
+    BaseDamageMultiplier: 1
+    BaseDamageReduction: 0
+    BaseAttackSpeed: 1
+    BaseParryEnergyGain: 1.5
+    BaseDashEnergyGain: 0.8
+    BaseHitStunDuration: 0.5
+    BaseRegulerStunDuration: 3
+    BaseResourceGainMultiplier: 1
+    BaseDashForce: 1000
+    BaseIframeDuration: 0.2
+  TempMaxHealth: 0
+  TempMaxEnergy: 0
+  TempMaxStamina: 0
+  TempStaminaRegeneration: 0
+  TempDashStaminaCost: 0
+  TempParryStaminaCost: 0
+  TempMovementSpeedMultiplier: 0
+  TempDamageMultiplier: 0
+  TempDamageReduction: 0
+  TempAttackSpeed: 0
+  TempParryEnergyGain: 0
+  TempDashEnergyGain: 0
+  TempHitStunDuration: 0
+  TempRegulerStunDuration: 0
+  TempResourceGainMultiplier: 0
+  TempDashForce: 0
+  TempIframeDuration: 0

@@ -1,16 +1,17 @@
+using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.GenTest;
 using CrashKonijn.Goap.Runtime;
+using UnityEngine;
 
-
-public class HososhiCapabilityFactory : CapabilityFactory
+public class LanternCapabilityFactory : CapabilityFactory
 {
-
+    //TODO: Add new goals to represent different personality
 
     public override ICapabilityConfig Create()
     {
 
-        var builder = new CapabilityBuilder("Hososhi");
+        var builder = new CapabilityBuilder("Lantern");
 
         BuildGoals(builder);
         BuildActions(builder);
@@ -45,13 +46,13 @@ public class HososhiCapabilityFactory : CapabilityFactory
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .SetStoppingDistance(3)
+            .SetStoppingDistance(2f)
             .SetBaseCost(4);
-
+        
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
-            .SetStoppingDistance(3)
+            .SetStoppingDistance(2f)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()

@@ -15,6 +15,7 @@ public class EnemyController : Controller, IPoolable
 
     
     [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
+    [field: SerializeField, BoxGroup("Debug")] private bool _canRotate = true;
 
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
 
@@ -76,7 +77,7 @@ public class EnemyController : Controller, IPoolable
 
     private void FixedUpdate()
     {
-        if (CurrentTargetTransform != null)
+        if (CurrentTargetTransform != null && _canRotate)
         {
             Movement.SetLookPosition(CurrentTargetTransform.position);
         }
@@ -139,7 +140,8 @@ public class EnemyController : Controller, IPoolable
         if (CurrentWeapon == null) return;
         if (!IsSkillPlaying())
         {
-             _currentSkill = CurrentWeapon.LoopBasicAttack();
+            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
             ApplySkillEffect();
             // swapout animation in AnimationStateMachine
             //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
@@ -177,6 +179,7 @@ public class EnemyController : Controller, IPoolable
 
     public void Stun(float duration, Action onComplete = null)
     {
+        _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);
         _animationStateMachine.SwitchState(AnimationStateType.Stagger);
         _staggerTween = Tween.Delay(duration).OnComplete(() =>
@@ -192,6 +195,19 @@ public class EnemyController : Controller, IPoolable
 
     public void OnPoolReturn()
     {
+
+    }
+    
+    public void ToggleRotationAnimEvent(int toggle)
+    {
+        if(toggle == 0)
+        {
+            _canRotate = true;
+        }
+        else
+        {
+            _canRotate = false;
+        }
         
     }
 }

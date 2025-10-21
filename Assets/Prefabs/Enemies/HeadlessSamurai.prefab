@@ -176,6 +176,7 @@ GameObject:
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 5263547530667358367}
   - component: {fileID: 1379345722282491249}
+  - component: {fileID: 5162801268352820049}
   m_Layer: 8
   m_Name: HeadlessSamurai
   m_TagString: Untagged
@@ -535,6 +536,7 @@ MonoBehaviour:
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
   _weapons:
   - {fileID: 5801437070466398254}
+  _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 222520671504956991}
   <Stats>k__BackingField: {fileID: 11400000, guid: 40806dd3b32d4334595aa39afe3346c0, type: 2}
   _attackableMask:
@@ -570,6 +572,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 0}
       Scale: {x: 0, y: 0, z: 0}
+      StayInParent: 0
   TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -577,6 +580,7 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 5062411154900718218}
   _attackCooldown: 0.3
+  _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
 --- !u!114 &6524476659326703885
 MonoBehaviour:
@@ -927,6 +931,19 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &5162801268352820049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9c0907e49d50df469d947ca197f55d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PersistentEffects: []
 --- !u!1001 &394492389435386265
 PrefabInstance:
   m_ObjectHideFlags: 0

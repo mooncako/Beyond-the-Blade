@@ -5,6 +5,7 @@ using CrashKonijn.Goap.GenTest;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.VFX;
 using UnityUtils;
 
 
@@ -14,6 +15,7 @@ using UnityUtils;
 [RequireComponent(typeof(Vision))]
 [RequireComponent(typeof(AnimancerComponent))]
 [RequireComponent(typeof(AOEApplier))]
+[RequireComponent(typeof(PersistentVFXHelper))]
 public class Controller : MonoBehaviour
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] public CustomCharacterMovement Movement { get; private set; }  // get / private set is effectively read only
@@ -24,6 +26,7 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
+    [field: SerializeField, FoldoutGroup("Base Reference")] protected PersistentVFXHelper _persistentVFXHelper;
     [SerializeField, FoldoutGroup("Base Reference")] protected ParryCollider _parryCollider;
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
     [SerializeField, BoxGroup("Settings")] protected LayerMask _attackableMask;
@@ -59,6 +62,7 @@ public class Controller : MonoBehaviour
         if (AOEApplier == null) AOEApplier = GetComponent<AOEApplier>();
         if (_parryCollider == null) _parryCollider = GetComponentInChildren<ParryCollider>();
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+        if (_persistentVFXHelper == null) _persistentVFXHelper = GetComponent<PersistentVFXHelper>();
         _weapons = GetComponentsInChildren<Weapon>();
 
         if ((_parryMask & (1 << 11)) == 0)
@@ -140,7 +144,7 @@ public class Controller : MonoBehaviour
             AOEApplier.Y = skill.SkillRange.Y;
             AOEApplier.Z = skill.SkillRange.Z;
         }
-        
+
 
     }
 
@@ -241,6 +245,11 @@ public class Controller : MonoBehaviour
     public bool IsAttacking()
     {
         return _animationStateMachine.IsInAttackActionState() || _animationStateMachine.IsInAbilityActionState();
+    }
+
+    public void AddPersistentVFX(VisualEffect effect)
+    {
+        _persistentVFXHelper.PersistentEffects.Add(effect);
     }
 
 }
