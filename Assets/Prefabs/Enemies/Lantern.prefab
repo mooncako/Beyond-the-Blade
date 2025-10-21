@@ -468,6 +468,7 @@ MonoBehaviour:
   - {fileID: 2746137905501011285}
   _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 797566862508417072}
+  _matController: {fileID: 1960093338022467650}
   <Stats>k__BackingField: {fileID: 11400000, guid: 6ac54f7457858c843ac482b61c8b1af8, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -1052,11 +1053,76 @@ PrefabInstance:
     - {fileID: 5866666021909216657, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1960093338022467650}
   m_SourcePrefab: {fileID: 100100000, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
+--- !u!137 &988572938150702 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7041887462335755974, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
+  m_PrefabInstance: {fileID: 2181347178224773652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1334431505894496069 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
+  m_PrefabInstance: {fileID: 2181347178224773652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1960093338022467650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334431505894496069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a08ef2582b16754418d8fc73705dd17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _skinnedMeshes:
+  - {fileID: 4741447004554900628}
+  - {fileID: 3973678338750852295}
+  - {fileID: 988572938150702}
+  _health: {fileID: 2640687494238271249}
+  _damageFlash: {fileID: 2100000, guid: 0f8e0a3602c90484d81303c2f80dee1f, type: 2}
+  _dissolveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0.0676145
+      outSlope: 0.0676145
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.43291193
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -2.250821
+      outSlope: -2.250821
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.055584848
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &1859717055156981247 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
+  m_PrefabInstance: {fileID: 2181347178224773652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &3973678338750852295 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2981634564332177107, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
+  m_PrefabInstance: {fileID: 2181347178224773652}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4741447004554900628 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6883949248391863936, guid: f8ad9315707ec3041a7c0c06e68afcd4, type: 3}
   m_PrefabInstance: {fileID: 2181347178224773652}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2990890893074021253

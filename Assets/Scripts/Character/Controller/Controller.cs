@@ -29,6 +29,7 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
     [field: SerializeField, FoldoutGroup("Base Reference")] protected PersistentVFXHelper _persistentVFXHelper;
     [SerializeField, FoldoutGroup("Base Reference")] protected ParryCollider _parryCollider;
+    [SerializeField, FoldoutGroup("Base Reference")] protected MaterialController _matController;
     [field: SerializeField, BoxGroup("Stats")] public Stats Stats { get; private set; }
     [SerializeField, BoxGroup("Settings")] protected LayerMask _attackableMask;
     [HideInInspector] public LayerMask AttackableMask => _attackableMask;
@@ -64,6 +65,7 @@ public class Controller : MonoBehaviour
         if (_parryCollider == null) _parryCollider = GetComponentInChildren<ParryCollider>();
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
         if (_persistentVFXHelper == null) _persistentVFXHelper = GetComponent<PersistentVFXHelper>();
+        if (_matController == null) _matController = GetComponentInChildren<MaterialController>();
         _weapons = GetComponentsInChildren<Weapon>();
 
         if ((_parryMask & (1 << 11)) == 0)

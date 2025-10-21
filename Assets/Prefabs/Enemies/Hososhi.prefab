@@ -469,6 +469,7 @@ MonoBehaviour:
   - {fileID: 8143121795839373604}
   _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 8018554212169038474}
+  _matController: {fileID: 6940067216120982943}
   <Stats>k__BackingField: {fileID: 11400000, guid: 071960f8fba6a4142a9ef95b9387637f, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -1572,6 +1573,30 @@ MonoBehaviour:
   - {fileID: 1792556165278653851}
   _health: {fileID: 2640687494238271249}
   _damageFlash: {fileID: 2100000, guid: 0f8e0a3602c90484d81303c2f80dee1f, type: 2}
+  _dissolveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0.0676145
+      outSlope: 0.0676145
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.43291193
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -2.250821
+      outSlope: -2.250821
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.055584848
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &3287818600021082339
 MonoBehaviour:
   m_ObjectHideFlags: 0

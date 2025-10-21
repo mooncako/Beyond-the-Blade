@@ -204,6 +204,7 @@ public class EnemyController : Controller, IPoolable
         Movement.CanMove = true;
         _canRotate = true;
         gameObject.layer = LayerMask.NameToLayer("Character");
+        _matController.ResetDissolve();
     }
 
     public void ToggleRotationAnimEvent(int toggle)

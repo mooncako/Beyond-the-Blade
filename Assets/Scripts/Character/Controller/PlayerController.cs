@@ -614,6 +614,7 @@ public class PlayerController : Controller,
         Stats.Clear();
         ApplyStats();
         CurrentWeapon.ResetSkills();
+        _matController.ResetDissolve();
     }
 
     public void Stun(float duration)

@@ -1,17 +1,21 @@
+using System;
 using System.Collections.Generic;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class MaterialController : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private SkinnedMeshRenderer[] _skinnedMeshes;
     [SerializeField, BoxGroup("References")] private Health _health;
     [SerializeField, BoxGroup("References")] private Material _damageFlash;
+    [SerializeField, BoxGroup("Settings")] private AnimationCurve _dissolveCurve;
     private List<Material> _defaultMaterials = new List<Material>();
 
     private Tween _delayTween;
     private Tween _iframeTween;
+    private List<Tween> _dissolveTweens = new List<Tween>();
 
     void OnValidate()
     {
@@ -25,11 +29,14 @@ public class MaterialController : MonoBehaviour
         {
             _health.OnDamage.AddListener(OnDamage);
             _health.OnIframe.AddListener(OnIframe);
+            _health.OnDeath.AddListener(OnDeath);
         }
+
+        _skinnedMeshes = GetComponentsInChildren<SkinnedMeshRenderer>();
 
         foreach (var renderer in _skinnedMeshes)
         {
-            for(int i = 0; i < renderer.materials.Length; i++)
+            for (int i = 0; i < renderer.materials.Length; i++)
             {
                 _defaultMaterials.Add(renderer.materials[i]);
             }
@@ -42,6 +49,7 @@ public class MaterialController : MonoBehaviour
         {
             _health.OnDamage.RemoveListener(OnDamage);
             _health.OnIframe.RemoveListener(OnIframe);
+            _health.OnDeath.RemoveListener(OnDeath);
         }
         _delayTween.Stop();
         _iframeTween.Stop();
@@ -52,6 +60,12 @@ public class MaterialController : MonoBehaviour
                 mat.SetInt("_IsIframe", 0);
             }
         }
+
+        foreach (var tween in _dissolveTweens)
+        {
+            tween.Stop();
+        }
+        _dissolveTweens.Clear();
         Recover();
     }
 
@@ -113,4 +127,38 @@ public class MaterialController : MonoBehaviour
         }
     }
 
+    private void OnDeath(DamageInfo info)
+    {
+        Dissolve();
+    }
+
+    [Button]
+    public void Dissolve()
+    {
+        Tween.Delay(.2f).OnComplete(() =>
+        {
+            foreach (var renderer in _skinnedMeshes)
+            {
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                foreach (Material mat in renderer.materials)
+                {
+                    Tween dissolveTween = Tween.Custom(0, 1, duration: 1.5f, newVal => mat.SetFloat("_NoisePower", _dissolveCurve.Evaluate(newVal)));
+                    _dissolveTweens.Add(dissolveTween);
+                }
+            }
+        });
+        
+    }
+
+    public void ResetDissolve()
+    {
+        foreach (var renderer in _skinnedMeshes)
+        {
+            renderer.shadowCastingMode = ShadowCastingMode.On;
+            foreach (Material mat in renderer.materials)
+            {
+                mat.SetFloat("_NoisePower", 1);
+            }
+        }
+    }
 }
