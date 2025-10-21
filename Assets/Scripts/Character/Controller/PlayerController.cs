@@ -67,7 +67,7 @@ public class PlayerController : Controller,
     {
         base.OnValidate();
         if (_input == null) _input = GetComponent<PlayerInput>();
-        if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+        //if (AnimationStateMachine == null) AnimationStateMachine = GetComponent<AnimationStateMachine>();  //duplicate in base
         if (_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
         if (Energy == null) Energy = GetComponent<Energy>();
         if (Stamina == null) Stamina = GetComponent<Stamina>();
@@ -109,7 +109,7 @@ public class PlayerController : Controller,
     {
         base.Update();
         HandleRotation();
-        InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
+        InputProcessor.SetInputActive(AnimationStateMachine.IsMovable());
 
         // link the input to movement
         var customMovement = Movement as CustomCharacterMovement;
@@ -327,8 +327,8 @@ public class PlayerController : Controller,
             {
                 CameraRotateEvent.Trigger();
                 SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
-                _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
-                _animationStateMachine.InterruptState(AnimationStateType.Attack);
+                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
+                AnimationStateMachine.InterruptState(AnimationStateType.Attack);
             }
 
             Movement.Stop();
@@ -347,8 +347,8 @@ public class PlayerController : Controller,
             {
                 Parry(GetAimPoint());
                 _currentSkill = CurrentWeapon.GetParrySkill();
-                _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
-                _animationStateMachine.InterruptState(AnimationStateType.Parry);
+                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
+                AnimationStateMachine.InterruptState(AnimationStateType.Parry);
                 Movement.Stop();
             }
         }
@@ -369,8 +369,8 @@ public class PlayerController : Controller,
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
                 StartIframe();
                 _currentSkill = CurrentWeapon.GetParrySkill();
-                _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
-                _animationStateMachine.InterruptState(AnimationStateType.Dash);
+                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
+                AnimationStateMachine.InterruptState(AnimationStateType.Dash);
 
             }
 
@@ -385,8 +385,8 @@ public class PlayerController : Controller,
             if (_abilityInCooldown) return;
 
             _currentSkill = CurrentAbility;
-            _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
-            if (_animationStateMachine.InterruptState(AnimationStateType.Ability))
+            AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
+            if (AnimationStateMachine.InterruptState(AnimationStateType.Ability))
             {
                 OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
                 StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
@@ -431,8 +431,8 @@ public class PlayerController : Controller,
     {
         // TODO: Muso Algorithm
         _currentSkill = CurrentWeapon.GetExecutionSkill();
-        _animationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Execution, _currentSkill);
-        _animationStateMachine.InterruptState(AnimationStateType.Execution);
+        AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Execution, _currentSkill);
+        AnimationStateMachine.InterruptState(AnimationStateType.Execution);
         Movement.Stop();
         Energy.Execute(); // depletes energy
     }
@@ -462,7 +462,7 @@ public class PlayerController : Controller,
 
     private bool IsActionAvailable(AnimationStateType stateType)
     {
-        return _animationStateMachine.CanEnter(stateType);
+        return AnimationStateMachine.CanEnter(stateType);
     }
 
     public void ExecuteLightAttack(Vector3 aimPosition)

@@ -793,7 +793,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 0}
       Scale: {x: 0, y: 0, z: 0}
-      StayInParent: 0
+      IsPersistent: 0
   TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -1065,6 +1065,26 @@ MonoBehaviour:
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
     Key: Stagger
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+  _deathState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: 0b044b38c3215f442ba4fd6b9ffe8f72, type: 2}
+      _NormalizedStartTime: NaN
+    Key: 
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 0

@@ -923,6 +923,26 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+  _deathState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: 0b044b38c3215f442ba4fd6b9ffe8f72, type: 2}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
   _directionalMovementAnimations: {fileID: 11400000, guid: bd82bddf3ec44d74aa1ea3a1e83377cf, type: 2}
   UpperBodyMask: {fileID: 31900000, guid: 3bb8c1934e898ea46af7f86f215a8d84, type: 2}

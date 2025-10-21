@@ -104,7 +104,7 @@ public class EnemyController : Controller, IPoolable
 
     public override void DamageAnimEvent()
     {
-        if (_animationStateMachine.IsInStaggerState()) return;
+        if (AnimationStateMachine.IsInStaggerState()) return;
 
         _hitTargets.Clear();
 
@@ -124,7 +124,7 @@ public class EnemyController : Controller, IPoolable
             }
         }
 
-         if (_animationStateMachine.IsInStaggerState()) return;
+         if (AnimationStateMachine.IsInStaggerState()) return;
 
         foreach (GameObject target in _hitTargets)
         {
@@ -186,10 +186,10 @@ public class EnemyController : Controller, IPoolable
     {
         _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);
-        _animationStateMachine.SwitchState(AnimationStateType.Stagger);
+        AnimationStateMachine.SwitchState(AnimationStateType.Stagger);
         _staggerTween = Tween.Delay(duration).OnComplete(() =>
         {
-            _animationStateMachine.SwitchState(AnimationStateType.Idle);
+            AnimationStateMachine.SwitchState(AnimationStateType.Idle);
         });
     }
 

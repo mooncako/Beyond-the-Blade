@@ -19,7 +19,8 @@ using UnityUtils;
 public class Controller : MonoBehaviour
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] public CustomCharacterMovement Movement { get; private set; }  // get / private set is effectively read only
-    [field: SerializeField, FoldoutGroup("Base Reference")] protected AnimationStateMachine _animationStateMachine;
+    [SerializeField, FoldoutGroup("Base Reference")] protected AnimationStateMachine _animationStateMachine;
+    public AnimationStateMachine AnimationStateMachine => _animationStateMachine;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Targetable Targetable { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
@@ -91,15 +92,15 @@ public class Controller : MonoBehaviour
     protected virtual void Update()
     {
 
-        if (!_animationStateMachine.IsInActionState() && !_animationStateMachine.IsInStaggerState())
+        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState())
         {
             if (Movement.MoveInput != Vector3.zero)
             {
-                _animationStateMachine.SwitchState(AnimationStateType.Move);
+                AnimationStateMachine.SwitchState(AnimationStateType.Move);
             }
             else
             {
-                _animationStateMachine.SwitchState(AnimationStateType.Idle);
+                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
             }
         }
     }
@@ -177,7 +178,7 @@ public class Controller : MonoBehaviour
 
         if (_hitTargets.Count > 0)
         {
-            HitStop.Begin(_animationStateMachine.CurrentState.AnimancerState, _hitStopDuration, _hitStopTween);
+            HitStop.Begin(AnimationStateMachine.CurrentState.AnimancerState, _hitStopDuration, _hitStopTween);
             CameraShakeEvent.Trigger(new LightShake());
         }
 
@@ -218,7 +219,7 @@ public class Controller : MonoBehaviour
 
     protected virtual void OnParried(float duration)
     {
-        _animationStateMachine.InterruptState(AnimationStateType.Stagger);
+        AnimationStateMachine.InterruptState(AnimationStateType.Stagger);
     }
 
     public virtual void StartAttackCooldown()
@@ -244,7 +245,7 @@ public class Controller : MonoBehaviour
 
     public bool IsAttacking()
     {
-        return _animationStateMachine.IsInAttackActionState() || _animationStateMachine.IsInAbilityActionState();
+        return AnimationStateMachine.IsInAttackActionState() || AnimationStateMachine.IsInAbilityActionState();
     }
 
     public void AddPersistentVFX(VisualEffect effect)
