@@ -46,13 +46,13 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .SetStoppingDistance(1)
+            .SetStoppingDistance(1.5f)
             .SetBaseCost(4);
         
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
-            .SetStoppingDistance(1)
+            .SetStoppingDistance(1.5f)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()

@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 5731174687414150010}
   - component: {fileID: 3803588526810832982}
   - component: {fileID: 2607786019991395328}
+  - component: {fileID: 3238098461528385645}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -756,6 +757,7 @@ MonoBehaviour:
   <AttackPoint>k__BackingField: {fileID: 6111448855060232503}
   _weapons:
   - {fileID: 4559995143190705224}
+  _persistentVFXHelper: {fileID: 3238098461528385645}
   _parryCollider: {fileID: 1005716894996644360}
   <Stats>k__BackingField: {fileID: 11400000, guid: 557be447e5c527843ad0fa9480313799, type: 2}
   _attackableMask:
@@ -791,6 +793,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 0}
       Scale: {x: 0, y: 0, z: 0}
+      StayInParent: 0
   TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -1122,6 +1125,19 @@ MonoBehaviour:
   ObjectID: 
   _destroySceneNames:
   - TestMainMenu
+--- !u!114 &3238098461528385645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9c0907e49d50df469d947ca197f55d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PersistentEffects: []
 --- !u!1 &7498923644987429484
 GameObject:
   m_ObjectHideFlags: 0

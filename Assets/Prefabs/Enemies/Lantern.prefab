@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 8335018461307400012}
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 4932681416210436455}
+  - component: {fileID: 5162801268352820049}
   m_Layer: 8
   m_Name: Lantern
   m_TagString: Untagged
@@ -465,6 +466,7 @@ MonoBehaviour:
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
   _weapons:
   - {fileID: 2746137905501011285}
+  _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 797566862508417072}
   <Stats>k__BackingField: {fileID: 11400000, guid: 6ac54f7457858c843ac482b61c8b1af8, type: 2}
   _attackableMask:
@@ -500,6 +502,7 @@ MonoBehaviour:
       Pos: {x: 0, y: 0, z: 0}
       Rot: {x: 0, y: 0, z: 0, w: 1}
       Scale: {x: 1, y: 1, z: 1}
+      StayInParent: 0
   TargetPos: {x: 0, y: 0, z: 0}
   _isSkillPlaying: 0
   _hitTargets: []
@@ -507,6 +510,7 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 3011173388331776581}
   _attackCooldown: 0.3
+  _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
 --- !u!114 &6524476659326703885
 MonoBehaviour:
@@ -726,7 +730,7 @@ MonoBehaviour:
         _NormalizedTimes: []
         _Callbacks: []
         _Names: []
-      _Clip: {fileID: 0}
+      _Clip: {fileID: 1827226128182048838, guid: ea566cf350bf4954cb3a62e3a30ac318, type: 3}
       _NormalizedStartTime: NaN
   _attackActionState:
     _stateMachine: {fileID: 4932681416210436455}
@@ -850,13 +854,26 @@ MonoBehaviour:
     _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 0}
   _directionalMovementAnimations: {fileID: 0}
-  UpperBodyMask: {fileID: 0}
+  UpperBodyMask: {fileID: 31900000, guid: 3bb8c1934e898ea46af7f86f215a8d84, type: 2}
   OnStateExit:
     m_PersistentCalls:
       m_Calls: []
   references:
     version: 2
     RefIds: []
+--- !u!114 &5162801268352820049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9c0907e49d50df469d947ca197f55d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PersistentEffects: []
 --- !u!1001 &972372032365803414
 PrefabInstance:
   m_ObjectHideFlags: 0

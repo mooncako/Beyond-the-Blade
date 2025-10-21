@@ -40,38 +40,50 @@ public class VFXManager : MonoBehaviour,
         if (_prefabDatabase.VFXDatabase.ContainsKey(e.Id))
         {
             GameObject go = _pool.Get(_prefabDatabase.VFXDatabase[e.Id]);
+            VisualEffect vfx = go.GetComponent<VisualEffect>();
             if (e.Owner != null)
             {
                 go.transform.SetParent(e.Owner, false);
+                if(e.Info.StayInParent)
+                    e.Owner.GetComponent<Controller>().AddPersistentVFX(vfx);
                 go.transform.position = e.Owner.position;
                 go.transform.localPosition = new Vector3(go.transform.localPosition.x + e.Info.Pos.x, go.transform.localPosition.y + e.Info.Pos.y, go.transform.localPosition.z + e.Info.Pos.z);
+                go.transform.localRotation = Quaternion.identity;
             }
             else
             {
                 go.transform.position = e.Info.Pos;
             }
 
-            go.transform.rotation = e.Info.Rot;
+            go.transform.localRotation = e.Info.Rot;
             go.transform.localScale = e.Info.Scale;
-            go.GetComponent<VisualEffect>().Play();
-            Tween.Delay(.1f).OnComplete(() =>
+            vfx.Play();
+            if (!e.Info.StayInParent)
             {
-                if (go != null)
-                    go.transform.SetParent(null);
-            });
+                Tween.Delay(.1f).OnComplete(() =>
+                {
+                    if (go != null)
+                        go.transform.SetParent(null);
+                });
+            }
+
             go.GetComponent<VFXFinishedEventHandler>().OnSpawnFinished.AddListener(() => ReturnVFX(go));
         }
 
     }
 
+#if UNITY_EDITOR
     [Button]
     private void TestManagerFunction(Transform transform, string id, VFXInfo info)
     {
         SpawnVFXEvent.Trigger(transform, id, info);
     }
+#endif
 
     private void ReturnVFX(GameObject go)
     {
+        if (go != null)
+            go.transform.SetParent(null);
         _pool.Return(go);
         go.GetComponent<VFXFinishedEventHandler>().OnSpawnFinished.RemoveAllListeners();
     }
