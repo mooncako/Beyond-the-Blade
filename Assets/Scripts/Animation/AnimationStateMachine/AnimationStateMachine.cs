@@ -69,6 +69,7 @@ public class AnimationStateMachine : MonoBehaviour
         SetOwner();
 
     }
+ 
 #endif
 
     void Awake()

@@ -17,11 +17,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: <Root Transform>
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'mixamo.com' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'LeftShoulder' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'RightShoulder' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -35,7 +31,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: CrouchToStand
+      name: Stagger_Enemies
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
@@ -1054,8 +1050,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c04d0b79c2f094342b00ecb9c47dda8a,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c04d0b79c2f094342b00ecb9c47dda8a, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
