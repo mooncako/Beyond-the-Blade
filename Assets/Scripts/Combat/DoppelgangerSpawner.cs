@@ -29,6 +29,7 @@ public class DoppelgangerSpawner : MonoBehaviour
         Doppelganger doppelganger = _pool.Get(_doppelgangerPrefab.gameObject).GetComponent<Doppelganger>();
         doppelganger.transform.position = controller.transform.position;
         doppelganger.transform.rotation = controller.transform.rotation;
+        doppelganger.SetOwner(controller);
         doppelganger.AssignData(controller);
         doppelganger.PlaySkill();
         doppelganger.OnDoppelgangerEnd.AddListener(OnDoppelgangerEnd);

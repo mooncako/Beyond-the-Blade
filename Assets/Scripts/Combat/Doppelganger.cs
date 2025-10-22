@@ -114,4 +114,9 @@ public class Doppelganger : MonoBehaviour, IPoolable
             CameraShakeEvent.Trigger(new LightShake());
         }
     }
+
+    public void SetOwner(Controller controller)
+    {
+        _animationStateMachine.SetOwner(controller);
+    }
 }

@@ -332,6 +332,7 @@ public class AnimationStateMachine : MonoBehaviour
         }
         else
         {
+            _owner = owner;
             if (_idleState != null)
                 _idleState.Owner = owner;
             if (_moveState != null)

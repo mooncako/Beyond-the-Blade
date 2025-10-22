@@ -2342,6 +2342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 4524613824046722150}
+  _owner: {fileID: 0}
   _idleState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
@@ -2386,6 +2387,15 @@ MonoBehaviour:
     _parameterSmoothTime: 0.15
     _stopProximity: 0.1
     _characterMovement: {fileID: 0}
+    UpperBodyClip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: fbc856ca8ad1b7245a8dee27060572da, type: 2}
+      _NormalizedStartTime: NaN
   _attackActionState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
@@ -2506,8 +2516,29 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+  _deathState:
+    _stateMachine: {fileID: 3000251216169434687}
+    _animancer: {fileID: 4524613824046722150}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: Death
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 0}
   _directionalMovementAnimations: {fileID: 0}
+  UpperBodyMask: {fileID: 31900000, guid: 3bb8c1934e898ea46af7f86f215a8d84, type: 2}
   OnStateExit:
     m_PersistentCalls:
       m_Calls: []
@@ -2566,7 +2597,30 @@ MonoBehaviour:
   _animationStateMachine: {fileID: 3000251216169434687}
   AOEApplier: {fileID: 5959787998579302769}
   AttackPoint: {fileID: 5315326037227044687}
-  _skillId: 
+  _skill:
+    AnimationID: 
+    Cooldown: 0
+    Damage: 0
+    SkillRange:
+      AreaType: 0
+      X: 0
+      Y: 0
+      Z: 0
+    Rarity: 0
+    TargetSelf: 0
+    IsTargetedGroundAOE: 0
+    Name: 
+    Description: 
+    IsStartBuffed: 0
+    IsMidBuffed: 0
+    IsEndBuffed: 0
+    Icon: {fileID: 0}
+    VFXInfo:
+      Pos: {x: 0, y: 0, z: 0}
+      Rot: {x: 0, y: 0, z: 0, w: 1}
+      Scale: {x: 1, y: 1, z: 1}
+      IsPersistent: 0
+  Pool: {fileID: 0}
   _hitStopDuration: 0
   _weapon: {fileID: 0}
   _owner: {fileID: 0}
@@ -2574,6 +2628,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   _hitTargets: []
+  OnDoppelgangerEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5959787998579302769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2647,6 +2704,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   _dissolveDeathSFX:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _onHealthRecoverySFX:
     Guid:
       Data1: 0
       Data2: 0
