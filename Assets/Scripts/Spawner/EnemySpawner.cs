@@ -2,7 +2,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour, IPoolable
 {
     [SerializeField, BoxGroup("References")] private VisualEffect _spawnVFX;
     [SerializeField, BoxGroup("References")] private VFXFinishedEventHandler _spawnVFXEventHandler;
@@ -23,7 +23,6 @@ public class EnemySpawner : MonoBehaviour
     void OnDisable()
     {
         _spawnVFXEventHandler.OnSpawnFinished.RemoveListener(SpawnEntity);
-        _spawnedEntity?.SetActive(false);
     }
 
     [Button]
@@ -36,5 +35,14 @@ public class EnemySpawner : MonoBehaviour
     {
         _spawnedEntity.SetActive(true);
         EnemySpawnedEvent.Trigger(_spawnedEntity.GetComponent<Health>());
+    }
+
+    public void OnPoolGet()
+    {
+    }
+
+    public void OnPoolReturn()
+    {
+        _spawnedEntity?.SetActive(false);
     }
 }
