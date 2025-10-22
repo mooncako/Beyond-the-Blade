@@ -10,7 +10,8 @@ using UnityEngine.SceneManagement;
 
 public class SpawnManager : MMSingleton<SpawnManager>,
     MMEventListener<EnemyClearedEvent>,
-    MMEventListener<LevelRandomizeCompleteEvent>
+    MMEventListener<LevelRandomizeCompleteEvent>,
+    MMEventListener<ReturnEnemyEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
     [SerializeField, BoxGroup("References")] private EnemyDatabaseSO _enemyDatabase;
@@ -53,6 +54,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         SceneManager.sceneLoaded += OnSceneLoaded;
         this.MMEventStartListening<EnemyClearedEvent>();
         this.MMEventStartListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStartListening<ReturnEnemyEvent>();
     }
 
     void OnDestroy()
@@ -60,6 +62,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<EnemyClearedEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<ReturnEnemyEvent>();
     }
 
     void OnDisable()
@@ -67,6 +70,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<EnemyClearedEvent>();
         this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<ReturnEnemyEvent>();
     }
 
 
@@ -88,6 +92,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             }
         }
 
+    }
+
+    public void OnMMEvent(ReturnEnemyEvent e)
+    {
+        _pool.Return(e.Go);
     }
 
     [Button]
@@ -113,7 +122,10 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-
+        if(scene.name == SCENENAME.Hub)
+        {
+            ResetManager();
+        }
         UpdateEnemyList();
 
     }

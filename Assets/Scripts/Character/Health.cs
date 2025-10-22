@@ -1,6 +1,8 @@
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.VFX;
 
 public class Health : MonoBehaviour
 {
@@ -21,9 +23,16 @@ public class Health : MonoBehaviour
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] public bool IsDamageable = true;
 
+    private Tween _deathDelayTween;
+
     void OnValidate()
     {
         if (_controller == null) _controller = GetComponent<Controller>();
+    }
+
+    void OnDisable()
+    {
+        _deathDelayTween.Stop();
     }
 
     public void ApplyStats(Stats stats)
@@ -87,6 +96,7 @@ public class Health : MonoBehaviour
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
+            _deathDelayTween = Tween.Delay(2.5f).OnComplete(() => ReturnEnemyEvent.Trigger(gameObject));
             // gameObject.SetActive(false);
         }
         else if (_controller is PlayerController player)
