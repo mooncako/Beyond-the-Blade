@@ -12,11 +12,10 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _DOUBLESIDED_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 1
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
   stringTagMap:
     MotionVector: User
@@ -50,12 +49,13 @@ Material:
     - _AuraRadius: 0.97
     - _BlendMode: 0
     - _ConservativeDepthOffsetEnable: 0
-    - _CullMode: 0
-    - _CullModeForward: 0
+    - _CullMode: 1
+    - _CullModeForward: 1
+    - _DepthBias: 0
     - _DepthOffsetEnable: 0
-    - _DistortScale: 2
-    - _DistortStrength: 0.015
-    - _DoubleSidedEnable: 1
+    - _DistortScale: 0.9
+    - _DistortStrength: 0.1
+    - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
     - _DstBlend: 0
@@ -63,10 +63,10 @@ Material:
     - _EnableBlendModePreserveSpecularLighting: 0
     - _EnableFogOnTransparent: 1
     - _ExcludeFromTUAndAA: 0
-    - _FlowSpeed: 0.5
+    - _FlowSpeed: 0.62
     - _NoiseScale: 1
-    - _OpaqueCullMode: 2
-    - _OutlineWidth: 0.03
+    - _OpaqueCullMode: 1
+    - _OutlineWidth: 0.94
     - _PerPixelSorting: 0
     - _PulseAmp: 0.37
     - _PulseSpeed: 0.93
@@ -81,6 +81,7 @@ Material:
     - _StencilWriteMaskDistortionVec: 4
     - _StencilWriteMaskMV: 43
     - _SurfaceType: 0
+    - _Thickness: 0.01
     - _TransparentBackfaceEnable: 0
     - _TransparentCullMode: 2
     - _TransparentDepthPostpassEnable: 0
@@ -89,13 +90,14 @@ Material:
     - _TransparentWritingMotionVec: 0
     - _TransparentZWrite: 0
     - _UseShadowThreshold: 0
-    - _VoronoiSharp: 0.7
+    - _VoronoiSharp: 0.97
     - _ZTestDepthEqualForOpaque: 3
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0.754717, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &6905234189723692224

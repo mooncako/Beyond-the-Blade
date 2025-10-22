@@ -309,26 +309,26 @@ public class AnimationStateMachine : MonoBehaviour
 
     public void SetOwner(Controller owner = null)
     {
-        if (owner == null)
+        if (owner == null && _owner != null)
         {
             if (_idleState != null)
-                _idleState.Owner = GetComponent<Controller>();
+                _idleState.Owner = _owner;
             if (_moveState != null)
-                _moveState.Owner = GetComponent<Controller>();
+                _moveState.Owner = _owner;
             if (_attackActionState != null)
-                _attackActionState.Owner = GetComponent<Controller>();
+                _attackActionState.Owner = _owner;
             if (_parryActionState != null)
-                _parryActionState.Owner = GetComponent<Controller>();
+                _parryActionState.Owner = _owner;
             if (_abilityActionState != null)
-                _abilityActionState.Owner = GetComponent<Controller>();
+                _abilityActionState.Owner = _owner;
             if (_executionActionState != null)
-                _executionActionState.Owner = GetComponent<Controller>();
+                _executionActionState.Owner = _owner;
             if (_dashActionState != null)
-                _dashActionState.Owner = GetComponent<Controller>();
+                _dashActionState.Owner = _owner;
             if (_staggerState != null)
-                _staggerState.Owner = GetComponent<Controller>();
+                _staggerState.Owner = _owner;
             if (_deathState != null)
-                _deathState.Owner = GetComponent<Controller>();
+                _deathState.Owner = _owner;
         }
         else
         {
