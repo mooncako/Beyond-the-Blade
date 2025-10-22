@@ -36,17 +36,6 @@ public class CharacterAnimations : MonoBehaviour
         Vector3 worldVelocity = _characterMovement.Velocity;
         Vector3 localVelocity = transform.InverseTransformVector(worldVelocity);
         localVelocity /= _characterMovement.Speed;
-
-        // set animator values
-        _animator.SetFloat("Right", localVelocity.x);
-        _animator.SetFloat("Forward", localVelocity.z);
-        if(localVelocity.magnitude > 0.1f)
-        {
-            _animator.SetBool("IsMoving", true);
-        }
-        else{
-            _animator.SetBool("IsMoving", false);
-        }
     }
 
     public void ToggleParameter(string parameterName)

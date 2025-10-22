@@ -27,7 +27,6 @@ public class PlayerController : Controller,
     [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Stamina Stamina;
     [Header("General Settings")]
-    [SerializeField] private bool _isTutorial = false;
     [BoxGroup("Input")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
@@ -38,13 +37,6 @@ public class PlayerController : Controller,
     [BoxGroup("Ability"), ReadOnly] private bool _abilityInCooldown;
     [BoxGroup("Ability"), ReadOnly] public UnityEvent<float> OnAbilityStartCooldown;
 
-    [Header("VFX")]
-    [FoldoutGroup("Slash")][SerializeField] private GameObject[] _slashVFXArray;
-    [FoldoutGroup("Slash")][SerializeField] private Transform _slashref;
-    [SerializeField] private float _slashVFXDuration = 0.12f;
-    [SerializeField] private VisualEffect _musoVFX;
-    [SerializeField] private GameObject _parryVFXPrefab;
-    [SerializeField] private float _parryVFXDuration = 1.5f;
     // [SerializeField] private ParryHit _parryHitVFX;
 
     [Header("Animancer")]
@@ -96,12 +88,6 @@ public class PlayerController : Controller,
 
     void Start()
     {
-
-        //foreach (string skillId in CurrentWeapon.WeaponSkillSO.SkillDict[2])
-        //{
-        //    AbilityList.Add(skillId, new PlayableSkill(skillId));
-        //}
-
 
     }
 
@@ -541,17 +527,6 @@ public class PlayerController : Controller,
         _isPerfectParryWindowActive = false;
     }
 
-    private void CreateMusoEffect(Vector3 aimPosition)
-    {
-        if (_musoVFX != null)
-        {
-
-            float angle = Mathf.Atan2(aimPosition.x, aimPosition.z) * Mathf.Rad2Deg;
-            _musoVFX.SetFloat("Rotation", angle);
-
-            _musoVFX.Play();
-        }
-    }
 
     private void StartIframe()
     {

@@ -24,7 +24,6 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isBossLevel = false;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
     private LevelSystem _selectedSystemPrefab;
