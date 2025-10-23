@@ -805,17 +805,10 @@ MonoBehaviour:
   _weaponCollider: {fileID: 0}
   Energy: {fileID: 3294508932354644453}
   Stamina: {fileID: 3803588526810832982}
-  _isTutorial: 0
   CanRotate: 1
   OnAbilityStartCooldown:
     m_PersistentCalls:
       m_Calls: []
-  _slashVFXArray: []
-  _slashref: {fileID: 0}
-  _slashVFXDuration: 0.12
-  _musoVFX: {fileID: 0}
-  _parryVFXPrefab: {fileID: 0}
-  _parryVFXDuration: 1.5
   _animancerComponent: {fileID: 6266151859748244355}
   _musoTarget: {fileID: 0}
   OnExecutionStarted:
@@ -839,7 +832,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 8798416106402121756}
   _playerController: {fileID: 1108131639495183653}
-  _combatController: {fileID: 0}
   _soundController: {fileID: 9112547462766832494}
   _deathTimeScaleCurve:
     serializedVersion: 2

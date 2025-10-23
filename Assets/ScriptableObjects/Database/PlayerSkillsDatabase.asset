@@ -672,10 +672,10 @@ MonoBehaviour:
       Data: 19|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
-      Data: 2
+      Data: 3
     - Name: X
       Entry: 4
-      Data: 9
+      Data: 0
     - Name: Y
       Entry: 4
       Data: 0
@@ -700,20 +700,7 @@ MonoBehaviour:
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
-        mscorlib
-    - Name: Item1
-      Entry: 1
-      Data: STUN
-    - Name: Item2
-      Entry: 4
       Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -865,7 +852,20 @@ MonoBehaviour:
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
-      Data: 1
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
+        mscorlib
+    - Name: Item1
+      Entry: 1
+      Data: INVINCIBLE
+    - Name: Item2
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 7
       Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
@@ -875,7 +875,20 @@ MonoBehaviour:
       Data: TELEPORT
     - Name: Item2
       Entry: 4
-      Data: 0
+      Data: 0.1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
+        mscorlib
+    - Name: Item1
+      Entry: 1
+      Data: STUN
+    - Name: Item2
+      Entry: 4
+      Data: 0.5
     - Name: 
       Entry: 8
       Data: 

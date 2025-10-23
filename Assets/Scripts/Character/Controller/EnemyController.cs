@@ -183,7 +183,7 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
-    public void Stun(float duration, Action onComplete = null)
+    public override void Stun(float duration, Action onComplete = null)
     {
         _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);

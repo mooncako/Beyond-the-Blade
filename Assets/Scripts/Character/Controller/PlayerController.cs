@@ -592,10 +592,25 @@ public class PlayerController : Controller,
         _matController.ResetDissolve();
     }
 
-    public void Stun(float duration)
+    public override void Stun(float duration, Action onComplete = null)
     {
         if (IsStunImmune) return;
-        _input.SwitchCurrentActionMap("UI");
-        Tween.Delay(duration).OnComplete(() => _input.SwitchCurrentActionMap("Player"));
+        
+        _animationStateMachine.InterruptState(AnimationStateType.Stagger);
+        Tween.Delay(duration).OnComplete(() =>
+        {
+            _animationStateMachine.SwitchState(AnimationStateType.Idle);
+            _input.SwitchCurrentActionMap("Player");
+            if(onComplete != null)
+            {
+                onComplete.Invoke();
+            }
+        });
     }
+
+    public override void StartStunAnimEvent()
+    {
+        _input.SwitchCurrentActionMap("UI");
+    }
+
 }

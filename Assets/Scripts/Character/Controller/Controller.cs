@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using Animancer;
 using Animancer.FSM;
 using CrashKonijn.Goap.GenTest;
@@ -253,6 +254,16 @@ public class Controller : MonoBehaviour
     public void AddPersistentVFX(VisualEffect effect)
     {
         _persistentVFXHelper.PersistentEffects.Add(effect);
+    }
+
+    public virtual void StartStunAnimEvent()
+    {
+
+    }
+
+    public virtual void Stun(float duration, Action onComplete = null)
+    {
+        
     }
 
 }
