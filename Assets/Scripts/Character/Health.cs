@@ -74,11 +74,19 @@ public class Health : MonoBehaviour
         {
             PlayerOnHealthChangeEvent.Trigger(this);
             PlayerOnDamageEvent.Trigger(this);
+            _controller.Movement.KnockBack(info.Instigator.transform, 500);
         }
 
         if (_health <= 0)
         {
             Death(info);
+        }
+        else
+        {
+            if(_controller is PlayerController)
+            {
+                _controller.Stun(.3f);
+            }
         }
     }
 
