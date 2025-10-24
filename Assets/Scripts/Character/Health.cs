@@ -86,6 +86,7 @@ public class Health : MonoBehaviour
             if(_controller is PlayerController)
             {
                 _controller.Stun(.3f);
+                OnIframe.Invoke(.1f);
             }
         }
     }
