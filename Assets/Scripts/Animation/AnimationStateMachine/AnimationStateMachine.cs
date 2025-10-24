@@ -445,4 +445,10 @@ public class AnimationStateMachine : MonoBehaviour
     {
         return _moveState != null && _moveState.IsDirectionalMovement;
     }
+
+    [Button]
+    public void EnterStaggerState()
+    {
+        InterruptState(AnimationStateType.Stagger);
+    }
 }

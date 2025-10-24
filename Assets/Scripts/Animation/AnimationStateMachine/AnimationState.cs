@@ -98,6 +98,8 @@ public abstract class AnimationState
             PossibleInterruptStates = _emptyStates;
         }
     }
+
+ 
     
 
 }
