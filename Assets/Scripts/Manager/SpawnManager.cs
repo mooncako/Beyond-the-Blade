@@ -96,7 +96,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
     public void OnMMEvent(ReturnEnemyEvent e)
     {
-        _pool.Return(e.Go);
+        _pool.Return(e.Go.transform.parent.gameObject);
     }
 
     [Button]

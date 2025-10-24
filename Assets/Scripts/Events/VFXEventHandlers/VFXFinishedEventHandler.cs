@@ -1,4 +1,5 @@
 using Animancer;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -10,6 +11,8 @@ public class VFXFinishedEventHandler : VFXOutputEventAbstractHandler
     [SerializeField, BoxGroup("References")] private VisualEffect _vfx;
     public override bool canExecuteInEditor => true;
 
+    private Tween _delayTween;
+
     void OnValidate()
     {
         if(_vfx == null) _vfx = GetComponent<VisualEffect>();
@@ -18,6 +21,12 @@ public class VFXFinishedEventHandler : VFXOutputEventAbstractHandler
     public override void OnVFXOutputEvent(VFXEventAttribute eventAttribute)
     {
         _vfx.Stop();
-        OnSpawnFinished.Invoke();
+        _delayTween = Tween.Delay(.5f, () => OnSpawnFinished.Invoke());
+
+    }
+
+    protected override void OnDisable()
+    {
+        _delayTween.Stop();
     }
 }

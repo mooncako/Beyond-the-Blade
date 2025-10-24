@@ -25,7 +25,8 @@ public class EnemyPack : MonoBehaviour,
             StartCoroutine(TimerCO());
         }
 
-        _enemies.Add(e.Health);
+        if(!_enemies.Contains(e.Health))
+            _enemies.Add(e.Health);
     }
 
     public void OnMMEvent(EncounterStartEvent e)
