@@ -164,7 +164,7 @@ public class PlayerController : Controller,
         }
 
         PlayerInitializedEvent.Trigger(this);
-        if(scene.name == "TestHub")
+        if(scene.name == SCENENAME.Hub)
         {
             Reset();
         }

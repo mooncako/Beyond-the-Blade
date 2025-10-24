@@ -13,6 +13,7 @@ public class MaterialController : MonoBehaviour
     [SerializeField, BoxGroup("References")] private VisualEffect _deathVFX;
     [SerializeField, BoxGroup("References")] private Material _damageFlash;
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _dissolveCurve;
+    [SerializeField, BoxGroup("Settings")] private bool _canDeathDissolve = true;
     private List<Material> _defaultMaterials = new List<Material>();
 
     private Tween _delayTween;
@@ -135,7 +136,8 @@ public class MaterialController : MonoBehaviour
 
     private void OnDeath(DamageInfo info)
     {
-        Dissolve();
+        if(_canDeathDissolve)
+            Dissolve();
     }
 
     [Button]
