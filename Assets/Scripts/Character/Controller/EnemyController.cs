@@ -161,6 +161,7 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnParried(duration);
         Stun(duration);
+        CameraShakeEvent.Trigger(new LightShake());
     }
 
     public override void StartAttackCooldown()

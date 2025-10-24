@@ -105,7 +105,7 @@ public class Health : MonoBehaviour
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
-            _deathDelayTween = Tween.Delay(2.5f).OnComplete(() => gameObject.SetActive(false));
+            _deathDelayTween = Tween.Delay(2.5f).OnComplete(() => ReturnEnemyEvent.Trigger(gameObject));
             // gameObject.SetActive(false);
         }
         else if (_controller is PlayerController player)

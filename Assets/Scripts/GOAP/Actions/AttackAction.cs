@@ -44,13 +44,13 @@ namespace CrashKonijn.Goap.GenTest
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
 
-            if (data.Controller.CanAttack)
+            if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack))
             {
                 data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
                 data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
-                data.AnimationStateMachine.SwitchState(AnimationStateType.Attack);
+                data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
 
             }
             

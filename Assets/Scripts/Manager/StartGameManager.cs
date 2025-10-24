@@ -7,6 +7,6 @@ public class StartGameManager : MMSingleton<StartGameManager>
     public void StartGame(string saveName)
     {
         SaveEvent.Trigger(saveName);
-        SceneManager.LoadScene("TestHub");
+        SceneManager.LoadScene(SCENENAME.Hub);
     }
 }
