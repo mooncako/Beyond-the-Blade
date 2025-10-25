@@ -14,6 +14,7 @@ public enum AnimationStateType
     Stagger = 1 << 6,
     Dash = 1 << 7,
     Death = 1 << 8,
+    Revive = 1 << 9,
     All = ~0
 
 }

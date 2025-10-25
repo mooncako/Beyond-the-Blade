@@ -1,17 +1,16 @@
-using System;
+using UnityEngine;
 using Animancer;
+using System;
 
 [Serializable]
-public class StaggerAnimationState : AnimationState
+public class ReviveAnimationState : AnimationState
 {
-    public StaggerAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer)
+    public ReviveAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer)
     {
         _stateMachine = stateMachine;
         _animancer = animancer;
-        Key = "Stagger";
+        Key = "Revive";
     }
-   
-
     public override void OnEnterState()
     {
         base.OnEnterState();

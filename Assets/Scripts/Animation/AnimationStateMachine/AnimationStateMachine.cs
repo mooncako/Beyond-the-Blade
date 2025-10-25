@@ -19,6 +19,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private ActionAnimationState _executionActionState;
     [SerializeField] private StaggerAnimationState _staggerState;
     [SerializeField] private DeathAnimationState _deathState;
+    [SerializeField] private ReviveAnimationState _reviveState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
@@ -49,6 +50,7 @@ public class AnimationStateMachine : MonoBehaviour
             _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
             _staggerState = new StaggerAnimationState(this, _animancer);
             _deathState = new DeathAnimationState(this, _animancer);
+            _reviveState = new ReviveAnimationState(this, _animancer);
             SetOwner();
         }
     }
@@ -66,6 +68,7 @@ public class AnimationStateMachine : MonoBehaviour
         _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
         _staggerState = new StaggerAnimationState(this, _animancer);
         _deathState = new DeathAnimationState(this, _animancer);
+        _reviveState = new ReviveAnimationState(this, _animancer);
         SetOwner();
 
     }
@@ -131,6 +134,11 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Stagger:
 
                 break;
+            case AnimationStateType.Death:
+
+                break;
+            case AnimationStateType.Revive:
+                break;
         }
         CurrentState.SwapClip(clip);
     }
@@ -182,6 +190,10 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Death:
                 CurrentState = _deathState;
                 _currentState = AnimationStateType.Death;
+                break;
+            case AnimationStateType.Revive:
+                CurrentState = _reviveState;
+                _currentState = AnimationStateType.Revive;
                 break;
         }
 
@@ -239,6 +251,10 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Death:
                 CurrentState = _deathState;
                 _currentState = AnimationStateType.Death;
+                break;
+            case AnimationStateType.Revive:
+                CurrentState = _reviveState;
+                _currentState = AnimationStateType.Revive;
                 break;
         }
         CurrentState.OnEnterState();
@@ -329,6 +345,8 @@ public class AnimationStateMachine : MonoBehaviour
                 _staggerState.Owner = _owner;
             if (_deathState != null)
                 _deathState.Owner = _owner;
+            if (_reviveState != null)
+                _reviveState.Owner = _owner;
         }
         else
         {
@@ -351,6 +369,8 @@ public class AnimationStateMachine : MonoBehaviour
                 _staggerState.Owner = owner;
             if (_deathState != null)
                 _deathState.Owner = owner;
+            if (_reviveState != null)
+                _reviveState.Owner = owner;
         }
         
 
@@ -446,5 +466,13 @@ public class AnimationStateMachine : MonoBehaviour
         return _moveState != null && _moveState.IsDirectionalMovement;
     }
 
-   
+
+    [Button]
+    public void EnterState(AnimationStateType type)
+    {
+        InterruptState(type);
+    }
+
+
+
 }
