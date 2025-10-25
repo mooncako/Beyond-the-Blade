@@ -12,14 +12,12 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHATEST_ON
   - _ENABLE_FOG_ON_TRANSPARENT
   - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords:
-  - _DOUBLESIDED_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 1
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
   stringTagMap:
     MotionVector: User
@@ -34,11 +32,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 1806add7d16bbe4419725ed4681c2c18, type: 3}
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_a930eb8b01f748a08235f7bc3baa5bdc_Texture_1_Texture2D:
-        m_Texture: {fileID: 0}
+    - _SampleTexture2D_b2f23efd7abb4aa9b117aa2a0b6cc14b_Texture_1_Texture2D:
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -56,15 +54,15 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 0
-    - _AlphaCutoffEnable: 1
+    - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 10
     - _AlphaSrcBlend: 1
     - _BlendMode: 0
     - _ConservativeDepthOffsetEnable: 0
-    - _CullMode: 0
-    - _CullModeForward: 0
+    - _CullMode: 2
+    - _CullModeForward: 2
     - _DepthOffsetEnable: 0
-    - _DoubleSidedEnable: 1
+    - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
     - _DstBlend: 10
@@ -74,7 +72,6 @@ Material:
     - _ExcludeFromTUAndAA: 0
     - _OpaqueCullMode: 2
     - _PerPixelSorting: 0
-    - _Progress: 0.636
     - _RenderQueueType: 4
     - _SrcBlend: 1
     - _StencilRef: 0
@@ -100,11 +97,10 @@ Material:
     m_Colors:
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _IndicatorColor: {r: 59.017693, g: 0, b: 0, a: 0}
-    - _IndicatorColor2: {r: 6.9644046, g: 5.3970747, b: 0, a: 0}
+    - _IndicatorColor: {r: 2.614119, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &8167590812735311684
+--- !u!114 &54177923459038776
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

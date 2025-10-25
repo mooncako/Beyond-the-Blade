@@ -22,6 +22,7 @@ public class DeathAnimationState : AnimationState
     public override void OnEnterState()
     {
         base.OnEnterState();
+        Owner?.ToggleIsSkillPlaying(false);
     }
 
     public override void OnInterrupt()

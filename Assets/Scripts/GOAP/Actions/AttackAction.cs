@@ -2,6 +2,7 @@ using System;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
+using PrimeTween;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
@@ -44,13 +45,32 @@ namespace CrashKonijn.Goap.GenTest
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
 
-            if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack))
+            if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack) && !data.Controller.IsSkillPlaying())
             {
-                data.Controller.CanAttack = false;
-                data.Controller.SetTargetPos(data.Target.Position);
-                data.Controller.ActivateSkill();
-                data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
-                data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+
+                if (!data.Controller.IsSkillNull())
+                {
+                    data.Controller.CanAttack = false;
+                    data.Controller.SetTargetPos(data.Target.Position);
+                    data.Controller.ActivateSkill();
+                    if (data.Controller.CheckSkill())
+                    {
+                        Tween.Delay(1).OnComplete(() =>
+                        {
+                            data.Controller.PlaySkillEffect();
+                            data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
+                            data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+                        });
+                    }
+                    else
+                    {
+                        data.Controller.PlaySkillEffect();
+                        data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
+                        data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+                    }
+                }
+                
+                
 
             }
             

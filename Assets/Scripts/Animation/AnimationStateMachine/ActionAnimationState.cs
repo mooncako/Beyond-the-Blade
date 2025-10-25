@@ -64,6 +64,8 @@ public class ActionAnimationState : AnimationState
         base.OnExitState();
         if (Owner != null)
             Owner.CanMove = true;
+        Owner?.StartAttackCooldown();
+        Owner?.ToggleIsSkillPlaying(false);
     }
     
     public void UpdateModifiers(List<(float, ModifierSO)> modifiers)
