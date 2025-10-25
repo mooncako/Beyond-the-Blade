@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
 {
-
+    //TODO: Add new goals to represent different personality
 
     public override ICapabilityConfig Create()
     {
@@ -28,6 +28,9 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
         builder.AddGoal<KillPlayerGoal>()
             .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
 
+        builder.AddGoal<KillPlayerCautiousGoal>()
+            .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
+
         builder.AddGoal<StrafeGoal>()
             .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
     }
@@ -43,8 +46,14 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .SetStoppingDistance(1)
+            .SetStoppingDistance(1.5f)
             .SetBaseCost(4);
+        
+        builder.AddAction<AttackCautiousAction>()
+            .SetTarget<PlayerTarget>()
+            .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
+            .SetStoppingDistance(1.5f)
+            .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
             .SetTarget<StrafeTarget>()

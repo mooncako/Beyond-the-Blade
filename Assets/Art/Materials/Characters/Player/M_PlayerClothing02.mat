@@ -24,20 +24,21 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_PlayerClothing02
-  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: bb3ddb4f161fb0a419b585b3537cb9cf, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
+  - _DISABLE_SSR_TRANSPARENT
+  - _MATERIAL_FEATURE_CLEAR_COAT
   - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
-  - _DISABLE_SSR_TRANSPARENT
   - _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: 2475
   stringTagMap:
     MotionVector: User
     RenderType: TransparentCutout
@@ -79,6 +80,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HalfLambert_ce380b7de72847baac2911e306e82ee7_RaytracedHardShadow_2246608029_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HalfLambert_dafeea6debd244eea2020680abd86d49_RaytracedHardShadow_2246608029_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Height:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -112,6 +121,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapOS:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RaytracedHardShadow:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -207,6 +220,7 @@ Material:
     - _Amplitude: 0.05
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _ClearCoatEnabled: 1
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _Crack: 0
@@ -268,6 +282,8 @@ Material:
     - _LightStrength: 1
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
+    - _MaterialTypeMask: 2
+    - _Metalic: 0
     - _Metallic: 0
     - _MetallicRemapMax: 1
     - _MetallicRemapMin: 0
@@ -280,7 +296,7 @@ Material:
     - _ObjectSpaceUVMappingEmissive: 0
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 1.25
+    - _OverallLightStrength: 1
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -296,6 +312,7 @@ Material:
     - _ReflectionPower: 1
     - _RefractionModel: 0
     - _RenderQueueType: 1
+    - _RequireSplitLighting: 0
     - _RimLightCameraRelativePitch: 0
     - _RimLightCameraRelativeYaw: 0
     - _RimLightHardness: 0.06
@@ -303,7 +320,7 @@ Material:
     - _ShadowEdge1: 0.437
     - _ShadowEdge2: 0.59
     - _ShadowMatteFilter: 5.919e-42
-    - _Smoothness: 0.5
+    - _Smoothness: 0
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -311,15 +328,15 @@ Material:
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 0
+    - _StencilRefDepth: 8
     - _StencilRefDistortionVec: 4
     - _StencilRefGBuffer: 10
-    - _StencilRefMV: 32
+    - _StencilRefMV: 40
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
     - _StencilWriteMaskGBuffer: 15
-    - _StencilWriteMaskMV: 43
+    - _StencilWriteMaskMV: 41
     - _Step: 0.17
     - _SubLightStrength: 1
     - _SubsurfaceMask: 1
@@ -353,7 +370,7 @@ Material:
     - _Vertical: 1.5
     - _Verticle: 0
     - _ZTestDepthEqualForOpaque: 3
-    - _ZTestGBuffer: 4
+    - _ZTestGBuffer: 3
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:

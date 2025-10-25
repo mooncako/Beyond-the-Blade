@@ -1,6 +1,9 @@
+using System;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
+using CrashKonijn.Goap.GenTest;
 using CrashKonijn.Goap.Runtime;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,10 +14,16 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected GoapBehaviour _goap;
     [SerializeField, BoxGroup("References")] protected PlayerSensor _playerSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
+    [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
+    [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
+    [SerializeField, BoxGroup("Settings")] public bool IsTank = false;
+    [SerializeField, BoxGroup("Settings")] public PersonalityType Personality;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
 
+    protected Tween _spawnDelayTween;
+    protected Tween _staggerDelayTween;
 
     protected virtual void OnValidate()
     {
@@ -22,6 +31,7 @@ public class Brain : MonoBehaviour
         if (_provider == null) _provider = GetComponent<GoapActionProvider>();
         if (_goap == null) _goap = GetComponent<GoapBehaviour>();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+        if (_movement == null) _movement = GetComponent<CustomCharacterMovement>();
     }
 
     protected virtual void OnEnable()
@@ -29,6 +39,10 @@ public class Brain : MonoBehaviour
         _playerSensor.OnPlayerEnter += OnPlayerEnter;
         _playerSensor.OnPlayerExit += OnPlayerExit;
         _agent.Events.OnActionEnd += OnActionEnd;
+        _agent.IsPaused = false;
+        _isPlayerDetected = false;
+        _provider.ClearGoal();
+        _provider.RequestGoal<WanderGoal>(false);
     }
 
     protected virtual void OnDisable()
@@ -36,6 +50,8 @@ public class Brain : MonoBehaviour
         _playerSensor.OnPlayerEnter -= OnPlayerEnter;
         _playerSensor.OnPlayerExit -= OnPlayerExit;
         _agent.Events.OnActionEnd -= OnActionEnd;
+        _spawnDelayTween.Stop();
+        _staggerDelayTween.Stop();
     }
 
     protected virtual void Awake()
@@ -60,6 +76,31 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnPlayerExit(Vector3 lastKnownPosition)
     {
-        
+
+    }
+
+    [Sirenix.OdinInspector.Button]
+    public virtual void Stun(float duration, Action onComplete = null)
+    {
+        IAction action = _agent.ActionState.Action;
+        _provider.ClearGoal();
+        _agent.IsPaused = true;
+        _movement.Stop();
+        _staggerDelayTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            _agent.IsPaused = false;
+            OnActionEnd(action);
+            if (onComplete != null)
+            {
+                onComplete.Invoke();
+            }
+        });
+    }
+
+    public virtual void Dead()
+    {
+        _agent.IsPaused = true;
+        _staggerDelayTween.Stop();
+        _spawnDelayTween.Stop();
     }
 }

@@ -24,8 +24,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: HososhiClothing02
-  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -121,6 +120,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleMaps_79c74189697245219bce99b8cfb852ec_Color_117152814_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_917f418ecaa146d3a77fccef62996eb5_Mask_3630088023_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleMaps_917f418ecaa146d3a77fccef62996eb5_Normal_4159734400_Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -245,6 +252,7 @@ Material:
     - _LightStrength: 1
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
+    - _MaterialTypeMask: 2
     - _Metallic: 0
     - _MetallicRemapMax: 1
     - _MetallicRemapMin: 0
@@ -273,6 +281,7 @@ Material:
     - _ReflectionPower: 1
     - _RefractionModel: 0
     - _RenderQueueType: 1
+    - _RequireSplitLighting: 0
     - _RimLightCameraRelativePitch: 0
     - _RimLightCameraRelativeYaw: 0
     - _RimLightHardness: 0.8
@@ -288,10 +297,10 @@ Material:
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 0
+    - _StencilRefDepth: 1
     - _StencilRefDistortionVec: 4
     - _StencilRefGBuffer: 10
-    - _StencilRefMV: 32
+    - _StencilRefMV: 33
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
@@ -329,7 +338,7 @@ Material:
     - _UseShadowThreshold: 0
     - _Vertical: 1.5
     - _ZTestDepthEqualForOpaque: 3
-    - _ZTestGBuffer: 4
+    - _ZTestGBuffer: 3
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:

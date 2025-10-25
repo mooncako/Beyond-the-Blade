@@ -7,10 +7,7 @@ public class CharacterAnimations : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private CustomCharacterMovement _characterMovement;
-    [SerializeField] private Rig ArmIKRig;
-    [SerializeField] private Rig DeflectRig;
     [SerializeField] private AnimationCurve _deflectCurve;
-    [SerializeField] private int _lowerBodyLayer=1;
     private int _currentDeflectVar;
 
     private void OnValidate()
@@ -22,10 +19,10 @@ public class CharacterAnimations : MonoBehaviour
     private void Start()
     {
         // add listener to health OnDeath event
-        if (TryGetComponent(out Health health))
-        {
-            health.OnDeath.AddListener(Death);
-        }
+        // if (TryGetComponent(out Health health))
+        // {
+        //     health.OnDeath.AddListener(Death);
+        // }
     }
 
     private void Death(DamageInfo damageInfo)
@@ -39,22 +36,8 @@ public class CharacterAnimations : MonoBehaviour
         Vector3 worldVelocity = _characterMovement.Velocity;
         Vector3 localVelocity = transform.InverseTransformVector(worldVelocity);
         localVelocity /= _characterMovement.Speed;
+    }
 
-        // set animator values
-        _animator.SetFloat("Right", localVelocity.x);
-        _animator.SetFloat("Forward", localVelocity.z);
-        if(localVelocity.magnitude > 0.1f)
-        {
-            _animator.SetBool("IsMoving", true);
-        }
-        else{
-            _animator.SetBool("IsMoving", false);
-        }
-    }
-    public void SetLowerAnimationLayerWeight(int weight)
-    {
-        _animator.SetLayerWeight(_lowerBodyLayer, weight);
-    }
     public void ToggleParameter(string parameterName)
     {
         _animator.SetBool(parameterName, true);

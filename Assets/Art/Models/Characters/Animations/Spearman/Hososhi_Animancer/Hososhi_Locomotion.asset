@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d4b536468a1925439647b20632e8600, type: 3}
+  m_Name: Hososhi_Locomotion
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  Idle:
+    _FadeDuration: 0
+    _Speed: 1
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: f174ef4b029a0b24b981914a6455078a, type: 2}
+    _NormalizedStartTime: NaN
+  Run:
+    _FadeDuration: 0.49300006
+    _Speed: 1
+    _Events:
+      _NormalizedTimes:
+      - 0.12687111
+      - NaN
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 5aae10cf529924a44811e5777c1ffa50, type: 2}
+    _NormalizedStartTime: NaN
+  TransitionLibrary: {fileID: 11400000, guid: 9a599849a1e7354478822f57c5daceb1, type: 2}
+  references:
+    version: 2
+    RefIds: []

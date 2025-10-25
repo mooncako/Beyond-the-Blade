@@ -19,25 +19,26 @@ MonoBehaviour:
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 32
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RegularSamuraiStrap
-  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: bb3ddb4f161fb0a419b585b3537cb9cf, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
+  - _DISABLE_SSR_TRANSPARENT
+  - _MATERIAL_FEATURE_CLEAR_COAT
   - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
-  - _DISABLE_SSR_TRANSPARENT
   - _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: 2475
   stringTagMap:
     MotionVector: User
     RenderType: TransparentCutout
@@ -131,6 +132,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_3f0850584a7f42d1ab7ab0aceaa12cf6_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 582183fa84b3b6648ace0dfa69b19263, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_74ac8117715a4312a5bfbf645ec79026_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 582183fa84b3b6648ace0dfa69b19263, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_99c8ef4e88b747e882fc2b2e7ec19926_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 4ea52e665573c1644bf05dd9b11fd2a4, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -195,6 +204,7 @@ Material:
     - _Amplitude: 0.05
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _ClearCoatEnabled: 1
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _Crack: 0
@@ -252,19 +262,21 @@ Material:
     - _LightStrength: 1
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
+    - _MaterialTypeMask: 2
+    - _Metalic: 0
     - _Metallic: 0
     - _MetallicRemapMax: 1
     - _MetallicRemapMin: 0
     - _MinorLightStrength: 1
     - _NoisePower: 1.037
     - _NormalMapSpace: 0
-    - _NormalMapStrength: 1
+    - _NormalMapStrength: 0
     - _NormalScale: 1
     - _ObjectSpaceUVMapping: 0
     - _ObjectSpaceUVMappingEmissive: 0
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 3
+    - _OverallLightStrength: 1
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -280,6 +292,7 @@ Material:
     - _ReflectionPower: 1
     - _RefractionModel: 0
     - _RenderQueueType: 1
+    - _RequireSplitLighting: 0
     - _RimLightCameraRelativePitch: 0
     - _RimLightCameraRelativeYaw: 0
     - _RimLightHardness: 0.8
@@ -287,7 +300,7 @@ Material:
     - _ShadowEdge1: 0.358
     - _ShadowEdge2: 0.59
     - _ShadowMatteFilter: 1.7399e-41
-    - _Smoothness: 0.5
+    - _Smoothness: 0.02
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -295,15 +308,15 @@ Material:
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 0
+    - _StencilRefDepth: 8
     - _StencilRefDistortionVec: 4
     - _StencilRefGBuffer: 10
-    - _StencilRefMV: 32
+    - _StencilRefMV: 40
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
     - _StencilWriteMaskGBuffer: 15
-    - _StencilWriteMaskMV: 43
+    - _StencilWriteMaskMV: 41
     - _Step: 0.17
     - _SubLightStrength: 1
     - _SubsurfaceMask: 1
@@ -336,7 +349,7 @@ Material:
     - _UseShadowThreshold: 0
     - _Vertical: 1.5
     - _ZTestDepthEqualForOpaque: 3
-    - _ZTestGBuffer: 4
+    - _ZTestGBuffer: 3
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
@@ -356,15 +369,17 @@ Material:
     - _LightColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightDirection: {r: 0, g: 0, b: 0, a: 0}
     - _MainLightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _MetalRemap: {r: 0, g: 1, b: 0, a: 0}
     - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightDirection: {r: 0, g: 0, b: 0, a: 0}
     - _ReflectionColor: {r: 1, g: 0, b: 0, a: 0}
     - _RimColor: {r: 4.594794, g: 0, b: 0, a: 1}
+    - _RoughRemap: {r: 0, g: 1, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _SubLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _SubLightDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _TextureColor: {r: 0.047169805, g: 0.00022249961, b: 0.00022249961, a: 0}
+    - _TextureColor: {r: 0.017874014, g: 0.000084311585, b: 0.000084311585, a: 0}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}

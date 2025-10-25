@@ -1,0 +1,48 @@
+using System;
+
+[Serializable]
+public enum ItemType
+{
+    Consumable,
+    Upgrade,
+    Utility
+}
+
+public enum UpgradeType
+{
+    InGame,
+    Meta
+}
+
+[Serializable]
+public enum ItemEffectType
+{
+    // Health Effects
+    RestoreHealth,
+    IncreaseMaxHealth,
+    
+    // Combat Stats
+    IncreaseDamage,
+    IncreaseAttackSpeed,
+    IncreaseDamageReduction,
+    
+    // Movement Stats
+    IncreaseMovementSpeed,
+    IncreaseDashForce,
+    
+    // Energy Stats
+    IncreaseMaxEnergy,
+    IncreaseParryEnergyGain,
+    IncreaseDashEnergyGain,
+
+    //Stamina Stats
+    IncreaseMaxStamina,
+    IncreaseStaminaRegenrate,
+    
+    // Special Stats
+    IncreaseResourceGainMultiplier,
+    DecreaseHitStunDuration,
+    IncreaseIframeDuration
+
+
+}

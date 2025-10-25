@@ -1,62 +1,90 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Animancer;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityUtils;
 
-public class EnemyController : Controller
+public class EnemyController : Controller, IPoolable
 {
-    [field: SerializeField, FoldoutGroup("Base References")] private PlayerSensor _playerSensor;
-    [field: SerializeField, BoxGroup("Skills")] private SkillAnimationDatabaseSO _animationDatabase;
-    [field: SerializeField, BoxGroup("Skills")] private EnemySkillsSO _skillsDatabase;
-    [field: SerializeField, BoxGroup("Skills")] public List<PlayableSkill> AvailableSkills { get; private set; } = new List<PlayableSkill>();
+    [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
+    
+    [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
 
-    [BoxGroup("Debug"), ReadOnly] public bool CanMove = true;
-    [BoxGroup("Debug"), ReadOnly] public bool CanAttack = true;
-    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Skill _currentSkill;
-    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _targetPos;
+    
+    [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
+    [field: SerializeField, BoxGroup("Debug")] private bool _canRotate = true;
+
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
 
-    private List<GameObject> _hitTargets = new List<GameObject>();
+    private Tween _attackDelayTween;
+    private Tween _staggerTween;
+
 
     protected override void OnValidate()
     {
         base.OnValidate();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+
+        if (_brain == null) _brain = GetComponent<Brain>();
+        if ((_attackableMask & (1 << 7)) == 0)
+        {
+            _attackableMask |= 1 << 7;
+        }
     }
 
     protected override void Awake()
     {
         base.Awake();
-        AvailableSkills.Sort((a, b) => b.BaseWeight.CompareTo(a.BaseWeight));
     }
 
     protected override void OnEnable()
     {
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.AddListener(OnParried);
+        }
+
         _playerSensor.OnPlayerEnter += playerTransform =>
         {
             CurrentTargetTransform = playerTransform;
             Movement.LookInMoveDirection = false;
         };
+
+        Health.OnDamage.AddListener(DamageFeedback);
+        Health.OnDeath.AddListener(OnDeath);
     }
 
     protected override void OnDisable()
     {
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnParried.RemoveListener(OnParried);
+        }
         _playerSensor.OnPlayerEnter -= playerTransform =>
         {
             CurrentTargetTransform = playerTransform;
             Movement.LookInMoveDirection = false;
         };
+
+        Health.OnDamage.RemoveListener(DamageFeedback);
+        Health.OnDeath.RemoveListener(OnDeath);
+
+        _attackDelayTween.Stop();
+        _staggerTween.Stop();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (CurrentTargetTransform != null)
+        if (CurrentTargetTransform != null && _canRotate)
         {
             Movement.SetLookPosition(CurrentTargetTransform.position);
         }
     }
 
+    
 
     public void MoveTo(Vector3 destination)
     {
@@ -75,87 +103,154 @@ public class EnemyController : Controller
         Movement.Stop();
     }
 
-    public void ActivateSkill()
+    public override void DamageAnimEvent()
     {
-        if (_animationDatabase == null) return;
-        if (_skillsDatabase == null) return;
-        if (AvailableSkills.Count == 0) return;
+        if (AnimationStateMachine.IsInStaggerState()) return;
 
-
-        // Swap out the animation on the attack state, then makes it go under cooldown
-        for (int i = 0; i < AvailableSkills.Count; i++)
-        {
-            if (!AvailableSkills[i].IsInCooldown)
-            {
-                if (_skillsDatabase.EnemySkillDict.ContainsKey(AvailableSkills[i].SkillId) &&
-                    _animationDatabase.SkillAnimDict.ContainsKey(_skillsDatabase.EnemySkillDict[AvailableSkills[i].SkillId].AnimationID))
-                {
-                    _currentSkill = _skillsDatabase.EnemySkillDict[AvailableSkills[i].SkillId];
-                    ApplySkillEffect();
-                    StartCoroutine(SkillCooldownCO(i, _skillsDatabase.EnemySkillDict[AvailableSkills[i].SkillId].Cooldown));
-                    Animator.OverrideClipForState("Attack", _animationDatabase.SkillAnimDict[_skillsDatabase.EnemySkillDict[AvailableSkills[i].SkillId].AnimationID]);
-                    Animator.Play("Attack");
-                    break;
-                }
-
-            }
-        }
-    }
-
-    private IEnumerator SkillCooldownCO(int index, float cooldownTime)
-    {
-        AvailableSkills[index].IsInCooldown = true;
-        yield return new WaitForSeconds(cooldownTime);
-        AvailableSkills[index].IsInCooldown = false;
-
-    }
-
-    private void ApplySkillEffect()
-    {
-        //TODO buffs & debuffs
-        AOEApplier.X = _currentSkill.SkillRange.X;
-        AOEApplier.Y = _currentSkill.SkillRange.Y;
-        AOEApplier.Z = _currentSkill.SkillRange.Z;
         _hitTargets.Clear();
 
-    }
-
-    public void DamageAnimEvent()
-    {
         if (_currentSkill.IsTargetedGroundAOE)
         {
-            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, _targetPos);
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, TargetPos, _attackableMask);
         }
         else
         {
             if (AttackPoint != null)
             {
-                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position);
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
             }
             else
             {
-                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position);
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
             }
         }
 
+         if (AnimationStateMachine.IsInStaggerState()) return;
 
         foreach (GameObject target in _hitTargets)
         {
-            DamageInfo info = new DamageInfo(_currentSkill.Damage, target, gameObject, gameObject, DamageType.Regular);
+            DamageInfo info = new DamageInfo(_currentSkill.Damage * Stats.DamageMultiplier, target, Health, gameObject, DamageType.Regular);
             target.GetComponent<Health>().Damage(info);
+        }
+
+        _isSkillPlaying = false;
+    }
+
+    public override void ActivateSkill()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            if (_currentSkill != null)
+            {
+                _isSkillPlaying = true;
+
+            }
+
+            // swapout animation in AnimationStateMachine
+            //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+
         }
     }
 
-    public void SetTargetPos(Vector3 position)
+    public bool CheckSkill()
     {
-        _targetPos = position;
+        if (_currentSkill == null) return false;
+        if (_currentSkill.VFXInfo.UsingIndicator)
+        {
+            SpawnVFXEvent.Trigger(transform, "ATTACK_WARNING", new VFXInfo(new Vector3(0, .9f, 0), transform.rotation, Vector3.one, true, false));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public bool IsSkillPlaying()
+    public bool IsSkillNull()
     {
-        return !_currentSkill.AnimationID.IsNullOrEmpty();
+        return _currentSkill == null;
     }
     
+    public void PlaySkillEffect()
+    {
+        SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
+        ApplySkillEffect();
+    }
+
+    protected override void OnParried(float duration)
+    {
+        base.OnParried(duration);
+        Stun(duration);
+        CameraShakeEvent.Trigger(new LightShake());
+    }
+
+    public override void StartAttackCooldown()
+    {
+        _attackDelayTween = Tween.Delay(_attackCooldown).OnComplete(() =>
+        {
+            CanAttack = true;
+        });
+    }
+
+    private void DamageFeedback(DamageInfo info)
+    {
+        if (!_brain.IsTank)
+        {
+            Stun(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
+        }
+        else
+        {
+            Movement.KnockBack(info.Instigator.transform, 500);
+        }
+    }
+
+    public override void Stun(float duration, Action onComplete = null)
+    {
+        if (IsStunImmune) return;
+        _persistentVFXHelper.StopPersistentEffects();
+        _brain.Stun(duration, onComplete);
+        AnimationStateMachine.SwitchState(AnimationStateType.Stagger);
+        _staggerTween = Tween.Delay(duration).OnComplete(() =>
+        {
+            AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+        });
+    }
+
+    public void OnPoolGet()
+    {
+
+    }
+
+    public void OnPoolReturn()
+    {
+        Movement.CanMove = true;
+        _canRotate = true;
+        gameObject.layer = LayerMask.NameToLayer("Character");
+        _matController.ResetDissolve();
+    }
+
+    public void ToggleRotationAnimEvent(int toggle)
+    {
+        if (toggle == 0)
+        {
+            _canRotate = true;
+        }
+        else
+        {
+            _canRotate = false;
+        }
+
+    }
     
-    
+    public void OnDeath(DamageInfo info)
+    {
+        _persistentVFXHelper.StopPersistentEffects();
+        _brain.Dead();
+        Movement.Stop();
+        Movement.CanMove = false;
+        _canRotate = false;
+        gameObject.layer = LayerMask.NameToLayer("Corpse");
+    }
 }

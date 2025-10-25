@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1369068994764038597}
   - component: {fileID: 4432083089864231479}
   - component: {fileID: 7424803643970785790}
+  - component: {fileID: 8945488313758311680}
+  - component: {fileID: 472282878646992840}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -96,8 +98,8 @@ MonoBehaviour:
   Composition:
     ScreenPosition: {x: 0, y: 0}
     DeadZone:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
+      Enabled: 1
+      Size: {x: 0.05, y: 0.05}
     HardLimits:
       Enabled: 0
       Size: {x: 0.8, y: 0.8}
@@ -153,3 +155,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cam: {fileID: 596834848122902187}
+--- !u!114 &8945488313758311680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2530084092606876289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392fd91588447d54b8c0053fb8d5e570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cineCam: {fileID: 596834848122902187}
+  _defaultFov: 20
+--- !u!114 &472282878646992840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2530084092606876289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ffa1d2b1d09cac48be0a3edce00ec11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _startDuration: 0.1
+  _recoverDuration: 0.3
+  _xOffsetRange: 0.5
+  _yOffsetRange: 1
+  _zOffsetRange: 0
+  _defaultRotation: {x: 45.000004, y: 315, z: 0.000001207418}

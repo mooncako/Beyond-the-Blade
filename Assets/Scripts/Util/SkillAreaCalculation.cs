@@ -47,16 +47,23 @@ public static class SkillAreaCalculation
 
         return hitsOut.Count;
     }
-    
-    public static int OverlapArc(Vector3 center, Vector3 forward, float outerRadius, float arcAngleDeg, float innerRadius,
-                                 float heightLimit, LayerMask mask, Collider[] buffer, List<Collider> hitsOut,
-                                 QueryTriggerInteraction qti = QueryTriggerInteraction.Collide)
+
+    public static int OverlapArc(
+    Vector3 center,
+    Vector3 forward,
+    float outerRadius,
+    float arcAngleDeg,
+    float innerRadius,
+    LayerMask mask,
+    Collider[] buffer,
+    List<Collider> hitsOut,
+    QueryTriggerInteraction qti = QueryTriggerInteraction.Collide)
     {
         hitsOut.Clear();
         int count = Physics.OverlapSphereNonAlloc(center, outerRadius, buffer, mask, qti);
 
         Vector3 f = forward;
-        f.y = 0f;
+        f.y = 0f; // flatten forward into XZ
         if (f.sqrMagnitude < 1e-5f) f = Vector3.forward;
         f.Normalize();
         float half = arcAngleDeg * 0.5f;
@@ -64,17 +71,19 @@ public static class SkillAreaCalculation
         for (int i = 0; i < count; i++)
         {
             Collider c = buffer[i];
+
+            // Get closest point in XZ only
             Vector3 p = Physics.ClosestPoint(center, c, c.transform.position, c.transform.rotation);
             Vector3 toP = p - center;
 
-            // Height clamp
-            if (!float.IsInfinity(heightLimit) && Mathf.Abs(toP.y) > heightLimit * 0.5f) continue;
-
-            // XZ checks
+            // Project to XZ plane only
             Vector3 toPXZ = new Vector3(toP.x, 0f, toP.z);
             float d = toPXZ.magnitude;
+
+            // Radius check
             if (d < Mathf.Max(0f, innerRadius) || d > outerRadius) continue;
 
+            // Angle check
             float angle = Vector3.Angle(f, toPXZ / Mathf.Max(d, 1e-5f));
             if (angle <= half)
                 hitsOut.Add(c);
@@ -82,4 +91,5 @@ public static class SkillAreaCalculation
 
         return hitsOut.Count;
     }
+
 }

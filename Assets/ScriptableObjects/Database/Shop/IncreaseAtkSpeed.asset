@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bcfe205e07c344087d3c10646bdab0, type: 3}
+  m_Name: IncreaseAtkSpeed
+  m_EditorClassIdentifier: 
+  ItemName: 'Attack Speed + '
+  Description: 'Attack Speed + '
+  Icon: {fileID: -3168733581550749585, guid: f7043b7291f49844b9671b3d3dedcbb5, type: 3}
+  Cost: 10
+  ItemType: 1
+  EffectType: 3
+  HealthRestoreAmount: 25
+  MaxHealthIncrease: 10
+  DamageIncrease: 0.1
+  AttackSpeedIncrease: 0.1
+  DamageReductionIncrease: 0.05
+  MovementSpeedIncrease: 0.1
+  DashForceIncrease: 100
+  MaxEnergyIncrease: 2
+  ParryEnergyGainIncrease: 0.2
+  DashEnergyGainIncrease: 0.1
+  ResourceGainMultiplierIncrease: 0.1
+  HitStunDurationDecrease: 0.1
+  IframeDurationIncrease: 0.05
+  CanPurchaseMultiple: 0
+  MaxPurchaseCount: 1

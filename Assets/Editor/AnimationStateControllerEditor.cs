@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(AnimationStateController))]
 public class AnimationStateControllerEditor : Editor
 {
     // Movement settings

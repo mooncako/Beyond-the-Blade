@@ -5,16 +5,15 @@ using UnityEngine;
 
 public class AOEApplier : MonoBehaviour
 {
-    [SerializeField, BoxGroup("Settings")] private LayerMask _hitMask;
 
     [BoxGroup("Settings")] public float X;
     [BoxGroup("Settings")] public float Y;
     [BoxGroup("Settings")] public float Z;
 
     [SerializeField, BoxGroup("Settings")] private float _coneHeight = Mathf.Infinity;
-    [SerializeField, BoxGroup("Settings")] private float _arcHeight = 2;
 
     [SerializeField, BoxGroup("Debug")] private SkillAreaType _type;
+    [SerializeField, BoxGroup("Debug")] private Transform _attackPoint;
 
     private readonly Collider[] _buffer = new Collider[64];
     private readonly List<Collider> _hits = new List<Collider>(64);
@@ -22,14 +21,14 @@ public class AOEApplier : MonoBehaviour
     private int count = 0;
 
 
-    public List<GameObject> GetDamagedEntities(SkillAreaType type, Vector3 center)
+    public List<GameObject> GetDamagedEntities(SkillAreaType type, Vector3 center, LayerMask hitMask)
     {
         _damagedEntities.Clear();
 
         switch (type)
         {
             case SkillAreaType.Box:
-                count = SkillAreaCalculation.OverlapBox(center + transform.forward * 1.5f, new Vector3(X, Y, Z), transform.rotation, _hitMask, _buffer);
+                count = SkillAreaCalculation.OverlapBox(center + transform.forward * 1.5f, new Vector3(X, Y, Z), transform.rotation, hitMask, _buffer);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_buffer[i].gameObject);
@@ -37,7 +36,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Circle:
-                count = SkillAreaCalculation.OverlapCircle(center, X, _hitMask, _buffer);
+                count = SkillAreaCalculation.OverlapCircle(center, X, hitMask, _buffer);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_buffer[i].gameObject);
@@ -45,7 +44,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Cone:
-                count = SkillAreaCalculation.OverlapCone(center, transform.forward, Y, X, _coneHeight, _hitMask, _buffer, _hits);
+                count = SkillAreaCalculation.OverlapCone(center, transform.forward, Y, X, _coneHeight, hitMask, _buffer, _hits);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_hits[i].gameObject);
@@ -53,7 +52,7 @@ public class AOEApplier : MonoBehaviour
                 break;
 
             case SkillAreaType.Arc:
-                count = SkillAreaCalculation.OverlapArc(center, transform.forward, X, Z, Y, _arcHeight, _hitMask, _buffer, _hits);
+                count = SkillAreaCalculation.OverlapArc(center, transform.forward, X, Z, Y, hitMask, _buffer, _hits);
                 for (int i = 0; i < count; i++)
                 {
                     _damagedEntities.Add(_hits[i].gameObject);
@@ -68,25 +67,35 @@ public class AOEApplier : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.white;
-        switch (_type)
+        Vector3 _startPos;
+        if (_attackPoint == null)
         {
-            case SkillAreaType.Box:
-                // Box gizmo (approx)
-                Gizmos.matrix = Matrix4x4.TRS(transform.position + transform.forward * 1.5f, transform.rotation, Vector3.one);
-                Gizmos.DrawWireCube(Vector3.zero, new Vector3(X, Y, Z));
-                break;
-            case SkillAreaType.Circle:
-                Gizmos.DrawWireSphere(transform.position, X);
-                break;
-            case SkillAreaType.Cone:
-                // Cone (wire)
-                DrawCone(transform.position, transform.forward, X, Y);
-                break;
-            case SkillAreaType.Arc:
-                // Arc (sector)
-                DrawArcSector(transform.position, transform.forward, X, Y, Z);
-                break;
+            _startPos = transform.position;
         }
+        else
+        {
+            _startPos = _attackPoint.position;
+        }
+
+        switch (_type)
+            {
+                case SkillAreaType.Box:
+                    // Box gizmo (approx)
+                    Gizmos.matrix = Matrix4x4.TRS(_startPos + transform.forward * 1.5f, transform.rotation, Vector3.one);
+                    Gizmos.DrawWireCube(Vector3.zero, new Vector3(X, Y, Z));
+                    break;
+                case SkillAreaType.Circle:
+                    Gizmos.DrawWireSphere(_startPos, X);
+                    break;
+                case SkillAreaType.Cone:
+                    // Cone (wire)
+                    DrawCone(_startPos, transform.forward, X, Y);
+                    break;
+                case SkillAreaType.Arc:
+                    // Arc (sector)
+                    DrawArcSector(_startPos, transform.forward, X, Y, Z);
+                    break;
+            }
         
     }
 

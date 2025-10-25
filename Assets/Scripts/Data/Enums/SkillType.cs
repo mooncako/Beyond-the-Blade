@@ -8,7 +8,7 @@ public enum SkillAreaType
     Arc,
 }
 
-public enum SkillRarity
+public enum Rarity
 {
     Normal,
     Rare,

@@ -1,0 +1,243 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621b80419d23c064eb0eaa958f23f19a, type: 3}
+  m_Name: EnemyDatabase
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 8594782585277001859, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
+    - {fileID: 8594782585277001859, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
+    - {fileID: 8594782585277001859, guid: 7192438a3595b354d9d6102b7ffdd0a8, type: 3}
+    - {fileID: 8594782585277001859, guid: 25f934e528f721748a356ddca5a4f15e, type: 3}
+    - {fileID: 3432176685117957173, guid: dbded3c1d7854b240a515f16d925bdf7, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: EnemyDict
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[EnemyProfile, Assembly-CSharp],[UnityEngine.GameObject,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.ObjectEqualityComparer`1[[EnemyProfile,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 5
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 2|EnemyProfile, Assembly-CSharp
+    - Name: EnemyName
+      Entry: 1
+      Data: HeadlessSamurai
+    - Name: Difficulty
+      Entry: 4
+      Data: 0
+    - Name: Cost
+      Entry: 3
+      Data: 1
+    - Name: Weight
+      Entry: 4
+      Data: 1.5
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: Cooldown
+      Entry: 4
+      Data: 0
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 1
+    - Name: NextEligibleTime
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 3|EnemyProfile, Assembly-CSharp
+    - Name: EnemyName
+      Entry: 1
+      Data: Hososhi
+    - Name: Difficulty
+      Entry: 4
+      Data: 2
+    - Name: Cost
+      Entry: 3
+      Data: 3
+    - Name: Weight
+      Entry: 4
+      Data: 0.8
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: Cooldown
+      Entry: 4
+      Data: 0
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 1
+    - Name: NextEligibleTime
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 4|EnemyProfile, Assembly-CSharp
+    - Name: EnemyName
+      Entry: 1
+      Data: HeadlessSamuraiCautious
+    - Name: Difficulty
+      Entry: 4
+      Data: 0
+    - Name: Cost
+      Entry: 3
+      Data: 1
+    - Name: Weight
+      Entry: 4
+      Data: 1.5
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: Cooldown
+      Entry: 4
+      Data: 0
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 0
+    - Name: NextEligibleTime
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 5|EnemyProfile, Assembly-CSharp
+    - Name: EnemyName
+      Entry: 1
+      Data: HososhiCautious
+    - Name: Difficulty
+      Entry: 4
+      Data: 1
+    - Name: Cost
+      Entry: 3
+      Data: 2
+    - Name: Weight
+      Entry: 4
+      Data: 0.8
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: Cooldown
+      Entry: 4
+      Data: 0
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 0
+    - Name: NextEligibleTime
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 6|EnemyProfile, Assembly-CSharp
+    - Name: EnemyName
+      Entry: 1
+      Data: Lantern
+    - Name: Difficulty
+      Entry: 4
+      Data: 1
+    - Name: Cost
+      Entry: 3
+      Data: 2
+    - Name: Weight
+      Entry: 4
+      Data: 1.2
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: Cooldown
+      Entry: 4
+      Data: 0
+    - Name: SpawnedThisWave
+      Entry: 3
+      Data: 0
+    - Name: NextEligibleTime
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

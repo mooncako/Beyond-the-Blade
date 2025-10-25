@@ -5,9 +5,24 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/OutdoorsScene.unity
-    guid: 8124e5870f4fd4c779e7a5f994e84ad1
+  - enabled: 1
+    path: Assets/Scenes/Gyms/TestMainMenu.unity
+    guid: 08c23542aaffc434eb5dc078a31cf648
+  - enabled: 1
+    path: Assets/Scenes/Gyms/TestHub.unity
+    guid: a2c776c3af0d55d459606719a9e8f0f6
+  - enabled: 1
+    path: Assets/Scenes/Gyms/TestGym/TestGymLighting.unity
+    guid: 332428c95751af94cb4334dcedcabd17
+  - enabled: 1
+    path: Assets/Scenes/Gyms/TestGym/TestGymCam.unity
+    guid: 1d4a08c53b117c649871e96e5d2dcc51
+  - enabled: 1
+    path: Assets/Scenes/Gyms/TestGym/TestGymLevel.unity
+    guid: 038f1788802ed8143821a8cad769eed5
+  - enabled: 1
+    path: Assets/Scenes/Gyms/TestGym/TestGymCharacters.unity
+    guid: 49d604141418bdd45b3c0fd75abac4e7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   m_UseUCBPForAssetBundles: 0

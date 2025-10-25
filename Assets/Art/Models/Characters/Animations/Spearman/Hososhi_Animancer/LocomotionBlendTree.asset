@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: LocomotionBlendTree
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 2885414906980728945
+  references:
+    version: 2
+    RefIds:
+    - rid: 2885414906980728945
+      type: {class: MixerTransition2D, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Animations:
+        - {fileID: 7400000, guid: f174ef4b029a0b24b981914a6455078a, type: 2}
+        - {fileID: 7400000, guid: 5aae10cf529924a44811e5777c1ffa50, type: 2}
+        - {fileID: 7400000, guid: 9a610aa424cdf8749b1c8ac78e26d59a, type: 2}
+        - {fileID: 7400000, guid: eb9c8fb4701b9b846907522d3f66130a, type: 2}
+        - {fileID: 7400000, guid: 648095c87325e9043ae325332da2a30d, type: 2}
+        _Speeds: []
+        _SynchronizeChildren: 00
+        _Thresholds:
+        - {x: 0, y: 0}
+        - {x: 0, y: 1}
+        - {x: 0, y: -1}
+        - {x: 1, y: 0}
+        - {x: -1, y: 0}
+        _DefaultParameter: {x: 0, y: 0}
+        _Type: 0
+        _ParameterNameX: {fileID: 11400000, guid: cfe9af0462927304e84f545d0acd9364, type: 2}
+        _ParameterNameY: {fileID: 11400000, guid: 4fb87b38bfb0e0743b7891cb027fde0b, type: 2}

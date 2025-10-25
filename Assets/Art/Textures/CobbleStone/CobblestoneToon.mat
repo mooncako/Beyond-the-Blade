@@ -24,8 +24,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CobblestoneToon
-  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -178,7 +177,7 @@ Material:
     - _AlphaCutoffEnable: 1
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
-    - _Amplitude: 0
+    - _Amplitude: 3.84
     - _Base_Displacement_Amount: 1
     - _Base_Normal_Strength: 1
     - _BlendMode: 0
@@ -211,8 +210,8 @@ Material:
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
     - _ExcludeFromTUAndAA: 0
-    - _Exponent: 1
-    - _HasReflectionLight: 1
+    - _Exponent: 289
+    - _HasReflectionLight: 0
     - _Height_Blend_Strength: 0.9
     - _IsHighlighted: 0
     - _IsIframe: 0
@@ -224,7 +223,7 @@ Material:
     - _NormalMapStrength: 3
     - _OnDamage: 0
     - _OpaqueCullMode: 2
-    - _OverallLightStrength: 3
+    - _OverallLightStrength: 1
     - _PREVIEW_VERTEX_COLORS: 0
     - _PerPixelSorting: 0
     - _REFLECTIONTYPE: 2
@@ -232,7 +231,7 @@ Material:
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
-    - _ReflectionPower: 1
+    - _ReflectionPower: 0.064
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
@@ -245,10 +244,10 @@ Material:
     - _ShadowMatteFilter: 4.0357e-41
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 0
+    - _StencilRefDepth: 1
     - _StencilRefDistortionVec: 4
     - _StencilRefGBuffer: 10
-    - _StencilRefMV: 32
+    - _StencilRefMV: 33
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
@@ -290,7 +289,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - _AmbientColor: {r: 1, g: 0.5330188, b: 0.6004895, a: 0}
+    - _AmbientColor: {r: 1, g: 1, b: 1, a: 0}
     - _Base_HSV_Adjustment: {r: 0, g: 0, b: 0, a: 0}
     - _Base_Height_Remap: {r: 0, g: 1, b: 0, a: 0}
     - _Base_Metal_Remap: {r: 0, g: 1, b: 0, a: 0}
@@ -323,11 +322,11 @@ Material:
     - _MainLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionColor: {r: 0.022097087, g: 0.022097087, b: 0.022097087, a: 0}
+    - _ReflectionColor: {r: 0.026811024, g: 0.010250536, b: 0.004173415, a: 0}
     - _RimColor: {r: 1, g: 0, b: 0, a: 0}
     - _SubLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _SubLightDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _TextureColor: {r: 0.7490197, g: 0.7490197, b: 0.7490197, a: 1}
+    - _TextureColor: {r: 1, g: 1, b: 1, a: 1}
     - _Tiling: {r: 10, g: 10, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

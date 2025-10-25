@@ -27,6 +27,9 @@ public class HososhiCapabilityFactory : CapabilityFactory
         builder.AddGoal<KillPlayerGoal>()
             .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
 
+        builder.AddGoal<KillPlayerCautiousGoal>()
+            .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
+
         builder.AddGoal<StrafeGoal>()
             .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
     }
@@ -42,8 +45,14 @@ public class HososhiCapabilityFactory : CapabilityFactory
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .SetStoppingDistance(2)
+            .SetStoppingDistance(3)
             .SetBaseCost(4);
+
+        builder.AddAction<AttackCautiousAction>()
+            .SetTarget<PlayerTarget>()
+            .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
+            .SetStoppingDistance(3)
+            .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
             .SetTarget<StrafeTarget>()

@@ -2,6 +2,7 @@ using System;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
+using PrimeTween;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
@@ -10,7 +11,6 @@ namespace CrashKonijn.Goap.GenTest
     public class AttackAction : GoapActionBase<AttackAction.Data>, IInjectable
     {
         private AttackSensorConfigSO _attackSensorConfig;
-
 
         // This method is called when the action is created
         // This method is optional and can be removed
@@ -30,7 +30,6 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = _attackSensorConfig.AttackDelay;
             
         }
 
@@ -38,22 +37,57 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void BeforePerform(IMonoAgent agent, Data data)
         {
-                
+
         }
 
         // This method is called every frame while the action is running
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
-            if (data.Controller.IsSkillPlaying())
-                data.Timer -= context.DeltaTime;
-            if (data.Controller.CanAttack)
+
+            if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack) && !data.Controller.IsSkillPlaying())
             {
+
+                data.Controller.CanAttack = false;
                 data.Controller.SetTargetPos(data.Target.Position);
                 data.Controller.ActivateSkill();
+                if (data.Controller.CheckSkill())
+                {
+                    Tween.Delay(1).OnComplete(() =>
+                    {
+                        if (!data.Controller.IsSkillNull())
+                        {
+                            data.Controller.PlaySkillEffect();
+                            data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
+                            data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+                        }
+                        else
+                        {
+                            data.Controller.CanAttack = true;
+                            data.Controller.ToggleIsSkillPlaying(false);
+                        }
+
+                    });
+                }
+                else
+                {
+                    if (!data.Controller.IsSkillNull())
+                    {
+                        data.Controller.PlaySkillEffect();
+                        data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
+                        data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+                    }
+                    
+                }
+
+
+
+
             }
+            
+
             data.Controller.Stop();
-            return data.Timer > 0 ? ActionRunState.Continue : ActionRunState.Completed;
+            return data.AnimationStateMachine.IsInAttackActionState() ? ActionRunState.Continue : ActionRunState.Completed;
         }
 
         // This method is called when the action is completed or stopped
@@ -75,10 +109,11 @@ namespace CrashKonijn.Goap.GenTest
         {
             public ITarget Target { get; set; }
 
-            public float Timer { get; set; }
-
             [GetComponent]
             public EnemyController Controller { get; set; }
+
+            [GetComponent]
+            public AnimationStateMachine AnimationStateMachine { get; set; }
         }
     }
 }

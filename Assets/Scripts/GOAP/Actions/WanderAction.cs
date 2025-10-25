@@ -1,5 +1,6 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Goap.Runtime;
+using CrashKonijn.Agent.Runtime;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
@@ -45,7 +46,7 @@ namespace CrashKonijn.Goap.GenTest
                 return ActionRunState.Continue;
             }
 
-            return ActionRunState.Stop;
+            return ActionRunState.Completed;
         }
 
         // This method is called when the action is completed or stopped
@@ -60,6 +61,9 @@ namespace CrashKonijn.Goap.GenTest
         {
             public ITarget Target { get; set; }
             public float Timer {get; set;}
+
+            [GetComponent]
+            public AnimationStateMachine AnimationStateMachine { get; set; }
         }
     }
 }

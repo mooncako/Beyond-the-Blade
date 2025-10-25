@@ -12,10 +12,11 @@ public class PlayerSoundController : SoundController
     [SerializeField] private FMODUnity.EventReference _musoExitSFX;
     [SerializeField] private FMODUnity.EventReference _musoLoopSFX;
     [SerializeField] private FMODUnity.EventReference _musoChargeGainedSFX;
+    [SerializeField] private FMODUnity.EventReference _dashSFX;
 
     public override void PlayFootstep()
     {
-
+        FMODUnity.RuntimeManager.PlayOneShot(_footstepSFX, transform.position);
     }
 
     public override  void PlayMovementSound()
@@ -23,7 +24,7 @@ public class PlayerSoundController : SoundController
 
     }
 
-     public override  void PlayAttackSFX()
+    public override  void PlayAttackSFX()
     {
 
         FMODUnity.RuntimeManager.PlayOneShot(_attackSFX, transform.position);
@@ -38,5 +39,10 @@ public class PlayerSoundController : SoundController
         // _attackInstance.start();
         // _attackInstance.release();
         
+    }
+        
+    public void PlayDashSFX()
+    {
+        FMODUnity.RuntimeManager.PlayOneShot(_dashSFX, transform.position);
     }
 }

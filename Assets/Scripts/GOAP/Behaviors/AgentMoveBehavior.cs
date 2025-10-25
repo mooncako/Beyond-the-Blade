@@ -11,6 +11,7 @@ public class AgentMoveBehavior : MonoBehaviour
     [SerializeField, FoldoutGroup("References")] private Animator _animator;
     [SerializeField, FoldoutGroup("References")] private AgentBehaviour _agentBehavior;
     [SerializeField, FoldoutGroup("References")] private EnemyController _controller;
+    [SerializeField, FoldoutGroup("References")] private AnimationStateMachine _animationStateMachine;
 
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] private ITarget _currentTarget;
@@ -20,12 +21,15 @@ public class AgentMoveBehavior : MonoBehaviour
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_controller == null) _controller = GetComponent<EnemyController>();
         if (_agentBehavior == null) _agentBehavior = GetComponent<AgentBehaviour>(); //similar to the navmeshagent
+        if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
+
     }
 
     private void OnEnable()
     {
         _agentBehavior.Events.OnTargetChanged += OnTargetChanged;
         _agentBehavior.Events.OnTargetNotInRange += OnTargetNotInRange;
+        _controller.Movement.Stop();
     }
 
     private void OnDisable()
@@ -36,8 +40,12 @@ public class AgentMoveBehavior : MonoBehaviour
 
     void Update()
     {
+        if (_agentBehavior.IsPaused) return;
         if (_currentTarget == null) return;
+        if (!_controller.CanMove) return;
 
+        // if(!AnimationStateMachine.IsInMoveState()) return;
+        
 
         _controller.MoveTo(_currentTarget.Position);
     }

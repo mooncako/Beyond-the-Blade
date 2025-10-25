@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d208eb8c61f7a64db7ca32daf9f6411, type: 3}
+  m_Name: PoolableModifierDatabase
+  m_EditorClassIdentifier: 
+  _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
+  Modifiers:
+  - SkillId: TELEPORT
+    CanAppear: 0
+  - SkillId: DOPPELGANGER
+    CanAppear: 1
+  - SkillId: ACCELERATION
+    CanAppear: 1
+  - SkillId: ATTACK
+    CanAppear: 1
+  - SkillId: BACKSTEP
+    CanAppear: 1
+  - SkillId: DASH
+    CanAppear: 1
+  - SkillId: DEFENSE
+    CanAppear: 1
+  - SkillId: INVINCIBLE
+    CanAppear: 0
+  - SkillId: SHOCKWAVE
+    CanAppear: 1
+  - SkillId: STUN
+    CanAppear: 1
+  - SkillId: ANTISTUN
+    CanAppear: 1
+  NormalModifiers:
+  - SkillId: ACCELERATION
+    CanAppear: 1
+  - SkillId: ATTACK
+    CanAppear: 1
+  - SkillId: BACKSTEP
+    CanAppear: 1
+  - SkillId: DASH
+    CanAppear: 1
+  - SkillId: DEFENSE
+    CanAppear: 1
+  - SkillId: ANTISTUN
+    CanAppear: 1
+  RareModifiers:
+  - SkillId: SHOCKWAVE
+    CanAppear: 1
+  EpicModifiers:
+  - SkillId: STUN
+    CanAppear: 1
+  LegendaryModifiers:
+  - SkillId: DOPPELGANGER
+    CanAppear: 1
