@@ -47,7 +47,6 @@ public class PlayerController : Controller,
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
     private bool _isPerfectParryWindowActive = false;
     public bool MusoReady { get; private set; }
-    [SerializeField] private EnemyController _musoTarget;
 
     [HideInInspector] public UnityEngine.Events.UnityEvent OnExecutionStarted;
     [HideInInspector] public UnityEngine.Events.UnityEvent OnAbilityCycled;
@@ -107,25 +106,25 @@ public class PlayerController : Controller,
         {
             DetectParry();
         }
-        if (MusoReady)
-        {
-            if (_musoTarget != null)
-                // _musoTarget.MaterialController.UnHightlight();
+        // if (MusoReady)
+        // {
+        //     if (_musoTarget != null)
+        //         // _musoTarget.MaterialController.UnHightlight();
 
-                // _musoTarget = FindClosestEnemyToPosition(GetLookDirection(), 100);
+        //         // _musoTarget = FindClosestEnemyToPosition(GetLookDirection(), 100);
 
-                if (_musoTarget == null)
-                {
-                    _lineRenderer.enabled = false;
-                }
+        //         if (_musoTarget == null)
+        //         {
+        //             _lineRenderer.enabled = false;
+        //         }
 
-            if (_musoTarget != null)
-            {
-                _lineRenderer.enabled = true;
-                // _musoTarget.MaterialController.Highlight();
-                _bezierLine.endPoint = _musoTarget.transform;
-            }
-        }
+        //     if (_musoTarget != null)
+        //     {
+        //         _lineRenderer.enabled = true;
+        //         // _musoTarget.MaterialController.Highlight();
+        //         _bezierLine.endPoint = _musoTarget.transform;
+        //     }
+        // }
     }
 
     protected override void OnEnable()
@@ -167,6 +166,10 @@ public class PlayerController : Controller,
         if(scene.name == SCENENAME.Hub)
         {
             Reset();
+            if(_animationStateMachine.IsInDeathState())
+            {
+                _animationStateMachine.InterruptState(AnimationStateType.Revive);
+            }
         }
     }
 
