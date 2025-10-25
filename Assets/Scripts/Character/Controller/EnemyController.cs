@@ -156,7 +156,7 @@ public class EnemyController : Controller, IPoolable
 
     public bool CheckSkill()
     {
-
+        if (_currentSkill == null) return false;
         if (_currentSkill.VFXInfo.UsingIndicator)
         {
             SpawnVFXEvent.Trigger(transform, "ATTACK_WARNING", new VFXInfo(new Vector3(0, .9f, 0), transform.rotation, Vector3.one, true, false));
@@ -208,6 +208,7 @@ public class EnemyController : Controller, IPoolable
 
     public override void Stun(float duration, Action onComplete = null)
     {
+        if (IsStunImmune) return;
         _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);
         AnimationStateMachine.SwitchState(AnimationStateType.Stagger);

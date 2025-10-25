@@ -14,7 +14,7 @@ namespace sc.splines.spawner.editor
     {
         public const int ASSET_ID = 305974;
         public const string ASSET_NAME = "Spline Spawner";
-        public const string VERSION = "1.1.0";
+        public const string VERSION = "1.1.2";
         
         public const string DOC_URL = "https://staggart.xyz/support/documentation/spline-spawner/";
         public const string FORUM_URL = "https://discussions.unity.com/t/1659478";

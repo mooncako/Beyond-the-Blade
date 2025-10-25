@@ -26,6 +26,7 @@ namespace sc.splines.spawner.editor
         private SerializedProperty respawningMode;
         private SerializedProperty root;
         private SerializedProperty hideInstances;
+        private SerializedProperty startupBehaviour;
         
         private SerializedProperty inputObjects;
         private SerializedProperty distributionSettings;
@@ -93,6 +94,7 @@ namespace sc.splines.spawner.editor
             respawningMode = serializedObject.FindProperty("respawningMode");
             root = serializedObject.FindProperty("root");
             hideInstances = serializedObject.FindProperty("hideInstances");
+            startupBehaviour = serializedObject.FindProperty("startupBehaviour");
             
             inputObjects = serializedObject.FindProperty("inputObjects");
             distributionSettings = serializedObject.FindProperty("distributionSettings");
@@ -268,7 +270,7 @@ namespace sc.splines.spawner.editor
             if (isAbleToSpawn == false)
             {
                 EditorGUILayout.HelpBox("Spawning is not possible." +
-                                        "\n\nThis spawner is part of a prefab instance, destroying objects that are part of a prefab instance is not allowed." +
+                                        "\n\nThe Root is part of a prefab instance, destroying objects that are part of a prefab instance is not allowed." +
                                         "\n\nEdit the source prefab, or set the \"Root\" to an external object.", MessageType.Error);
                 EditorGUILayout.Separator();
             }
@@ -337,7 +339,10 @@ namespace sc.splines.spawner.editor
 
                 using (new EditorGUILayout.HorizontalScope())
                 {
+                    Color color = GUI.color;
+                    if (!isAbleToSpawn) GUI.color = new Color(1, 0.25f, 0f, 1f);
                     EditorGUILayout.PropertyField(root);
+                    GUI.color = color;
                     if (GUILayout.Button("This", EditorStyles.miniButton, GUILayout.Width(50f)))
                     {
                         root.objectReferenceValue = spawner.gameObject;
@@ -351,6 +356,8 @@ namespace sc.splines.spawner.editor
                 }
                 EditorGUI.indentLevel--;
 
+                EditorGUILayout.PropertyField(startupBehaviour, GUILayout.MaxWidth(EditorGUIUtility.labelWidth + 160f));
+                
                 EditorGUILayout.Space();
 
                 DrawPrefabs();
@@ -413,6 +420,7 @@ namespace sc.splines.spawner.editor
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
+                isAbleToSpawn = spawner.IsAllowedToSpawn();
 
                 //EditorApplication.delayCall += RespawnTargets;
                 if(!inspectingPrefab) RespawnTargets();

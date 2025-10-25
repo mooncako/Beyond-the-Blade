@@ -93,6 +93,15 @@ namespace sc.splines.spawner.runtime
             }
         }
 
+        public enum StartupBehaviour
+        {
+            None,
+            Respawn,
+            RespawnRandomized
+        }
+        [Tooltip("Action executed in Start()")]
+        public StartupBehaviour startupBehaviour = StartupBehaviour.None;
+
         [UnityEngine.Serialization.FormerlySerializedAs("prefabs")]
         [Tooltip("List of prefab objects to spawn along the spline")]
         public List<SpawnableObject> inputObjects = new List<SpawnableObject>();
@@ -172,6 +181,17 @@ namespace sc.splines.spawner.runtime
 
         private partial void UnsubscribeSplineCallbacks();
 
+        private void Start()
+        {
+            if (startupBehaviour == StartupBehaviour.None) return;
+            
+            if(startupBehaviour == StartupBehaviour.RespawnRandomized) distributionSettings.RandomizeSeed();
+            if (startupBehaviour == StartupBehaviour.RespawnRandomized || startupBehaviour == StartupBehaviour.Respawn)
+            {
+                Respawn();
+            }
+        }
+
         private void OnEnable()
         {
             SubscribeSplineCallbacks();
@@ -199,9 +219,29 @@ namespace sc.splines.spawner.runtime
             var isPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(this.gameObject);
 
             //Child objects involved that cannot be destroyed
-            if (isPrefabInstance && root == this.transform) return false;
+            if (isPrefabInstance)
+            {
+                //Spawning in scene root
+                if (!root) return true;
+                
+                //Spawning still possible if the root is external
+                if (root != this.transform)
+                {
+                    //Though if that is also a prefab, disallow
+                    if (PrefabUtility.IsPartOfPrefabInstance(root.gameObject))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
             
-            return isPrefabInstance == false;
+            return true;
             #else
             return true;
             #endif
@@ -230,6 +270,8 @@ namespace sc.splines.spawner.runtime
         {
             if (!splineContainer || !IsAllowedToSpawn()) return;
 
+            //if(Application.isPlaying) Debug.Log($"{this.name} respawned", this);
+            
             splineCount = splineContainer.Splines.Count;
 
             //If the container transform was altered, the cached native splines will be required to update

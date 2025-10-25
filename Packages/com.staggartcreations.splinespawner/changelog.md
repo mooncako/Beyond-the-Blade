@@ -1,3 +1,21 @@
+1.1.2 (October 16th 2025)
+
+Added:
+- Startup behaviour options: None, Respawn and Respawn Randomized.
+- Mask: Update On Enable option, for runtime spawning functionality
+
+Changed:
+- Toggling masks now only triggers respawns if they are selected in Edit mode.
+
+Fixed:
+- Issue with spawners as child objects of other spawners being misinterpreted as orphaned objects.
+
+1.1.1 (October 6th 2025)
+
+Fixed:
+- Prefab spawning warning not refreshing when Root transform changes
+- Spawning not taking effect for prefabbed spawners, even if the Root transform was an external (non-prefab) object.
+
 1.1.0 (September 24th 2025)
 
 Added:

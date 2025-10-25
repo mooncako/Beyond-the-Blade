@@ -20,6 +20,7 @@ namespace sc.splines.spawner.editor
         private SerializedProperty margin;
         private SerializedProperty capRounding;
         private SerializedProperty overlay;
+        private SerializedProperty updateOnEnable;
         private SerializedProperty computeShader;
 
         
@@ -35,6 +36,7 @@ namespace sc.splines.spawner.editor
             margin = serializedObject.FindProperty("margin");
             capRounding = serializedObject.FindProperty("capRounding");
             overlay = serializedObject.FindProperty("overlay");
+            updateOnEnable = serializedObject.FindProperty("updateOnEnable");
             computeShader = serializedObject.FindProperty("computeShader");
             
             if(script.RequiresUpdate()) script.ForceUpdate();
@@ -148,6 +150,10 @@ namespace sc.splines.spawner.editor
 
                 EditorGUILayout.Space();
 
+                EditorGUILayout.PropertyField(updateOnEnable);
+                
+                EditorGUILayout.Space();
+                
                 EditorGUILayout.LabelField("Scene View", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(overlay);
             }

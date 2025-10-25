@@ -18,6 +18,46 @@ namespace sc.splines.spawner.editor
 {
     public static class SplineSpawnerEditor
     {
+        private static bool STARTUP_PERFORMED
+        {
+            get => SessionState.GetBool("SPLINE_SPAWNER_EDITOR_STARTED", false);
+            set => SessionState.SetBool("SPLINE_SPAWNER_EDITOR_STARTED", value);
+        }
+        
+        [InitializeOnLoadMethod]
+        static void Initialize()
+        {
+            if (STARTUP_PERFORMED == false)
+            {
+                AssetInfo.VersionChecking.CheckForUpdate();
+                STARTUP_PERFORMED = true;
+            }
+
+            SplineSpawnerMask.onStateChange += OnMaskToggle;
+        }
+        
+        private static void OnMaskToggle(SplineSpawnerMask instance, bool enabled)
+        {
+            //Debug.Log($"{instance.name}: {(enabled ? "Enabled" : "Disabled")}");
+
+            //Toggling a selected mask in the editor will trigger affected spawners to be respawned
+            if (Application.isPlaying == false)
+            {
+                GameObject[] selected = Selection.gameObjects;
+                int hashCode = instance.GetHashCode();
+                
+                for (int i = 0; i < selected.Length; i++)
+                {
+                    if (selected[i].GetHashCode() == hashCode)
+                    {
+                        Debug.Log($"[SplineSpawnerEditor] Mask {instance.name} toggled", instance);
+                        
+                        instance.RespawnAffectedSpawners();
+                    }
+                }
+            }
+        }
+        
         #if SPLINES
         #region Menu items
         private const string DEFAULT_PREFAB_GUID = "0d8f3ff3ffb9e7b48984d748f06a3215";

@@ -75,6 +75,10 @@ namespace sc.splines.spawner.runtime
         [Tooltip("Controls the visibility of the mask overlay in the scene view")]
         [Range(0f,1f)]
         public float overlay = 0.25f;
+
+        [Tooltip("When enabled toggling this mask will update any spawners affected by it. Only applies to Play mode or builds." +
+                 "Use this when looking to perform runtime spawning")]
+        public bool updateOnEnable;
         
         [Tooltip("Compute shader used for mask generation")]
         [HideInInspector]
@@ -104,6 +108,13 @@ namespace sc.splines.spawner.runtime
 
         private const string CS_RENDER_SDF_KERNEL_NAME = "RenderSDF";
         private const string CS_SAMPLE_SDF_KERNEL_NAME = "SampleSDF";
+        
+        public delegate void LoadEvent(SplineSpawnerMask instance, bool enabled);
+
+        /// <summary>
+        /// Enable and disable callbacks. The instance being passed is the Spline Spawner Mask being (de)activated.
+        /// </summary>
+        public static event LoadEvent onStateChange;
         
         [AttributeUsage(AttributeTargets.Field)]
         public class MaskLayerAttribute : PropertyAttribute
@@ -137,7 +148,10 @@ namespace sc.splines.spawner.runtime
                 //RenderSDFIfNeeded();
             }
             
-            if (gameObject.scene.isLoaded) RespawnAffectedSpawners();
+            //Ensuring that toggling the component on/off indeed affects spawners
+            if (updateOnEnable && gameObject.scene.isLoaded && Application.isPlaying) RespawnAffectedSpawners();
+            
+            onStateChange?.Invoke(this, true);
         }
 
         public void SetSplineContainer(SplineContainer container, bool forceUpdate = true)
@@ -488,6 +502,8 @@ namespace sc.splines.spawner.runtime
         public void RespawnAffectedSpawners()
         {
             List<SplineSpawner> spawners = GetSpawnersAffectedBy();
+            
+            //if(spawners.Count > 0) Debug.Log($"[Mask] {this.name} triggered {spawners.Count} respawns", this);
 
             foreach (SplineSpawner spawner in spawners)
             {
@@ -505,10 +521,10 @@ namespace sc.splines.spawner.runtime
             SplineContainer.SplineAdded -= OnSplineCountChanged;
             SplineContainer.SplineRemoved -= OnSplineCountChanged;
 
-            //Don't respawn during cleanup
-            if (!gameObject.scene.isLoaded) return;
+            //Ensuring that toggling the component on/off indeed affects spawners
+            if (updateOnEnable && gameObject.scene.isLoaded && Application.isPlaying) RespawnAffectedSpawners();
 
-            RespawnAffectedSpawners();
+            onStateChange?.Invoke(this, false);
         }
 
         [NonSerialized]
@@ -518,10 +534,9 @@ namespace sc.splines.spawner.runtime
         {
             if (!splineContainer) return;
             
-            if (splineContainer.transform.hasChanged || this.transform.hasChanged)
+            if (splineContainer.transform.hasChanged)
             {
                 splineContainer.transform.hasChanged = false;
-                this.transform.hasChanged = false;
                 
                 ForceUpdate();
                 RespawnAffectedSpawners();

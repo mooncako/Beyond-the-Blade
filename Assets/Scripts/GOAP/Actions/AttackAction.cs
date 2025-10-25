@@ -48,29 +48,40 @@ namespace CrashKonijn.Goap.GenTest
             if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack) && !data.Controller.IsSkillPlaying())
             {
 
-                if (!data.Controller.IsSkillNull())
+                data.Controller.CanAttack = false;
+                data.Controller.SetTargetPos(data.Target.Position);
+                data.Controller.ActivateSkill();
+                if (data.Controller.CheckSkill())
                 {
-                    data.Controller.CanAttack = false;
-                    data.Controller.SetTargetPos(data.Target.Position);
-                    data.Controller.ActivateSkill();
-                    if (data.Controller.CheckSkill())
+                    Tween.Delay(1).OnComplete(() =>
                     {
-                        Tween.Delay(1).OnComplete(() =>
+                        if (!data.Controller.IsSkillNull())
                         {
                             data.Controller.PlaySkillEffect();
                             data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
                             data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
-                        });
-                    }
-                    else
+                        }
+                        else
+                        {
+                            data.Controller.CanAttack = true;
+                            data.Controller.ToggleIsSkillPlaying(false);
+                        }
+
+                    });
+                }
+                else
+                {
+                    if (!data.Controller.IsSkillNull())
                     {
                         data.Controller.PlaySkillEffect();
                         data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
                         data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
                     }
+                    
                 }
-                
-                
+
+
+
 
             }
             
