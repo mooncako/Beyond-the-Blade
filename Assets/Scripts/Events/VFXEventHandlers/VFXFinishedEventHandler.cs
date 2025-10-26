@@ -9,6 +9,7 @@ public class VFXFinishedEventHandler : VFXOutputEventAbstractHandler
 {
     [HideInInspector] public UnityEvent OnSpawnFinished;
     [SerializeField, BoxGroup("References")] private VisualEffect _vfx;
+    [SerializeField, BoxGroup("Settings")] private float _delay = .5f;
     public override bool canExecuteInEditor => true;
 
     private Tween _delayTween;
@@ -21,7 +22,7 @@ public class VFXFinishedEventHandler : VFXOutputEventAbstractHandler
     public override void OnVFXOutputEvent(VFXEventAttribute eventAttribute)
     {
         _vfx.Stop();
-        _delayTween = Tween.Delay(.5f, () => OnSpawnFinished.Invoke());
+        _delayTween = Tween.Delay(_delay, () => OnSpawnFinished.Invoke());
 
     }
 

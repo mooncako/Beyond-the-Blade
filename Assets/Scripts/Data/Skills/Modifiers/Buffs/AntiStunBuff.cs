@@ -10,10 +10,7 @@ public class AntiStunBuff : ModifierSO
     //TODO: currently only works for player, add to enemy later
     public override void Perform(in ModifierContext context)
     {
-        if (context.Caster is PlayerController p)
-        {
-            ApplyStunImmunity(p);
-        }
+        ApplyStunImmunity(context.Caster);
     }
 
     private void ApplyStunImmunity(Controller controller)

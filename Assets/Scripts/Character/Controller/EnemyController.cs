@@ -144,17 +144,39 @@ public class EnemyController : Controller, IPoolable
             _currentSkill = CurrentWeapon.LoopBasicAttack();
             if (_currentSkill != null)
             {
-                SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
-                ApplySkillEffect();
                 _isSkillPlaying = true;
+
             }
-            
+
             // swapout animation in AnimationStateMachine
             //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-            
 
-            
         }
+    }
+
+    public bool CheckSkill()
+    {
+        if (_currentSkill == null) return false;
+        if (_currentSkill.VFXInfo.UsingIndicator)
+        {
+            SpawnVFXEvent.Trigger(transform, "ATTACK_WARNING", new VFXInfo(new Vector3(0, .9f, 0), transform.rotation, Vector3.one, true, false));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsSkillNull()
+    {
+        return _currentSkill == null;
+    }
+    
+    public void PlaySkillEffect()
+    {
+        SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
+        ApplySkillEffect();
     }
 
     protected override void OnParried(float duration)
@@ -186,6 +208,7 @@ public class EnemyController : Controller, IPoolable
 
     public override void Stun(float duration, Action onComplete = null)
     {
+        if (IsStunImmune) return;
         _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);
         AnimationStateMachine.SwitchState(AnimationStateType.Stagger);

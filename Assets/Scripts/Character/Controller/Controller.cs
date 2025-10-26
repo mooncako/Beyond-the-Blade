@@ -185,7 +185,6 @@ public class Controller : MonoBehaviour
             CameraShakeEvent.Trigger(new LightShake());
         }
 
-        _isSkillPlaying = false;
     }
 
     public virtual void SetTargetPos(Vector3 position)
@@ -196,6 +195,11 @@ public class Controller : MonoBehaviour
     public bool IsSkillPlaying()
     {
         return _isSkillPlaying;
+    }
+
+    public void ToggleIsSkillPlaying(bool toggle)
+    {
+        _isSkillPlaying = toggle;
     }
 
     [Button]

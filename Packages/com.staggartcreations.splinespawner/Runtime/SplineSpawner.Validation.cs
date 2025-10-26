@@ -32,13 +32,16 @@ namespace sc.splines.spawner.runtime
                 }
             }
             
-            SplineInstanceContainer[] childContainers = this.gameObject.GetComponentsInChildren<SplineInstanceContainer>();
-
-            for (int i = 0; i < childContainers.Length; i++)
+            //Scan only top level child objects
+            int childObjectCount = this.transform.childCount;
+            for (int i = 0; i < childObjectCount; i++)
             {
-                SplineInstanceContainer container = childContainers[i];
+                Transform child = transform.GetChild(i);
+                SplineInstanceContainer container = child.GetComponent<SplineInstanceContainer>();
                 
-                if (container.owner == null || container.owner != this)
+                if(!container) continue;
+                
+                if(container.owner == null || container.owner != this)
                 {
                     container.owner = this;
                     adopted++;
@@ -52,15 +55,17 @@ namespace sc.splines.spawner.runtime
             
             if (splineCount != containers.Count)
             {
-                //Debug.LogWarning($"Mismatching number of object containers ({containers.Count}) relative to the number of splines ({splineCount}). Recreating them now. This may happen if containers are manually deleted, or the spline container was changed.");
-                
-                for (var i = 0; i < containers.Count; i++)
+                //Debug.LogWarning($"Mismatching number of object containers ({containers.Count}) relative to the number of splines ({splineCount}). Synchronizing them now. This may happen if containers are manually deleted, or the spline container was changed.");
+
+                //Remove excess containers
+                for (int i = containers.Count - 1; i >= splineCount; i--)
                 {
                     containers[i].Destroy();
+                    containers.RemoveAt(i);
                 }
-                
-                containers.Clear();
-                for (int i = 0; i < splineCount; i++)
+
+                //Add missing containers
+                for (int i = containers.Count; i < splineCount; i++)
                 {
                     containers.Add(SplineInstanceContainer.Create(this, i));
                 }

@@ -110,10 +110,14 @@ namespace sc.splines.spawner.runtime
                     bounds.SetMinMax(minSum, maxSum);
                 }
             }
-            
+
             boundsMin = bounds.min;
             boundsMax = bounds.max;
-            boundsSize = bounds.size;
+            
+            //Counter the scale, since this'll be multiplied with the bounds size at later stages.
+            Vector3 objectScale = target.transform.localScale;
+            boundsSize = new float3(bounds.size.x / objectScale.x, bounds.size.y / objectScale.y, bounds.size.z / objectScale.z);
+            
             pivotOffset = -(float3)bounds.center;
         }
         

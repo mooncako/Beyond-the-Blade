@@ -71,8 +71,8 @@ namespace sc.splines.spawner.runtime
         public void Execute()
         {
             float trimLength = (trimming.x + trimming.y);
-            splineLength -= trimLength;
-
+            if(trimLength > 0) splineLength -= trimLength;
+            
             if (splineLength < 1f) return;
             
             //T-values of the trimming
@@ -85,14 +85,13 @@ namespace sc.splines.spawner.runtime
             if(useInstanceCount) m_spacing = splineLength / (float)instanceCount;
 
             //Set a starting value, otherwise an infinite loop may occur if only 1 prefab is used with a very low probability.
-            float lastOffset = 0;
-            //distanceTraveled += lastOffset * 0.5f;
+            float lastOffset = 0f;
             float lengthAlongSpline = 0;
             
-            uint i = 0;
-            while (distanceTraveled < splineLength)
+            while (distanceTraveled <= splineLength)
             {
                 float t = distanceTraveled / this.splineLength;
+                float remainingLength = (splineLength - distanceTraveled);
                 
                 t = math.clamp(t, 0.00001f, 0.99999f); //Ensure a tangent can always be derived
                 //Remap normalized (0-1) t-range to trimmed range
@@ -111,10 +110,11 @@ namespace sc.splines.spawner.runtime
                     {
                         m_spacing = random.NextFloat(spacingMinMax.x, spacingMinMax.y);
                     }
+                    
                     lengthAlongSpline = prefab.GetObjectLength() + m_spacing;
-
+                    
                     //Current prefab no longer fits on the spline, end here
-                    if ((splineLength - distanceTraveled) < lengthAlongSpline) return;
+                    if (lengthAlongSpline > remainingLength) break;
                     
                     float offset = 0;
                     /*
@@ -212,15 +212,14 @@ namespace sc.splines.spawner.runtime
                     }
 
                     spawnPoints.Add(spawnPoint);
-
                 }
-
-                //Ensure that the distance is always incremented
-                lastOffset =  math.max(0.02f, lengthAlongSpline);
                 
+                //LengthAlongSpline represents the length of the last spawned object. If no object was picked (low probability) an empty space is correctly created.
+                lastOffset = math.max(0.02f, lengthAlongSpline);
                 distanceTraveled += lastOffset;
-                i++;
             }
+            
+            //Debug.Log($"Spawned {spawnPoints.Length} {lengthAlongSpline}m objects on a {splineLength}m spline with {(splineLength - distanceTraveled)}m space left");
         }
         
         float GetYawDegrees(quaternion q)
