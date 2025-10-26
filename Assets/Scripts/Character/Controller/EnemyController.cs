@@ -182,7 +182,8 @@ public class EnemyController : Controller, IPoolable
     protected override void OnParried(float duration)
     {
         base.OnParried(duration);
-        Stun(duration);
+        Stun(duration, null, true);
+        ParrySuccessEvent.Trigger();
         CameraShakeEvent.Trigger(new LightShake());
     }
 
@@ -206,9 +207,9 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
-    public override void Stun(float duration, Action onComplete = null)
+    public override void Stun(float duration, Action onComplete = null, bool forceStun = false)
     {
-        if (IsStunImmune) return;
+        if (IsStunImmune && !forceStun) return;
         _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);
         AnimationStateMachine.SwitchState(AnimationStateType.Stagger);

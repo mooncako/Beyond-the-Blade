@@ -18,7 +18,8 @@ public class PlayerController : Controller,
     MMEventListener<LevelRandomizeCompleteEvent>,
     MMEventListener<SkillSwapEvent>,
     MMEventListener<AbilitySwapEvent>,
-    MMEventListener<AddNewAbilityEvent>
+    MMEventListener<AddNewAbilityEvent>,
+    MMEventListener<ParrySuccessEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -135,6 +136,7 @@ public class PlayerController : Controller,
         this.MMEventStartListening<SkillSwapEvent>();
         this.MMEventStartListening<AbilitySwapEvent>();
         this.MMEventStartListening<AddNewAbilityEvent>();
+        this.MMEventStartListening<ParrySuccessEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -146,6 +148,7 @@ public class PlayerController : Controller,
         this.MMEventStopListening<SkillSwapEvent>();
         this.MMEventStopListening<AbilitySwapEvent>();
         this.MMEventStopListening<AddNewAbilityEvent>();
+        this.MMEventStopListening<ParrySuccessEvent>();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
     }
@@ -209,6 +212,10 @@ public class PlayerController : Controller,
         {
             NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, false, CurrentWeapon.SkillDict[e.SkillId]);
         }
+    }
+    public void OnMMEvent(ParrySuccessEvent e)
+    {
+        SpawnVFXEvent.Trigger(AttackPoint, "PARRY_SUCCESS", new VFXInfo(new Vector3(0, 0.2f, 0.5f), Quaternion.identity, Vector3.one, false, false));
     }
 
     private void HandleRotation()
@@ -595,9 +602,9 @@ public class PlayerController : Controller,
         _matController.ResetDissolve();
     }
 
-    public override void Stun(float duration, Action onComplete = null)
+    public override void Stun(float duration, Action onComplete = null, bool forceStun = false)
     {
-        if (IsStunImmune) return;
+        if (IsStunImmune && !forceStun) return;
         
         _animationStateMachine.InterruptState(AnimationStateType.Stagger);
         Tween.Delay(duration).OnComplete(() =>

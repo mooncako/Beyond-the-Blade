@@ -265,7 +265,7 @@ public class Controller : MonoBehaviour
 
     }
 
-    public virtual void Stun(float duration, Action onComplete = null)
+    public virtual void Stun(float duration, Action onComplete = null, bool forceStun = false)
     {
         
     }
