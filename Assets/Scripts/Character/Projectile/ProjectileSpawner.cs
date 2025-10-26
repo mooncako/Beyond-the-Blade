@@ -10,13 +10,30 @@ using UnityEngine;
 public class ProjectileSpawner : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
-    [SerializeField, BoxGroup("References")] private List<ProjectilePrefabEntry> _projectilePrefabs;
-    [SerializeField, BoxGroup("Settings")] private PoolConfig _poolConfig;
+    
+    [SerializeField, BoxGroup("Projectiles"), TableList(ShowIndexLabels = true)]
+    [InfoBox("Add projectiles here - ID and Prefab only. Pool settings below apply to ALL projectiles.")]
+    private List<ProjectileEntry> _projectiles = new List<ProjectileEntry>();
+    
+    [SerializeField, BoxGroup("Pool Settings")]
+    [InfoBox("These settings apply to ALL projectiles in the list above")]
+    [Range(1, 50)]
+    private int _initialPoolSize = 10;
+    
+    [SerializeField, BoxGroup("Pool Settings")]
+    [Range(0, 100)]
+    private int _maxPoolSize = 30;
+    
+    [SerializeField, BoxGroup("Pool Settings")]
+    private bool _canExpand = true;
 
     [System.Serializable]
-    public class ProjectilePrefabEntry
+    public class ProjectileEntry
     {
+        [TableColumnWidth(100)]
         public string ID;
+        
+        [TableColumnWidth(200)]
         public GameObject Prefab;
     }
 
@@ -29,11 +46,11 @@ public class ProjectileSpawner : MonoBehaviour
 
     void Start()
     {
-        // Build dictionary for quick lookup
+        // Build dictionary and prefab list from single source
         _projectileDict = new Dictionary<string, GameObject>();
         List<GameObject> poolList = new List<GameObject>();
-
-        foreach (var entry in _projectilePrefabs)
+        
+        foreach (var entry in _projectiles)
         {
             if (!string.IsNullOrEmpty(entry.ID) && entry.Prefab != null)
             {
@@ -42,8 +59,8 @@ public class ProjectileSpawner : MonoBehaviour
             }
         }
 
-        // Initialize pool (same as DoppelgangerSpawner line 14-18)
-        _pool.InitializeRuntimePool(poolList, _poolConfig.InitialSize, _poolConfig.MaxSize, _poolConfig.CanExpand);
+        // Initialize pool with ALL prefabs and shared settings
+        _pool.InitializeRuntimePool(poolList, _initialPoolSize, _maxPoolSize, _canExpand);
     }
 
     /// <summary>
@@ -86,6 +103,18 @@ public class ProjectileSpawner : MonoBehaviour
     {
         // Return to pool (same as DoppelgangerSpawner line 38-40)
         _pool.Return(projectile);
+    }
+
+
+    //debug spawn projectile button 
+    [Button]
+    public void TestSpawnProjectile()
+    {
+
+        //spawn projectile, the projecttile last for 3 seconds and then destroy itself
+        ProjectileData data = new ProjectileData();
+        data.lifetime = 3f;
+        SpawnProjectile("Test", transform.position, transform.forward, gameObject, new ProjectileData());
     }
 }
 
