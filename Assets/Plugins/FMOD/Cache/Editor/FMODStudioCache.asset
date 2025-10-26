@@ -96,10 +96,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638970065112113285
+  lastModified: 638970730312734837
   FileSizes:
   - Name: Desktop
-    Value: 908
+    Value: 964
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -121,12 +121,13 @@ MonoBehaviour:
   - {fileID: -4554938467197485602}
   - {fileID: 1823962624617289361}
   - {fileID: -3810115227202331774}
+  - {fileID: 4759571373721339209}
   EditorParameters: []
   MasterBanks:
   - {fileID: 1667499214880025089}
   StringsBanks:
   - {fileID: -1138822804711436300}
-  cacheTime: 638970065112113285
+  cacheTime: 638970730312734837
   cacheVersion: 131632
 --- !u!114 &1667499214880025089
 MonoBehaviour:
@@ -143,10 +144,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638970065112113285
+  lastModified: 638970730312724861
   FileSizes:
   - Name: Desktop
-    Value: 16992
+    Value: 33504
   Exists: 1
 --- !u!114 &1823962624617289361
 MonoBehaviour:
@@ -175,3 +176,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 100
   Length: 600
+--- !u!114 &4759571373721339209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/PerfectParrySFX
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/PerfectParrySFX
+  Guid:
+    Data1: 760639426
+    Data2: 1222294234
+    Data3: -1741793372
+    Data4: 615940458
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 100
+  Length: 1885
