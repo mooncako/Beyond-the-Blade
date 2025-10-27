@@ -1,0 +1,69 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/StylishEsper/SkillWeb/Scripts/Editor/WebCreatorEditorWindow.uss?fileID=7433441132597879392&amp;guid=40d74786dc5359b4caff7255321ef07e&amp;type=3#WebCreatorEditorWindow" />
+    <Esper.SkillWeb.Editor.WebView name="WebView" style="position: absolute; width: 100%; height: 100%;" />
+    <uie:Toolbar style="justify-content: flex-end;">
+        <uie:ToolbarButton text="Save (CTRL + S)" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SaveButton" style="border-right-width: 1px; -unity-text-align: middle-left;" />
+    </uie:Toolbar>
+    <ui:VisualElement focusable="false" picking-mode="Ignore" style="flex-grow: 1; visibility: visible; display: flex; opacity: 1;">
+        <uie:Toolbar name="WebInspector" style="flex-grow: 0; height: auto; width: 300px; flex-direction: column; align-self: center; margin-top: 10px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; opacity: 0.8;">
+            <ui:TextField label="Web Name" name="WebNameField" style="flex-grow: 1; margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+        </uie:Toolbar>
+        <Esper.SkillWeb.Editor.DraggableEditorElement name="WebList" class="webList" style="border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; background-color: rgb(60, 60, 60); width: 300px; height: 400px; left: 20px; top: 20px; position: absolute; opacity: 0.8;">
+            <ui:Button text="-" parse-escape-sequences="true" display-tooltip-when-elided="true" name="WebListResizeButton" focusable="true" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 16px; width: 20px; height: 20px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; background-color: rgba(188, 188, 188, 0); align-self: flex-end;" />
+            <ui:VisualElement name="WebListContent" style="flex-grow: 1; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px;">
+                <uie:ToolbarSearchField name="SearchField" style="flex-grow: 0; width: 150px; align-self: flex-end;" />
+                <ui:ScrollView style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
+                    <ui:VisualElement name="WebListScrollContent" style="flex-grow: 1; padding-top: 6px; padding-right: 6px; padding-bottom: 0; padding-left: 6px; flex-shrink: 1;">
+                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" class="itemRoot">
+                            <ui:VisualElement class="itemContent">
+                                <ui:Label tabindex="-1" text="Web Name" parse-escape-sequences="true" display-tooltip-when-elided="true" class="itemLabel" style="flex-grow: 1; flex-shrink: 1; -unity-text-align: middle-left; font-size: 14px;" />
+                                <ui:Label tabindex="-1" text="ID: 0" parse-escape-sequences="true" display-tooltip-when-elided="true" class="itemLabel" style="flex-grow: 1; flex-shrink: 1; font-size: 12px; -unity-text-align: middle-right;" />
+                            </ui:VisualElement>
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:ScrollView>
+                <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; flex-direction: row;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="CreateButton" tooltip="Create New Attribute" style="height: 24px; width: 24px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px;">
+                        <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/StylishEsper/SkillWeb/Editor/Icons/icon_plus.png?fileID=2800000&amp;guid=192a6f85e4a07824ab3493996477f027&amp;type=3#icon_plus&quot;); flex-shrink: 0;" />
+                    </ui:Button>
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="DeleteButton" tooltip="Delete Attribute" style="height: 24px; width: 24px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; background-color: rgb(181, 69, 69); display: flex; margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px;">
+                        <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/StylishEsper/SkillWeb/Editor/Icons/icon_delete.png?fileID=2800000&amp;guid=6183bb79ae14d7949b4e2ae8d55b8863&amp;type=3#icon_delete&quot;); flex-shrink: 0;" />
+                    </ui:Button>
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-grow: 0; height: 24px; flex-direction: row; align-items: center; justify-content: center; border-left-color: rgb(35, 35, 35); border-right-color: rgb(35, 35, 35); border-top-color: rgb(35, 35, 35); border-bottom-color: rgb(35, 35, 35); flex-shrink: 0;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PreviousPageButton" class="paginationButton" style="background-image: url(&quot;project://database/Assets/StylishEsper/SkillWeb/Editor/Icons/left_icon.png?fileID=2800000&amp;guid=7cfbf676d9a06dc49baf34609e82b07a&amp;type=3#left_icon&quot;);" />
+                    <ui:Label tabindex="-1" text="1/1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PagesLabel" style="-unity-text-align: middle-center; font-size: 14px;" />
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextPageButton" class="paginationButton" style="background-image: url(&quot;project://database/Assets/StylishEsper/SkillWeb/Editor/Icons/right_icon.png?fileID=2800000&amp;guid=6a8490a5115c53046a77e4cb3bd3f512&amp;type=3#right_icon&quot;);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </Esper.SkillWeb.Editor.DraggableEditorElement>
+        <uie:Toolbar name="SkillFinder" style="height: 250px; width: 250px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; display: flex; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; flex-direction: column; position: absolute; opacity: 0.8;">
+            <uie:ToolbarSearchField name="FinderSearchField" style="flex-shrink: 1; height: 18px; width: 236px;" />
+            <ui:VisualElement style="flex-grow: 0; flex-direction: row;">
+                <uie:ToolbarMenu tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" text="Sizes" name="SizeMenu" class="filterRoot" />
+                <uie:ToolbarMenu tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" text="Tags" name="TagMenu" class="filterRoot" />
+            </ui:VisualElement>
+            <ui:ScrollView name="SkillScroll" horizontal-scroller-visibility="Hidden" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.5); margin-bottom: 0; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; margin-top: 3px; display: flex;">
+                <ui:VisualElement name="SkillContent" style="flex-grow: 1; padding-top: 6px; padding-right: 6px; padding-bottom: 0; padding-left: 6px; flex-shrink: 1;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" class="skillRoot">
+                        <ui:VisualElement class="itemContent">
+                            <ui:Label tabindex="-1" text="Web Name" parse-escape-sequences="true" display-tooltip-when-elided="true" class="itemLabel" style="-unity-text-align: middle-left; font-size: 14px; text-overflow: clip;" />
+                            <ui:Label tabindex="-1" text="ID: 0" parse-escape-sequences="true" display-tooltip-when-elided="true" class="itemLabel" style="flex-grow: 1; flex-shrink: 0; font-size: 12px; -unity-text-align: middle-right;" />
+                        </ui:VisualElement>
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:ScrollView>
+        </uie:Toolbar>
+        <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; width: 100%; height: 100%; position: absolute; justify-content: flex-end; align-items: flex-end;">
+            <Esper.SkillWeb.Editor.DraggableEditorElement name="DatasetContainer" style="background-color: rgb(60, 60, 60); width: 200px; height: 200px; opacity: 0.8; position: absolute; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: middle-left;">
+                <ui:VisualElement style="flex-grow: 0; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Dataset" parse-escape-sequences="true" display-tooltip-when-elided="true" style="flex-grow: 1; -unity-text-align: middle-left; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 5px;" />
+                    <ui:Button text="-" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DatasetResizeButton" focusable="true" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 16px; width: 20px; height: 20px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; background-color: rgba(188, 188, 188, 0); align-self: flex-end;" />
+                </ui:VisualElement>
+                <ui:ScrollView style="flex-grow: 1;">
+                    <ui:VisualElement name="DatasetContent" style="flex-grow: 1;" />
+                </ui:ScrollView>
+            </Esper.SkillWeb.Editor.DraggableEditorElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

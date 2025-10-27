@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/StylishEsper/SkillWeb/Scripts/Editor/WebViewUGUIEditor.uss?fileID=7433441132597879392&amp;guid=78d72a0ca5dc5ae4eb62ebb4783b9bc0&amp;type=3#WebViewUGUIEditor" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Label tabindex="-1" text="Loading" parse-escape-sequences="true" display-tooltip-when-elided="true" class="header" style="-unity-font-style: bold;" />
+        <ui:TextField picking-mode="Ignore" label="Web Name" name="WebNameField" class="field" />
+        <ui:Toggle label="Load On Start" name="LoadOnStartField" class="field" />
+        <ui:Label tabindex="-1" text="Testing" parse-escape-sequences="true" display-tooltip-when-elided="true" class="header" style="-unity-font-style: bold;" />
+        <ui:Toggle label="Enable Testing" name="EnableTestingField" class="field" />
+        <ui:IntegerField label="Starting Skill Points" value="0" name="StartingSkillPointsField" class="field" />
+        <ui:Label tabindex="-1" text="Prefabs" parse-escape-sequences="true" display-tooltip-when-elided="true" class="header" style="-unity-font-style: bold;" />
+        <uie:ObjectField label="Tiny Skill Prefab" name="SkillNodeTinyPrefabField" type="Esper.SkillWeb.UI.UGUI.SkillNodeUGUI, SkillWeb" class="field" />
+        <uie:ObjectField label="Small Skill Prefab" name="SkillNodeSmallPrefabField" type="Esper.SkillWeb.UI.UGUI.SkillNodeUGUI, SkillWeb" class="field" />
+        <uie:ObjectField label="Medium Skill Prefab" name="SkillNodeMediumPrefabField" type="Esper.SkillWeb.UI.UGUI.SkillNodeUGUI, SkillWeb" class="field" />
+        <uie:ObjectField label="Large Skill Prefab" name="SkillNodeLargePrefabField" type="Esper.SkillWeb.UI.UGUI.SkillNodeUGUI, SkillWeb" class="field" />
+        <uie:ObjectField label="Giant Skill Prefab" name="SkillNodeGiantPrefabField" type="Esper.SkillWeb.UI.UGUI.SkillNodeUGUI, SkillWeb" class="field" />
+        <ui:ListView show-border="true" reorderable="true" show-foldout-header="true" show-add-remove-footer="true" reorder-mode="Animated" header-title="Connection Prefabs" name="ConnectionPrefabsField" class="field" />
+        <ui:Label tabindex="-1" text="Components" parse-escape-sequences="true" display-tooltip-when-elided="true" class="header" style="-unity-font-style: bold;" />
+        <uie:ObjectField label="Content" name="ContentField" type="UnityEngine.RectTransform, UnityEngine.CoreModule" class="field" />
+        <uie:ObjectField label="Graph Content" name="GraphContentField" type="UnityEngine.RectTransform, UnityEngine.CoreModule" class="field" />
+        <uie:ObjectField label="Bounds" name="BoundsField" type="UnityEngine.RectTransform, UnityEngine.CoreModule" class="field" />
+        <ui:Label tabindex="-1" text="Automatic Bounds" parse-escape-sequences="true" display-tooltip-when-elided="true" class="header" style="-unity-font-style: bold;" />
+        <ui:Toggle label="Clamp Inside Screen" name="ClampInsideScreenField" value="false" class="field" />
+    </ui:VisualElement>
+</ui:UXML>
