@@ -13,8 +13,6 @@ public class FissurePlayer : MonoBehaviour
     [SerializeField, BoxGroup("Settings")] private float _colorChangeTime = 2f;
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _screenCrackEdgeCurve;
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _screenCrackOffsetCurve;
-    [SerializeField, BoxGroup("Settings")] private float _maxTwirlStrength = 5.5f;
-    [SerializeField, BoxGroup("Settings")] private float _minTwirlStrength = 1.5f;
     [SerializeField, BoxGroup("Settings"), ColorUsage(true, true)] private Color _backMatStartColor;
     [SerializeField, BoxGroup("Settings"), ColorUsage(true, true)] private Color _backMatEndColor;
 
@@ -46,7 +44,6 @@ public class FissurePlayer : MonoBehaviour
         _backMatColorTween.Stop();
 
         _fissureOpenTween = Tween.Custom(0, 1, duration: _fissureOpenTime, onValueChange: prog => _frontRenderer.material.SetFloat("_FissureProgress", _fissureProgressCurve.Evaluate(prog)));
-        _backRenderer.material.SetFloat("_TwirlStrength", Random.Range(_minTwirlStrength, _maxTwirlStrength));
         Tween.Delay(_fissureOpenTime / 2).OnComplete(() =>
         {
             _screenCrackTween = Tween.Custom(0, 1, duration: _fissureOpenTime, onValueChange: prog =>

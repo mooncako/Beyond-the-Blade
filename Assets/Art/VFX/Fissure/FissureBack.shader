@@ -1,10 +1,14 @@
-Shader "Shader/FissureBack"
+Shader "Shader Graphs/FissureBack"
 {
     Properties
     {
+        _InnerEdge("InnerEdge", Range(0, 1)) = 0.21
         [HDR]_VoidColor("VoidColor", Color) = (0.1315238, 0, 2.297397, 0)
         _Speed("Speed", Range(0, 1)) = 0.093
-        _TwirlStrength("TwirlStrength", Float) = 1
+        _FresnelPower("FresnelPower", Float) = 5
+        [HDR]_BorderColor("BorderColor", Color) = (0, 0.5321255, 1, 0)
+        _Seed("Seed", Vector) = (0, 0, 0, 0)
+        [NoScaleOffset]_TwirlTexture("TwirlTexture", 2D) = "white" {}
         [HideInInspector]_EmissionColor("Color", Color) = (1, 1, 1, 1)
         [HideInInspector]_RenderQueueType("Float", Float) = 4
         [HideInInspector][ToggleUI]_AddPrecomputedVelocity("Boolean", Float) = 0
@@ -139,6 +143,7 @@ Shader "Shader/FissureBack"
             #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
             #define HAVE_MESH_MODIFICATION
@@ -244,7 +249,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -255,6 +264,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -294,6 +305,8 @@ Shader "Shader/FissureBack"
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
              float3 positionRWS;
+             float3 normalWS;
+             float4 tangentWS;
              float4 texCoord0;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
@@ -307,16 +320,21 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
         struct PackedVaryingsMeshToPS
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-             float4 texCoord0 : INTERP0;
-             float3 positionRWS : INTERP1;
+             float4 tangentWS : INTERP0;
+             float4 texCoord0 : INTERP1;
+             float3 positionRWS : INTERP2;
+             float3 normalWS : INTERP3;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
             #endif
@@ -327,8 +345,10 @@ Shader "Shader/FissureBack"
             PackedVaryingsMeshToPS output;
             ZERO_INITIALIZE(PackedVaryingsMeshToPS, output);
             output.positionCS = input.positionCS;
+            output.tangentWS.xyzw = input.tangentWS;
             output.texCoord0.xyzw = input.texCoord0;
             output.positionRWS.xyz = input.positionRWS;
+            output.normalWS.xyz = input.normalWS;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -339,8 +359,10 @@ Shader "Shader/FissureBack"
         {
             VaryingsMeshToPS output;
             output.positionCS = input.positionCS;
+            output.tangentWS = input.tangentWS.xyzw;
             output.texCoord0 = input.texCoord0.xyzw;
             output.positionRWS = input.positionRWS.xyz;
+            output.normalWS = input.normalWS.xyz;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -369,18 +391,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -393,22 +440,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -425,6 +482,21 @@ Shader "Shader/FissureBack"
         VoronoiPrecise3D_float(_Property_c0874fd2920f9c8baf4b91be875c7ebb_Out_0_Vector3, _Property_1d30cf63fc420f8f99a0cbe60bb88392_Out_0_Float, _Property_01df2bf4a6ebe48c8c34049cb8b5c130_Out_0_Float, _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Value_3_Float, _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float);
         Value_1 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Value_3_Float;
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
+        }
+        
+        void Unity_Absolute_float3(float3 In, out float3 Out)
+        {
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -453,6 +525,7 @@ Shader "Shader/FissureBack"
         SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
         {
             SurfaceDescription surface = (SurfaceDescription)0;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -460,25 +533,47 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -590,6 +685,7 @@ Shader "Shader/FissureBack"
             output.positionSS = input.positionCS;       // input.positionCS is SV_Position
         
             output.positionRWS =                input.positionRWS;
+            output.tangentToWorld =             BuildTangentToWorld(input.tangentWS, input.normalWS);
             output.texCoord0 =                  input.texCoord0;
         
         #if UNITY_ANY_INSTANCING_ENABLED
@@ -628,14 +724,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -989,12 +1089,14 @@ Shader "Shader/FissureBack"
         
             // Attribute
             #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define ATTRIBUTES_NEED_TEXCOORD1
             #define ATTRIBUTES_NEED_TEXCOORD2
             #define ATTRIBUTES_NEED_TEXCOORD3
             #define VARYINGS_NEED_POSITION_WS
             #define VARYINGS_NEED_POSITIONPREDISPLACEMENT_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
             #define VARYINGS_NEED_TEXCOORD1
             #define VARYINGS_NEED_TEXCOORD2
@@ -1106,7 +1208,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -1117,6 +1223,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -1139,6 +1247,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -1147,6 +1256,7 @@ Shader "Shader/FissureBack"
         {
              float3 positionOS : POSITION;
              float3 normalOS : NORMAL;
+             float4 tangentOS : TANGENT;
              float4 uv0 : TEXCOORD0;
              float4 uv1 : TEXCOORD1;
              float4 uv2 : TEXCOORD2;
@@ -1160,6 +1270,8 @@ Shader "Shader/FissureBack"
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
              float3 positionRWS;
              float3 positionPredisplacementRWS;
+             float3 normalWS;
+             float4 tangentWS;
              float4 texCoord0;
              float4 texCoord1;
              float4 texCoord2;
@@ -1173,20 +1285,25 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
         struct PackedVaryingsMeshToPS
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-             float4 texCoord0 : INTERP0;
-             float4 texCoord1 : INTERP1;
-             float4 texCoord2 : INTERP2;
-             float4 texCoord3 : INTERP3;
-             float3 positionRWS : INTERP4;
-             float3 positionPredisplacementRWS : INTERP5;
+             float4 tangentWS : INTERP0;
+             float4 texCoord0 : INTERP1;
+             float4 texCoord1 : INTERP2;
+             float4 texCoord2 : INTERP3;
+             float4 texCoord3 : INTERP4;
+             float3 positionRWS : INTERP5;
+             float3 positionPredisplacementRWS : INTERP6;
+             float3 normalWS : INTERP7;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
             #endif
@@ -1197,12 +1314,14 @@ Shader "Shader/FissureBack"
             PackedVaryingsMeshToPS output;
             ZERO_INITIALIZE(PackedVaryingsMeshToPS, output);
             output.positionCS = input.positionCS;
+            output.tangentWS.xyzw = input.tangentWS;
             output.texCoord0.xyzw = input.texCoord0;
             output.texCoord1.xyzw = input.texCoord1;
             output.texCoord2.xyzw = input.texCoord2;
             output.texCoord3.xyzw = input.texCoord3;
             output.positionRWS.xyz = input.positionRWS;
             output.positionPredisplacementRWS.xyz = input.positionPredisplacementRWS;
+            output.normalWS.xyz = input.normalWS;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -1213,12 +1332,14 @@ Shader "Shader/FissureBack"
         {
             VaryingsMeshToPS output;
             output.positionCS = input.positionCS;
+            output.tangentWS = input.tangentWS.xyzw;
             output.texCoord0 = input.texCoord0.xyzw;
             output.texCoord1 = input.texCoord1.xyzw;
             output.texCoord2 = input.texCoord2.xyzw;
             output.texCoord3 = input.texCoord3.xyzw;
             output.positionRWS = input.positionRWS.xyz;
             output.positionPredisplacementRWS = input.positionPredisplacementRWS.xyz;
+            output.normalWS = input.normalWS.xyz;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -1247,18 +1368,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -1271,22 +1417,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -1305,9 +1461,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -1333,6 +1514,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -1340,29 +1522,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -1469,6 +1677,7 @@ Shader "Shader/FissureBack"
         
             output.positionRWS =                input.positionRWS;
             output.positionPredisplacementRWS = input.positionPredisplacementRWS;
+            output.tangentToWorld =             BuildTangentToWorld(input.tangentWS, input.normalWS);
             output.texCoord0 =                  input.texCoord0;
             output.texCoord1 =                  input.texCoord1;
             output.texCoord2 =                  input.texCoord2;
@@ -1510,14 +1719,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -1984,7 +2197,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -1995,6 +2212,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -2017,6 +2236,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -2050,8 +2270,11 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -2118,18 +2341,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -2142,22 +2390,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -2176,9 +2434,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -2210,6 +2493,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -2217,29 +2501,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -2390,14 +2700,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -2759,6 +3073,7 @@ Shader "Shader/FissureBack"
             #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
             #define HAVE_MESH_MODIFICATION
@@ -2864,7 +3179,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -2875,6 +3194,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -2897,6 +3218,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -2915,6 +3237,8 @@ Shader "Shader/FissureBack"
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
              float3 positionRWS;
+             float3 normalWS;
+             float4 tangentWS;
              float4 texCoord0;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
@@ -2928,16 +3252,21 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
         struct PackedVaryingsMeshToPS
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-             float4 texCoord0 : INTERP0;
-             float3 positionRWS : INTERP1;
+             float4 tangentWS : INTERP0;
+             float4 texCoord0 : INTERP1;
+             float3 positionRWS : INTERP2;
+             float3 normalWS : INTERP3;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
             #endif
@@ -2948,8 +3277,10 @@ Shader "Shader/FissureBack"
             PackedVaryingsMeshToPS output;
             ZERO_INITIALIZE(PackedVaryingsMeshToPS, output);
             output.positionCS = input.positionCS;
+            output.tangentWS.xyzw = input.tangentWS;
             output.texCoord0.xyzw = input.texCoord0;
             output.positionRWS.xyz = input.positionRWS;
+            output.normalWS.xyz = input.normalWS;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -2960,8 +3291,10 @@ Shader "Shader/FissureBack"
         {
             VaryingsMeshToPS output;
             output.positionCS = input.positionCS;
+            output.tangentWS = input.tangentWS.xyzw;
             output.texCoord0 = input.texCoord0.xyzw;
             output.positionRWS = input.positionRWS.xyz;
+            output.normalWS = input.normalWS.xyz;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -2990,18 +3323,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -3014,22 +3372,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -3048,9 +3416,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -3082,6 +3475,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -3089,29 +3483,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -3223,6 +3643,7 @@ Shader "Shader/FissureBack"
             output.positionSS = input.positionCS;       // input.positionCS is SV_Position
         
             output.positionRWS =                input.positionRWS;
+            output.tangentToWorld =             BuildTangentToWorld(input.tangentWS, input.normalWS);
             output.texCoord0 =                  input.texCoord0;
         
         #if UNITY_ANY_INSTANCING_ENABLED
@@ -3261,14 +3682,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -3746,7 +4171,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -3757,6 +4186,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -3778,6 +4209,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -3811,8 +4243,11 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -3879,18 +4314,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -3903,22 +4363,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -3937,9 +4407,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -3971,6 +4466,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -3978,29 +4474,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -4151,14 +4673,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -4633,7 +5159,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -4644,6 +5174,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -4665,6 +5197,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -4698,8 +5231,11 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -4766,18 +5302,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -4790,22 +5351,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -4824,9 +5395,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -4858,6 +5454,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -4865,29 +5462,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -5038,14 +5661,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -5430,6 +6057,7 @@ Shader "Shader/FissureBack"
             #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
             #define HAVE_MESH_MODIFICATION
@@ -5535,7 +6163,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -5546,6 +6178,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -5567,6 +6201,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -5585,6 +6220,8 @@ Shader "Shader/FissureBack"
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
              float3 positionRWS;
+             float3 normalWS;
+             float4 tangentWS;
              float4 texCoord0;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
@@ -5598,16 +6235,21 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
         struct PackedVaryingsMeshToPS
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-             float4 texCoord0 : INTERP0;
-             float3 positionRWS : INTERP1;
+             float4 tangentWS : INTERP0;
+             float4 texCoord0 : INTERP1;
+             float3 positionRWS : INTERP2;
+             float3 normalWS : INTERP3;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
             #endif
@@ -5618,8 +6260,10 @@ Shader "Shader/FissureBack"
             PackedVaryingsMeshToPS output;
             ZERO_INITIALIZE(PackedVaryingsMeshToPS, output);
             output.positionCS = input.positionCS;
+            output.tangentWS.xyzw = input.tangentWS;
             output.texCoord0.xyzw = input.texCoord0;
             output.positionRWS.xyz = input.positionRWS;
+            output.normalWS.xyz = input.normalWS;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -5630,8 +6274,10 @@ Shader "Shader/FissureBack"
         {
             VaryingsMeshToPS output;
             output.positionCS = input.positionCS;
+            output.tangentWS = input.tangentWS.xyzw;
             output.texCoord0 = input.texCoord0.xyzw;
             output.positionRWS = input.positionRWS.xyz;
+            output.normalWS = input.normalWS.xyz;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -5660,18 +6306,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -5684,22 +6355,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -5718,9 +6399,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -5753,6 +6459,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -5760,29 +6467,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             {
                 surface.VTPackedFeedback = float4(1.0f,1.0f,1.0f,1.0f);
             }
@@ -5897,6 +6630,7 @@ Shader "Shader/FissureBack"
             output.positionSS = input.positionCS;       // input.positionCS is SV_Position
         
             output.positionRWS =                input.positionRWS;
+            output.tangentToWorld =             BuildTangentToWorld(input.tangentWS, input.normalWS);
             output.texCoord0 =                  input.texCoord0;
         
         #if UNITY_ANY_INSTANCING_ENABLED
@@ -5935,14 +6669,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -6305,6 +7043,7 @@ Shader "Shader/FissureBack"
             #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
             #define HAVE_MESH_MODIFICATION
@@ -6410,7 +7149,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -6421,6 +7164,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -6443,6 +7188,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
@@ -6461,6 +7207,8 @@ Shader "Shader/FissureBack"
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
              float3 positionRWS;
+             float3 normalWS;
+             float4 tangentWS;
              float4 texCoord0;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
@@ -6474,16 +7222,21 @@ Shader "Shader/FissureBack"
         };
         struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
         struct PackedVaryingsMeshToPS
         {
             SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-             float4 texCoord0 : INTERP0;
-             float3 positionRWS : INTERP1;
+             float4 tangentWS : INTERP0;
+             float4 texCoord0 : INTERP1;
+             float3 positionRWS : INTERP2;
+             float3 normalWS : INTERP3;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
              uint instanceID : CUSTOM_INSTANCE_ID;
             #endif
@@ -6494,8 +7247,10 @@ Shader "Shader/FissureBack"
             PackedVaryingsMeshToPS output;
             ZERO_INITIALIZE(PackedVaryingsMeshToPS, output);
             output.positionCS = input.positionCS;
+            output.tangentWS.xyzw = input.tangentWS;
             output.texCoord0.xyzw = input.texCoord0;
             output.positionRWS.xyz = input.positionRWS;
+            output.normalWS.xyz = input.normalWS;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -6506,8 +7261,10 @@ Shader "Shader/FissureBack"
         {
             VaryingsMeshToPS output;
             output.positionCS = input.positionCS;
+            output.tangentWS = input.tangentWS.xyzw;
             output.texCoord0 = input.texCoord0.xyzw;
             output.positionRWS = input.positionRWS.xyz;
+            output.normalWS = input.normalWS.xyz;
             #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
             output.instanceID = input.instanceID;
             #endif
@@ -6536,18 +7293,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -6560,22 +7342,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -6594,9 +7386,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -6628,6 +7445,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -6635,29 +7453,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -6769,6 +7613,7 @@ Shader "Shader/FissureBack"
             output.positionSS = input.positionCS;       // input.positionCS is SV_Position
         
             output.positionRWS =                input.positionRWS;
+            output.tangentToWorld =             BuildTangentToWorld(input.tangentWS, input.normalWS);
             output.texCoord0 =                  input.texCoord0;
         
         #if UNITY_ANY_INSTANCING_ENABLED
@@ -6807,14 +7652,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -7177,8 +8026,11 @@ Shader "Shader/FissureBack"
             // Defines
         
             // Attribute
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
         
@@ -7283,7 +8135,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -7294,6 +8150,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -7320,14 +8178,18 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
         
             struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -7355,18 +8217,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -7379,22 +8266,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -7413,9 +8310,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -7433,6 +8355,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -7440,29 +8363,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -7479,14 +8428,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -7834,8 +8787,11 @@ Shader "Shader/FissureBack"
             // Defines
         
             // Attribute
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
         
@@ -7940,7 +8896,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -7951,6 +8911,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -7977,14 +8939,18 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
         
             struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -8012,18 +8978,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -8036,22 +9027,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -8070,9 +9071,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -8090,6 +9116,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -8097,29 +9124,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -8136,14 +9189,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -8494,8 +9551,11 @@ Shader "Shader/FissureBack"
             // Defines
         
             // Attribute
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
         
@@ -8600,7 +9660,11 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
-        float _TwirlStrength;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -8611,6 +9675,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -8637,14 +9703,18 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
         
             struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -8672,18 +9742,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -8696,22 +9791,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -8730,9 +9835,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -8750,6 +9880,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -8757,29 +9888,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -8796,14 +9953,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -9155,8 +10316,11 @@ Shader "Shader/FissureBack"
             // Defines
         
             // Attribute
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
         
@@ -9261,7 +10425,12 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
         float _TwirlStrength;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -9272,6 +10441,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -9300,14 +10471,18 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
         
             struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -9335,18 +10510,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -9359,22 +10559,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -9393,9 +10603,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -9413,6 +10648,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -9420,29 +10656,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -9459,14 +10721,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
@@ -9786,6 +11052,7 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/Raytracing/Shaders/RayTracingCommon.hlsl"
         	#include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPassRayTracingDebug.hlsl"
         
             ENDHLSL
@@ -9852,8 +11119,11 @@ Shader "Shader/FissureBack"
             // Defines
         
             // Attribute
+            #define ATTRIBUTES_NEED_NORMAL
+            #define ATTRIBUTES_NEED_TANGENT
             #define ATTRIBUTES_NEED_TEXCOORD0
             #define VARYINGS_NEED_POSITION_WS
+            #define VARYINGS_NEED_TANGENT_TO_WORLD
             #define VARYINGS_NEED_TEXCOORD0
         
         
@@ -9958,7 +11228,12 @@ Shader "Shader/FissureBack"
             CBUFFER_START(UnityPerMaterial)
         float4 _VoidColor;
         float _Speed;
+        float _FresnelPower;
+        float4 _BorderColor;
+        float2 _Seed;
         float _TwirlStrength;
+        float4 _TwirlTexture_TexelSize;
+        float _InnerEdge;
         float4 _EmissionColor;
         float _UseShadowThreshold;
         float4 _DoubleSidedConstants;
@@ -9969,6 +11244,8 @@ Shader "Shader/FissureBack"
         
         
         // Object and Global properties
+        TEXTURE2D(_TwirlTexture);
+        SAMPLER(sampler_TwirlTexture);
         
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
@@ -9994,14 +11271,18 @@ Shader "Shader/FissureBack"
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/ClassicNoise3D.hlsl"
         #include_with_pragmas "Assets/SharedAssets/Shaders/NoisyNodes/HLSL/Voronoi3D.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonLighting.hlsl"
         
             // --------------------------------------------------
             // Structs and Packing
         
             struct SurfaceDescriptionInputs
         {
+             float3 ObjectSpaceNormal;
+             float3 WorldSpaceNormal;
              float3 ObjectSpaceViewDirection;
              float3 WorldSpaceViewDirection;
+             float3 AbsoluteWorldSpacePosition;
              float4 uv0;
              float3 TimeParameters;
         };
@@ -10029,18 +11310,43 @@ Shader "Shader/FissureBack"
             Out = smoothstep(Edge1, Edge2, In);
         }
         
-        void Unity_Multiply_float_float(float A, float B, out float Out)
+        void Unity_DotProduct_float3(float3 A, float3 B, out float Out)
         {
-            Out = A * B;
+            Out = dot(A, B);
         }
         
-        void Unity_Twirl_float(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
+        void Unity_SampleGradientV1_float(Gradient Gradient, float Time, out float4 Out)
         {
-            float2 delta = UV - Center;
-            float angle = Strength * length(delta);
-            float x = cos(angle) * delta.x - sin(angle) * delta.y;
-            float y = sin(angle) * delta.x + cos(angle) * delta.y;
-            Out = float2(x + Center.x + Offset.x, y + Center.y + Offset.y);
+            // convert to OkLab if we need perceptual color space.
+            float3 color = lerp(Gradient.colors[0].rgb, LinearToOklab(Gradient.colors[0].rgb), Gradient.type == 2);
+        
+            [unroll]
+            for (int c = 1; c < Gradient.colorsLength; c++)
+            {
+                float colorPos = saturate((Time - Gradient.colors[c - 1].w) / (Gradient.colors[c].w - Gradient.colors[c - 1].w)) * step(c, Gradient.colorsLength - 1);
+                float3 color2 = lerp(Gradient.colors[c].rgb, LinearToOklab(Gradient.colors[c].rgb), Gradient.type == 2);
+                color = lerp(color, color2, lerp(colorPos, step(0.01, colorPos), Gradient.type % 2)); // grad.type == 1 is fixed, 0 and 2 are blends.
+            }
+            color = lerp(color, OklabToLinear(color), Gradient.type == 2);
+        
+        #ifdef UNITY_COLORSPACE_GAMMA
+            color = LinearToSRGB(color);
+        #endif
+        
+            float alpha = Gradient.alphas[0].x;
+            [unroll]
+            for (int a = 1; a < Gradient.alphasLength; a++)
+            {
+                float alphaPos = saturate((Time - Gradient.alphas[a - 1].y) / (Gradient.alphas[a].y - Gradient.alphas[a - 1].y)) * step(a, Gradient.alphasLength - 1);
+                alpha = lerp(alpha, Gradient.alphas[a].x, lerp(alphaPos, step(0.01, alphaPos), Gradient.type % 2));
+            }
+        
+            Out = float4(color, alpha);
+        }
+        
+        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A * B;
         }
         
         void Unity_Multiply_float3_float3(float3 A, float3 B, out float3 Out)
@@ -10053,22 +11359,32 @@ Shader "Shader/FissureBack"
             Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
         }
         
-        struct Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float
+        struct Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float
         {
         };
         
-        void SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float(float3 Vector3_7940555B, float3 Vector3_A38714DF, float Vector1_783686F, Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float IN, out float Value_0)
+        void SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(float3 Vector3_7940555B, float Vector1_1B8B9078, Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float IN, out float Value_0)
         {
         float3 _Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3 = Vector3_7940555B;
-        float _Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float = Vector1_783686F;
+        float _Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float = Vector1_1B8B9078;
         float3 _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3;
-        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_b7b2f840f16efa8d8e0bed63f6d3f02f_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
-        float3 _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3 = Vector3_A38714DF;
-        float _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
-        PerlinNoise3DPeriodic_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _Property_bbb8bb8a4086538d95ec2bb100926c19_Out_0_Vector3, _PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
-        float _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
-        Unity_Remap_float(_PerlinNoise3DPeriodicCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float);
-        Value_0 = _Remap_3d93546d37e2a884a25d1a45ed8b2023_Out_3_Float;
+        Unity_Multiply_float3_float3(_Property_44999cc87708de82a26b39ae1da975ec_Out_0_Vector3, (_Property_dad5add45a7fa785be976f925bc5a5da_Out_0_Float.xxx), _Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3);
+        float _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float;
+        PerlinNoise3D_float(_Multiply_1d17f1db9ddb2d8481679237f2442ac2_Out_2_Vector3, _PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float);
+        float _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        Unity_Remap_float(_PerlinNoise3DCustomFunction_1d714aea6ba122808f5efcabfce18252_Out_1_Float, float2 (-1.15, 1.15), float2 (0, 1), _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float);
+        Value_0 = _Remap_af84172fa44e378facaf1384fe5d8f4d_Out_3_Float;
+        }
+        
+        void Unity_Multiply_float_float(float A, float B, out float Out)
+        {
+            Out = A * B;
+        }
+        
+        void Unity_RandomRange_float(float2 Seed, float Min, float Max, out float Out)
+        {
+             float randomno =  frac(sin(dot(Seed, float2(12.9898, 78.233)))*43758.5453);
+             Out = lerp(Min, Max, randomno);
         }
         
         struct Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float
@@ -10087,9 +11403,34 @@ Shader "Shader/FissureBack"
         Cells_2 = _VoronoiPrecise3DCustomFunction_f3778cac851e5b82b5979141914b8445_Cells_4_Float;
         }
         
-        void Unity_Multiply_float4_float4(float4 A, float4 B, out float4 Out)
+        void Unity_Absolute_float3(float3 In, out float3 Out)
         {
-            Out = A * B;
+            Out = abs(In);
+        }
+        
+        void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+        {
+            Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+        }
+        
+        float3 Unity_HDRP_GetEmissionHDRColor_float(float3 ldrColor, float luminanceIntensity, float exposureWeight)
+        {
+            float3 hdrColor = ldrColor * luminanceIntensity;
+        
+            #ifdef SHADERGRAPH_PREVIEW
+            float inverseExposureMultiplier = 1.0;
+            #else
+            float inverseExposureMultiplier = GetInverseCurrentExposureMultiplier();
+            #endif
+        
+            // Inverse pre-expose using _EmissiveExposureWeight weight
+            hdrColor = lerp(hdrColor * inverseExposureMultiplier, hdrColor, exposureWeight);
+            return hdrColor;
+        }
+        
+        void Unity_Add_float4(float4 A, float4 B, out float4 Out)
+        {
+            Out = A + B;
         }
         
             // Graph Vertex
@@ -10107,6 +11448,7 @@ Shader "Shader/FissureBack"
         {
             SurfaceDescription surface = (SurfaceDescription)0;
             float4 _Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_VoidColor) : _VoidColor;
+            float _Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float = _InnerEdge;
             float4 _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4 = IN.uv0;
             float2 _Swizzle_054563945a0a4f688fce11f0c067b0c8_Out_1_Vector2 = _UV_ce55b36e72754a339073e4c05a64b551_Out_0_Vector4.xy;
             float _Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float;
@@ -10114,29 +11456,55 @@ Shader "Shader/FissureBack"
             float _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float;
             Unity_OneMinus_float(_Distance_c4ffb139341a42d3b5cf9eacb7ebf32c_Out_2_Float, _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float);
             float _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float;
-            Unity_Smoothstep_float(float(0.21), float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
-            float _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float = _TwirlStrength;
-            float _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float = _Speed;
-            float _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float;
-            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_dd3435956a064c54bbdde0bd11195b89_Out_0_Float, _Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float);
-            float2 _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2;
-            Unity_Twirl_float(IN.uv0.xy, float2 (0.5, 0.5), _Property_a2876ba841464f7fa3d65d390aef9458_Out_0_Float, (_Multiply_c28d553cfcfb48d496b162c7fd167ea6_Out_2_Float.xx), _Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2);
-            Bindings_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329;
-            float _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float;
-            SG_Perlinnoise3Dperiodic_f1f55b6989e234e419183b7312ac98c3_float((float3(_Twirl_0e88a4d326db4b1190cdf3fd5e21bb42_Out_4_Vector2, 0.0)), float3 (10, 10, 10), float(13.37), _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329, _Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float);
+            Unity_Smoothstep_float(_Property_16eef79ff58443149895b35d0a88bdb2_Out_0_Float, float(1), _OneMinus_ddb5d9db7caf4b62a568bde921ce8df6_Out_1_Float, _Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float);
+            Gradient _Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient = NewGradient(0, 4, 2, float4(0, 0, 0, 0.271931),float4(0.01568037, 0.01568037, 0.01568037, 0.4678416),float4(0.1071531, 0.1071531, 0.1071531, 0.6052644),float4(1, 1, 1, 1),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0),float4(0, 0, 0, 0), float2(1, 0),float2(1, 1),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0),float2(0, 0));
+            float _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float;
+            Unity_DotProduct_float3(IN.ObjectSpaceViewDirection, IN.ObjectSpaceNormal, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float);
+            float4 _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4;
+            Unity_SampleGradientV1_float(_Gradient_c34cf660310448768ec81f4600b23ad8_Out_0_Gradient, _DotProduct_a9da63c888204935a4f48734c8f433f6_Out_2_Float, _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4);
+            float4 _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4;
+            Unity_Multiply_float4_float4((_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float.xxxx), _SampleGradient_55be3ad199724950a8ea6fef206482f3_Out_2_Vector4, _Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4);
+            Bindings_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a;
+            float _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float;
+            SG_Perlinnoise3D_a9d0e810228171349a3ac07147d8e5a8_float(IN.ObjectSpaceViewDirection, float(10), _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a, _Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float);
             float3 _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3;
-            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3Dperiodic_11e440bf26de4c3485c0b3969e4e7329_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            Unity_Multiply_float3_float3(IN.ObjectSpaceViewDirection, (_Perlinnoise3D_2ef838cde24a44709261ea9a8b27b71a_Value_0_Float.xxx), _Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3);
+            float _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float = _Speed;
+            float _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float;
+            Unity_Multiply_float_float(IN.TimeParameters.x, _Property_ba2d1376c19c40fbadc820d0fb721b2e_Out_0_Float, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float);
+            float2 _Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2 = _Seed;
+            float _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float;
+            Unity_RandomRange_float(_Property_2cfd9c61936548ee85383d83df6beba0_Out_0_Vector2, float(26.96), float(45.6), _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float);
             Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float;
             float _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float;
-            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, IN.TimeParameters.x, float(15.99), _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
-            float _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
-            Unity_Multiply_float_float(_Smoothstep_c41c6d39dc2d4ffdb25085c12ad99efd_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float);
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Multiply_69f96c9f7a0c42dc849cb6a4562c1f6e_Out_2_Vector3, _Multiply_972bec3a2e4045fabdfe031341bb86a6_Out_2_Float, _RandomRange_f106151978f44fb29a96aa5d6ed49c70_Out_3_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Value_1_Float, _Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float);
+            float4 _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Multiply_41ac645f27f44e63bad0c6171eae2689_Out_2_Vector4, (_Voronoiprecisenoise3D_f47c074d44614ac082fde0af92af746a_Cells_2_Float.xxxx), _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4);
             float4 _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4;
-            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, (_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float.xxxx), _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            Unity_Multiply_float4_float4(_Property_d09e7f2c2a774dbd93cc943fa6a50940_Out_0_Vector4, _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, _Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4);
+            float4 _Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4 = IsGammaSpace() ? LinearToSRGB(_BorderColor) : _BorderColor;
+            float3 _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3;
+            Unity_Absolute_float3(IN.AbsoluteWorldSpacePosition, _Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3);
+            Bindings_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float;
+            float _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float;
+            SG_Voronoiprecisenoise3D_cf19a184f7b476448807f17724b543af_float(_Absolute_63648fa9872644aa973fb29c5f563d60_Out_1_Vector3, IN.TimeParameters.x, float(6.2), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Value_1_Float, _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float);
+            float _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float;
+            Unity_Smoothstep_float(float(-0.41), float(1), _Voronoiprecisenoise3D_558c89b2c8864e7989b946a30894f5f1_Cells_2_Float, _Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float);
+            float _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float = _FresnelPower;
+            float _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float;
+            Unity_FresnelEffect_float(IN.WorldSpaceNormal, IN.WorldSpaceViewDirection, _Property_82bfb359e6494ff08a54e8c08976a6f1_Out_0_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float);
+            float _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float;
+            Unity_Multiply_float_float(_Smoothstep_5e97616f0a19459b9491b96a21be8928_Out_3_Float, _FresnelEffect_2d6f355635c540ddb1979786af942137_Out_3_Float, _Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float);
+            float4 _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4;
+            Unity_Multiply_float4_float4(_Property_e0f9565d1eaa452fb638faa34cc517eb_Out_0_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4);
+            float3 _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3 = Unity_HDRP_GetEmissionHDRColor_float((_Multiply_c830107a56a244ddb418529801929bdf_Out_2_Vector4.xyz).xyz, float(3), float(0));
+            float4 _Add_0b088d988049415c84334d987e692959_Out_2_Vector4;
+            Unity_Add_float4(_Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Vector4, (_Multiply_4f82bb0eed3147b38e80899ad2bdfff3_Out_2_Float.xxxx), _Add_0b088d988049415c84334d987e692959_Out_2_Vector4);
             surface.BaseColor = (_Multiply_c99894632a3d4233816d32eda945021b_Out_2_Vector4.xyz);
-            surface.Emission = float3(0, 0, 0);
-            surface.Alpha = _Multiply_bb7e464894574e7bb998e736a52f3bfa_Out_2_Float;
+            surface.Emission = _EmissionNode_87074dafd5ff4d39bf4005b1089a56e4_Output_0_Vector3;
+            surface.Alpha = (_Add_0b088d988049415c84334d987e692959_Out_2_Vector4).x;
             return surface;
         }
         
@@ -10153,14 +11521,18 @@ Shader "Shader/FissureBack"
             SurfaceDescriptionInputs output;
             ZERO_INITIALIZE(SurfaceDescriptionInputs, output);
         
+            output.WorldSpaceNormal =                           normalize(input.tangentToWorld[2].xyz);
             #if defined(SHADER_STAGE_RAY_TRACING)
+            output.ObjectSpaceNormal =                          mul(output.WorldSpaceNormal, (float3x3) ObjectToWorld3x4());
             #else
+            output.ObjectSpaceNormal =                          normalize(mul(output.WorldSpaceNormal, (float3x3) UNITY_MATRIX_M));           // transposed multiplication by inverse matrix to handle normal scale
             #endif
             output.WorldSpaceViewDirection =                    normalize(viewWS);
             output.ObjectSpaceViewDirection =                   TransformWorldToObjectDir(output.WorldSpaceViewDirection);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif
+            output.AbsoluteWorldSpacePosition =                 GetAbsolutePositionWS(input.positionRWS);
         #if SHADERPASS != SHADERPASS_FOG_VOLUME_VOXELIZATION
         #else
         #endif

@@ -119,6 +119,43 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!84 &93735808
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &129081560
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -627,7 +664,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!135 &617600572
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -672,7 +709,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f43f98a7fc757a34892dd06a9fd315fe, type: 2}
+  - {fileID: 2100000, guid: f6ef961011c024543afead12434683e2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -711,49 +748,12 @@ Transform:
   m_GameObject: {fileID: 617600571}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.70804155, z: -0, w: 0.7061708}
-  m_LocalPosition: {x: -0.03, y: 0.582, z: -6.754}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -1.82, y: -0.68, z: -12.24}
+  m_LocalScale: {x: 4.4592605, y: 4.4592605, z: 4.4592605}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90.152, z: 0}
---- !u!84 &693406860
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &696217425
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3358,6 +3358,50 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 872214332758329216, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 2.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.01700002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.10500002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0029997826
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.5752165
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.81301004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.082137614
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.03733882
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -111.693
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -24.828003
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058168360373581543, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 28.524994
+      objectReference: {fileID: 0}
     - target: {fileID: 6671288248795671037, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.73
@@ -3398,6 +3442,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8376610062471809750, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 8996568106118870683, guid: 37a8b571b03f9bd48b591ca6e4b8b751, type: 3}
       propertyPath: m_Name
       value: Fissure
