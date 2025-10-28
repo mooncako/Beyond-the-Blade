@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5937366774161203833}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.71724766, y: -0.04214815, z: 0.07364754, w: 0.69163245}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.81301004, y: 0.082137614, z: -0.03733882, w: 0.5752165}
+  m_LocalPosition: {x: 0.01700002, y: -0.10500002, z: 0.0029997826}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6671288248795671037}
-  m_LocalEulerAnglesHint: {x: -2.404, y: 3.081, z: 13.897}
+  m_LocalEulerAnglesHint: {x: -111.693, y: -24.828003, z: 28.524994}
 --- !u!198 &872214332758329216
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -287,7 +287,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 2.75
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4882,7 +4882,7 @@ ParticleSystemRenderer:
   m_VertexStreams: 00010304
   m_UseCustomTrailVertexStreams: 0
   m_TrailVertexStreams: 00010304
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -9978,7 +9978,5 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _maxTwirlStrength: 5.5
-  _minTwirlStrength: 1.5
   _backMatStartColor: {r: 0, g: 50.181023, b: 766.9961, a: 0}
   _backMatEndColor: {r: 19.074512, g: 0, b: 191.74904, a: 0}
