@@ -445,7 +445,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -498,7 +498,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -551,9 +551,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotation:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
-      minScalar: 0
+      minMaxState: 3
+      scalar: 6.283185
+      minScalar: -6.283185
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -607,7 +607,7 @@ ParticleSystem:
     maxNumParticles: 1
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
-    rotation3D: 0
+    rotation3D: 1
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
@@ -4917,9 +4917,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5937366774161203833}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.81301004, y: 0.082137614, z: -0.03733882, w: 0.5752165}
+  m_LocalRotation: {x: -0.8693313, y: 0.13898279, z: -0.21537659, w: 0.4225635}
   m_LocalPosition: {x: 0.01700002, y: -0.10500002, z: 0.0029997826}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1129, y: 1, z: 3.247019}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6671288248795671037}
@@ -10227,7 +10227,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -10280,7 +10280,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -10333,9 +10333,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotation:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
-      minScalar: 0
+      minMaxState: 3
+      scalar: 6.283185
+      minScalar: -6.283185
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10389,7 +10389,7 @@ ParticleSystem:
     maxNumParticles: 1
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
-    rotation3D: 0
+    rotation3D: 1
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
@@ -14739,8 +14739,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.8352169
-      value: 0.7401547
+      time: 0.50913006
+      value: 0.74852294
       inSlope: Infinity
       outSlope: Infinity
       tangentMode: 1
@@ -14748,8 +14748,17 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.9457125
-      value: 0.82991445
+      time: 0.6811593
+      value: 0.8154699
+      inSlope: Infinity
+      outSlope: Infinity
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9384661
+      value: 0.88849187
       inSlope: Infinity
       outSlope: Infinity
       tangentMode: 1
@@ -14759,8 +14768,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 3.133052
-      outSlope: 3.133052
+      inSlope: 1.8121406
+      outSlope: 1.8121406
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -14818,7 +14827,7 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 0.6009633
-      value: 0.52980655
+      value: 0.644
       inSlope: Infinity
       outSlope: Infinity
       tangentMode: 103
@@ -14827,9 +14836,9 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.599
-      inSlope: 0.17340115
-      outSlope: 0.17340115
+      value: 0.644
+      inSlope: 0
+      outSlope: 0
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -14853,7 +14862,7 @@ MonoBehaviour:
       outWeight: 0.52173907
     - serializedVersion: 3
       time: 1
-      value: 0.25
+      value: 0.11
       inSlope: 3.044528
       outSlope: 3.044528
       tangentMode: 0
