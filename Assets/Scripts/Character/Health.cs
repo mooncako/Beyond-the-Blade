@@ -55,11 +55,11 @@ public class Health : MonoBehaviour
         PlayerOnHealthChangeEvent.Trigger(this);
     }
 
-    public void Damage(DamageInfo info)
+    public void Damage(DamageInfo info, bool isForce = false)
     {
         if (_health <= 0) return;
         
-        if (!IsDamageable)
+        if (!IsDamageable && !isForce)
         {
             if (_controller is PlayerController p)
             {

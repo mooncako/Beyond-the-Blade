@@ -5,6 +5,7 @@ using Animancer;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityUtils;
 
 public class EnemyController : Controller, IPoolable
@@ -12,6 +13,7 @@ public class EnemyController : Controller, IPoolable
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
     
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
+    [SerializeField, FoldoutGroup("Base Reference")] public NavMeshAgent Agent;
 
     
     [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
@@ -27,6 +29,7 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnValidate();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+        if (Agent == null) Agent = GetComponent<NavMeshAgent>();
 
         if (_brain == null) _brain = GetComponent<Brain>();
         if ((_attackableMask & (1 << 7)) == 0)
