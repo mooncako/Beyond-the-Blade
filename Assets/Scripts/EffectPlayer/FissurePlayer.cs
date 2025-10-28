@@ -1,6 +1,7 @@
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.VFX;
 
 public class FissurePlayer : MonoBehaviour
@@ -24,22 +25,15 @@ public class FissurePlayer : MonoBehaviour
     [SerializeField, BoxGroup("Settings"), ColorUsage(true, true)] private Color _backMatStartColor;
     [SerializeField, BoxGroup("Settings"), ColorUsage(true, true)] private Color _backMatEndColor;
 
+    [HideInInspector] public UnityEvent OnFissureOpen;
+
     private Tween _fissureOpenTween;
     private Tween _screenCrackTween;
     private Tween _backMatColorTween;
     private Tween _delayTween1;
     private Tween _delayTween2;
 
-    void OnValidate()
-    {
 
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
 
     void OnDisable()
     {
@@ -51,7 +45,7 @@ public class FissurePlayer : MonoBehaviour
     }
 
     [Button]
-    private void Play()
+    public void Play()
     {
         _fissureBack.Stop();
         _fissureFront.Stop();
@@ -72,8 +66,13 @@ public class FissurePlayer : MonoBehaviour
         {
             _frontRenderer.material.SetFloat("_FissureProgress", _fissureProgressCurve.Evaluate(prog));
             _crackRenderer.material.SetFloat("_FissureProgress", _crackProgressCurve.Evaluate(prog));
+        }).OnComplete(() =>
+        {
+            OnFissureOpen.Invoke();
         });
+
         _delayTween1 = Tween.Delay(_fissureOpenTime / 3).OnComplete(() => _fracture.Play());
+        
         _delayTween2 = Tween.Delay(_fissureOpenTime / 2).OnComplete(() =>
         {
             _screenCrackTween = Tween.Custom(0, 1, duration: _fissureOpenTime, onValueChange: prog =>

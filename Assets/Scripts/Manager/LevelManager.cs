@@ -212,9 +212,14 @@ public class LevelManager : MMSingleton<LevelManager>,
                 break;
         }
     }
-    
+
     private bool IsNextLevelBossRoom()
     {
         return CurrentLevelIndex == 4 || CurrentLevelIndex == 9 || CurrentLevelIndex == 14;
+    }
+
+    public Vector3 GetCurrentPickupSpawnPos(Vector3 offset)
+    {
+        return new Vector3(_currentLevel.PickupSpawnPosition.position.x + offset.x, _currentLevel.PickupSpawnPosition.position.y + offset.y, _currentLevel.PickupSpawnPosition.position.z + offset.z);
     }
 }
