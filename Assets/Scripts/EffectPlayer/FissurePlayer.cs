@@ -6,9 +6,12 @@ public class FissurePlayer : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private ParticleSystem _fissureFront;
     [SerializeField, BoxGroup("References")] private ParticleSystem _fissureBack;
+    [SerializeField, BoxGroup("References")] private ParticleSystem _fissureCrack;
     [SerializeField, BoxGroup("References")] private ParticleSystemRenderer _frontRenderer;
     [SerializeField, BoxGroup("References")] private ParticleSystemRenderer _backRenderer;
+    [SerializeField, BoxGroup("References")] private ParticleSystemRenderer _crackRenderer;
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _fissureProgressCurve;
+    [SerializeField, BoxGroup("Settings")] private AnimationCurve _crackProgressCurve;
     [SerializeField, BoxGroup("Settings")] private float _fissureOpenTime = .8f;
     [SerializeField, BoxGroup("Settings")] private float _colorChangeTime = 2f;
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _screenCrackEdgeCurve;
@@ -36,14 +39,19 @@ public class FissurePlayer : MonoBehaviour
     {
         _fissureBack.Stop();
         _fissureFront.Stop();
+        _fissureCrack.Stop();
         _fissureFront.Play();
         _fissureBack.Play();
+        _fissureCrack.Play();
 
         _fissureOpenTween.Stop();
         _screenCrackTween.Stop();
         _backMatColorTween.Stop();
 
-        _fissureOpenTween = Tween.Custom(0, 1, duration: _fissureOpenTime, onValueChange: prog => _frontRenderer.material.SetFloat("_FissureProgress", _fissureProgressCurve.Evaluate(prog)));
+        _fissureOpenTween = Tween.Custom(0, 1, duration: _fissureOpenTime, onValueChange: prog => {
+            _frontRenderer.material.SetFloat("_FissureProgress", _fissureProgressCurve.Evaluate(prog));
+            _crackRenderer.material.SetFloat("_FissureProgress", _crackProgressCurve.Evaluate(prog));
+        });
         Tween.Delay(_fissureOpenTime / 2).OnComplete(() =>
         {
             _screenCrackTween = Tween.Custom(0, 1, duration: _fissureOpenTime, onValueChange: prog =>
