@@ -97,10 +97,14 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
             _torii.SetActive(true);
             SetPortalData();
             _portalVFX.Play();
-            _portalTween = Tween.Custom(0, 1, duration: .5f, onValueChange: prog =>
+            Tween.Delay(.3f).OnComplete(() =>
             {
-                _portalVFX.SetFloat("PortalProg", prog);
+                _portalTween = Tween.Custom(0, 1, duration: 1f, onValueChange: prog =>
+                {
+                    _portalVFX.SetFloat("PortalProg", prog);
+                });
             });
+            
             _isOn = true;
         });
     }
