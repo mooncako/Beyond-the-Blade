@@ -1,16 +1,26 @@
 using MoreMountains.Tools;
+using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 
 public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
 {
+    [SerializeField, BoxGroup("References")] private VisualEffect _portalVFX;
+    [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenVFX;
+    [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenParticleVFX;
+    [SerializeField, BoxGroup("References")] private GameObject _torii;
+
     [SerializeField, BoxGroup("Settings")] private string _levelName;
     [SerializeField, BoxGroup("Settings")] private bool _isNewSession;
     [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
+
+    private Tween _toriiGenTween;
+    private Tween _portalTween;
 
     void OnValidate()
     {
@@ -26,16 +36,24 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
         {
             _isOn = true;
         }
+        else
+        {
+            _portalVFX.Stop();
+        }
     }
 
     void OnEnable()
     {
         this.MMEventStartListening<GateOpenEvent>();
+        _toriiGenVFX.Play();
+        
     }
 
     void OnDisable()
     {
         this.MMEventStopListening<GateOpenEvent>();
+        _toriiGenTween.Stop();
+        _portalTween.Stop();
     }
 
     void OnTriggerEnter(Collider other)
@@ -61,7 +79,56 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
 
     public void OnMMEvent(GateOpenEvent e)
     {
-        _isOn = true;
         //Open animation, vfx ...etc
+        OpenGate();
+    }
+
+    [Button]
+    private void OpenGate()
+    {
+        _toriiGenTween = Tween.Custom(0, 1, duration: .8f, onValueChange: prog =>
+        {
+            _toriiGenVFX.SetFloat("GenProg", prog);
+        }).OnComplete(() =>
+        {
+            _toriiGenParticleVFX.Play();
+            _toriiGenVFX.SetFloat("Alpha", 0);
+            _toriiGenVFX.Stop();
+            _torii.SetActive(true);
+            SetPortalData();
+            _portalVFX.Play();
+            _portalTween = Tween.Custom(0, 1, duration: .5f, onValueChange: prog =>
+            {
+                _portalVFX.SetFloat("PortalProg", prog);
+            });
+            _isOn = true;
+        });
+    }
+
+    private void SetPortalData()
+    {
+        switch(_levelType)
+        {
+            case LevelType.Reguler:
+                _portalVFX.SetInt("Icon", 0);
+                _portalVFX.SetVector4("IconColor", PORTALCOLOR.Reguler * 20);
+                _portalVFX.SetVector4("VoidColor", PORTALCOLOR.Reguler * 3.4f);
+                break;
+            case LevelType.Shop:
+                _portalVFX.SetInt("Icon", 1);
+                _portalVFX.SetVector4("IconColor", PORTALCOLOR.Shop * 20);
+                _portalVFX.SetVector4("VoidColor", PORTALCOLOR.Shop * 3.4f);
+                break;
+            case LevelType.Recover:
+                _portalVFX.SetInt("Icon", 2);
+                _portalVFX.SetVector4("IconColor", PORTALCOLOR.Recover * 20);
+                _portalVFX.SetVector4("VoidColor", PORTALCOLOR.Recover * 3.4f);
+                break;
+            case LevelType.Boss:
+                _portalVFX.SetInt("Icon", 3);
+                _portalVFX.SetVector4("IconColor", PORTALCOLOR.Boss * 20);
+                _portalVFX.SetVector4("VoidColor", PORTALCOLOR.Boss * 3.4f);
+                break;
+        }
     }
 }

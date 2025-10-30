@@ -175,7 +175,22 @@ public class LevelManager : MMSingleton<LevelManager>,
         if (e.State == EventStateType.OnEventEnd)
         {
             CalculateExitTypes();
+
+            if (IsNextLevelBossRoom())
+            {
+                Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[0].transform.position, _currentLevel.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
+                gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
+            }
+            else
+            {
+                for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
+                {
+                    Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[i].transform.position, _currentLevel.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
+                    gate.SetLevelName(SceneManager.GetActiveScene().name, _exitsLevelType[i]);
+                }
+            }
         }
+ 
     }
 
     public void OnMMEvent(EnterNewLevelEvent e)
@@ -188,19 +203,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         _doOnce = true;
         //TODO: Spawn exits
 
-        if (IsNextLevelBossRoom())
-        {
-            Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[0].transform.position, _currentLevel.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
-            gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
-        }
-        else
-        {
-            for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
-            {
-                Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[i].transform.position, _currentLevel.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
-                gate.SetLevelName(SceneManager.GetActiveScene().name, _exitsLevelType[i]);
-            }
-        }
+        
     }
 
     public void OnMMEvent(SpawnRewardEvent e)

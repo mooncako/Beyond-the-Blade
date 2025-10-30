@@ -11,7 +11,7 @@ public class RoomClearFeedbackPlayer : MonoBehaviour,
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _timeScaleCurve;
 
     private Tween _timeScaleTween;
-
+ 
     void OnEnable()
     {
         this.MMEventStartListening<RoomClearedEvent>();
