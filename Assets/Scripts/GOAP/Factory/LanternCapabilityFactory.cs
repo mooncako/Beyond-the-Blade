@@ -31,6 +31,9 @@ public class LanternCapabilityFactory : CapabilityFactory
         builder.AddGoal<KillPlayerCautiousGoal>()
             .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
 
+        builder.AddGoal<KillPlayerWithProjectileGoal>()
+            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
+
         builder.AddGoal<StrafeGoal>()
             .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
     }
@@ -45,10 +48,19 @@ public class LanternCapabilityFactory : CapabilityFactory
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<HeavyAttackEnergy>(Comparison.SmallerThanOrEqual, 5)
+            .AddEffect<HeavyAttackEnergy>(EffectType.Decrease)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(2f)
             .SetBaseCost(4);
         
+        builder.AddAction<FireProjectileAction>()
+            .SetTarget<PlayerTarget>()
+            .AddEffect<PlayerHealth>(EffectType.Decrease)
+            .AddEffect<HeavyAttackEnergy>(EffectType.Increase)
+            .SetStoppingDistance(5f)
+            .SetBaseCost(3);
+
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
