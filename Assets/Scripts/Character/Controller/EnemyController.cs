@@ -155,6 +155,25 @@ public class EnemyController : Controller, IPoolable
             //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
 
         }
+
+    }
+    
+    public void ActivateProjectile()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.GetProjectile();
+            if (_currentSkill != null)
+            {
+                _isSkillPlaying = true;
+
+            }
+
+            // swapout animation in AnimationStateMachine
+            //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
+
+        }
     }
 
     public bool CheckSkill()

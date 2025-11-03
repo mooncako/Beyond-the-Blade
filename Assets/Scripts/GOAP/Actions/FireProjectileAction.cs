@@ -1,6 +1,7 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
+using PrimeTween;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
@@ -40,7 +41,49 @@ namespace CrashKonijn.Goap.GenTest
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
-            return ActionRunState.Completed;
+            if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack) && !data.Controller.IsSkillPlaying())
+            {
+
+                data.Controller.CanAttack = false;
+                data.Controller.SetTargetPos(data.Target.Position);
+                data.Controller.ActivateProjectile();
+                if (data.Controller.CheckSkill())
+                {
+                    Tween.Delay(1).OnComplete(() =>
+                    {
+                        if (!data.Controller.IsSkillNull())
+                        {
+                            data.Controller.PlaySkillEffect();
+                            data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
+                            data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+                        }
+                        else
+                        {
+                            data.Controller.CanAttack = true;
+                            data.Controller.ToggleIsSkillPlaying(false);
+                        }
+
+                    });
+                }
+                else
+                {
+                    if (!data.Controller.IsSkillNull())
+                    {
+                        data.Controller.PlaySkillEffect();
+                        data.AnimationStateMachine.SetAction(data.Controller.CurrentWeapon.GetAnimationClip(data.Controller.GetCurrentSkillAnimationID()), AnimationStateType.Attack, data.Controller.GetCurrentSkill());
+                        data.AnimationStateMachine.InterruptState(AnimationStateType.Attack);
+                    }
+                    
+                }
+
+
+
+
+            }
+            
+
+            data.Controller.Stop();
+            return data.AnimationStateMachine.IsInAttackActionState() ? ActionRunState.Continue : ActionRunState.Completed;
         }
 
         // This method is called when the action is completed

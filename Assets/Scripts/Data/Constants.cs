@@ -51,6 +51,7 @@ public static class AVAILABLESKILLKEY
     public const int Ability = 2;
     public const int Execution = 3;
     public const int Dash = 4;
+    public const int Projectile = 5;
 }
 
 public static class RARITYCOLOR
