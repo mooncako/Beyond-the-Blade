@@ -108,6 +108,27 @@ public class Weapon : MonoBehaviour
         return null;
     }
 
+    public Skill GetProjectile()
+    {
+        if (_animationDatabase == null) return null;
+        if (SkillDatabase == null) return null;
+        if (!WeaponSkillDict.ContainsKey(AVAILABLESKILLKEY.Projectile)) return null;
+        if (AvailableSkills.Count == 0) return null;
+
+        foreach (string key in WeaponSkillDict[AVAILABLESKILLKEY.Projectile])
+        {
+            if (!AvailableSkills[key].IsInCooldown)
+                if (SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
+                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDict[AvailableSkills[key].SkillId].AnimationID))
+                {
+                    StartCoroutine(SkillCooldownCO(key, SkillDict[AvailableSkills[key].SkillId].Cooldown));
+                    _skill = SkillDict[AvailableSkills[key].SkillId];
+                    return _skill;
+                }
+        }
+        return null;
+    }
+
     public Skill GetExecutionSkill()
     {
         if (_animationDatabase == null) return null;
