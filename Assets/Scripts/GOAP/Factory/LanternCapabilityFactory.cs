@@ -45,9 +45,8 @@ public class LanternCapabilityFactory : CapabilityFactory
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
-            .AddCondition<HeavyAttackEnergy>(Comparison.GreaterThanOrEqual, 5)
+            .AddCondition<PlayerDistance>(Comparison.SmallerThanOrEqual, 1)
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
-            .AddEffect<HeavyAttackEnergy>(EffectType.Decrease)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(2f)
             .SetBaseCost(2);
@@ -56,7 +55,6 @@ public class LanternCapabilityFactory : CapabilityFactory
             .SetTarget<PlayerTarget>()
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .AddEffect<HeavyAttackEnergy>(EffectType.Increase)
             .SetStoppingDistance(20f)
             .SetBaseCost(3);
 
@@ -88,7 +86,8 @@ public class LanternCapabilityFactory : CapabilityFactory
         builder.AddTargetSensor<StrafeTargetSensor>()
             .SetTarget<StrafeTarget>();
 
-        
+        builder.AddWorldSensor<TargetDistanceSensor>()
+            .SetKey<PlayerDistance>();
     }
 
 

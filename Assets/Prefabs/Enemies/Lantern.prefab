@@ -294,6 +294,7 @@ GameObject:
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 4932681416210436455}
   - component: {fileID: 5162801268352820049}
+  - component: {fileID: 2277548745975462270}
   m_Layer: 8
   m_Name: Lantern
   m_TagString: Untagged
@@ -1060,6 +1061,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PersistentEffects: []
+--- !u!114 &2277548745975462270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76788a8e35ad0fa428b47d9308537aab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 0}
+  Distance: 0
 --- !u!1001 &972372032365803414
 PrefabInstance:
   m_ObjectHideFlags: 0
