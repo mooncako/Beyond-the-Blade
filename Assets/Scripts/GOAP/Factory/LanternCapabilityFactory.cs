@@ -77,6 +77,8 @@ public class LanternCapabilityFactory : CapabilityFactory
 
     protected override void BuildSensors(CapabilityBuilder builder)
     {
+        base.BuildSensors(builder);
+
         builder.AddTargetSensor<WanderTargetSensor>()
             .SetTarget<WanderTarget>();
 
@@ -86,14 +88,7 @@ public class LanternCapabilityFactory : CapabilityFactory
         builder.AddTargetSensor<StrafeTargetSensor>()
             .SetTarget<StrafeTarget>();
 
-        builder.AddWorldSensor<HeavyAttackEnergySensor>()
-            .SetKey<HeavyAttackEnergy>();
-
-        builder.AddWorldSensor<PlayerHealthSensor>()
-            .SetKey<PlayerHealth>();
-
-        builder.AddWorldSensor<TargetVisibilitySensor>()
-            .SetKey<IsTargetVisible>();
+        
     }
 
 
