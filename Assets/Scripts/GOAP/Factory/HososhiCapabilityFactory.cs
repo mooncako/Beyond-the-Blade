@@ -44,18 +44,21 @@ public class HososhiCapabilityFactory : CapabilityFactory
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(3)
             .SetBaseCost(4);
 
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
             .SetStoppingDistance(3)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
             .SetTarget<StrafeTarget>()
+            .AddEffect<IsTargetVisible>(EffectType.Increase)
             .AddEffect<IsStrafe>(EffectType.Increase)
             .SetStoppingDistance(.5f)
             .SetBaseCost(4);    
@@ -63,6 +66,8 @@ public class HososhiCapabilityFactory : CapabilityFactory
 
     protected override void BuildSensors(CapabilityBuilder builder)
     {
+        base.BuildSensors(builder);
+
         builder.AddTargetSensor<WanderTargetSensor>()
             .SetTarget<WanderTarget>();
 

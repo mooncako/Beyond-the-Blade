@@ -45,18 +45,21 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(1.5f)
             .SetBaseCost(4);
         
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
             .SetStoppingDistance(1.5f)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
             .SetTarget<StrafeTarget>()
+            .AddEffect<IsTargetVisible>(EffectType.Increase)
             .AddEffect<IsStrafe>(EffectType.Increase)
             .SetStoppingDistance(.5f)
             .SetBaseCost(4);    
@@ -64,6 +67,8 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
 
     protected override void BuildSensors(CapabilityBuilder builder)
     {
+        base.BuildSensors(builder);
+
         builder.AddTargetSensor<WanderTargetSensor>()
             .SetTarget<WanderTarget>();
 

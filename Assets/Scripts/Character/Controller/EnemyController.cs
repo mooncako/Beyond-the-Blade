@@ -14,6 +14,7 @@ public class EnemyController : Controller, IPoolable
     
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
     [SerializeField, FoldoutGroup("Base Reference")] public NavMeshAgent Agent;
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
 
     
     [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
@@ -28,6 +29,7 @@ public class EnemyController : Controller, IPoolable
     protected override void OnValidate()
     {
         base.OnValidate();
+        if (Energy == null) Energy = GetComponent<Energy>();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
         if (Agent == null) Agent = GetComponent<NavMeshAgent>();
 
@@ -266,7 +268,7 @@ public class EnemyController : Controller, IPoolable
         }
 
     }
-    
+
     public void OnDeath(DamageInfo info)
     {
         _persistentVFXHelper.StopPersistentEffects();
@@ -275,5 +277,11 @@ public class EnemyController : Controller, IPoolable
         Movement.CanMove = false;
         _canRotate = false;
         gameObject.layer = LayerMask.NameToLayer("Corpse");
+    }
+
+    public override void ApplyStats()
+    {
+        base.ApplyStats();
+        Energy.ApplyStats(Stats);
     }
 }

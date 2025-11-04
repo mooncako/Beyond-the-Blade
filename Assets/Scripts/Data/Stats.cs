@@ -71,7 +71,7 @@ public class Stats : ScriptableObject
 
 
     [Button]
-    public void Clear()
+    public virtual void Clear()
     {
         TempAttackSpeed = 0;
         TempDamageMultiplier = 0;
@@ -89,7 +89,7 @@ public class Stats : ScriptableObject
         TempStaminaRegeneration = 0;
     }
 
-    public void CopyValue(StatsData stats)
+    public virtual void CopyValue(StatsData stats)
     {
         StatsData.Range = stats.Range;
         StatsData.AlertRange = stats.AlertRange;

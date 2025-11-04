@@ -31,9 +31,6 @@ public class LanternCapabilityFactory : CapabilityFactory
         builder.AddGoal<KillPlayerCautiousGoal>()
             .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
 
-        builder.AddGoal<KillPlayerWithProjectileGoal>()
-            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
-
         builder.AddGoal<StrafeGoal>()
             .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
     }
@@ -48,27 +45,29 @@ public class LanternCapabilityFactory : CapabilityFactory
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
-            .AddCondition<HeavyAttackEnergy>(Comparison.SmallerThanOrEqual, 5)
-            .AddEffect<HeavyAttackEnergy>(EffectType.Decrease)
+            .AddCondition<PlayerDistance>(Comparison.SmallerThanOrEqual, 1)
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(2f)
-            .SetBaseCost(4);
+            .SetBaseCost(2);
         
         builder.AddAction<FireProjectileAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .AddEffect<HeavyAttackEnergy>(EffectType.Increase)
-            .SetStoppingDistance(5f)
+            .SetStoppingDistance(20f)
             .SetBaseCost(3);
 
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
             .SetStoppingDistance(2f)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
             .SetTarget<StrafeTarget>()
+            .AddEffect<IsTargetVisible>(EffectType.Increase)
             .AddEffect<IsStrafe>(EffectType.Increase)
             .SetStoppingDistance(.5f)
             .SetBaseCost(4);    
@@ -76,6 +75,8 @@ public class LanternCapabilityFactory : CapabilityFactory
 
     protected override void BuildSensors(CapabilityBuilder builder)
     {
+        base.BuildSensors(builder);
+
         builder.AddTargetSensor<WanderTargetSensor>()
             .SetTarget<WanderTarget>();
 
@@ -84,6 +85,9 @@ public class LanternCapabilityFactory : CapabilityFactory
 
         builder.AddTargetSensor<StrafeTargetSensor>()
             .SetTarget<StrafeTarget>();
+
+        builder.AddWorldSensor<TargetDistanceSensor>()
+            .SetKey<PlayerDistance>();
     }
 
 

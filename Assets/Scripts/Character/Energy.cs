@@ -30,9 +30,19 @@ public class Energy : MonoBehaviour
         return _energy / _maxEnergy;
     }
 
+    public float GetCurrentEnergy()
+    {
+        return _energy;
+    }
+
     public void GainEnergy(float energy)
     {
         _energy = Mathf.Clamp(_energy + energy, 0, _maxEnergy);
         OnEnergyGain.Invoke(energy);
+    }
+
+    public void DepletesEnergy(float energy)
+    {
+        _energy = Mathf.Clamp(_energy - energy, 0, _maxEnergy);
     }
 }

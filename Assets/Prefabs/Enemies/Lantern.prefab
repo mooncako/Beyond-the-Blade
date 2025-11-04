@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 3418439087366576687}
   - component: {fileID: 6264934010256777202}
   - component: {fileID: 2640687494238271249}
+  - component: {fileID: 4340876250974595323}
   - component: {fileID: 2515946022723110387}
   - component: {fileID: 6233116775064065168}
   - component: {fileID: 8394953832475103564}
@@ -293,6 +294,7 @@ GameObject:
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 4932681416210436455}
   - component: {fileID: 5162801268352820049}
+  - component: {fileID: 2277548745975462270}
   m_Layer: 8
   m_Name: Lantern
   m_TagString: Untagged
@@ -504,6 +506,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   IsDamageable: 1
+--- !u!114 &4340876250974595323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxEnergy: 10
+  _energy: 0
+  OnExecution:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEnergyGain:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStatsUpdated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2515946022723110387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,6 +654,7 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 3011173388331776581}
   Agent: {fileID: 3926015235504465536}
+  Energy: {fileID: 4340876250974595323}
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
@@ -1035,6 +1061,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PersistentEffects: []
+--- !u!114 &2277548745975462270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76788a8e35ad0fa428b47d9308537aab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 0}
+  Distance: 0
 --- !u!1001 &972372032365803414
 PrefabInstance:
   m_ObjectHideFlags: 0
