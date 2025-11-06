@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &116476303262170839
 Transform:
   m_ObjectHideFlags: 0
@@ -157,24 +157,23 @@ MonoBehaviour:
       m_Calls: []
   ObjectPool: {fileID: 0}
   _data:
-    speed: 4
+    speed: 2
     maxRange: 10
     lifetime: 4
     damage: 25
     damageType: 1
     isPiercing: 0
-    maxHits: 0
+    maxHits: 1
     canBounce: 0
     maxBounces: 0
-    ownerTeam: 0
+    ownerTeam: 1
     targetLayers:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 128
     collisionLayers:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 128
     rotateInFlight: 0
     rotationSpeed: 0
   _projectileVFX: {fileID: 0}
   _onDestroyVFX: {fileID: 0}
-  _collider: {fileID: 1241751137417592245}

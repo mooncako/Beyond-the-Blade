@@ -28,7 +28,7 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     private int _bounceCount;
     
     private Rigidbody _rigidbody;
-    private Collider _collider;
+    protected Collider _collider;
     private Vector3 _startPosition;
 
     #region Unity Lifecycle
@@ -66,7 +66,7 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     private void OnTriggerEnter(Collider other)
     {
         if (!IsActive) return;
-        
+
         HandleCollision(other);
     }
 

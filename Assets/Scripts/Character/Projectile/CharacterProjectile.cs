@@ -6,17 +6,10 @@ public class CharacterProjectile : BaseProjectile
 {
     [SerializeField, BoxGroup("Visual Effects")] private VisualEffect _projectileVFX;
     [SerializeField, BoxGroup("Visual Effects")] private VisualEffect _onDestroyVFX;
-    [SerializeField, BoxGroup("References")] private Collider _collider;
-
-    void OnValidate()
-    {
-        if (_collider == null) _collider = GetComponent<Collider>();
-    }
 
     protected override void HandleTargetHit(GameObject target)
     {
         Health targetHealth = target.GetComponent<Health>();
-
         DamageInfo damageInfo = new DamageInfo(
             _data.damage,
             target,
@@ -62,6 +55,12 @@ public class CharacterProjectile : BaseProjectile
             Deactivate();
         }
 
-        
+
+    }
+
+    [Button]
+    private void Test()
+    {
+        Activate();
     }
 }
