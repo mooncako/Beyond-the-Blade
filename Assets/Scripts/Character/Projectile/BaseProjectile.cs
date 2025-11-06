@@ -19,12 +19,12 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     public ObjectPool ObjectPool;
 
     // Private fields
-    [SerializeField] private ProjectileData _data;
+    [SerializeField] protected ProjectileData _data;
     private Vector3 _direction;
     private Vector3 _velocity;
     private float _distanceTraveled;
     private float _timeAlive;
-    private int _hitCount;
+    protected int _hitCount;
     private int _bounceCount;
     
     private Rigidbody _rigidbody;
@@ -219,7 +219,7 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
         transform.Rotate(Vector3.forward, _data.rotationSpeed * Time.fixedDeltaTime);
     }
 
-    private void HandleCollision(Collider other)
+    protected virtual void HandleCollision(Collider other)
     {
         // Check if this is a valid target
         if (IsValidTarget(other))
@@ -271,7 +271,7 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
         return (_data.collisionLayers.value & (1 << other.gameObject.layer)) != 0;
     }
 
-    private void HandleTargetHit(GameObject target)
+    protected virtual void HandleTargetHit(GameObject target)
     {
         // Create damage info
         

@@ -5,6 +5,8 @@ public class ProjectileSpawnBuff : ModifierSO
 {
     public override void Perform(in ModifierContext context)
     {
-        SpawnProjectileEvent.Trigger(context.Caster.GetCurrentSkill().AnimationID, context.Caster.transform.forward, context.Caster.transform.forward, context.Caster.gameObject);
+        Vector3 spawnPos = context.Caster.AttackPoint ? context.Caster.AttackPoint.position : context.Caster.transform.position;
+
+        SpawnProjectileEvent.Trigger(context.Caster.GetCurrentSkill().AnimationID, spawnPos, context.Caster.transform.forward, context.Caster.gameObject);
     }
 }
