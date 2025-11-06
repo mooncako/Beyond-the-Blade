@@ -66,7 +66,7 @@ public class ProjectileSpawner : MonoBehaviour
     /// <summary>
     /// Spawn a projectile - direct call, no events (like DoppelgangerSpawner.Spawn)
     /// </summary>
-    public void SpawnProjectile(string projectileId, Vector3 position, Vector3 direction, GameObject owner, ProjectileData data)
+    public void SpawnProjectile(string projectileId, Vector3 position, Vector3 direction, GameObject owner)
     {
         // Get prefab from dictionary
         if (!_projectileDict.TryGetValue(projectileId, out GameObject prefab))
@@ -89,7 +89,7 @@ public class ProjectileSpawner : MonoBehaviour
 
         // Setup projectile (same as DoppelgangerSpawner line 32-33)
         projectile.SetOwner(owner);
-        projectile.Initialize(data);
+        projectile.Initialize();
         projectile.ObjectPool = _pool;
 
         // Listen for destruction to return to pool (same as DoppelgangerSpawner line 35)
@@ -108,13 +108,10 @@ public class ProjectileSpawner : MonoBehaviour
 
     //debug spawn projectile button 
     [Button]
-    public void TestSpawnProjectile()
+    public void TestSpawnProjectile(string key)
     {
 
-        //spawn projectile, the projecttile last for 3 seconds and then destroy itself
-        ProjectileData data = new ProjectileData();
-        data.lifetime = 3f;
-        SpawnProjectile("Test", transform.position, transform.forward, gameObject, new ProjectileData());
+        SpawnProjectile(key, transform.position, transform.forward, gameObject);
     }
 }
 

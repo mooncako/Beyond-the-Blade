@@ -74,9 +74,8 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
 
     #region IProjectile Implementation
 
-    public void Initialize(ProjectileData data)
+    public void Initialize()
     {
-        _data = data;
         _hitCount = 0;
         _bounceCount = 0;
         _distanceTraveled = 0f;
