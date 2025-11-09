@@ -11,6 +11,9 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     
     [Tooltip("Called when projectile is destroyed")]
     public UnityEvent OnProjectileDestroyed;
+    
+    [Tooltip("Called when projectile is deflected")]
+    public UnityEvent<GameObject> OnProjectileDeflected;
 
     // Interface Properties
     public bool IsActive { get; private set; }
@@ -30,6 +33,12 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     private Rigidbody _rigidbody;
     protected Collider _collider;
     private Vector3 _startPosition;
+    
+    [Header("Deflection")]
+    [SerializeField] private bool _canBeDeflected = true;
+    public bool CanBeDeflected => _canBeDeflected;
+    
+    private bool _hasBeenDeflected = false;
 
     #region Unity Lifecycle
 
@@ -162,6 +171,33 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
         Activate();
     }
 
+    public void Deflect(GameObject deflector, Vector3 deflectDirection)
+    {
+        if (!_canBeDeflected || _hasBeenDeflected) return;
+        
+        _hasBeenDeflected = true;
+        
+        Owner = deflector;
+        
+        Targetable deflectorTargetable = deflector.GetComponent<Targetable>();
+        if (deflectorTargetable != null)
+        {
+            _data.ownerTeam = deflectorTargetable.Team;
+        }
+        
+        // Redirect projectile in new direction
+        SetDirection(deflectDirection);
+        
+        // Reset hit count so deflected projectile can hit again
+        _hitCount = 0;
+        
+        
+        // Trigger deflect event for VFX/audio feedback
+        OnProjectileDeflected?.Invoke(deflector);
+        
+        Debug.Log($"Projectile deflected by {deflector.name}! New direction: {deflectDirection}");
+    }
+
     #endregion
 
     #region IPoolable Implementation
@@ -171,15 +207,18 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
         _bounceCount = 0;
         _distanceTraveled = 0f;
         _timeAlive = 0f;
+        _hasBeenDeflected = false; // Reset deflection flag
         IsActive = false;
     }
     public void OnPoolReturn()
     {
         OnProjectileDestroyed?.RemoveAllListeners();
         OnTargetHit?.RemoveAllListeners();
+        OnProjectileDeflected?.RemoveAllListeners();
 
         IsActive = false;
         _rigidbody.linearVelocity = Vector3.zero;
+        _hasBeenDeflected = false;
     }
     #endregion
 
@@ -328,14 +367,15 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
 
     #endregion
 
+
     #region Debug
 
     private void OnDrawGizmosSelected()
     {
         if (!IsActive) return;
 
-        // Draw velocity vector
-        Gizmos.color = Color.red;
+        // Draw velocity vector - red if not deflected, cyan if deflected
+        Gizmos.color = _hasBeenDeflected ? Color.cyan : Color.red;
         Gizmos.DrawRay(transform.position, _velocity.normalized * 2f);
         
         // Draw remaining range
@@ -343,6 +383,43 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
         float remainingRange = _data.maxRange - _distanceTraveled;
         Vector3 endPosition = transform.position + _direction * remainingRange;
         Gizmos.DrawWireSphere(endPosition, 0.5f);
+    }
+    
+    [Sirenix.OdinInspector.Button("Test Deflect (Forward)"), Sirenix.OdinInspector.BoxGroup("Debug")]
+    private void DebugDeflectForward()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("Debug deflect only works in Play mode!");
+            return;
+        }
+        
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Deflect(player, transform.forward);
+        }
+        else
+        {
+            Debug.LogError("No player found! Make sure player has 'Player' tag.");
+        }
+    }
+    
+    [Sirenix.OdinInspector.Button("Test Deflect (Reverse)"), Sirenix.OdinInspector.BoxGroup("Debug")]
+    private void DebugDeflectReverse()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("Debug deflect only works in Play mode!");
+            return;
+        }
+        
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Deflect(player, -_direction);
+        }
+        
     }
 
     #endregion

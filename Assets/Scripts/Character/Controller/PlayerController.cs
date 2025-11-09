@@ -47,6 +47,7 @@ public class PlayerController : Controller,
     private Vector3 _forward;
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
     private bool _isPerfectParryWindowActive = false;
+    public bool IsPerfectParryWindowActive => _isPerfectParryWindowActive;
     public bool MusoReady { get; private set; }
 
     [HideInInspector] public UnityEngine.Events.UnityEvent OnExecutionStarted;
@@ -138,6 +139,12 @@ public class PlayerController : Controller,
         this.MMEventStartListening<AddNewAbilityEvent>();
         this.MMEventStartListening<ParrySuccessEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
+        
+        //Listen for projectile deflection
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnProjectileDeflected.AddListener(OnProjectileDeflected);
+        }
     }
 
     protected override void OnDisable()
@@ -151,6 +158,11 @@ public class PlayerController : Controller,
         this.MMEventStopListening<ParrySuccessEvent>();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
+        
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnProjectileDeflected.RemoveListener(OnProjectileDeflected);
+        }
     }
 
     void OnDestroy()
@@ -509,7 +521,7 @@ public class PlayerController : Controller,
 
     }
 
-    private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
+    public EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
     {
         // Find all enemies in scene within the attack layer
         Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackableMask);
@@ -535,6 +547,16 @@ public class PlayerController : Controller,
     public void StopParryAnimEvent()
     {
         _isPerfectParryWindowActive = false;
+    }
+    
+    public void OnProjectileDeflected(BaseProjectile projectile)
+    {
+        Energy.GainEnergy(Stats.ParryEnergyGain * Stats.ResourceGainMultiplier);
+        
+        ParrySuccessEvent.Trigger();
+        
+        CameraShakeEvent.Trigger(new LightShake());
+        
     }
 
 
@@ -622,5 +644,7 @@ public class PlayerController : Controller,
     {
         _input.SwitchCurrentActionMap("UI");
     }
+    
+    
 
 }
