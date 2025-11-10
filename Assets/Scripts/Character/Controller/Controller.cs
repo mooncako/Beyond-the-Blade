@@ -154,6 +154,8 @@ public class Controller : MonoBehaviour
 
     public virtual void DamageAnimEvent()
     {
+        if (_animationStateMachine.IsInStaggerState()) return;
+
         _hitTargets.Clear();
         if (_currentSkill.IsTargetedGroundAOE)
         {
