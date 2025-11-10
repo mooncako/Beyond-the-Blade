@@ -329,43 +329,6 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 2faccdcf4bb31524fbc5b5c44b4718f5, type: 2}
   m_BuildHeightMesh: 0
---- !u!84 &663720791
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &930218448
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -496,6 +459,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6790eee50f3aa8b4b9ea1b6c2a40a9b4, type: 3}
+--- !u!84 &1190317400
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!114 &1204092974 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3803588526810832982, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
@@ -816,30 +816,74 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneTransitionManager
       objectReference: {fileID: 0}
-    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
-      propertyPath: _strengthCurve.m_Curve.Array.data[0].inSlope
-      value: -3.2036712
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
-      propertyPath: _strengthCurve.m_Curve.Array.data[1].inSlope
-      value: -0.19987129
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: customPasses.Array.size
+      value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
-      propertyPath: _strengthCurve.m_Curve.Array.data[0].outSlope
-      value: -3.2036712
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: 'customPasses.Array.data[1]'
+      value: 8438268202098098332
       objectReference: {fileID: 0}
-    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
-      propertyPath: _strengthCurve.m_Curve.Array.data[1].inWeight
-      value: 0.56521744
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: 'managedReferences[8438268202098098332]'
+      value: Unity.RenderPipelines.HighDefinition.Runtime UnityEngine.Rendering.HighDefinition.FullScreenCustomPass
       objectReference: {fileID: 0}
-    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
-      propertyPath: _strengthCurve.m_Curve.Array.data[1].outSlope
-      value: -0.19987129
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[520470345427976303].enabled
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
-      propertyPath: _strengthCurve.m_Curve.Array.data[0].outWeight
-      value: 0.22463769
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].m_Name
+      value: Custom Pass
       objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].m_Version
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[520470345427976303].passFoldout
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].clearFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].passFoldout
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].fetchColorBuffer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].materialPassName
+      value: Custom Pass 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].materialPassIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].targetColorBuffer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].targetDepthBuffer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098332].fullscreenPassMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 8ca870ba1f79e8f45aed567a2f4d1848, type: 2}
     - target: {fileID: 3937517316926448123, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.4391165
