@@ -134,7 +134,7 @@ PrefabInstance:
     - target: {fileID: 575563289218849831, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: m_outputTexture
       value: 
-      objectReference: {fileID: 536229587}
+      objectReference: {fileID: 0}
     - target: {fileID: 575563289218849831, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: 'm_HDRPDirectionalLightList.Array.data[0]'
       value: 
@@ -329,7 +329,7 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 2faccdcf4bb31524fbc5b5c44b4718f5, type: 2}
   m_BuildHeightMesh: 0
---- !u!84 &536229587
+--- !u!84 &663720791
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -815,6 +815,30 @@ PrefabInstance:
     - target: {fileID: 162051183469332586, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_Name
       value: SceneTransitionManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: _strengthCurve.m_Curve.Array.data[0].inSlope
+      value: -3.2036712
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: _strengthCurve.m_Curve.Array.data[1].inSlope
+      value: -0.19987129
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: _strengthCurve.m_Curve.Array.data[0].outSlope
+      value: -3.2036712
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: _strengthCurve.m_Curve.Array.data[1].inWeight
+      value: 0.56521744
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: _strengthCurve.m_Curve.Array.data[1].outSlope
+      value: -0.19987129
+      objectReference: {fileID: 0}
+    - target: {fileID: 3736970580472258744, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: _strengthCurve.m_Curve.Array.data[0].outWeight
+      value: 0.22463769
       objectReference: {fileID: 0}
     - target: {fileID: 3937517316926448123, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_LocalPosition.x

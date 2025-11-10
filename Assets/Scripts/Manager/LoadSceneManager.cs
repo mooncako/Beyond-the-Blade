@@ -10,8 +10,8 @@ public class LoadSceneManager : MonoBehaviour,
 {
     [SerializeField, BoxGroup("References")] private CustomPassVolume _transitionVolume;
     [SerializeField, BoxGroup("References")] private Material _transitionMaterial;
-    [SerializeField, BoxGroup("Settings")] private float _startStrength = 0;
-    [SerializeField, BoxGroup("Settings")] private float _endStrength = 6;
+    [SerializeField, BoxGroup("Settings")] private AnimationCurve _strengthCurve;
+    [SerializeField, BoxGroup("Settings")] private float _startStrength = 1;
     [SerializeField, BoxGroup("Settings")] private float _duration = .5f;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isTransitioning = false;
@@ -56,14 +56,14 @@ public class LoadSceneManager : MonoBehaviour,
             _transitionVolume.enabled = true;
             _strengthTween.Stop();
             LevelTransitionEvent.Trigger(EventStateType.OnEventStart);
-            _strengthTween = Tween.Custom(_startStrength, _endStrength, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", newVal)).OnComplete(() =>
+            _strengthTween = Tween.Custom(0, 1, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal))).OnComplete(() =>
             {
                 SceneManager.LoadScene(e.SceneName);
-                Tween.Delay(.1f).OnComplete(() =>
+                Tween.Delay(_duration).OnComplete(() =>
                 {
                     _isTransitioning = false;
                     LevelTransitionEvent.Trigger(EventStateType.OnEventEnd);
-                    _strengthTween = Tween.Custom(_endStrength, _startStrength, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", newVal)).OnComplete(() =>
+                    _strengthTween = Tween.Custom(1, 0, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal))).OnComplete(() =>
                     {
                         _transitionVolume.enabled = false;
 

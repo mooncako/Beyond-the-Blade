@@ -48,9 +48,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transitionVolume: {fileID: 1495043265437472129}
   _transitionMaterial: {fileID: 2100000, guid: 1e7b3d96f2e376d419cc030e8b4c68fe, type: 2}
-  _startStrength: 0
-  _endStrength: 6
+  _strengthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.013273689
+      outSlope: -0.013273689
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.6304347
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1.6622288
+      outSlope: -1.6622288
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2391305
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _startStrength: 1
   _duration: 0.5
+  _isTransitioning: 0
 --- !u!114 &1495043265437472129
 MonoBehaviour:
   m_ObjectHideFlags: 0
