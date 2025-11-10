@@ -58,7 +58,10 @@ public class LoadSceneManager : MonoBehaviour,
             _transitionVolume.customPasses[0].enabled = true;
             _strengthTween.Stop();
             LevelTransitionEvent.Trigger(EventStateType.OnEventStart);
-            _strengthTween = Tween.Custom(0, 1, _duration, newVal => _transitionMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal))).OnComplete(() =>
+            _strengthTween = Tween.Custom(0, 1, _duration, newVal =>
+            {
+                _transitionMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal));
+            }).OnComplete(() =>
             {
                 SceneManager.LoadScene(e.SceneName);
                 Tween.Delay(_duration).OnComplete(() =>
@@ -67,10 +70,15 @@ public class LoadSceneManager : MonoBehaviour,
                     _transitionVolume.customPasses[0].enabled = false;
                     _isTransitioning = false;
                     LevelTransitionEvent.Trigger(EventStateType.OnEventEnd);
-                    _strengthTween = Tween.Custom(0, 1, _duration, newVal => _transitionBackMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal))).OnComplete(() =>
+                    _strengthTween = Tween.Custom(0, 1, _duration, newVal =>
+                    {
+                        _transitionBackMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal));
+
+                    }).OnComplete(() =>
                     {
                         _transitionVolume.customPasses[1].enabled = false;
-
+                        _transitionMaterial.SetFloat("_RealmStrength", _startStrength);
+                        _transitionBackMaterial.SetFloat("_RealmStrength", _startStrength);
                     });
                 });
             });
