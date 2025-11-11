@@ -329,6 +329,43 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 2faccdcf4bb31524fbc5b5c44b4718f5, type: 2}
   m_BuildHeightMesh: 0
+--- !u!84 &316810981
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &930218448
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -470,43 +507,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a171453dbe210f248accbc1432b2d3a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!84 &1218405883
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1 &1312715436
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,6 +815,14 @@ PrefabInstance:
     - target: {fileID: 162051183469332586, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_Name
       value: SceneTransitionManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098346].enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495043265437472129, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
+      propertyPath: managedReferences[8438268202098098347].enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3937517316926448123, guid: 9a7a6b804e808a74993cf2218d553ab5, type: 3}
       propertyPath: m_LocalPosition.x
