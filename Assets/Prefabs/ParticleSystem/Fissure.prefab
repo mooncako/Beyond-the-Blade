@@ -15043,6 +15043,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _fissureOpenTime: 1.5
+  _fissureCloseTime: 1.5
   _colorChangeTime: 1.5
   _screenCrackEdgeCurve:
     serializedVersion: 2
@@ -15094,6 +15095,39 @@ MonoBehaviour:
     m_RotationOrder: 4
   _backMatStartColor: {r: 0, g: 50.181023, b: 766.9961, a: 0}
   _backMatEndColor: {r: 19.074512, g: 0, b: 191.74904, a: 0}
+  _innerEdgeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.5338282
+      outSlope: 0.5338282
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.57815987
+    - serializedVersion: 3
+      time: 0.78026986
+      value: 0.41031337
+      inSlope: -2.2291403
+      outSlope: -2.2291403
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.28490576
+      outWeight: 0.431195
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   OnFissureOpen:
     m_PersistentCalls:
       m_Calls: []
