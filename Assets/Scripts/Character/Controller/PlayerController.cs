@@ -19,7 +19,8 @@ public class PlayerController : Controller,
     MMEventListener<SkillSwapEvent>,
     MMEventListener<AbilitySwapEvent>,
     MMEventListener<AddNewAbilityEvent>,
-    MMEventListener<ParrySuccessEvent>
+    MMEventListener<ParrySuccessEvent>,
+    MMEventListener<CurrencyEarnedEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -43,6 +44,7 @@ public class PlayerController : Controller,
     [Header("Animancer")]
     [SerializeField] private AnimancerComponent _animancerComponent;
 
+    public PlayerStatsSO PlayerStats => (PlayerStatsSO)Stats;
 
     private Vector3 _forward;
     private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
@@ -138,6 +140,7 @@ public class PlayerController : Controller,
         this.MMEventStartListening<AbilitySwapEvent>();
         this.MMEventStartListening<AddNewAbilityEvent>();
         this.MMEventStartListening<ParrySuccessEvent>();
+        this.MMEventStartListening<CurrencyEarnedEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
         
         //Listen for projectile deflection
@@ -156,6 +159,7 @@ public class PlayerController : Controller,
         this.MMEventStopListening<AbilitySwapEvent>();
         this.MMEventStopListening<AddNewAbilityEvent>();
         this.MMEventStopListening<ParrySuccessEvent>();
+        this.MMEventStopListening<CurrencyEarnedEvent>();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
         
@@ -228,6 +232,18 @@ public class PlayerController : Controller,
     public void OnMMEvent(ParrySuccessEvent e)
     {
         SpawnVFXEvent.Trigger(AttackPoint, "PARRY_SUCCESS", new VFXInfo(new Vector3(0, 0.2f, 0.5f), Quaternion.identity, Vector3.one, false, false));
+    }
+
+    public void OnMMEvent(CurrencyEarnedEvent e)
+    {
+        if (e.CurrencyType == CurrencyType.Gold)
+        {
+            PlayerStats.GoldCount += e.Amount;
+        }
+        else if (e.CurrencyType == CurrencyType.SoulShard)
+        {
+            PlayerStats.SoulShardCount += e.Amount;
+        }
     }
 
     private void HandleRotation()
@@ -644,7 +660,4 @@ public class PlayerController : Controller,
     {
         _input.SwitchCurrentActionMap("UI");
     }
-    
-    
-
 }
