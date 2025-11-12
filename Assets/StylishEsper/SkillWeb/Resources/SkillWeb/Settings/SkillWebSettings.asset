@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dd7c012b0db5e14cbcdb41352c998df, type: 3}
+  m_Name: SkillWebSettings
+  m_EditorClassIdentifier: 
+  debugLogMode: 1
+  enablePlayerLevelRequirement: 1
+  enableDowngrading: 1
+  deltaTime: 0
+  databaseName: SkillWeb
+  skillDatasetReference: {fileID: 0}
+  webDatasetReference: {fileID: 0}
+  tags:
+  - Default
+  zoomStrength: 0.2
+  zoomSmoothing: 8
+  minScale: 0.25
+  maxScale: 1.5
+  startingScale: 0
+  panSmoothing: 8
+  afterSnapDelay: 0.25
+  automaticBoundsEnabled: 1
+  resetFocusSpeed: 5
+  mousePanButton: 2
+  skillNodeSizes:
+    tiny: 100
+    small: 125
+    medium: 150
+    large: 175
+    giant: 200
