@@ -23,17 +23,27 @@ namespace Esper.SkillWeb.Editor
 
         public IntegerField dependencyCountField;
 
+        public IntegerField maxedRequirementCountField;
+
+        public ToolbarButton hideFieldsButton;
+
         private Label titleLabel;
 
         private Label idLabel;
 
-        private bool fieldsHidden;
+        private Label maxLvlLabel;
+
+        private VisualElement hideIcon;
 
         public SkillNodeEditor(SkillNode skillNode) : base(skillNode)
         {
             idLabel = new Label();
             idLabel.AddToClassList("idLabel");
             mainContainer.Add(idLabel);
+
+            maxLvlLabel = new Label();
+            maxLvlLabel.AddToClassList("maxLvlLabel");
+            mainContainer.Add(maxLvlLabel);
 
             hasConnectionDependencyToggle = new Toggle();
             hasConnectionDependencyToggle.AddToClassList("dependantField");
@@ -44,6 +54,7 @@ namespace Esper.SkillWeb.Editor
             hasConnectionDependencyToggle.RegisterValueChangedCallback(x =>
             {
                 dependencyCountField.style.display = x.newValue ? DisplayStyle.Flex : DisplayStyle.None;
+                maxedRequirementCountField.style.display = x.newValue ? DisplayStyle.Flex : DisplayStyle.None;
             });
 
             positionField = new Vector2Field();
@@ -54,36 +65,23 @@ namespace Esper.SkillWeb.Editor
             dependencyCountField = new IntegerField();
             dependencyCountField.AddToClassList("dependencyCountField");
             dependencyCountField.label = "Dependency Count";
-            dependencyCountField.value = 1;
             mainContainer.Add(dependencyCountField);
 
-            var hideFieldsButton = new ToolbarButton();
+            maxedRequirementCountField = new IntegerField();
+            maxedRequirementCountField.AddToClassList("dependencyCountToMaxedField");
+            maxedRequirementCountField.label = "Maxed Requirement";
+            mainContainer.Add(maxedRequirementCountField);
+
+            hideFieldsButton = new ToolbarButton();
             hideFieldsButton.AddToClassList("hideFieldsButton");
 
-            var hideIcon = new VisualElement();
+            hideIcon = new VisualElement();
             hideIcon.AddToClassList("visibleIcon");
             hideFieldsButton.Add(hideIcon);
 
             hideFieldsButton.clicked += () =>
             {
-                fieldsHidden = !fieldsHidden;
-
-                if (fieldsHidden)
-                {
-                    hasConnectionDependencyToggle.style.visibility = Visibility.Hidden;
-                    positionField.style.visibility = Visibility.Hidden;
-                    dependencyCountField.style.visibility = Visibility.Hidden;
-                    hideIcon.RemoveFromClassList("visibleIcon");
-                    hideIcon.AddToClassList("hiddenIcon");
-                }
-                else
-                {
-                    hasConnectionDependencyToggle.style.visibility = Visibility.Visible;
-                    positionField.style.visibility = Visibility.Visible;
-                    dependencyCountField.style.visibility = Visibility.Visible;
-                    hideIcon.RemoveFromClassList("hiddenIcon");
-                    hideIcon.AddToClassList("visibleIcon");
-                }
+                UpdateFieldsHiddenState();
             };
 
             mainContainer.Add(hideFieldsButton);
@@ -96,6 +94,28 @@ namespace Esper.SkillWeb.Editor
             titleLabel.style.overflow = Overflow.Hidden;
 
             Refresh();
+        }
+
+        public void UpdateFieldsHiddenState()
+        {
+            if (Value.hideFieldsInWebGraphEditor)
+            {
+                hasConnectionDependencyToggle.style.visibility = Visibility.Hidden;
+                positionField.style.visibility = Visibility.Hidden;
+                dependencyCountField.style.visibility = Visibility.Hidden;
+                maxedRequirementCountField.style.visibility = Visibility.Hidden;
+                hideIcon.RemoveFromClassList("visibleIcon");
+                hideIcon.AddToClassList("hiddenIcon");
+            }
+            else
+            {
+                hasConnectionDependencyToggle.style.visibility = Visibility.Visible;
+                positionField.style.visibility = Visibility.Visible;
+                dependencyCountField.style.visibility = Visibility.Visible;
+                maxedRequirementCountField.style.visibility = Visibility.Visible;
+                hideIcon.RemoveFromClassList("hiddenIcon");
+                hideIcon.AddToClassList("visibleIcon");
+            }
         }
 
         public override void Refresh()
@@ -119,11 +139,13 @@ namespace Esper.SkillWeb.Editor
 
             title = skill.skillName;
             idLabel.text = $"ID: {Id}";
+            maxLvlLabel.text = $"Max Lvl: {skill.maxLevel}";
             idLabel.style.display = DisplayStyle.Flex;
             hasConnectionDependencyToggle.style.display = DisplayStyle.Flex;
             positionField.style.display = DisplayStyle.Flex;
             image.style.backgroundColor = StyleKeyword.Auto;
             titleLabel.tooltip = skill.skillName;
+            UpdateFieldsHiddenState();
 
             switch (skill.size)
             {

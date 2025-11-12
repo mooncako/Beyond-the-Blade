@@ -53,6 +53,11 @@ namespace Esper.SkillWeb
         public static int skillPoints;
 
         /// <summary>
+        /// If Skill Web has been initialized.
+        /// </summary>
+        public static bool IsInitialized { get => SkillWebDatabase.IsConnected; }
+
+        /// <summary>
         /// Initializes Skill Web by connecting to the database. This is required to get it to work properly at runtime.
         /// </summary>
         public static void Initialize()

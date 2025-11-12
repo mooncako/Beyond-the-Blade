@@ -459,6 +459,9 @@ namespace Esper.SkillWeb.Editor
             skillNodeElement.dependencyCountField.SetValueWithoutNotify(skillNode.dependencyCount);
             skillNodeElement.dependencyCountField.RegisterValueChangedCallback(x => 
             {
+                if (skillNodeElement.Value == null)
+                    return;
+
                 var totalConnections = skillNodeElement.GetTotalConnectionCount();
 
                 if (totalConnections == 0)
@@ -478,12 +481,58 @@ namespace Esper.SkillWeb.Editor
                 }
 
                 Undo.RegisterCompleteObjectUndo(webGraph, "Graph Change");
-                skillNodeElement.Value.dependencyCount = x.newValue;
+                var skill = skillNodeElement.Value;
+                skill.dependencyCount = x.newValue;
+
+                if (skill.maxedRequirementCount > skill.dependencyCount)
+                {
+                    skill.maxedRequirementCount = skill.dependencyCount;
+                    skillNodeElement.maxedRequirementCountField.SetValueWithoutNotify(skillNode.maxedRequirementCount);
+                }
+
                 EditorUtility.SetDirty(webGraph);
                 onGraphChanged.Invoke();
             });
 
             skillNodeElement.dependencyCountField.style.display = skillNodeElement.hasConnectionDependencyToggle.value ? DisplayStyle.Flex : DisplayStyle.None;
+
+            skillNodeElement.maxedRequirementCountField.SetValueWithoutNotify(skillNode.maxedRequirementCount);
+            skillNodeElement.maxedRequirementCountField.RegisterValueChangedCallback(x =>
+            {
+                if (skillNodeElement.Value == null)
+                    return;
+
+                if (x.newValue < 0)
+                {
+                    skillNodeElement.maxedRequirementCountField.SetValueWithoutNotify(0);
+                    return;
+                }
+                else if (x.newValue > skillNode.dependencyCount)
+                {
+                    skillNodeElement.maxedRequirementCountField.SetValueWithoutNotify(skillNode.dependencyCount);
+                    return;
+                }
+
+                Undo.RegisterCompleteObjectUndo(webGraph, "Graph Change");
+                skillNodeElement.Value.maxedRequirementCount = x.newValue;
+                EditorUtility.SetDirty(webGraph);
+                onGraphChanged.Invoke();
+            });
+
+            skillNodeElement.maxedRequirementCountField.style.display = skillNodeElement.hasConnectionDependencyToggle.value ? DisplayStyle.Flex : DisplayStyle.None;
+
+            skillNodeElement.hideFieldsButton.clicked += () =>
+            {
+                if (skillNodeElement.Value == null)
+                    return;
+
+                var skill = skillNodeElement.Value;
+                skill.hideFieldsInWebGraphEditor = !skill.hideFieldsInWebGraphEditor;
+                skillNodeElement.UpdateFieldsHiddenState();
+                Undo.RegisterCompleteObjectUndo(webGraph, "Graph Change");
+                EditorUtility.SetDirty(webGraph);
+                onGraphChanged.Invoke();
+            };
 
             loadedNodeElements.Add(skillNodeElement.Id, skillNodeElement);
             AddElement(skillNodeElement);

@@ -15,7 +15,7 @@ namespace Esper.SkillWeb.UI
     public abstract class RuntimeWebViewer : MonoBehaviour
     {
         /// <summary>
-        /// The web.
+        /// The reference of the Web that was last loaded into the UI.
         /// </summary>
         [NonSerialized]
         public Web web;

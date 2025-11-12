@@ -40,9 +40,15 @@ namespace Esper.SkillWeb.Graph
         public bool hasConnectionDependency = true;
 
         /// <summary>
-        /// The amount of connections to obtained skills required for this skill to be unlockable.
+        /// The number of direct connections to obtained skills required for this skill to be unlockable.
         /// </summary>
         public int dependencyCount = 1;
+
+        /// <summary>
+        /// The number of direct connections to maxed skills required for this skill to be unlockable. This should 
+        /// always be equal to or smaller than the dependencyCount.
+        /// </summary>
+        public int maxedRequirementCount = 0;
 
         /// <summary>
         /// An action that refreshes the UI. This is invoked when the skill state is updated.
@@ -60,6 +66,13 @@ namespace Esper.SkillWeb.Graph
         /// The dataset. This is cloned from the Skill reference.
         /// </summary>
         public SkillDataset dataset;
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// This controls the hidden state of the fields in the Web Creator. This is only available in the Unity Editor.
+        /// </summary>
+        public bool hideFieldsInWebGraphEditor;
+#endif
 
         /// <summary>
         /// The current skill level.
@@ -164,8 +177,12 @@ namespace Esper.SkillWeb.Graph
         {
             var copy = new SkillNode(id, skill, position, connections);
             copy.guid = guid;
+#if UNITY_EDITOR
+            copy.hideFieldsInWebGraphEditor = hideFieldsInWebGraphEditor;
+#endif
             copy.hasConnectionDependency = hasConnectionDependency;
             copy.dependencyCount = dependencyCount;
+            copy.maxedRequirementCount = maxedRequirementCount;
             copy.webGraphID = webGraphID;
             return copy;
         }
@@ -409,11 +426,13 @@ namespace Esper.SkillWeb.Graph
             bool playerLevelRequirementMet = !SkillWeb.Settings.enablePlayerLevelRequirement || (SkillWeb.Settings.enablePlayerLevelRequirement && playerLevelGetter() >= skill.levelRequirement);
             bool prereqDependencyMet = !hasConnectionDependency || HasConnectionToPrerequisiteSkill();
             bool connectionDependencyMet = !hasConnectionDependency || (prereqDependencyMet && dependencyCount <= 1);
+            bool maxedRequirementMet = !hasConnectionDependency || maxedRequirementCount <= 0;
 
-            if (!connectionDependencyMet)
+            if (!connectionDependencyMet || !maxedRequirementMet)
             {
                 // Count the number of valid connections (direct connections to obtained skills)
-                int valid = 0;
+                int validDependencies = 0;
+                int validMaxDependencies = 0;
 
                 foreach (var connection in connections)
                 {
@@ -430,21 +449,26 @@ namespace Esper.SkillWeb.Graph
                         other = web.GetNode(otherID);
                     }
 
-                    // Other is valid if obtained
-                    if (other != null && other.IsObtained)
+                    // Other is valid if obtained or maxed
+                    if (other != null)
                     {
-                        valid++;
-                    }
+                        if (other.IsObtained)
+                        {
+                            validDependencies++;
 
-                    if (valid >= dependencyCount)
-                    {
-                        connectionDependencyMet = true;
-                        break;
+                            if (other.IsMaxed)
+                            {
+                                validMaxDependencies++;
+                            }
+                        }
                     }
                 }
+
+                connectionDependencyMet = validDependencies >= dependencyCount;
+                maxedRequirementMet = validMaxDependencies >= maxedRequirementCount;
             }
 
-            return playerLevelRequirementMet && prereqDependencyMet && connectionDependencyMet;
+            return playerLevelRequirementMet && prereqDependencyMet && connectionDependencyMet && maxedRequirementMet;
         }
 
         /// <summary>
