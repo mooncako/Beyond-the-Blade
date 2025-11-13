@@ -48,7 +48,7 @@ public class CharacterProjectile : BaseProjectile
         if (_onDestroyVFX != null)
         {
             _onDestroyVFX.Play();
-            _onDestroyVFX.GetComponent<VFXFinishedEventHandler>().OnSpawnFinished.AddListener(Deactivate);
+            _onDestroyVFX.GetComponent<VFXFinishedEventHandler>().OnVfxFinished.AddListener(Deactivate);
         }
         else
         {
