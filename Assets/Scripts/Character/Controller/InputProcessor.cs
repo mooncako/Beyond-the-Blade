@@ -17,6 +17,10 @@ public class InputProcessor
     {
         // Always store the input value, regardless of whether it's active
         _inputVector = value;
+        if(_isInputActive)
+        {
+            CameraRotateEvent.Trigger(value);
+        }
     }
     
     public void SetInputActive(bool active)
