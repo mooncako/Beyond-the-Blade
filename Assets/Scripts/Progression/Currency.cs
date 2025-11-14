@@ -5,12 +5,14 @@ using UnityEngine.Events;
 using UnityEngine.VFX;
 
 [RequireComponent(typeof(SphereCollider))]
-public abstract class Currency : MonoBehaviour
+public abstract class Currency : MonoBehaviour, IPoolable
 {
     [SerializeField, BoxGroup("References")] protected SphereCollider _collider;
     [SerializeField, BoxGroup("References")] protected VisualEffect _currencyVfx;
     [SerializeField, BoxGroup("References")] protected VisualEffect _onHitVfx;
     [SerializeField, BoxGroup("References")] protected VFXFinishedEventHandler _finishedHandler;
+
+    [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _initialized = false;
 
     [HideInInspector] public UnityEvent OnCurrencyHit;
 
@@ -29,10 +31,6 @@ public abstract class Currency : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if(_currencyVfx != null)
-        {
-            _currencyVfx.Play();
-        }
 
         if(_finishedHandler != null)
         {
@@ -55,4 +53,17 @@ public abstract class Currency : MonoBehaviour
         
     }
 
+    public virtual void OnPoolGet()
+    {
+        if(_currencyVfx != null)
+        {
+            _currencyVfx.Play();
+        }
+        _initialized = true;
+    }
+
+    public virtual void OnPoolReturn()
+    {
+        _collider.enabled = true;
+    }
 }
