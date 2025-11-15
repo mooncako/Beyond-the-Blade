@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.VFX;
 
 [RequireComponent(typeof(SphereCollider))]
+[RequireComponent(typeof(DontDestroy))]
 public abstract class Currency : MonoBehaviour, IPoolable
 {
     [SerializeField, BoxGroup("References")] protected SphereCollider _collider;

@@ -180,7 +180,10 @@ VisualEffect:
     m_Vector3f:
       m_Array: []
     m_Vector4f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 63.253597, y: 35.766434, z: 0, w: 1}
+        m_Name: Color
+        m_Overridden: 0
     m_Uint:
       m_Array: []
     m_Int:
@@ -269,6 +272,7 @@ GameObject:
   - component: {fileID: 2927848169083381923}
   - component: {fileID: 6793718738632905050}
   - component: {fileID: 2185709120355908228}
+  - component: {fileID: 318789815798461133}
   m_Layer: 0
   m_Name: GoldCoin
   m_TagString: Untagged
@@ -330,8 +334,26 @@ MonoBehaviour:
   _currencyVfx: {fileID: 82903433347352847}
   _onHitVfx: {fileID: 2730297699988902152}
   _finishedHandler: {fileID: 8326018189272176070}
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 128
   _initialized: 0
   OnCurrencyHit:
     m_PersistentCalls:
       m_Calls: []
-  Amount: 3
+  Amount: 1
+--- !u!114 &318789815798461133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5919645881299836551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35b454ea1a22b2649b5a3042e908c256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectID: 
+  _destroySceneNames:
+  - TestHub
