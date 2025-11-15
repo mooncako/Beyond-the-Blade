@@ -1,3 +1,4 @@
+using FMODUnity;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -11,6 +12,7 @@ public abstract class Currency : MonoBehaviour, IPoolable
     [SerializeField, BoxGroup("References")] protected VisualEffect _currencyVfx;
     [SerializeField, BoxGroup("References")] protected VisualEffect _onHitVfx;
     [SerializeField, BoxGroup("References")] protected VFXFinishedEventHandler _finishedHandler;
+    [SerializeField, BoxGroup("Settings")] protected LayerMask _playerMask;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _initialized = false;
 
@@ -26,6 +28,11 @@ public abstract class Currency : MonoBehaviour, IPoolable
         {
             _collider = GetComponent<SphereCollider>();
             _collider.isTrigger = true;
+        }
+
+        if ((_playerMask & (1 << 7)) == 0)
+        {
+            _playerMask |= 1 << 7;
         }
     }
 

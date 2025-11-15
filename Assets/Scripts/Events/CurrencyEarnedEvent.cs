@@ -1,3 +1,4 @@
+using MoreMountains.Tools;
 using UnityEngine;
 
 public struct CurrencyEarnedEvent
@@ -16,5 +17,6 @@ public struct CurrencyEarnedEvent
     {
         e.Amount = amount;
         e.CurrencyType = currencyType;
+        MMEventManager.TriggerEvent(e);
     }
 }

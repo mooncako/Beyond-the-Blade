@@ -4,17 +4,26 @@ using UnityEngine;
 
 public class GoldCoin : Currency
 {
+    private float _speed;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        _speed = Random.Range(15, 25);
+    }
 
     void Update()
     {
         if(_initialized)
         {
-            transform.position += (new Vector3(PlayerBroadcast.Instance.Players[0].transform.position.x, .9f, PlayerBroadcast.Instance.Players[0].transform.position.z) - transform.position).normalized * 10 * Time.deltaTime;
+            transform.position += (new Vector3(PlayerBroadcast.Instance.Players[0].transform.position.x, .9f, PlayerBroadcast.Instance.Players[0].transform.position.z) - transform.position).normalized * _speed * Time.deltaTime;
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
+        if ((_playerMask.value & (1 << other.gameObject.layer)) == 0) return;
+
         if(_currencyVfx != null)
         {
             _currencyVfx.gameObject.SetActive(false);
