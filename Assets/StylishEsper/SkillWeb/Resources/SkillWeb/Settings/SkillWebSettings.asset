@@ -15,15 +15,16 @@ MonoBehaviour:
   debugLogMode: 1
   enablePlayerLevelRequirement: 1
   enableDowngrading: 1
-  deltaTime: 0
-  databaseName: SkillWeb
-  skillDatasetReference: {fileID: 0}
-  webDatasetReference: {fileID: 0}
+  skillDatasetReference: {fileID: 11400000, guid: eeb8089700b0ef34ba5b188d15ee3aa1,
+    type: 2}
+  webDatasetReference: {fileID: 11400000, guid: 4a3990fc847a0e84c8e52e8c6562ec6c,
+    type: 2}
   tags:
-  - Default
+  - Sword Mastery (Demo)
+  - Runes (Demo)
   zoomStrength: 0.2
   zoomSmoothing: 8
-  minScale: 0.25
+  minScale: 0.2
   maxScale: 1.5
   startingScale: 0
   panSmoothing: 8
