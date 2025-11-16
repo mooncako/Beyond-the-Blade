@@ -15,6 +15,7 @@ public class PlayerStatsSO : Stats
     {
         base.Clear();
         GoldCount = 0;
+        TempGoldDropRate = 0;
     }
 
 }
