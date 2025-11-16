@@ -1,0 +1,235 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcc82362ad5662847b32093b40128fd0, type: 3}
+  m_Name: -1_Sword Mastery
+  m_EditorClassIdentifier: 
+  id: -1
+  webName: Sword Mastery
+  skillNodes:
+  - webGraphID: 0
+    id: 0
+    position: {x: 67.92453, y: 326.9434}
+    connections: []
+    skill: {fileID: 11400000, guid: ca4665cb473538749a6f70c6c662d86a, type: 2}
+    hasConnectionDependency: 0
+  - webGraphID: 0
+    id: 1
+    position: {x: 998.9434, y: 326.9434}
+    connections: []
+    skill: {fileID: 11400000, guid: dac37855730e3834cabd9fff03232778, type: 2}
+    hasConnectionDependency: 0
+  - webGraphID: 0
+    id: 2
+    position: {x: 533.43396, y: 326.9434}
+    connections: []
+    skill: {fileID: 11400000, guid: 60ebf9e5bce41d24e8de27428576c709, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 3
+    position: {x: 532.5283, y: 1305.0566}
+    connections: []
+    skill: {fileID: 11400000, guid: 883e4959cbba9a0479b62942334862a6, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 4
+    position: {x: 401.20755, y: -340.52832}
+    connections: []
+    skill: {fileID: 11400000, guid: e878e261ce215504cba7523d51dd867e, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 5
+    position: {x: 665.6604, y: -340.52832}
+    connections: []
+    skill: {fileID: 11400000, guid: 39f46dd4305d6b74298224b61c43831c, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 6
+    position: {x: 665.6604, y: -996.22644}
+    connections: []
+    skill: {fileID: 11400000, guid: 084f84421e3ab1945bea0f31d381dd54, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 7
+    position: {x: 401.20755, y: -996.22644}
+    connections: []
+    skill: {fileID: 11400000, guid: 502abb4dee683e54e9c58b8154b965f3, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 8
+    position: {x: 665.6604, y: -1627.4718}
+    connections: []
+    skill: {fileID: 11400000, guid: 9106b2ce554388144a399d5f4eb0ce93, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 9
+    position: {x: 665.6604, y: -2230.6414}
+    connections: []
+    skill: {fileID: 11400000, guid: 79def7c10beadd64d894896a3a40d3a1, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 10
+    position: {x: 401.20755, y: -1627.4718}
+    connections: []
+    skill: {fileID: 11400000, guid: c90b4aeeb9cf63e4ea03743b71fdff9d, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 11
+    position: {x: 447.3962, y: 800.6038}
+    connections: []
+    skill: {fileID: 11400000, guid: 60ebf9e5bce41d24e8de27428576c709, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 12
+    position: {x: -304.3019, y: 151.2453}
+    connections: []
+    skill: {fileID: 11400000, guid: ca4665cb473538749a6f70c6c662d86a, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 13
+    position: {x: 401.20755, y: 151.2453}
+    connections: []
+    skill: {fileID: 11400000, guid: ca4665cb473538749a6f70c6c662d86a, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 14
+    position: {x: 1382.0378, y: 151.2453}
+    connections: []
+    skill: {fileID: 11400000, guid: dac37855730e3834cabd9fff03232778, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 15
+    position: {x: 665.6604, y: 151.2453}
+    connections: []
+    skill: {fileID: 11400000, guid: dac37855730e3834cabd9fff03232778, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 0
+    id: 16
+    position: {x: 618.56604, y: 800.6038}
+    connections: []
+    skill: {fileID: 11400000, guid: 60ebf9e5bce41d24e8de27428576c709, type: 2}
+    hasConnectionDependency: 1
+  connections:
+  - webGraphID: 0
+    outputNodeID: 0
+    inputNodeID: 2
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 2
+    inputNodeID: 1
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 5
+    inputNodeID: 6
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 7
+    inputNodeID: 4
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 6
+    inputNodeID: 8
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 8
+    inputNodeID: 9
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 10
+    inputNodeID: 7
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 9
+    inputNodeID: 10
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 2
+    inputNodeID: 11
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 12
+    inputNodeID: 0
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 12
+    inputNodeID: 13
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 13
+    inputNodeID: 4
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 1
+    inputNodeID: 14
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 14
+    inputNodeID: 15
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 15
+    inputNodeID: 5
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 11
+    inputNodeID: 16
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 3
+    inputNodeID: 11
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 16
+    inputNodeID: 3
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 16
+    inputNodeID: 2
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  dataset: {fileID: 11400000, guid: dc7cacd304bda644c8578b639f96f30a, type: 2}
