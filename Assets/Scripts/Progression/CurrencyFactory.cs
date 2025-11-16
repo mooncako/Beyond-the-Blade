@@ -36,7 +36,7 @@ public class CurrencyFactory : MonoBehaviour,
         {
             randomPoint = Random.insideUnitCircle * 1.5f;
             Currency currency = _pool.Get(currencyPrefab).GetComponent<Currency>();
-            currency.transform.position = new Vector3(pos.x + randomPoint.x, pos.y, pos.z + randomPoint.y);
+            currency.transform.position = new Vector3(pos.x + randomPoint.x, pos.y + .9f, pos.z + randomPoint.y);
             currency.OnCurrencyHit.AddListener(() => ReturnCurrency(currency));
         }
     }
