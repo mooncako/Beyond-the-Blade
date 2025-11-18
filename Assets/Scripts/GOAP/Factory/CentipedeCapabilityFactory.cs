@@ -20,6 +20,9 @@ public class CentipedeCapabilityFactory : CapabilityFactory
     {
         builder.AddGoal<WanderGoal>()
             .AddCondition<IsWander>(Comparison.GreaterThanOrEqual, 1);
+
+        builder.AddGoal<KillPlayerGoal>()
+            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
     }
 
     protected override void BuildActions(CapabilityBuilder builder)
@@ -29,6 +32,13 @@ public class CentipedeCapabilityFactory : CapabilityFactory
             .AddEffect<IsWander>(EffectType.Increase)
             .SetStoppingDistance(1)
             .SetBaseCost(5);
+
+        builder.AddAction<AttackAction>()
+            .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
+            .AddEffect<PlayerHealth>(EffectType.Decrease)
+            .SetStoppingDistance(1.5f)
+            .SetBaseCost(4);
     }
 
     protected override void BuildSensors(CapabilityBuilder builder)
@@ -37,5 +47,8 @@ public class CentipedeCapabilityFactory : CapabilityFactory
 
         builder.AddTargetSensor<WanderTargetSensor>()
             .SetTarget<WanderTarget>();
+
+        builder.AddTargetSensor<PlayerTargetSensor>()
+            .SetTarget<PlayerTarget>();
     }
 }
