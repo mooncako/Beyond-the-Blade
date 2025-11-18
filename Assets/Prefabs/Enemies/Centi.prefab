@@ -98,7 +98,7 @@ Transform:
   m_GameObject: {fileID: 2956767064760233662}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.65, z: -9.37}
+  m_LocalPosition: {x: 0, y: 0.65, z: -18.38}
   m_LocalScale: {x: 3, y: 3, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -216,7 +216,7 @@ Transform:
   m_GameObject: {fileID: 3540097435238276698}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.094, z: 0.096}
+  m_LocalPosition: {x: 0, y: 1.094, z: 4.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -348,7 +348,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 2.56
-  m_Height: 28.55
+  m_Height: 9.62
   m_Direction: 2
   m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!54 &8598472387181080395
@@ -414,7 +414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Speed>k__BackingField: 5
   <Acceleration>k__BackingField: 10
-  <TurnSpeed>k__BackingField: 50
+  <TurnSpeed>k__BackingField: 10
   <OnlyTurnWithInput>k__BackingField: 1
   <StoppingDistance>k__BackingField: 0.25
   <LookInMoveDirection>k__BackingField: 1
@@ -1089,8 +1089,8 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
-  _locomotionAnimation: {fileID: 11400000, guid: 6b61855f86e2351408cfdadcd201ff1a, type: 2}
-  _directionalMovementAnimations: {fileID: 11400000, guid: bd82bddf3ec44d74aa1ea3a1e83377cf, type: 2}
+  _locomotionAnimation: {fileID: 0}
+  _directionalMovementAnimations: {fileID: 0}
   UpperBodyMask: {fileID: 31900000, guid: 3bb8c1934e898ea46af7f86f215a8d84, type: 2}
   OnStateExit:
     m_PersistentCalls:
@@ -1161,7 +1161,7 @@ Transform:
   m_GameObject: {fileID: 5414845805400176818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.65, z: -1.1}
+  m_LocalPosition: {x: 0, y: 0.65, z: -10.11}
   m_LocalScale: {x: 3, y: 3, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1247,7 +1247,7 @@ Transform:
   m_GameObject: {fileID: 6316825029759443695}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.65, z: -17.59}
+  m_LocalPosition: {x: 0, y: 0.65, z: -26.599998}
   m_LocalScale: {x: 3, y: 3, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
