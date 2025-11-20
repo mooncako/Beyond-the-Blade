@@ -39,24 +39,18 @@ public class HososhiBrain : Brain
 
     protected override void OnActionEnd(IAction action)
     {
-        if (_isPlayerDetected)
+        if (!gameObject.activeSelf) return;
+        switch (Personality)
         {
-            switch (Personality)
-            {
-                case PersonalityType.Aggressive:
-                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
-                    break;
-                case PersonalityType.Cautious:
-                    _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
-                    break;
-                case PersonalityType.Evasive:
-                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
-                    break;
-            }
-        }
-        else
-        {
-            _provider.RequestGoal<WanderGoal>();
+            case PersonalityType.Aggressive:
+                _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                break;
+            case PersonalityType.Cautious:
+                _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
+                break;
+            case PersonalityType.Evasive:
+                _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
+                break;
         }
     }
 

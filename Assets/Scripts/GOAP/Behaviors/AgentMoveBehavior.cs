@@ -46,7 +46,7 @@ public class AgentMoveBehavior : MonoBehaviour
 
         // if(!AnimationStateMachine.IsInMoveState()) return;
         
-
+    
         _controller.MoveTo(_currentTarget.Position);
     }
 

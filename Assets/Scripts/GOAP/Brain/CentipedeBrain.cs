@@ -1,3 +1,4 @@
+using CrashKonijn.Agent.Core;
 using CrashKonijn.Goap.GenTest;
 using UnityEngine;
 
@@ -34,7 +35,13 @@ public class CentipedeBrain : Brain
 
     protected override void Start()
     {
-        _provider.RequestGoal<WanderGoal>(true);
+        _provider.RequestGoal<KillPlayerGoal>(false);
         _playerSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
+    }
+
+    protected override void OnActionEnd(IAction action)
+    {
+        if (!gameObject.activeSelf) return;
+        _provider.RequestGoal<KillPlayerGoal>();
     }
 }

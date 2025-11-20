@@ -348,7 +348,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 2.56
-  m_Height: 9.62
+  m_Height: 9.17
   m_Direction: 2
   m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!54 &8598472387181080395
@@ -387,7 +387,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 3744354742756812122}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1.73
+  m_Radius: 5.24
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -396,10 +396,10 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2.83
+  m_Height: 2.91
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 0
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &3418439087366576687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -540,7 +540,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3744354742756812122}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: c04d0b79c2f094342b00ecb9c47dda8a, type: 3}
+  m_Avatar: {fileID: 0}
   m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -881,13 +881,13 @@ MonoBehaviour:
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
     Clip:
-      _FadeDuration: 0.25
+      _FadeDuration: 0.1
       _Speed: 1
       _Events:
         _NormalizedTimes: []
         _Callbacks: []
         _Names: []
-      _Clip: {fileID: 1827226128182048838, guid: b67a787e07cd8ad4b92fcabc206dcf4f, type: 3}
+      _Clip: {fileID: 7400000, guid: 1f2aab37fc221354c9313d8254ec6488, type: 2}
       _NormalizedStartTime: NaN
     Key: 
     FadeDuration: 0
@@ -901,13 +901,13 @@ MonoBehaviour:
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
     Clip:
-      _FadeDuration: 0.25
+      _FadeDuration: 0.1
       _Speed: 1
       _Events:
         _NormalizedTimes: []
         _Callbacks: []
         _Names: []
-      _Clip: {fileID: -203655887218126122, guid: 8757321dccc7a0a4b9787c60a208f5ae, type: 3}
+      _Clip: {fileID: 7400000, guid: 25e81d77fe09c714585edf4f41a97b03, type: 2}
       _NormalizedStartTime: NaN
     Key: 
     FadeDuration: 0
@@ -927,7 +927,7 @@ MonoBehaviour:
         _NormalizedTimes: []
         _Callbacks: []
         _Names: []
-      _Clip: {fileID: 1827226128182048838, guid: 4bb4416193a8b2949a691e1cec79722d, type: 3}
+      _Clip: {fileID: 7400000, guid: 25e81d77fe09c714585edf4f41a97b03, type: 2}
       _NormalizedStartTime: NaN
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
