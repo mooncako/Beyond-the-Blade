@@ -25,14 +25,21 @@ public class CentipedeCapabilityFactory : CapabilityFactory
 
     protected override void BuildActions(CapabilityBuilder builder)
     {
-
-
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
+            .AddEffect<HeavyAttackEnergy>(EffectType.Increase)
             .SetStoppingDistance(5f)
             .SetBaseCost(4);
+
+        builder.AddAction<HeavyAttackAction>()
+            .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
+            .AddCondition<HeavyAttackEnergy>(Comparison.GreaterThanOrEqual, 9)
+            .AddEffect<PlayerHealth>(EffectType.Decrease)
+            .SetStoppingDistance(5f)
+            .SetBaseCost(3);
     }
 
     protected override void BuildSensors(CapabilityBuilder builder)

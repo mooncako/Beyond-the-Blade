@@ -24,6 +24,7 @@ public class Controller : MonoBehaviour
     public AnimationStateMachine AnimationStateMachine => _animationStateMachine;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Targetable Targetable { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }

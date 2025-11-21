@@ -94,7 +94,27 @@ public class Weapon : MonoBehaviour
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
-        foreach (string key in WeaponSkillDict[0])
+        foreach (string key in WeaponSkillDict[AVAILABLESKILLKEY.Attack])
+        {
+            if (!AvailableSkills[key].IsInCooldown)
+                if (SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
+                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDict[AvailableSkills[key].SkillId].AnimationID))
+                {
+                    StartCoroutine(SkillCooldownCO(key, SkillDict[AvailableSkills[key].SkillId].Cooldown));
+                    _skill = SkillDict[AvailableSkills[key].SkillId];
+                    return _skill;
+                }
+        }
+        return null;
+    }
+
+    public Skill LoopHeavyAttack()
+    {
+        if (_animationDatabase == null) return null;
+        if (SkillDatabase == null) return null;
+        if (AvailableSkills.Count == 0) return null;
+
+        foreach (string key in WeaponSkillDict[AVAILABLESKILLKEY.HeavyAttack])
         {
             if (!AvailableSkills[key].IsInCooldown)
                 if (SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&

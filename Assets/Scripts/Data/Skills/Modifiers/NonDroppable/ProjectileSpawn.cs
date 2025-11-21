@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ProjectileSpawn", menuName = "Modifier/Buffs/ProjectileSpawnBuff")]
-public class ProjectileSpawnBuff : ModifierSO
+[CreateAssetMenu(fileName = "ProjectileSpawn", menuName = "Modifier/NonDroppable/ProjectileSpawn")]
+public class ProjectileSpawn : ModifierSO
 {
     public override void Perform(in ModifierContext context)
     {

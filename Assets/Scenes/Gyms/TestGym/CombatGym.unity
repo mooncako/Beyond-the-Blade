@@ -187,7 +187,7 @@ PrefabInstance:
     - target: {fileID: -5065653963056194739, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
       propertyPath: _attackActionState.Clip._Clip
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7400000, guid: 4e3bf8db7bf7ba245959a0b028c83762, type: 2}
     - target: {fileID: 3744354742756812122, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
       propertyPath: m_Name
       value: Centi
@@ -236,6 +236,26 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 2.28
       objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+      propertyPath: X
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+      propertyPath: Y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+      propertyPath: Z
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+      propertyPath: _type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909133857443672914, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+      propertyPath: _attackPoint
+      value: 
+      objectReference: {fileID: 158974704}
     - target: {fileID: 8598472387181080395, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
       propertyPath: m_UseGravity
       value: 0
@@ -245,6 +265,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+--- !u!4 &158974704 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1560458968914386357, guid: ef48bd794c6226d48b689dda179ef8e0, type: 3}
+  m_PrefabInstance: {fileID: 158974703}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &229468787
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1211,6 +1236,43 @@ MonoBehaviour:
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
   m_ObsoleteContactShadows: 0
+--- !u!84 &1428125053
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1481164186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1375,43 +1437,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &2026010844
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &1499420506883385331
 PrefabInstance:
   m_ObjectHideFlags: 0

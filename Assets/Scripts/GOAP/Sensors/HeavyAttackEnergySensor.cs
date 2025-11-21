@@ -6,11 +6,9 @@ using UnityEngine;
 [GoapId("HeavyAttackEnergySensor")]
 public class HeavyAttackEnergySensor : LocalWorldSensorBase
 {
-    private int _energy;
 
     public override void Created()
     {
-        _energy = 0;
     }
 
     public override void Update()

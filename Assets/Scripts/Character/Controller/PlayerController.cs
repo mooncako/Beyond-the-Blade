@@ -26,7 +26,6 @@ public class PlayerController : Controller,
     [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
     [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
-    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Stamina Stamina;
     [Header("General Settings")]
     [BoxGroup("Input")] public InputProcessor InputProcessor;

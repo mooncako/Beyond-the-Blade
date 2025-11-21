@@ -14,7 +14,7 @@ public class EnemyController : Controller, IPoolable
     
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
     [SerializeField, FoldoutGroup("Base Reference")] public NavMeshAgent Agent;
-    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
+    
 
     
     [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
@@ -153,11 +153,23 @@ public class EnemyController : Controller, IPoolable
 
             }
 
-            // swapout animation in AnimationStateMachine
-            //_animationStateMachine.SwapAnimation(AnimationStateType.Action, CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID));
-
         }
 
+    }
+
+    public void ActivateHeavySkill()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.LoopHeavyAttack();
+            if (_currentSkill != null)
+            {
+                _isSkillPlaying = true;
+
+            }
+
+        }
     }
     
     public void ActivateProjectile()

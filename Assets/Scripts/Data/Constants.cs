@@ -52,6 +52,7 @@ public static class AVAILABLESKILLKEY
     public const int Execution = 3;
     public const int Dash = 4;
     public const int Projectile = 5;
+    public const int HeavyAttack = 6;
 }
 
 public static class RARITYCOLOR
