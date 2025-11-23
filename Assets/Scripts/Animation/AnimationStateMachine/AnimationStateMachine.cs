@@ -22,6 +22,7 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField] private ReviveAnimationState _reviveState;
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
+    [SerializeField] public bool IsHumanoid { get; private set;} = true;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
     [SerializeField] public AvatarMask UpperBodyMask;
     public AnimancerLayer BaseLayer;

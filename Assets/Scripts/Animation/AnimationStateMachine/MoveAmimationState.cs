@@ -56,16 +56,11 @@ public class MoveAnimationState : AnimationState
     public override void OnEnterState()
     {
         // Handle upper body layer
-        if (UpperBodyClip != null)
+        if (UpperBodyClip != null && _stateMachine.IsHumanoid)
         {
             
             _stateMachine.UpperBodyLayer.Weight = 1;
             _stateMachine.UpperBodyLayer.Play(UpperBodyClip, 0.1f);
-        }
-        else
-        {
-            // No upper body override, fade out the layer
-            _stateMachine.UpperBodyLayer.StartFade(0, 0.1f);
         }
         if (_isDirectionalMovement)
         {
@@ -75,8 +70,6 @@ public class MoveAnimationState : AnimationState
         {
             // Play base layer (full body or lower body locomotion)
             _stateMachine.BaseLayer.Play(Clip);
-            
-            
         }
     }
 
