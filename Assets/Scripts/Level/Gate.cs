@@ -14,10 +14,12 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
 
     [SerializeField, BoxGroup("Settings")] private string _levelName;
     [SerializeField, BoxGroup("Settings")] private bool _isNewSession;
+    [SerializeField, BoxGroup("Settings")] private bool _isNewScene = false;
     [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private ExitPos _exit;
 
     private Tween _toriiGenTween;
     private Tween _portalTween;
@@ -65,8 +67,18 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
             {
                 other.GetComponent<PlayerController>().StartNewSession();
             }
+
             EnterNewLevelEvent.Trigger(_levelType);
-            LoadSceneEvent.Trigger(_levelName);
+
+            if(_isNewScene)
+            {
+                LoadSceneEvent.Trigger(_levelName);
+            }
+            else
+            {
+                
+            }
+            
         }
     }
 
@@ -81,6 +93,11 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     {
         //Open animation, vfx ...etc
         OpenGate();
+    }
+
+    public void AssignExit(ExitPos exit)
+    {
+        _exit = exit;
     }
 
     [Button]

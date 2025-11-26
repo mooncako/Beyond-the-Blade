@@ -27,6 +27,7 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug")] public SpawnPos SpawnPos;
     [SerializeField, BoxGroup("Debug")] public PlayerController _player;
     [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList = new List<ExitPos>();
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
 
 #if UNITY_EDITOR
     [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
@@ -70,16 +71,38 @@ public class LevelSystem : MonoBehaviour
         // Select Spawn/Exit Locations
         SelectSpawnExitLocations();
 
-        Tween.Delay(.1f).OnComplete(() => {
+        Tween.Delay(.01f).OnComplete(() => {
             
-            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, EnemySpawnPositions);
+            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, EnemySpawnPositions, this);
 
-            Tween.Delay(.5f).OnComplete(() =>
+            Tween.Delay(.01f).OnComplete(() =>
             {
-                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, EnemySpawnPositions);
+                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, EnemySpawnPositions, this);
             });
             
         });
+    }
+
+    public void CalculateExitTypes()
+    {
+        float possibilityIndex;
+        _exitsLevelType.Clear();
+        for (int i = 0; i < ExitPosList.Count; i++)
+        {
+            possibilityIndex = Random.Range(0, 1);
+            if (possibilityIndex <= ExitsProbability.RegularExitPercentage)
+            {
+                _exitsLevelType.Add(LevelType.Reguler);
+            }
+            else if (possibilityIndex <= ExitsProbability.RegularExitPercentage + ExitsProbability.RecoveryExitPercentage)
+            {
+                _exitsLevelType.Add(LevelType.Recover);
+            }
+            else
+            {
+                _exitsLevelType.Add(LevelType.Shop);
+            }
+        }
     }
 
     private void SelectSpawnExitLocations()
