@@ -1,6 +1,7 @@
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -156,7 +157,12 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
-        if(_currentLevelCount == 5) return;
+        if(_currentLevelCount == 5)
+        {
+            Debug.Log(1);
+            BuildNavMeshEvent.Trigger();
+            return;
+        }
         if (e.State == EventStateType.OnEventEnd)
         {
             if(_currentLevelCount != 0)
@@ -165,7 +171,6 @@ public class LevelManager : MMSingleton<LevelManager>,
             }
             e.Level.CalculateExitTypes();
             _currentLevelCount++;
-            LevelSystem system;
             if (IsNextLevelBossRoom())
             {
                 Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
@@ -185,7 +190,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                         break;
                 }
 
-                system = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
+                Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
             }
             else
             {
@@ -209,7 +214,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                             break;
                     }
 
-                    system = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
+                    Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
                 }
             }
         }

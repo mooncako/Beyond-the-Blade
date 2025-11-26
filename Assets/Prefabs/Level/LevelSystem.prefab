@@ -577,7 +577,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8839776226140716288}
-  - component: {fileID: 337656151512876161}
   - component: {fileID: 294343454693272879}
   m_Layer: 0
   m_Name: LevelSystem
@@ -609,38 +608,6 @@ Transform:
   - {fileID: 7912416213260999935}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &337656151512876161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7963203523257687673}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 5120
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 9000cbf6d90f04944bbbf4b4b9aa6eed, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!114 &294343454693272879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,7 +624,6 @@ MonoBehaviour:
   - {fileID: 3585683648826595665}
   _gameplayObjectSpawners:
   - {fileID: 7990605664560212213}
-  _navMeshSurface: {fileID: 337656151512876161}
   _levelMesh: {fileID: 4415931394334982216}
   BiomeType: 0
   _exitsAmount: 1
@@ -681,7 +647,7 @@ MonoBehaviour:
   SpawnPos: {fileID: 0}
   _player: {fileID: 0}
   ExitPosList: []
-  _exitsLevelType: 
+  ExitsLevelType: 
 --- !u!1 &9039863494200469717
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,7 +1222,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7607998624642708413, guid: cc53f635a4965a444b583e0b58d65748, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.002204299
+      value: 2.9977956
       objectReference: {fileID: 0}
     - target: {fileID: 7607998624642708413, guid: cc53f635a4965a444b583e0b58d65748, type: 3}
       propertyPath: m_LocalPosition.z

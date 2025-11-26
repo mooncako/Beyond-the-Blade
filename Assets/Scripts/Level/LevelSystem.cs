@@ -6,12 +6,11 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityUtils;
 
-[RequireComponent(typeof(NavMeshSurface))]
+
 public class LevelSystem : MonoBehaviour
 {
     [field: SerializeField, FoldoutGroup("References")] private EnvironmentalObjectSpawner[] _environmentalObjectSpawners;
     [field: SerializeField, FoldoutGroup("References")] private GameplayObjectSpawner[] _gameplayObjectSpawners;
-    [SerializeField, FoldoutGroup("References")] private NavMeshSurface _navMeshSurface;
     [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
 
     [SerializeField, BoxGroup("Settings")] public BiomeType BiomeType;
@@ -30,8 +29,8 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -41,14 +40,12 @@ public class LevelSystem : MonoBehaviour
         SpawnPositions = GetComponentsInChildren<SpawnPos>();
         EnemySpawnPositions = GetComponentsInChildren<EnemySpawnPos>();
         ExitPositions = GetComponentsInChildren<ExitPos>();
-        _navMeshSurface = GetComponent<NavMeshSurface>();
         _levelMesh = GetComponentInChildren<LevelMesh>();
     }
 #endif
 
     void OnValidate()
     {
-        if (_navMeshSurface == null) _navMeshSurface = GetComponent<NavMeshSurface>();
         if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
     }
 
@@ -66,7 +63,7 @@ public class LevelSystem : MonoBehaviour
         GenerateGameplayProps();
 
         // Rebuild Navmesh
-        RebuildNavmesh();
+        // RebuildNavmesh();
 
         // Select Spawn/Exit Locations
         SelectSpawnExitLocations();
@@ -176,12 +173,12 @@ public class LevelSystem : MonoBehaviour
         }
     }
 
-    private void RebuildNavmesh()
-    {
-        _navMeshSurface.BuildNavMesh();
-        // Generate Enemies
+    // private void RebuildNavmesh()
+    // {
+    //     _navMeshSurface.BuildNavMesh();
+    //     // Generate Enemies
         
-    }
+    // }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)
     {

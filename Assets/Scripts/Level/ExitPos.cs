@@ -4,18 +4,20 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 
+[RequireComponent(typeof(SplineContainer))]
 public class ExitPos : DrawPos
 {
-    [BoxGroup("References")] public SplineContainer Spline;
+    [BoxGroup("References")] public SplineContainer SplineContainer;
 
     void OnValidate()
     {
-        if(Spline == null) Spline = GetComponent<SplineContainer>();
+        if(SplineContainer == null) SplineContainer = GetComponent<SplineContainer>();
     }
 
     public Vector3 GetTeleportExit()
     {
-        float3 splineExitPos = Spline.Spline.ToArray()[Spline.Spline.ToArray().Length - 1].Position;
-        return new Vector3(transform.position.x + splineExitPos.x, transform.position.y + splineExitPos.y, transform.position.z + splineExitPos.z);
+        float3 splineExitPos = SplineContainer.Spline.ToArray()[SplineContainer.Spline.ToArray().Length - 1].Position;
+        
+        return SplineContainer.transform.TransformPoint(splineExitPos);
     }
 }
