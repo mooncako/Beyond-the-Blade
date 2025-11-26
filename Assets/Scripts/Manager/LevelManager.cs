@@ -23,6 +23,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelCount = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
@@ -97,6 +98,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     private void ResetManager()
     {
         CurrentLevelIndex = 0;
+        _currentLevelCount = 0;
     }
 
     private void SelectLevel()
@@ -154,25 +156,56 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
+        if(_currentLevelCount == 5) return;
         if (e.State == EventStateType.OnEventEnd)
         {
             e.Level.CalculateExitTypes();
+            _currentLevelCount++;
 
             if (IsNextLevelBossRoom())
             {
                 Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
                 gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
                 gate.AssignExit(e.Level.ExitPosList[0]); 
-                // Instantiating next level
+                // Instantiating boss level
+                switch(_currentBiome)
+                {
+                    case BiomeType.City:
+                        _selectedSystemPrefab = _bossLevelPrefabs[0];
+                        break;
+                    case BiomeType.Market:
+                        _selectedSystemPrefab = _bossLevelPrefabs[1];
+                        break;
+                    case BiomeType.Shrine:
+                        _selectedSystemPrefab = _bossLevelPrefabs[2];
+                        break;
+                }
+
+                Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
             }
             else
             {
                 for (int i = 0; i < e.Level.ExitPosList.Count; i++)
                 {
                     Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[i].transform.position, e.Level.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
-                    gate.SetLevelName(SceneManager.GetActiveScene().name, _exitsLevelType[i]);
+                    gate.SetLevelName(SceneManager.GetActiveScene().name, e.Level.ExitsLevelType[i]);
                     gate.AssignExit(e.Level.ExitPosList[i]);
                     // Instantiating next level
+
+                    switch(e.Level.ExitsLevelType[i])
+                    {
+                        case LevelType.Reguler:
+                            _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
+                            break;
+                        case LevelType.Recover:
+                            _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
+                            break;
+                        case LevelType.Shop:
+                            _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
+                            break;
+                    }
+
+                    Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
                 }
             }
         }
@@ -204,7 +237,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     private bool IsNextLevelBossRoom()
     {
-        return CurrentLevelIndex == 4 || CurrentLevelIndex == 9 || CurrentLevelIndex == 14;
+        return _currentLevelCount == 4;
     }
 
     public Vector3 GetCurrentPickupSpawnPos(Vector3 offset)

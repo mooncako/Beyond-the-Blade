@@ -1,7 +1,7 @@
 
-using System.Numerics;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Splines;
 
 public class ExitPos : DrawPos
