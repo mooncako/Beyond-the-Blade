@@ -681,6 +681,7 @@ MonoBehaviour:
   SpawnPos: {fileID: 0}
   _player: {fileID: 0}
   ExitPosList: []
+  _exitsLevelType: 
 --- !u!1 &9039863494200469717
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,6 +1288,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7607998624642708413, guid: cc53f635a4965a444b583e0b58d65748, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984960638479509425, guid: cc53f635a4965a444b583e0b58d65748, type: 3}
+      propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[0].Position.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
