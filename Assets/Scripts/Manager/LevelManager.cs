@@ -159,9 +159,13 @@ public class LevelManager : MMSingleton<LevelManager>,
         if(_currentLevelCount == 5) return;
         if (e.State == EventStateType.OnEventEnd)
         {
+            if(_currentLevelCount != 0)
+            {
+                e.Level.ShiftLevel();
+            }
             e.Level.CalculateExitTypes();
             _currentLevelCount++;
-
+            LevelSystem system;
             if (IsNextLevelBossRoom())
             {
                 Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
@@ -181,7 +185,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                         break;
                 }
 
-                Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
+                system = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
             }
             else
             {
@@ -205,7 +209,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                             break;
                     }
 
-                    Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
+                    system = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
                 }
             }
         }

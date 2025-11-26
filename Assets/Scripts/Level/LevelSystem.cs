@@ -207,5 +207,11 @@ public class LevelSystem : MonoBehaviour
         return ints;
 
     }
+
+    public void ShiftLevel()
+    {
+        Vector3 shiftDistance = transform.position - SpawnPos.transform.position;
+        transform.position += shiftDistance;
+    }
 }
     
