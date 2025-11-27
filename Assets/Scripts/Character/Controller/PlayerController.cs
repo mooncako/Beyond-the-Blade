@@ -10,6 +10,7 @@ using PrimeTween;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.Splines;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
@@ -27,6 +28,9 @@ public class PlayerController : Controller,
     [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Stamina Stamina;
+    [SerializeField, FoldoutGroup("Base Reference")] private SplineAnimate _splineAnimate;
+    [SerializeField, FoldoutGroup("Base Reference")] private GameObject _playerMesh;
+    [SerializeField, FoldoutGroup("Base Reference")] private VisualEffect _teleportEffect;
     [Header("General Settings")]
     [BoxGroup("Input")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
@@ -65,6 +69,7 @@ public class PlayerController : Controller,
         if (_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
         if (Energy == null) Energy = GetComponent<Energy>();
         if (Stamina == null) Stamina = GetComponent<Stamina>();
+        if (_splineAnimate == null) _splineAnimate = GetComponent<SplineAnimate>();
         if ((_attackableMask & (1 << 8)) == 0)
         {
             _attackableMask |= 1 << 8;
@@ -657,5 +662,20 @@ public class PlayerController : Controller,
     public override void StartStunAnimEvent()
     {
         _input.SwitchCurrentActionMap("UI");
+    }
+
+    public void PortalTrigger(SplineContainer container, Vector3 exitPos)
+    {
+        _splineAnimate.Container = container;
+        _splineAnimate.NormalizedTime = 0;
+        _splineAnimate.Play();
+        _playerMesh.SetActive(false);
+        _teleportEffect.Play();
+        Tween.Delay(_splineAnimate.Duration).OnComplete(() =>
+        {
+            _playerMesh.SetActive(true);
+            _teleportEffect.Stop();
+            Movement.Teleport(exitPos);
+        });
     }
 }
