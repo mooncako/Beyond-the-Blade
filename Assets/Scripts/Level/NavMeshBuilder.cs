@@ -8,6 +8,7 @@ public class NavMeshBuilder : MonoBehaviour,
     MMEventListener<BuildNavMeshEvent>
 {
     [SerializeField, BoxGroup("References")] private NavMeshSurface _navMeshSurface;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _hasTriggered = false;
 
     void OnValidate()
     {
@@ -25,13 +26,25 @@ public class NavMeshBuilder : MonoBehaviour,
     }
 
     [Button]
-    private void Build()
+    private void Build(bool forceBuild)
     {
-        _navMeshSurface.BuildNavMesh();
+        if(forceBuild)
+        {
+            _navMeshSurface.BuildNavMesh();
+        }
+        else
+        {
+            if(!_hasTriggered)
+            {
+                _hasTriggered = true;
+                _navMeshSurface.BuildNavMesh();
+            }
+        }
+        
     }
 
     public void OnMMEvent(BuildNavMeshEvent e)
     {
-        Build();
+        Build(e.ForceBuild);
     }
 }

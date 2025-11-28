@@ -157,14 +157,16 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
-        if(_currentLevelCount == 5)
-        {
-            Debug.Log(1);
-            BuildNavMeshEvent.Trigger();
-            return;
-        }
+        
         if (e.State == EventStateType.OnEventEnd)
         {
+            if(_currentLevelCount == 5)
+            {
+                BuildNavMeshEvent.Trigger(false);
+                LevelSetupCompleteEvent.Trigger(_currentLevel.SpawnPos.transform.position);
+                return;
+            }
+
             if(_currentLevelCount != 0)
             {
                 e.Level.ShiftLevel();

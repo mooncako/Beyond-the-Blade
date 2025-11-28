@@ -16,7 +16,7 @@ using UnityEngine.Splines;
 [RequireComponent(typeof(CustomCharacterMovement))]
 public class PlayerController : Controller,
     MMEventListener<PlayerAnimationStateChangeEvent>,
-    MMEventListener<LevelRandomizeCompleteEvent>,
+    MMEventListener<LevelSetupCompleteEvent>,
     MMEventListener<SkillSwapEvent>,
     MMEventListener<AbilitySwapEvent>,
     MMEventListener<AddNewAbilityEvent>,
@@ -24,9 +24,8 @@ public class PlayerController : Controller,
     MMEventListener<CurrencyEarnedEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
+    // [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
+    // [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Stamina Stamina;
     [SerializeField, FoldoutGroup("Base Reference")] private SplineAnimate _splineAnimate;
     [SerializeField, FoldoutGroup("Base Reference")] private GameObject _playerMesh;
@@ -50,7 +49,7 @@ public class PlayerController : Controller,
     public PlayerStatsSO PlayerStats => (PlayerStatsSO)Stats;
 
     private Vector3 _forward;
-    private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
+
     private bool _isPerfectParryWindowActive = false;
     public bool IsPerfectParryWindowActive => _isPerfectParryWindowActive;
     public bool MusoReady { get; private set; }
@@ -139,7 +138,7 @@ public class PlayerController : Controller,
     {
         base.OnEnable();
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
-        this.MMEventStartListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStartListening<LevelSetupCompleteEvent>();
         this.MMEventStartListening<SkillSwapEvent>();
         this.MMEventStartListening<AbilitySwapEvent>();
         this.MMEventStartListening<AddNewAbilityEvent>();
@@ -158,7 +157,7 @@ public class PlayerController : Controller,
     {
         base.OnDisable();
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
-        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<LevelSetupCompleteEvent>();
         this.MMEventStopListening<SkillSwapEvent>();
         this.MMEventStopListening<AbilitySwapEvent>();
         this.MMEventStopListening<AddNewAbilityEvent>();
@@ -201,13 +200,11 @@ public class PlayerController : Controller,
         CurrentState = e.State;
     }
 
-    public void OnMMEvent(LevelRandomizeCompleteEvent e)
+    public void OnMMEvent(LevelSetupCompleteEvent e)
     {
-        if (e.State == EventStateType.OnEventEnd)
-        {
-            Movement.Teleport(e.SpawnPoint.position);
-        }
+        Movement.Teleport(e.SpawnPosition);
     }
+
     public void OnMMEvent(SkillSwapEvent e)
     {
         CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
@@ -501,11 +498,11 @@ public class PlayerController : Controller,
     }
 
 
-    public void CleanUpLightAttack()
-    {
-        _weaponCollider.enabled = false;
-        _hitEnemiesThisAttack.Clear();
-    }
+    // public void CleanUpLightAttack()
+    // {
+    //     _weaponCollider.enabled = false;
+    //     _hitEnemiesThisAttack.Clear();
+    // }
 
     public void Parry(Vector3 aimPosition)
     {
