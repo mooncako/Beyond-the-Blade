@@ -12,6 +12,7 @@ public class LevelSystem : MonoBehaviour
     [field: SerializeField, FoldoutGroup("References")] private EnvironmentalObjectSpawner[] _environmentalObjectSpawners;
     [field: SerializeField, FoldoutGroup("References")] private GameplayObjectSpawner[] _gameplayObjectSpawners;
     [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
+    [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
 
     [SerializeField, BoxGroup("Settings")] public BiomeType BiomeType;
     [SerializeField, BoxGroup("Settings"), Range(1, 3)] private int _exitsAmount = 1;
@@ -29,8 +30,8 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -41,6 +42,7 @@ public class LevelSystem : MonoBehaviour
         EnemySpawnPositions = GetComponentsInChildren<EnemySpawnPos>();
         ExitPositions = GetComponentsInChildren<ExitPos>();
         _levelMesh = GetComponentInChildren<LevelMesh>();
+        _levelAssigner = GetComponentInChildren<LevelAssigner>();
     }
 #endif
 
@@ -70,11 +72,11 @@ public class LevelSystem : MonoBehaviour
 
         Tween.Delay(.01f).OnComplete(() => {
             
-            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, EnemySpawnPositions, this);
+            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, this);
 
             Tween.Delay(.01f).OnComplete(() =>
             {
-                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, EnemySpawnPositions, this);
+                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, this);
             });
             
         });

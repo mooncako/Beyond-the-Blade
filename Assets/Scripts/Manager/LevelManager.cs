@@ -34,6 +34,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     void OnValidate()
     {
         if (_pickupFactory == null) _pickupFactory = GetComponent<PickupFactory>();
+        
     }
 
     protected override void Awake()
@@ -81,7 +82,6 @@ public class LevelManager : MMSingleton<LevelManager>,
         if (_doOnce)
         {
             _doOnce = false;
-            CurrentLevelIndex++;
 
             if (!_isSetupComplete)
             {
@@ -252,5 +252,12 @@ public class LevelManager : MMSingleton<LevelManager>,
     public Vector3 GetCurrentPickupSpawnPos(Vector3 offset)
     {
         return new Vector3(_currentLevel.PickupSpawnPosition.position.x + offset.x, _currentLevel.PickupSpawnPosition.position.y + offset.y, _currentLevel.PickupSpawnPosition.position.z + offset.z);
+    }
+
+    public void ChangeLevel(LevelSystem system)
+    {
+        CurrentLevelIndex++;
+        _currentLevel = system;
+        EnemyStartSpawnEvent.Trigger(_currentLevel.EnemySpawnPositions);
     }
 }
