@@ -74,6 +74,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
             if(_isNewScene)
             {
                 LoadSceneEvent.Trigger(_levelName);
+                
             }
             else
             {

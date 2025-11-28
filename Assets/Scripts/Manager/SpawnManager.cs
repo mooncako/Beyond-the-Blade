@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class SpawnManager : MMSingleton<SpawnManager>,
     MMEventListener<EnemyClearedEvent>,
-    MMEventListener<LevelRandomizeCompleteEvent>,
+    MMEventListener<EnemyStartSpawnEvent>,
     MMEventListener<ReturnEnemyEvent>
 {
     [SerializeField, BoxGroup("References")] private ObjectPool _pool;
@@ -53,7 +53,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
         this.MMEventStartListening<EnemyClearedEvent>();
-        this.MMEventStartListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStartListening<EnemyStartSpawnEvent>();
         this.MMEventStartListening<ReturnEnemyEvent>();
     }
 
@@ -61,7 +61,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<EnemyClearedEvent>();
-        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<EnemyStartSpawnEvent>();
         this.MMEventStopListening<ReturnEnemyEvent>();
     }
 
@@ -69,7 +69,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         this.MMEventStopListening<EnemyClearedEvent>();
-        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<EnemyStartSpawnEvent>();
         this.MMEventStopListening<ReturnEnemyEvent>();
     }
 
@@ -80,18 +80,13 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         SpawnWave();
     }
 
-    public void OnMMEvent(LevelRandomizeCompleteEvent e)
+    public void OnMMEvent(EnemyStartSpawnEvent e)
     {
-        if (e.State == EventStateType.OnEventStart)
+        if (_canSpawn)
         {
-
-            if (_canSpawn)
-            {
-                _enemySpawnPos = e.EnemySpawnPositions;
-                SetupWaveInfo();
-            }
+            _enemySpawnPos = e.EnemySpawnPositions;
+            SetupWaveInfo();
         }
-
     }
 
     public void OnMMEvent(ReturnEnemyEvent e)
