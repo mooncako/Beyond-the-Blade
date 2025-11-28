@@ -663,6 +663,7 @@ public class PlayerController : Controller,
 
     public void PortalTrigger(SplineContainer container, Vector3 exitPos)
     {
+        ToggleKillzEvent.Trigger(false);
         _splineAnimate.Container = container;
         _splineAnimate.NormalizedTime = 0;
         _splineAnimate.Play();
@@ -673,6 +674,7 @@ public class PlayerController : Controller,
             _playerMesh.SetActive(true);
             _teleportEffect.Stop();
             Movement.Teleport(exitPos);
+            ToggleKillzEvent.Trigger(true);
         });
     }
 }

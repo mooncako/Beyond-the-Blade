@@ -81,7 +81,9 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     }
 
     public void OnMMEvent(EnemyStartSpawnEvent e)
-    {
+    {   
+        UpdateEnemyList();
+
         if (_canSpawn)
         {
             _enemySpawnPos = e.EnemySpawnPositions;
@@ -121,7 +123,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         {
             ResetManager();
         }
-        UpdateEnemyList();
+        
 
     }
 
@@ -171,6 +173,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             return;
         }
 
+        StopCoroutine(SpawnEnemyCO());
         StartCoroutine(SpawnEnemyCO());
     }
     
