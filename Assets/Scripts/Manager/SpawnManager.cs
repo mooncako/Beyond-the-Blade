@@ -99,6 +99,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [Button]
     private void UpdateEnemyList()
     {
+        //TODO: rewrite this
         _currentEnemyDict.Clear();
         _picks.Clear();
         _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
