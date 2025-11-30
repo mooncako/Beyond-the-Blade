@@ -20,6 +20,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
     [SerializeField, BoxGroup("Settings")] private LevelType _defaultLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private BiomeType _currentBiome;
+    [SerializeField, HideInInspector] public BiomeType CurrentBiome => _currentBiome;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public LevelType CurrentLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
@@ -89,7 +90,8 @@ public class LevelManager : MMSingleton<LevelManager>,
                 CurrentLevelType = _defaultLevelType;
                 _isSetupComplete = true;
             }
-
+            
+            SpawnManager.Instance.UpdateEnemyList();
             // Choose the current level based on CurrentLeveltype and biome
             SelectLevel();
         }

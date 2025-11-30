@@ -82,7 +82,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
     public void OnMMEvent(EnemyStartSpawnEvent e)
     {   
-        UpdateEnemyList();
+        
 
         if (_canSpawn)
         {
@@ -97,18 +97,16 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     }
 
     [Button]
-    private void UpdateEnemyList()
+    public void UpdateEnemyList()
     {
         //TODO: rewrite this
         _currentEnemyDict.Clear();
-        _picks.Clear();
-        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        
         List<GameObject> poolList = new List<GameObject>();
 
         foreach (EnemyProfile profile in _enemyDatabase.EnemyDict.Keys)
         {
-            if (profile.Difficulty >= _minDifficulty && profile.Difficulty <= _maxDifficulty)
+            if (profile.BiomeType == LevelManager.Instance.CurrentBiome)
             {
                 _currentEnemyDict.Add(profile, _enemyDatabase.EnemyDict[profile]);
                 poolList.Add(_enemyDatabase.EnemyDict[profile]);
@@ -125,11 +123,14 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             ResetManager();
         }
         
-
     }
 
     private void SetupWaveInfo()
     {
+        _picks.Clear();
+        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
         {

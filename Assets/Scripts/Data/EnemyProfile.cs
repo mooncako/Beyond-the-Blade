@@ -8,6 +8,8 @@ public class EnemyProfile
 {
     [Header("Enemy Name")]
     public string EnemyName;
+    [Header("Biome")]
+    public BiomeType BiomeType;
     [Header("Difficulty")]
     public float Difficulty;
     [Header("Cost")]
