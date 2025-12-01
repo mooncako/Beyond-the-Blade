@@ -34,6 +34,7 @@ public class LevelAssigner : MonoBehaviour
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
             if(_hasTriggered) return;
+            _hasTriggered = true;
             LevelManager.Instance.ChangeLevel(_levelSystem);
         }
     }

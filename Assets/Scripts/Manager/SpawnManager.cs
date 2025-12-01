@@ -32,12 +32,13 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> EnemiesWaitingForSpawn => _enemiesWaitingForSpawn.ToList();
 #endif
 
-    private int _budget;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _budget;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _poolInitialized = false;
 
     private Queue<string> _currentSpawningEnemies = new Queue<string>();
     private Queue<string> _enemiesWaitingForSpawn = new Queue<string>();
 
-    private EnemySpawnPos[] _enemySpawnPos;
+    [SerializeField, ReadOnly] private EnemySpawnPos[] _enemySpawnPos;
 
     private void OnValidate()
     {
@@ -81,14 +82,13 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     }
 
     public void OnMMEvent(EnemyStartSpawnEvent e)
-    {   
-        
-
+    { 
         if (_canSpawn)
         {
             _enemySpawnPos = e.EnemySpawnPositions;
             SetupWaveInfo();
         }
+        
     }
 
     public void OnMMEvent(ReturnEnemyEvent e)
@@ -99,7 +99,9 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [Button]
     public void UpdateEnemyList()
     {
+        if(_poolInitialized) return;
         //TODO: rewrite this
+        _poolInitialized = true;
         _currentEnemyDict.Clear();
         
         List<GameObject> poolList = new List<GameObject>();
@@ -201,6 +203,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     private void ResetManager()
     {
         _minDifficulty = 0;
+        _poolInitialized = false;
     }
 
     public void ToggleSpawn(bool toggle)

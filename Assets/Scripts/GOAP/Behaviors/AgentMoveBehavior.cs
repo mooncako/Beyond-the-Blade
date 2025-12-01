@@ -29,7 +29,7 @@ public class AgentMoveBehavior : MonoBehaviour
     {
         _agentBehavior.Events.OnTargetChanged += OnTargetChanged;
         _agentBehavior.Events.OnTargetNotInRange += OnTargetNotInRange;
-        _controller.Movement.Stop();
+        // _controller.Movement.Stop();
     }
 
     private void OnDisable()
@@ -46,7 +46,6 @@ public class AgentMoveBehavior : MonoBehaviour
 
         // if(!AnimationStateMachine.IsInMoveState()) return;
         
-    
         _controller.MoveTo(_currentTarget.Position);
     }
 

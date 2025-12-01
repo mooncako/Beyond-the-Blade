@@ -166,6 +166,7 @@ public class LevelManager : MMSingleton<LevelManager>,
             if(_currentLevelCount == 5)
             {
                 BuildNavMeshEvent.Trigger(false);
+                
                 LevelSetupCompleteEvent.Trigger(_currentLevel.SpawnPos.transform.position);
                 return;
             }
