@@ -17,7 +17,6 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
     [SerializeField, BoxGroup("References")] protected EnemyController _controller;
     [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
-    [SerializeField, BoxGroup("Settings")] public bool IsTank = false;
     [SerializeField, BoxGroup("Settings")] public PersonalityType Personality;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;

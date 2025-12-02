@@ -14,6 +14,7 @@ public class EnemyController : Controller, IPoolable
     
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
     [SerializeField, FoldoutGroup("Base Reference")] public NavMeshAgent Agent;
+    [SerializeField, FoldoutGroup("Base Reference")] public Posture Posture;
     
 
     
@@ -32,6 +33,7 @@ public class EnemyController : Controller, IPoolable
         if (Energy == null) Energy = GetComponent<Energy>();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
         if (Agent == null) Agent = GetComponent<NavMeshAgent>();
+        if (Posture == null) Posture = GetComponent<Posture>();
 
         if (_brain == null) _brain = GetComponent<Brain>();
         if ((_attackableMask & (1 << 7)) == 0)
@@ -60,7 +62,9 @@ public class EnemyController : Controller, IPoolable
 
         Health.OnDamage.AddListener(DamageFeedback);
         Health.OnDeath.AddListener(OnDeath);
-        StartCoroutine(UpdateStateCO());
+        Posture.OnStunned.AddListener(OnStunned);
+
+        // StartCoroutine(UpdateStateCO());
     }
 
     protected override void OnDisable()
@@ -77,10 +81,11 @@ public class EnemyController : Controller, IPoolable
 
         Health.OnDamage.RemoveListener(DamageFeedback);
         Health.OnDeath.RemoveListener(OnDeath);
+        Posture.OnStunned.AddListener(OnStunned);
 
         _attackDelayTween.Stop();
         _staggerTween.Stop();
-        StopCoroutine(UpdateStateCO());
+        // StopCoroutine(UpdateStateCO());
     }
 
     private void FixedUpdate()
@@ -97,7 +102,8 @@ public class EnemyController : Controller, IPoolable
         {
             if (Movement.IsAgentMoving())
             {
-                AnimationStateMachine.SwitchState(AnimationStateType.Move);
+                if(!AnimationStateMachine.IsInMoveState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Move);
             }
         }
     }
@@ -106,10 +112,11 @@ public class EnemyController : Controller, IPoolable
     {
         while(true)
         {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(.5f, 1f));
+            yield return new WaitForSeconds(UnityEngine.Random.Range(.5f, .8f));
             if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
             {
-                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+                if(AnimationStateMachine.IsInMoveState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Idle);
             }
         }
         
@@ -242,10 +249,17 @@ public class EnemyController : Controller, IPoolable
     protected override void OnParried(float duration)
     {
         base.OnParried(duration);
-        Stun(duration, null, true);
+        Posture.IncreaseStun(UnityEngine.Random.Range(_currentSkill.Damage/10, _currentSkill.Damage/10 + _currentSkill.Damage/20), duration);
+        AnimationStateMachine.SwitchState(AnimationStateType.Idle);
         ParrySuccessEvent.Trigger();
         CameraShakeEvent.Trigger(new LightShake());
     }
+
+    private void OnStunned(float duration)
+    {
+        Stun(duration, null, true);
+    }
+
 
     public override void StartAttackCooldown()
     {
@@ -257,14 +271,7 @@ public class EnemyController : Controller, IPoolable
 
     private void DamageFeedback(DamageInfo info)
     {
-        if (!_brain.IsTank)
-        {
-            Stun(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
-        }
-        else
-        {
-            Movement.KnockBack(info.Instigator.transform, 500);
-        }
+        Movement.KnockBack(info.Instigator.transform, 500);
     }
 
     public override void Stun(float duration, Action onComplete = null, bool forceStun = false)
@@ -319,5 +326,10 @@ public class EnemyController : Controller, IPoolable
     {
         base.ApplyStats();
         Energy.ApplyStats(Stats);
+        if(Stats is EnemyStatsSO enemyStats)
+        {
+            Posture?.ApplyStats(enemyStats.StunThreshold);
+        }
+        
     }
 }

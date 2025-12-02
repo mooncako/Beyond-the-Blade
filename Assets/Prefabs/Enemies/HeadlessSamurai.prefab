@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 1379345722282491249}
   - component: {fileID: 5162801268352820049}
   - component: {fileID: 3185499813960374161}
+  - component: {fileID: 7963954931857946615}
   m_Layer: 8
   m_Name: HeadlessSamurai
   m_TagString: Untagged
@@ -521,7 +522,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Range: 4
   AlertRange: 6
-  FieldOfView: 200
+  FieldOfView: 140
   _occlusionMask:
     serializedVersion: 2
     m_Bits: 768
@@ -702,6 +703,7 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 5062411154900718218}
   Agent: {fileID: 3926015235504465536}
+  Posture: {fileID: 7963954931857946615}
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
@@ -758,7 +760,6 @@ MonoBehaviour:
   _movement: {fileID: 3418439087366576687}
   _controller: {fileID: 4962864894029839974}
   _spanwDelay: 0.5
-  IsTank: 0
   Personality: 0
   _isPlayerInRange: 0
   _isPlayerDetected: 0
@@ -1121,7 +1122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxEnergy: 0
+  _maxEnergy: 10
   _energy: 0
   OnExecution:
     m_PersistentCalls:
@@ -1130,6 +1131,24 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnStatsUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7963954931857946615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b712d2bb0af172d48b825431ff3be938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentStunValue: 0
+  _stunned: 0
+  StunThreshold: 5
+  OnStunned:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1001 &394492389435386265

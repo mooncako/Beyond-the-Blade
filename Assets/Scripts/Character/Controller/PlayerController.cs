@@ -544,7 +544,7 @@ public class PlayerController : Controller,
 
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.HitStunDuration); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.RegulerStunDuration); // TODO: Add Stats regarding parry and stagger
         }
 
 
