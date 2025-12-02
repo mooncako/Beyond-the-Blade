@@ -96,17 +96,7 @@ public class Controller : MonoBehaviour
     protected virtual void Update()
     {
 
-        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
-        {
-            if (Movement.MoveInput != Vector3.zero)
-            {
-                AnimationStateMachine.SwitchState(AnimationStateType.Move);
-            }
-            else
-            {
-                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
-            }
-        }
+        
     }
 
     public virtual void ActivateSkill()

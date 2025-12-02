@@ -60,6 +60,7 @@ public class EnemyController : Controller, IPoolable
 
         Health.OnDamage.AddListener(DamageFeedback);
         Health.OnDeath.AddListener(OnDeath);
+        StartCoroutine(UpdateStateCO());
     }
 
     protected override void OnDisable()
@@ -79,6 +80,7 @@ public class EnemyController : Controller, IPoolable
 
         _attackDelayTween.Stop();
         _staggerTween.Stop();
+        StopCoroutine(UpdateStateCO());
     }
 
     private void FixedUpdate()
@@ -89,7 +91,29 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
-    
+    protected override void Update()
+    {
+        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
+        {
+            if (Movement.IsAgentMoving())
+            {
+                AnimationStateMachine.SwitchState(AnimationStateType.Move);
+            }
+        }
+    }
+
+    private IEnumerator UpdateStateCO()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(.5f, 1f));
+            if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
+            {
+                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+            }
+        }
+        
+    }
 
     public void MoveTo(Vector3 destination)
     {

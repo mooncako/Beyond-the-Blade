@@ -15,6 +15,7 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected PlayerSensor _playerSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
+    [SerializeField, BoxGroup("References")] protected EnemyController _controller;
     [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
     [SerializeField, BoxGroup("Settings")] public bool IsTank = false;
     [SerializeField, BoxGroup("Settings")] public PersonalityType Personality;
@@ -32,6 +33,7 @@ public class Brain : MonoBehaviour
         if (_goap == null) _goap = GetComponent<GoapBehaviour>();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
         if (_movement == null) _movement = GetComponent<CustomCharacterMovement>();
+        if (_controller == null) _controller = GetComponent<EnemyController>();
     }
 
     protected virtual void OnEnable()
@@ -42,7 +44,6 @@ public class Brain : MonoBehaviour
         _agent.IsPaused = false;
         _isPlayerDetected = false;
         _provider.ClearGoal();
-        _provider.RequestGoal<WanderGoal>(false);
     }
 
     protected virtual void OnDisable()

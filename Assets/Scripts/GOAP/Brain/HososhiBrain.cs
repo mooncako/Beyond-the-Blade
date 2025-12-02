@@ -12,7 +12,6 @@ public class HososhiBrain : Brain
     protected override void OnEnable()
     {
         base.OnEnable();
-        _provider.RequestGoal<WanderGoal>(false);
     }
 
     protected override void OnDisable()

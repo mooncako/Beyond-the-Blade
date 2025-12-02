@@ -23,7 +23,8 @@ public class IdleAnimationState : AnimationState
     public override void OnEnterState()
     {
         base.OnEnterState();
-        
+        if(Owner != null)
+            Owner.Movement.Stop();
     }
 
     public override void OnInterrupt()

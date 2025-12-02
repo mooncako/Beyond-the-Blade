@@ -113,6 +113,8 @@ public class MoveAnimationState : AnimationState
 
     public override void OnExitState()
     {
+        base.OnExitState();
+        
         if (_stateMachine.UpperBodyLayer.Weight > 0)
         {
             _stateMachine.UpperBodyLayer.StartFade(0, 0.15f);
@@ -128,7 +130,6 @@ public class MoveAnimationState : AnimationState
             }
         }
         
-        base.OnExitState();
     }
 
     public override void OnInterrupt()

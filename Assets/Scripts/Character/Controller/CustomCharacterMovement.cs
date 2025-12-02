@@ -80,6 +80,11 @@ public class CustomCharacterMovement : CharacterMovement3D
         MoveInput = input;
     }
 
+    public bool IsAgentMoving()
+    {
+        return NavMeshAgent.hasPath || NavMeshAgent.velocity.magnitude > 0;
+    }
+
     protected override void Update()
     {
         base.Update();

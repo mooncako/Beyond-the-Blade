@@ -756,6 +756,7 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _attackSensorConfigSO: {fileID: 11400000, guid: 2bf44a9d65f705d4bb12aa68c2459ba8, type: 2}
   _movement: {fileID: 3418439087366576687}
+  _controller: {fileID: 4962864894029839974}
   _spanwDelay: 0.5
   IsTank: 0
   Personality: 0
@@ -898,7 +899,7 @@ MonoBehaviour:
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
     Clip:
-      _FadeDuration: 0.25
+      _FadeDuration: 0.10333335
       _Speed: 1
       _Events:
         _NormalizedTimes: []
@@ -913,7 +914,7 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
-    _isDirectionalMovement: 1
+    _isDirectionalMovement: 0
     _parameterSmoothTime: 0.15
     _stopProximity: 0.1
     _characterMovement: {fileID: 0}

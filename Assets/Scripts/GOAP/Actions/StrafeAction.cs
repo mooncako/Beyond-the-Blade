@@ -27,6 +27,7 @@ namespace CrashKonijn.Goap.GenTest
         public override void Start(IMonoAgent agent, Data data)
         {
             data.Timer = Random.Range(1, 2);
+
         }
 
         // This method is called once before the action is performed
@@ -76,6 +77,9 @@ namespace CrashKonijn.Goap.GenTest
 
             [GetComponent]
             public AnimationStateMachine AnimationStateMachine { get; set; }
+
+            [GetComponent]
+            public EnemyController Controller { get; set; }
         }
     }
 }
