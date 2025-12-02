@@ -141,7 +141,7 @@ public class EnemyController : Controller, IPoolable
 
     public override void DamageAnimEvent()
     {
-        if (AnimationStateMachine.IsInStaggerState()) return;
+        if (!AnimationStateMachine.IsInActionState()) return;
 
         _hitTargets.Clear();
 
@@ -250,7 +250,7 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnParried(duration);
         Posture.IncreaseStun(UnityEngine.Random.Range(_currentSkill.Damage/10, _currentSkill.Damage/10 + _currentSkill.Damage/20), duration);
-        AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+        Stun(.2f, null, false);
         ParrySuccessEvent.Trigger();
         CameraShakeEvent.Trigger(new LightShake());
     }
