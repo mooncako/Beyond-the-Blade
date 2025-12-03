@@ -20,8 +20,10 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
     [SerializeField, BoxGroup("Settings")] private LevelType _defaultLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private BiomeType _currentBiome;
+    [SerializeField, HideInInspector] public BiomeType CurrentBiome => _currentBiome;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public LevelType CurrentLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
+    [SerializeField, HideInInspector] public LevelSystem CurrentLevel => _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelCount = 0;
@@ -89,7 +91,8 @@ public class LevelManager : MMSingleton<LevelManager>,
                 CurrentLevelType = _defaultLevelType;
                 _isSetupComplete = true;
             }
-
+            
+            SpawnManager.Instance.UpdateEnemyList();
             // Choose the current level based on CurrentLeveltype and biome
             SelectLevel();
         }
@@ -163,6 +166,7 @@ public class LevelManager : MMSingleton<LevelManager>,
             if(_currentLevelCount == 5)
             {
                 BuildNavMeshEvent.Trigger(false);
+                
                 LevelSetupCompleteEvent.Trigger(_currentLevel.SpawnPos.transform.position);
                 return;
             }
@@ -177,7 +181,7 @@ public class LevelManager : MMSingleton<LevelManager>,
             {
                 Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
                 gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
-                gate.AssignExit(e.Level.ExitPosList[0]); 
+                gate.AssignExit(e.Level.ExitPosList[0], e.Level); 
                 // Instantiating boss level
                 switch(_currentBiome)
                 {
@@ -200,7 +204,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                 {
                     Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[i].transform.position, e.Level.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
                     gate.SetLevelName(SceneManager.GetActiveScene().name, e.Level.ExitsLevelType[i]);
-                    gate.AssignExit(e.Level.ExitPosList[i]);
+                    gate.AssignExit(e.Level.ExitPosList[i], e.Level);
                     // Instantiating next level
 
                     switch(e.Level.ExitsLevelType[i])

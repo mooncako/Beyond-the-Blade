@@ -99,7 +99,20 @@ public class PlayerController : Controller,
 
     protected override void Update()
     {
-        base.Update();
+        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
+        {
+            if (Movement.MoveInput != Vector3.zero)
+            {
+                if(!AnimationStateMachine.IsInMoveState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Move);
+            }
+            else
+            {
+                if(!AnimationStateMachine.IsInIdleState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+            }
+        }
+
         HandleRotation();
         InputProcessor.SetInputActive(AnimationStateMachine.IsMovable());
 
@@ -531,7 +544,7 @@ public class PlayerController : Controller,
 
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.HitStunDuration); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.RegulerStunDuration); // TODO: Add Stats regarding parry and stagger
         }
 
 

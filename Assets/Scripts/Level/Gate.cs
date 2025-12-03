@@ -19,6 +19,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _gateLevel;
     [SerializeField, BoxGroup("Debug")] private ExitPos _exit;
 
     private Tween _toriiGenTween;
@@ -94,12 +95,14 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     public void OnMMEvent(GateOpenEvent e)
     {
         //Open animation, vfx ...etc
-        OpenGate();
+        if(e.Level == _gateLevel)
+            OpenGate();
     }
 
-    public void AssignExit(ExitPos exit)
+    public void AssignExit(ExitPos exit, LevelSystem gateLevel)
     {
         _exit = exit;
+        _gateLevel = gateLevel;
     }
 
     [Button]

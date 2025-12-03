@@ -22,8 +22,6 @@ public class LanternCapabilityFactory : CapabilityFactory
 
     protected override void BuildGoals(CapabilityBuilder builder)
     {
-        builder.AddGoal<WanderGoal>()
-            .AddCondition<IsWander>(Comparison.GreaterThanOrEqual, 1);
 
         builder.AddGoal<KillPlayerGoal>()
             .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
@@ -37,11 +35,6 @@ public class LanternCapabilityFactory : CapabilityFactory
 
     protected override void BuildActions(CapabilityBuilder builder)
     {
-        builder.AddAction<WanderAction>()
-            .SetTarget<WanderTarget>()
-            .AddEffect<IsWander>(EffectType.Increase)
-            .SetStoppingDistance(1)
-            .SetBaseCost(5);
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
@@ -69,16 +62,13 @@ public class LanternCapabilityFactory : CapabilityFactory
             .SetTarget<StrafeTarget>()
             .AddEffect<IsTargetVisible>(EffectType.Increase)
             .AddEffect<IsStrafe>(EffectType.Increase)
-            .SetStoppingDistance(.5f)
+            .SetStoppingDistance(3f)
             .SetBaseCost(4);    
     }
 
     protected override void BuildSensors(CapabilityBuilder builder)
     {
         base.BuildSensors(builder);
-
-        builder.AddTargetSensor<WanderTargetSensor>()
-            .SetTarget<WanderTarget>();
 
         builder.AddTargetSensor<PlayerTargetSensor>()
             .SetTarget<PlayerTarget>();
