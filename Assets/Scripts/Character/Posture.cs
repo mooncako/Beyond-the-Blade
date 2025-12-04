@@ -8,9 +8,11 @@ public class Posture : MonoBehaviour
 {
     [Title("Stun Progress", titleAlignment: TitleAlignments.Centered)]
     [ProgressBar(0, "StunThreshold", ColorGetter = "GetStunThresholdColor", Height = 30), HideLabel] public float CurrentStunValue = 0;
+    public float StunPercentile => CurrentStunValue / StunThreshold;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _stunned = false;
     [HideInInspector] public float StunThreshold;
     [HideInInspector] public UnityEvent<float> OnStunned; 
+    [HideInInspector] public UnityEvent<float> OnStunUpdate;
 
 
     public void ApplyStats(float stunThreshold)
@@ -23,6 +25,7 @@ public class Posture : MonoBehaviour
         if(_stunned) return;
 
         CurrentStunValue = Mathf.Clamp(CurrentStunValue + value, 0, StunThreshold);
+        OnStunUpdate.Invoke(StunPercentile);
         if(CurrentStunValue.Approx(StunThreshold))
         {
             OnStunned.Invoke(duration);
@@ -43,6 +46,7 @@ public class Posture : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
             CurrentStunValue = Mathf.Clamp(CurrentStunValue - StunThreshold/(duration/.1f), 0, StunThreshold);
+            OnStunUpdate.Invoke(StunPercentile);
         }
         _stunned = false;
     }
