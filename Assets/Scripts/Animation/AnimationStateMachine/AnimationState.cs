@@ -66,6 +66,8 @@ public abstract class AnimationState
         {
             ToggleInterruption(true);
         }
+
+        Owner.ToggleRootMotionOffAnimEvent();
     }
 
     public void RefreshState()

@@ -463,6 +463,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Movement>k__BackingField: {fileID: 3418439087366576687}
   _animationStateMachine: {fileID: -5065653963056194739}
+  _animator: {fileID: 6233116775064065168}
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
   Energy: {fileID: 4452831636959043059}
@@ -521,6 +522,7 @@ MonoBehaviour:
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
+  _currentStunDuration: 0
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1032,6 +1034,9 @@ MonoBehaviour:
   _stunned: 0
   StunThreshold: 7
   OnStunned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStunUpdate:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7372532104410388795

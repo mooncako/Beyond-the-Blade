@@ -17,9 +17,14 @@ public class Weapon : MonoBehaviour
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, Skill> SkillDict = new Dictionary<string, Skill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<int, List<string>> WeaponSkillDict = new Dictionary<int, List<string>>();
+    [field: SerializeField, BoxGroup("Skills")] public List<ComboString> Combos = new List<ComboString>();
 
     private Skill _skill;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private int _abilityIndex = 0;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private int _currentComboIndex = 0;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private int _comboSelectionIndex = 0;
+    [field: SerializeField, BoxGroup("Debug"), ReadOnly] private bool _inCombo = false;
+    public bool InCombo => _inCombo;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public List<(string, UpgradeSlotType, bool)> UniversalAttackModifiers = new List<(string, UpgradeSlotType, bool)>();
 
 #if UNITY_EDITOR
@@ -88,23 +93,60 @@ public class Weapon : MonoBehaviour
 
     }
 
-    public Skill LoopBasicAttack()
+    public Skill LoopBasicAttack(bool useCombo = false)
     {
         if (_animationDatabase == null) return null;
         if (SkillDatabase == null) return null;
         if (AvailableSkills.Count == 0) return null;
 
+        if(useCombo)
+        {
+            if(_currentComboIndex == 0)
+            {
+                _comboSelectionIndex = Random.Range(0, Combos.Count);
+            }
+            
+            if(Combos.Count != 0 && Combos[_comboSelectionIndex].Combo.Count != 0)
+            {
+                if(SkillDict.ContainsKey(Combos[_comboSelectionIndex].Combo[_currentComboIndex]) &&
+                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDict[Combos[_comboSelectionIndex].Combo[_currentComboIndex]].AnimationID))
+                {
+                    string key = Combos[_comboSelectionIndex].Combo[_currentComboIndex];
+
+                    StartCoroutine(SkillCooldownCO(key, SkillDict[AvailableSkills[key].SkillId].Cooldown));
+                    _skill = SkillDict[AvailableSkills[key].SkillId];
+                
+                    _currentComboIndex++;
+                    if(_currentComboIndex == Combos[_comboSelectionIndex].Combo.Count)
+                    {
+                        _currentComboIndex = 0;
+                        _inCombo = false;
+                    }
+                    else
+                    {
+                        _inCombo = true;
+                    }
+                    return _skill;
+                }
+            }
+
+            
+        }
+
         foreach (string key in WeaponSkillDict[AVAILABLESKILLKEY.Attack])
         {
             if (!AvailableSkills[key].IsInCooldown)
                 if (SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&
-                    _animationDatabase.SkillAnimDict.ContainsKey(SkillDict[AvailableSkills[key].SkillId].AnimationID))
+                     _animationDatabase.SkillAnimDict.ContainsKey(SkillDict[AvailableSkills[key].SkillId].AnimationID))
                 {
                     StartCoroutine(SkillCooldownCO(key, SkillDict[AvailableSkills[key].SkillId].Cooldown));
                     _skill = SkillDict[AvailableSkills[key].SkillId];
                     return _skill;
                 }
         }
+        
+
+        
         return null;
     }
 

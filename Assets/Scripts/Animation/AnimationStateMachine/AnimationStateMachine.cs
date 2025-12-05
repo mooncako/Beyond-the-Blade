@@ -88,7 +88,6 @@ public class AnimationStateMachine : MonoBehaviour
         UpperBodyLayer.SetDebugName("Upper Body Layer");
         UpperBodyLayer.Weight = 0;
 
-
     }
 
     void OnEnable()

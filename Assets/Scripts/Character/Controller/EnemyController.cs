@@ -22,9 +22,10 @@ public class EnemyController : Controller, IPoolable
     [field: SerializeField, BoxGroup("Debug")] private bool _canRotate = true;
 
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentStunDuration;
 
     private Tween _attackDelayTween;
-    private Tween _staggerTween;
+    private Tween _stunTween;
 
 
     protected override void OnValidate()
@@ -84,7 +85,7 @@ public class EnemyController : Controller, IPoolable
         Posture.OnStunned.AddListener(OnStunned);
 
         _attackDelayTween.Stop();
-        _staggerTween.Stop();
+        _stunTween.Stop();
         // StopCoroutine(UpdateStateCO());
     }
 
@@ -139,9 +140,9 @@ public class EnemyController : Controller, IPoolable
         Movement.Stop();
     }
 
-    public override void DamageAnimEvent()
+    public override void DamageAnimEvent(string animationID)
     {
-        if (!AnimationStateMachine.IsInActionState()) return;
+        if (animationID != _currentSkill.AnimationID || !_animationStateMachine.IsInActionState()) return;
 
         _hitTargets.Clear();
 
@@ -177,7 +178,7 @@ public class EnemyController : Controller, IPoolable
         if (CurrentWeapon == null) return;
         if (!IsSkillPlaying())
         {
-            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            _currentSkill = CurrentWeapon.LoopBasicAttack(true);
             if (_currentSkill != null)
             {
                 _isSkillPlaying = true;
@@ -221,30 +222,11 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
-    public bool CheckSkill()
-    {
-        if (_currentSkill == null) return false;
-        if (_currentSkill.VFXInfo.UsingIndicator)
-        {
-            SpawnVFXEvent.Trigger(transform, "ATTACK_WARNING", new VFXInfo(new Vector3(0, .9f, 0), transform.rotation, Vector3.one, true, false));
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool IsSkillNull()
-    {
-        return _currentSkill == null;
-    }
     
-    public void PlaySkillEffect()
-    {
-        SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
-        ApplySkillEffect();
-    }
+
+    
+    
+    
 
     protected override void OnParried(float duration)
     {
@@ -279,11 +261,31 @@ public class EnemyController : Controller, IPoolable
         if (IsStunImmune && !forceStun) return;
         _persistentVFXHelper.StopPersistentEffects();
         _brain.Stun(duration, onComplete);
-        AnimationStateMachine.SwitchState(AnimationStateType.Stagger);
-        _staggerTween = Tween.Delay(duration).OnComplete(() =>
+
+        if(!AnimationStateMachine.IsInStaggerState())
+            AnimationStateMachine.SwitchState(AnimationStateType.Stagger);
+        if (_currentStunDuration.Approx(0))
         {
-            AnimationStateMachine.SwitchState(AnimationStateType.Idle);
-        });
+            _currentStunDuration = duration;
+            _stunTween = Tween.Delay(duration).OnComplete(() =>
+            {
+                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+                _currentStunDuration = 0;
+            });
+        }
+        else
+        {
+            if(_currentStunDuration < duration)
+            {
+                _currentStunDuration = duration;
+                _stunTween.Stop();
+                _stunTween = Tween.Delay(duration).OnComplete(() =>
+                {
+                    AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+                    _currentStunDuration = 0;
+                });
+            }
+        }
     }
 
     public void OnPoolGet()
