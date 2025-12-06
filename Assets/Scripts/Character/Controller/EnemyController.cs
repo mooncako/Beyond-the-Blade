@@ -286,6 +286,11 @@ public class EnemyController : Controller, IPoolable
                 });
             }
         }
+
+        if( duration >= 1)
+        {
+            CurrentWeapon.ResetCombo();
+        }
     }
 
     public void OnPoolGet()

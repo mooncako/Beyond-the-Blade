@@ -95,6 +95,7 @@ public abstract class AnimationState
         }
         else
         {
+            
             _isInterruptionBlocked = true;
             _tempStates = PossibleInterruptStates;
             PossibleInterruptStates = _emptyStates;

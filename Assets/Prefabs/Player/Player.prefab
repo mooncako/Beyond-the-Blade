@@ -969,6 +969,7 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
   _parryActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -985,10 +986,11 @@ MonoBehaviour:
     Key: Parry
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 192
+    PossibleInterruptStates: 200
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 0
   _dashActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1009,6 +1011,7 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
   _abilityActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1029,6 +1032,7 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
   _executionActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1049,6 +1053,7 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
   _staggerState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}

@@ -7,11 +7,14 @@ using PrimeTween;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using sc.splines.spawner.runtime;
+using Sirenix.OdinInspector;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
 {
     private AnimancerEvent.Sequence _events;
+
+    [SerializeField, BoxGroup("Settings")] private bool _canNaturalInterrupt = true;
 
     public ActionAnimationState()
     {
@@ -84,7 +87,12 @@ public class ActionAnimationState : AnimationState
         {
             state.Events(this).Add(modifierTuple.eventIndex, () => Owner.ModifierRelayAnimEvent(modifierTuple.modifier));
         }
-        state.Events(this).Add(.3f, () => ToggleInterruption(true));
+
+        if(_canNaturalInterrupt)
+        {
+            state.Events(this).Add(.3f, () => ToggleInterruption(true));
+        }
+            
         state.Events(this).OnEnd ??= () =>
         {
             _stateMachine.SwitchState(AnimationStateType.Idle);

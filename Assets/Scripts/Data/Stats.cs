@@ -20,10 +20,10 @@ public class Stats : ScriptableObject
     [ShowInInspector, ReadOnly] public float StaminaRegeneration => StatsData.BaseStaminaRegeneration + TempStaminaRegeneration;
 
     [ReadOnly] public float TempDashStaminaCost = 0f;
-    [ShowInInspector, ReadOnly] public float DashStaminaCost => StatsData.BaseDashStaminaCost - TempDashStaminaCost; // use minus? 
+    [ShowInInspector, ReadOnly] public float DashStaminaCost => StatsData.BaseDashStaminaCost + TempDashStaminaCost; // use minus? 
 
     [ReadOnly] public float TempParryStaminaCost = 0f;
-    [ShowInInspector, ReadOnly] public float ParryStaminaCost => StatsData.BaseParryStaminaCost - TempParryStaminaCost; //  minus? 
+    [ShowInInspector, ReadOnly] public float ParryStaminaCost => StatsData.BaseParryStaminaCost + TempParryStaminaCost; //  minus? 
 
 
     [ReadOnly] public float TempMovementSpeedMultiplier = 0;

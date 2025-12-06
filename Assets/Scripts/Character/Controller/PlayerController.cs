@@ -246,6 +246,8 @@ public class PlayerController : Controller,
     public void OnMMEvent(ParrySuccessEvent e)
     {
         SpawnVFXEvent.Trigger(AttackPoint, "PARRY_SUCCESS", new VFXInfo(new Vector3(0, 0.2f, 0.5f), Quaternion.identity, Vector3.one, false, false));
+        _animationStateMachine.CurrentState.ToggleInterruption(true);
+        Stamina.GainStamina(Stats.ParryStaminaCost/2);
     }
 
     public void OnMMEvent(CurrencyEarnedEvent e)

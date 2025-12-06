@@ -150,6 +150,12 @@ public class Weapon : MonoBehaviour
         return null;
     }
 
+    public void ResetCombo()
+    {
+        _inCombo = false;
+        _currentComboIndex = 0;
+    }
+
     public Skill LoopHeavyAttack()
     {
         if (_animationDatabase == null) return null;
