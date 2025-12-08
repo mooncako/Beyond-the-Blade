@@ -362,7 +362,7 @@ public class PlayerController : Controller,
         if (context.started && IsActionAvailable(AnimationStateType.Attack))
         { 
             ExecuteLightAttack(GetAimPoint());
-            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            UpdateCurrentSkill(CurrentWeapon.LoopBasicAttack());
             if (_currentSkill != null)
             {
                 SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
@@ -385,7 +385,7 @@ public class PlayerController : Controller,
             if (Stamina.ConsumeStamina(Stats.ParryStaminaCost))
             {
                 Parry(GetAimPoint());
-                _currentSkill = CurrentWeapon.GetParrySkill();
+                UpdateCurrentSkill(CurrentWeapon.GetParrySkill());
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Parry);
                 Movement.Stop();
@@ -407,7 +407,7 @@ public class PlayerController : Controller,
 
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
                 StartIframe();
-                _currentSkill = CurrentWeapon.GetDashSkill();
+                UpdateCurrentSkill(CurrentWeapon.GetDashSkill());
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Dash, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Dash);
 
@@ -423,7 +423,7 @@ public class PlayerController : Controller,
             if (CurrentAbility == null) return;
             if (_abilityInCooldown) return;
 
-            _currentSkill = CurrentAbility;
+            UpdateCurrentSkill(CurrentAbility);
             AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
             if (AnimationStateMachine.InterruptState(AnimationStateType.Ability))
             {
@@ -550,6 +550,12 @@ public class PlayerController : Controller,
         }
 
 
+    }
+
+    private void UpdateCurrentSkill(Skill skill)
+    {
+        _currentSkill = skill;
+        ApplySkillEffect();
     }
 
     public EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)

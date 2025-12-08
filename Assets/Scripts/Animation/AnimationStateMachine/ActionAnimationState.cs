@@ -38,7 +38,11 @@ public class ActionAnimationState : AnimationState
     public override void OnEnterState()
     {
         if (Owner != null)
+        {
             Owner.CanMove = false;
+            Owner.ToggleRootMotionOnAnimEvent();
+        }
+            
         if (Clip.Clip != null)
         {
             ToggleInterruption(false);

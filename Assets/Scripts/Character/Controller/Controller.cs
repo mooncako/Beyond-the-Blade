@@ -84,6 +84,7 @@ public class Controller : MonoBehaviour
         {
             _parryCollider.OnParried.AddListener(OnParried);
         }
+
     }
 
     protected virtual void OnDisable()
@@ -145,7 +146,6 @@ public class Controller : MonoBehaviour
     public void PlaySkillEffect()
     {
         SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
-        ApplySkillEffect();
     }
 
     protected virtual void ApplySkillEffect(Skill skill = null)
@@ -165,7 +165,7 @@ public class Controller : MonoBehaviour
             AOEApplier.Z = skill.SkillRange.Z;
         }
 
-
+    
     }
 
     public virtual void DamageAnimEvent(string animationID)

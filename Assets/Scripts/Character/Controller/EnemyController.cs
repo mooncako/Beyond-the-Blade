@@ -185,6 +185,8 @@ public class EnemyController : Controller, IPoolable
 
             }
 
+            ApplySkillEffect();
+
         }
 
     }
@@ -201,6 +203,7 @@ public class EnemyController : Controller, IPoolable
 
             }
 
+            ApplySkillEffect();
         }
     }
     
