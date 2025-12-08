@@ -407,8 +407,8 @@ public class PlayerController : Controller,
 
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
                 StartIframe();
-                _currentSkill = CurrentWeapon.GetParrySkill();
-                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
+                _currentSkill = CurrentWeapon.GetDashSkill();
+                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Dash, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Dash);
 
             }

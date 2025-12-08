@@ -232,7 +232,9 @@ public class Weapon : MonoBehaviour
 
     public ClipTransition GetAnimationClip(string animationId)
     {
-        return _animationDatabase.SkillAnimDict[animationId];
+        int index = Random.Range(0, _animationDatabase.SkillAnimDict[animationId].Length);
+
+        return _animationDatabase.SkillAnimDict[animationId][index];
     }
 
     private IEnumerator SkillCooldownCO(string key, float cooldownTime)
