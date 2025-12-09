@@ -15,6 +15,7 @@ public class ActionAnimationState : AnimationState
     private AnimancerEvent.Sequence _events;
 
     [SerializeField, BoxGroup("Settings")] private bool _canNaturalInterrupt = true;
+    [SerializeField, BoxGroup("Settings")] private bool _autoTransition = true;
 
     public ActionAnimationState()
     {
@@ -52,10 +53,14 @@ public class ActionAnimationState : AnimationState
         }
         else
         {
-            Tween.Delay(.5f).OnComplete(() =>
+            if(_autoTransition)
             {
-                _stateMachine.SwitchState(AnimationStateType.Idle);
-            });
+                Tween.Delay(.5f).OnComplete(() =>
+                {
+                    _stateMachine.SwitchState(AnimationStateType.Idle);
+                });
+            }
+            
         }
 
     }
@@ -73,6 +78,10 @@ public class ActionAnimationState : AnimationState
             Owner.CanMove = true;
         Owner?.StartAttackCooldown();
         Owner?.ToggleIsSkillPlaying(false);
+        if(Owner is PlayerController pC)
+        {
+            pC.ToggleAimMode(false);
+        }
 
     }
     
@@ -96,12 +105,15 @@ public class ActionAnimationState : AnimationState
         {
             state.Events(this).Add(.3f, () => ToggleInterruption(true));
         }
-            
-        state.Events(this).OnEnd ??= () =>
+
+        if (_autoTransition)
         {
-            _stateMachine.SwitchState(AnimationStateType.Idle);
-            
-        };
+            state.Events(this).OnEnd ??= () =>
+            {
+                _stateMachine.SwitchState(AnimationStateType.Idle);
+            };
+        }
+
         Modifiers.Clear();
     }
 }

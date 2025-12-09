@@ -813,6 +813,28 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 1827226128182048838, guid: 4bb4416193a8b2949a691e1cec79722d, type: 3}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -834,6 +856,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -855,6 +878,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -876,6 +900,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -897,6 +922,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
@@ -918,6 +944,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}

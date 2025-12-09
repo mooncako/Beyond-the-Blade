@@ -41,6 +41,8 @@ public class PlayerController : Controller,
     [BoxGroup("Ability"), ReadOnly] private bool _abilityInCooldown;
     [BoxGroup("Ability"), ReadOnly] public UnityEvent<float> OnAbilityStartCooldown;
 
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isInAimMode = false;
+
     // [SerializeField] private ParryHit _parryHitVFX;
 
     [Header("Animancer")]
@@ -52,7 +54,6 @@ public class PlayerController : Controller,
 
     private bool _isPerfectParryWindowActive = false;
     public bool IsPerfectParryWindowActive => _isPerfectParryWindowActive;
-    public bool MusoReady { get; private set; }
 
     [HideInInspector] public UnityEngine.Events.UnityEvent OnExecutionStarted;
     [HideInInspector] public UnityEngine.Events.UnityEvent OnAbilityCycled;
@@ -266,8 +267,17 @@ public class PlayerController : Controller,
     {
         if (Mathf.Approximately(Time.deltaTime, 0)) return;
         if (!CanRotate) return;
-        if (GetMoveDir() == Vector3.zero) return;
-        Movement.SetLookDirection(GetMoveDir());
+        
+
+        if(!_isInAimMode)
+        {
+            if (GetMoveDir() == Vector3.zero) return;
+            Movement.SetLookDirection(GetMoveDir());
+        } 
+        else
+        {
+            Movement.SetLookPosition(GetAimPoint());
+        }  
     }
 
     private Vector3 GetMoveDir()
@@ -418,18 +428,24 @@ public class PlayerController : Controller,
 
     public void InputUseAbility(InputAction.CallbackContext context)
     {
-        if (context.started && IsActionAvailable(AnimationStateType.Ability))
+
+        if (context.performed)
         {
+            AnimationStateMachine.SwitchState(AnimationStateType.Ready);
+            _isInAimMode = true;
+            
+        }
+        else if (context.canceled && AnimationStateMachine.IsInReadyActionState())
+        {
+            _isInAimMode = false;
             if (CurrentAbility == null) return;
             if (_abilityInCooldown) return;
 
             UpdateCurrentSkill(CurrentAbility);
             AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
-            if (AnimationStateMachine.InterruptState(AnimationStateType.Ability))
-            {
-                OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
-                StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
-            }
+            AnimationStateMachine.SwitchState(AnimationStateType.Ability);
+            OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
+            StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
 
         }
     }
@@ -697,5 +713,10 @@ public class PlayerController : Controller,
             Movement.Teleport(exitPos);
             ToggleKillzEvent.Trigger(true);
         });
+    }
+
+    public void ToggleAimMode(bool toggle)
+    {
+        _isInAimMode = toggle;
     }
 }

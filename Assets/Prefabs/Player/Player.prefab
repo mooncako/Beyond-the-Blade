@@ -815,6 +815,7 @@ MonoBehaviour:
   OnAbilityStartCooldown:
     m_PersistentCalls:
       m_Calls: []
+  _isInAimMode: 0
   _animancerComponent: {fileID: 6266151859748244355}
   OnExecutionStarted:
     m_PersistentCalls:
@@ -950,6 +951,28 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 7400000, guid: fbc856ca8ad1b7245a8dee27060572da, type: 2}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 5731174687414150010}
+    _animancer: {fileID: 6266151859748244355}
+    Owner: {fileID: 1108131639495183653}
+    Clip:
+      _FadeDuration: 0.32666662
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 1827226128182048838, guid: 65dde850f42cec141916fcaa271a4938, type: 3}
+      _NormalizedStartTime: 0
+    Key: Ready
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 508
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 0
   _attackActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -966,11 +989,12 @@ MonoBehaviour:
     Key: Attack
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 204
+    PossibleInterruptStates: 1228
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -987,11 +1011,12 @@ MonoBehaviour:
     Key: Parry
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 200
+    PossibleInterruptStates: 1224
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 0
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1008,11 +1033,12 @@ MonoBehaviour:
     Key: Dash
     FadeDuration: 0
     FadeMode: 0
-    PossibleInterruptStates: 72
+    PossibleInterruptStates: 1096
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1034,6 +1060,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1055,6 +1082,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
     _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: 5731174687414150010}
     _animancer: {fileID: 6266151859748244355}
@@ -1341,19 +1369,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.99080575
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.0000001872535
+      value: -0.13529225
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.000000025333948
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 0.00000018553185
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1394,12 +1422,12 @@ ParentConstraint:
   m_Enabled: 1
   serializedVersion: 2
   m_Weight: 1
-  m_TranslationAtRest: {x: -0.16952434, y: 1.0459238, z: 0.021623492}
-  m_RotationAtRest: {x: 0, y: 0, z: 0}
+  m_TranslationAtRest: {x: -0.16952437, y: 1.0459238, z: 0.021623388}
+  m_RotationAtRest: {x: -15.551048, y: 0, z: 0}
   m_TranslationOffsets:
   - {x: 0, y: 0, z: 0}
   m_RotationOffsets:
-  - {x: -73.110016, y: 0, z: 0}
+  - {x: -88.661026, y: -0.00036971358, z: 0.00038870412}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
