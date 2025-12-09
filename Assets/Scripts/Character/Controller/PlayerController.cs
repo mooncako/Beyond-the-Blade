@@ -126,25 +126,6 @@ public class PlayerController : Controller,
         {
             DetectParry();
         }
-        // if (MusoReady)
-        // {
-        //     if (_musoTarget != null)
-        //         // _musoTarget.MaterialController.UnHightlight();
-
-        //         // _musoTarget = FindClosestEnemyToPosition(GetLookDirection(), 100);
-
-        //         if (_musoTarget == null)
-        //         {
-        //             _lineRenderer.enabled = false;
-        //         }
-
-        //     if (_musoTarget != null)
-        //     {
-        //         _lineRenderer.enabled = true;
-        //         // _musoTarget.MaterialController.Highlight();
-        //         _bezierLine.endPoint = _musoTarget.transform;
-        //     }
-        // }
     }
 
     protected override void OnEnable()
@@ -520,18 +501,9 @@ public class PlayerController : Controller,
 
     public void ExecuteLightAttack(Vector3 aimPosition)
     {
-        // _movement.Dash(_movement.LookDirection, 10f);
-        // _lastAttackTime = Time.time;
         Movement.SetLookPosition(aimPosition);
-        // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
+
     }
-
-
-    // public void CleanUpLightAttack()
-    // {
-    //     _weaponCollider.enabled = false;
-    //     _hitEnemiesThisAttack.Clear();
-    // }
 
     public void Parry(Vector3 aimPosition)
     {
