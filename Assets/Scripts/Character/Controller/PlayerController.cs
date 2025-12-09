@@ -38,7 +38,6 @@ public class PlayerController : Controller,
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
     [BoxGroup("Ability"), ReadOnly] public Skill CurrentAbility { get; private set; }
-    [BoxGroup("Ability"), ReadOnly] private bool _abilityInCooldown;
     [BoxGroup("Ability"), ReadOnly] public UnityEvent<float> OnAbilityStartCooldown;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isInAimMode = false;
@@ -429,7 +428,7 @@ public class PlayerController : Controller,
     public void InputUseAbility(InputAction.CallbackContext context)
     {
 
-        if (context.performed)
+        if (context.performed && !CurrentWeapon.IsCurrentAbilityInCooldown())
         {
             AnimationStateMachine.SwitchState(AnimationStateType.Ready);
             _isInAimMode = true;
@@ -439,13 +438,12 @@ public class PlayerController : Controller,
         {
             _isInAimMode = false;
             if (CurrentAbility == null) return;
-            if (_abilityInCooldown) return;
 
+            CurrentWeapon.StartAbilityCooldown();
             UpdateCurrentSkill(CurrentAbility);
             AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
             AnimationStateMachine.SwitchState(AnimationStateType.Ability);
             OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
-            StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
 
         }
     }
@@ -639,12 +637,6 @@ public class PlayerController : Controller,
     public void SetCurrentAbility(string skillId)
     {
         CurrentAbility = CurrentWeapon.GetSkill(skillId);
-    }
-    private IEnumerator AbilityCooldownCo(float cooldownTime)
-    {
-        _abilityInCooldown = true;
-        yield return new WaitForSeconds(cooldownTime);
-        _abilityInCooldown = false;
     }
 
     [Button]

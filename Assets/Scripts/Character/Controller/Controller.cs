@@ -150,10 +150,10 @@ public class Controller : MonoBehaviour
 
     protected virtual void ApplySkillEffect(Skill skill = null)
     {
-
         //TODO buffs & debuffs
         if (skill == null)
         {
+            if(_currentSkill == null) return;
             AOEApplier.X = _currentSkill.SkillRange.X;
             AOEApplier.Y = _currentSkill.SkillRange.Y;
             AOEApplier.Z = _currentSkill.SkillRange.Z;

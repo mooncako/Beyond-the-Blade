@@ -253,6 +253,16 @@ public class Weapon : MonoBehaviour
         return _skill;
     }
 
+    public void StartAbilityCooldown()
+    {
+        StartCoroutine(SkillCooldownCO(WeaponSkillDict[AVAILABLESKILLKEY.Ability][_abilityIndex], SkillDict[WeaponSkillDict[AVAILABLESKILLKEY.Ability][_abilityIndex]].Cooldown));
+    }
+
+    public bool IsCurrentAbilityInCooldown()
+    {
+        return AvailableSkills[WeaponSkillDict[AVAILABLESKILLKEY.Ability][_abilityIndex]].IsInCooldown;
+    }
+
     public void UpdateAbilityIndex(bool isUpward)
     {
         if (isUpward)
