@@ -331,11 +331,6 @@ public class PlayerController : Controller,
         // Store the input in the InputProcessor
         InputProcessor.ProcessInputVector(inputValue);
 
-        // Only apply movement if the action is available
-        //InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
-        //if (!_animationStateMachine.IsInActionState())
-        //    _animationStateMachine.SwitchState(AnimationStateType.Move);
-
 
     }
 
@@ -380,10 +375,6 @@ public class PlayerController : Controller,
                 AnimationStateMachine.InterruptState(AnimationStateType.Parry);
                 Movement.Stop();
             }
-        }
-        else
-        {
-
         }
     }
 
