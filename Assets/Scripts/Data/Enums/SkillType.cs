@@ -15,3 +15,10 @@ public enum Rarity
     Epic,
     Legendary
 }
+
+public enum WeaponType
+{
+    Katana,
+    Universal,
+    
+}

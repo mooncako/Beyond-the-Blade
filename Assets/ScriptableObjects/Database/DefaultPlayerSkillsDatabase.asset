@@ -46,7 +46,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 20
+      Data: 21
     - Name: 
       Entry: 7
       Data: 
@@ -65,6 +65,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 30
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 3|SkillRange, Assembly-CSharp
@@ -220,6 +223,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 35
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 7|SkillRange, Assembly-CSharp
@@ -375,6 +381,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 40
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 11|SkillRange, Assembly-CSharp
@@ -529,6 +538,9 @@ MonoBehaviour:
       Data: 0.7
     - Name: Damage
       Entry: 4
+      Data: 0
+    - Name: WeaponType
+      Entry: 3
       Data: 0
     - Name: SkillRange
       Entry: 7
@@ -685,6 +697,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 35
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 19|SkillRange, Assembly-CSharp
@@ -840,6 +855,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 100
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 23|SkillRange, Assembly-CSharp
@@ -1034,6 +1052,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 40
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 27|SkillRange, Assembly-CSharp
@@ -1202,6 +1223,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 0
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 31|SkillRange, Assembly-CSharp
@@ -1357,6 +1381,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 1
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 35|SkillRange, Assembly-CSharp
@@ -1512,6 +1539,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 1
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 39|SkillRange, Assembly-CSharp
@@ -1667,6 +1697,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 1
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 43|SkillRange, Assembly-CSharp
@@ -1822,6 +1855,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 1
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 47|SkillRange, Assembly-CSharp
@@ -1977,6 +2013,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 1
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 51|SkillRange, Assembly-CSharp
@@ -2132,6 +2171,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 25
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 55|SkillRange, Assembly-CSharp
@@ -2287,6 +2329,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 35
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 59|SkillRange, Assembly-CSharp
@@ -2442,6 +2487,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 45
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 63|SkillRange, Assembly-CSharp
@@ -2597,6 +2645,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 55
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 67|SkillRange, Assembly-CSharp
@@ -2752,6 +2803,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 30
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 71|SkillRange, Assembly-CSharp
@@ -2919,7 +2973,10 @@ MonoBehaviour:
       Data: 0.7
     - Name: Damage
       Entry: 4
-      Data: 30
+      Data: 50
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 75|SkillRange, Assembly-CSharp
@@ -3088,6 +3145,9 @@ MonoBehaviour:
     - Name: Damage
       Entry: 4
       Data: 35
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
     - Name: SkillRange
       Entry: 7
       Data: 79|SkillRange, Assembly-CSharp
@@ -3147,6 +3207,164 @@ MonoBehaviour:
     - Name: Description
       Entry: 1
       Data: Longer reach
+    - Name: IsStartBuffed
+      Entry: 5
+      Data: false
+    - Name: IsMidBuffed
+      Entry: 5
+      Data: false
+    - Name: IsEndBuffed
+      Entry: 5
+      Data: false
+    - Name: Icon
+      Entry: 6
+      Data: 
+    - Name: VFXInfo
+      Entry: 7
+      Data: VFXInfo, Assembly-CSharp
+    - Name: Pos
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Rot
+      Entry: 7
+      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Scale
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: IsPersistent
+      Entry: 5
+      Data: false
+    - Name: UsingIndicator
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: SWORD_LIGHTNING_STRIKE
+    - Name: $v
+      Entry: 7
+      Data: 82|Skill, Assembly-CSharp
+    - Name: AnimationID
+      Entry: 1
+      Data: SWORD_LIGHTNING_STRIKE_ANIM
+    - Name: Cooldown
+      Entry: 4
+      Data: 5
+    - Name: Damage
+      Entry: 4
+      Data: 35
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
+    - Name: SkillRange
+      Entry: 7
+      Data: 83|SkillRange, Assembly-CSharp
+    - Name: AreaType
+      Entry: 3
+      Data: 1
+    - Name: X
+      Entry: 4
+      Data: 2.5
+    - Name: Y
+      Entry: 4
+      Data: 1.5
+    - Name: Z
+      Entry: 4
+      Data: 5.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Rarity
+      Entry: 3
+      Data: 0
+    - Name: TargetSelf
+      Entry: 5
+      Data: false
+    - Name: IsTargetedGroundAOE
+      Entry: 5
+      Data: false
+    - Name: Buffs
+      Entry: 7
+      Data: 84|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Debuffs
+      Entry: 7
+      Data: 85|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Name
+      Entry: 1
+      Data: Lightning Strike
+    - Name: Description
+      Entry: 1
+      Data: 
     - Name: IsStartBuffed
       Entry: 5
       Data: false

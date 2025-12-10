@@ -12,9 +12,10 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
     // ---------- Rows expected from the Sheet ----------
     // Columns expected (names must match your Apps Script JSON):
     // Key, AnimationID, Cooldown, Damage,
+    // WeaponType,
     // AreaType, RangeX, RangeY, RangeZ,
     // Rarity, TargetSelf, IsTargetedGroundAOE,
-    // Buffs, Debuffs
+    // Buffs, Debuffs, Name, Description
     [Serializable]
     private class SkillRow
     {
@@ -22,6 +23,8 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
         public string AnimationID;
         public float Cooldown;
         public float Damage;
+
+        public string WeaponType;   // enum as string (NEW)
 
         public string AreaType; // enum as string
         public float RangeX;
@@ -49,7 +52,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 
     // ---------- UI State ----------
     [Header("Google Apps Script Web App")]
-    [SerializeField] private string _webAppUrl = "https://script.google.com/macros/s/AKfycbw-fe8xucRwRdbBlrM8r5yLFZGbHe7WZNIKMH-F_a2Dv9iiw7B3uNG_p04U3g6FeudR9w/exec"; // e.g. https://script.google.com/macros/s/AKfycb.../exec
+    [SerializeField] private string _webAppUrl = "https://script.google.com/macros/s/AKfycbw-fe8xucRwRdbBlrM8r5yLFZGbHe7WZNIKMH-F_a2Dv9iiw7B3uNG_p04U3g6FeudR9w/exec";
     [SerializeField] private string _sharedSecret = "BYTHEBLADE";
     [SerializeField] private string _sheetName = "EnemySkills"; // tab name inside the Google Sheet
 
@@ -120,7 +123,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 
         EditorGUILayout.HelpBox(
             "This tool pulls data from the Google Sheet and updates the selected ScriptableObjects.\n\n" +
-            "Expected columns: Key, AnimationID, Cooldown, Damage, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs.\n" +
+            "Expected columns: Key, AnimationID, Cooldown, Damage, WeaponType, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs, Name, Description.\n" +
             "Lists are semicolon-separated; escape literal semicolons as \\;.",
             MessageType.Info);
     }
@@ -183,11 +186,22 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
 
+                        // WeaponType enum (NEW)
+                        var weaponStr = (r.WeaponType ?? "").Trim();
+                        if (Enum.TryParse<WeaponType>(weaponStr, true, out var weaponType))
+                        {
+                            skill.WeaponType = weaponType;
+                        }
+                        else if (!string.IsNullOrEmpty(weaponStr))
+                        {
+                            Debug.LogWarning($"[SheetSync] Unknown WeaponType '{r.WeaponType}' for Key '{key}'");
+                        }
+
                         // Rarity enum
                         var rarityStr = (r.Rarity ?? "").Trim();
                         if (Enum.TryParse<Rarity>(rarityStr, true, out var rarity))
                             skill.Rarity = rarity;
-                        else
+                        else if (!string.IsNullOrEmpty(rarityStr))
                             Debug.LogWarning($"[SheetSync] Unknown Rarity '{r.Rarity}' for Key '{key}'");
 
                         // Range & AreaType
@@ -197,12 +211,9 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         var areaStr = (r.AreaType ?? "").Trim();
                         if (Enum.TryParse<SkillAreaType>(areaStr, true, out var area))
                         {
-                            // If SkillRange.AreaType is a property, this will set it.
-                            // If Unity doesn't serialize auto-properties in your setup,
-                            // consider making it a field or [SerializeField] backing field.
                             skill.SkillRange.AreaType = area;
                         }
-                        else
+                        else if (!string.IsNullOrEmpty(areaStr))
                         {
                             Debug.LogWarning($"[SheetSync] Unknown AreaType '{r.AreaType}' for Key '{key}'");
                         }
@@ -376,5 +387,3 @@ public static class EditorHttp
     }
 }
 #endif
-
-

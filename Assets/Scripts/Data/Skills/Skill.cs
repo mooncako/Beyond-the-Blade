@@ -9,6 +9,7 @@ public class Skill
     public string AnimationID;
     public float Cooldown;
     public float Damage;
+    public WeaponType WeaponType;
     public SkillRange SkillRange;
     public Rarity Rarity;
     public bool TargetSelf;
@@ -28,6 +29,7 @@ public class Skill
         AnimationID = skill.AnimationID;
         Cooldown = skill.Cooldown;
         Damage = skill.Damage;
+        WeaponType = skill.WeaponType;
         SkillRange = skill.SkillRange;
         Rarity = skill.Rarity;
         TargetSelf = skill.TargetSelf;

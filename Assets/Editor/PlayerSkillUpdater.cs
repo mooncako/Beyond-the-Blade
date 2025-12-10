@@ -18,6 +18,8 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
         public float Cooldown;
         public float Damage;
 
+        public string WeaponType;   // NEW
+
         public string AreaType;
         public float RangeX;
         public float RangeY;
@@ -110,7 +112,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
         EditorGUILayout.HelpBox(
             "Pulls data from the 'PlayerSkills' tab and updates selected PlayerSkillsSO assets.\n" +
-            "Expected columns: Key, AnimationID, Cooldown, Damage, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs.\n" +
+            "Expected columns: Key, AnimationID, Cooldown, Damage, WeaponType, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs, Name, Description.\n" +
             "Lists use semicolons; escape literal semicolons as \\;.",
             MessageType.Info);
     }
@@ -162,7 +164,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         var r = kv.Value;
 
                         // ---- NOTE ----
-                        // Change 'PlayerSkillDict' to your actual dictionary/property name if different
+                        // Change 'SkillDict' to your actual dictionary/property name if different
                         if (!so.SkillDict.TryGetValue(key, out var skill))
                         {
                             skill = new Skill();
@@ -172,16 +174,27 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
                         // Basic fields
                         skill.AnimationID = r.AnimationID ?? "";
-                        skill.Cooldown = r.Cooldown;
-                        skill.Damage = r.Damage;
+                        skill.Cooldown   = r.Cooldown;
+                        skill.Damage     = r.Damage;
                         skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
+
+                        // WeaponType enum ------------- NEW
+                        var weaponStr = (r.WeaponType ?? "").Trim();
+                        if (Enum.TryParse<WeaponType>(weaponStr, true, out var weaponType))
+                        {
+                            skill.WeaponType = weaponType;
+                        }
+                        else if (!string.IsNullOrEmpty(weaponStr))
+                        {
+                            Debug.LogWarning($"[SheetSync] Unknown WeaponType '{r.WeaponType}' for Key '{key}'");
+                        }
 
                         // Rarity enum
                         var rarityStr = (r.Rarity ?? "").Trim();
                         if (Enum.TryParse<Rarity>(rarityStr, true, out var rarity))
                             skill.Rarity = rarity;
-                        else
+                        else if (!string.IsNullOrEmpty(rarityStr))
                             Debug.LogWarning($"[SheetSync] Unknown Rarity '{r.Rarity}' for Key '{key}'");
 
                         // Range & AreaType
@@ -191,7 +204,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         var areaStr = (r.AreaType ?? "").Trim();
                         if (Enum.TryParse<SkillAreaType>(areaStr, true, out var area))
                             skill.SkillRange.AreaType = area;
-                        else
+                        else if (!string.IsNullOrEmpty(areaStr))
                             Debug.LogWarning($"[SheetSync] Unknown AreaType '{r.AreaType}' for Key '{key}'");
 
                         skill.SkillRange.X = r.RangeX;
@@ -199,7 +212,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         skill.SkillRange.Z = r.RangeZ;
 
                         // Lists
-                        skill.Buffs = ParsePairs(r.Buffs);
+                        skill.Buffs   = ParsePairs(r.Buffs);
                         skill.Debuffs = ParsePairs(r.Debuffs);
 
                         skill.Name        = r.Name ?? "";
@@ -233,6 +246,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
             parts[i] = parts[i].Replace("\\;", ";");
         return parts;
     }
+
     private static List<(string, float)> ParsePairs(string s)
     {
         var result = new List<(string, float)>();
