@@ -307,6 +307,10 @@ public class PlayerController : Controller,
             {
                 _aimPoint = mouseRay.GetPoint(planeDistance);
                 _aimPoint.y = transform.position.y;
+                if(FindClosestEnemyToPosition(_aimPoint, .5f, out Vector3 aimPoint))
+                {
+                    return aimPoint;
+                }
                 return _aimPoint;
             }
 
@@ -320,6 +324,45 @@ public class PlayerController : Controller,
             }
         }
         return Vector3.zero;
+    }
+
+    private bool FindClosestEnemyToPosition(Vector3 position, float maxDistance, out Vector3 pos)
+    {
+        // Find all enemies in scene within the attack layer
+        Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackableMask);
+
+
+        if (colliders.Length > 0)
+        {
+            EnemyController closestEnemy = null;
+            float closestDistance = maxDistance;
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.TryGetComponent<EnemyController>(out var enemy))
+                {
+                    float distance = Vector3.Distance(position, enemy.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestEnemy = enemy;
+                    }
+                }
+            }
+            if(closestEnemy != null)
+            {
+                pos = closestEnemy.transform.position;
+            }
+            else
+            {
+                pos = position;
+            }
+            
+            return true;
+        }
+
+        pos = Vector3.zero;
+        return false;
     }
 
     public void InputMovement(InputAction.CallbackContext context)
