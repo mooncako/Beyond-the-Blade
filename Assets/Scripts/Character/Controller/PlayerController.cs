@@ -59,6 +59,7 @@ public class PlayerController : Controller,
     [ReadOnly] public bool IsNewSession = true;
 
     private Tween _iframeTween;
+    private static readonly Collider[] _enemyOverlapBuffer = new Collider[64];
 
     protected override void OnValidate()
     {
@@ -328,42 +329,52 @@ public class PlayerController : Controller,
 
     private bool FindClosestEnemyToPosition(Vector3 position, float maxDistance, out Vector3 pos)
     {
-        // Find all enemies in scene within the attack layer
-        Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackableMask);
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            position,
+            maxDistance,
+            _enemyOverlapBuffer,
+            _attackableMask,
+            QueryTriggerInteraction.Ignore
+        );
 
-
-        if (colliders.Length > 0)
+        if (hitCount == 0)
         {
-            EnemyController closestEnemy = null;
-            float closestDistance = maxDistance;
-
-            foreach (Collider collider in colliders)
-            {
-                if (collider.TryGetComponent<EnemyController>(out var enemy))
-                {
-                    float distance = Vector3.Distance(position, enemy.transform.position);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestEnemy = enemy;
-                    }
-                }
-            }
-            if(closestEnemy != null)
-            {
-                pos = closestEnemy.transform.position;
-            }
-            else
-            {
-                pos = position;
-            }
-            
-            return true;
+            pos = position;
+            return false;
         }
 
-        pos = Vector3.zero;
-        return false;
+        EnemyController closestEnemy = null;
+        float maxDistanceSqr = maxDistance * maxDistance;
+        float closestSqr = maxDistanceSqr;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            var col = _enemyOverlapBuffer[i];
+            if (!col) continue;
+
+            if (!col.TryGetComponent<EnemyController>(out var enemy))
+                continue;
+
+            Vector3 toEnemy = enemy.transform.position - position;
+            float sqr = toEnemy.sqrMagnitude;
+
+            if (sqr < closestSqr)
+            {
+                closestSqr = sqr;
+                closestEnemy = enemy;
+            }
+        }
+
+        if (closestEnemy == null)
+        {
+            pos = position;   // no valid enemy found, despite colliders in range
+            return false;
+        }
+
+        pos = closestEnemy.transform.position;
+        return true;
     }
+
 
     public void InputMovement(InputAction.CallbackContext context)
     {
