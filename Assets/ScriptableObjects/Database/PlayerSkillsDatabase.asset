@@ -20,14 +20,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 1a2fc06097082a946ab87ae65f4a0397, type: 3}
     - {fileID: 21300000, guid: 8e3e13c2593d848428f5e41c341114ef, type: 3}
     - {fileID: 21300000, guid: df0a71e557dee5c4898c4e7e2efad8dc, type: 3}
-    - {fileID: -3168733581550749585, guid: f7043b7291f49844b9671b3d3dedcbb5, type: 3}
     - {fileID: 21300000, guid: 8adc88d7488569c4a87bd5617dc6b9dc, type: 3}
     - {fileID: 21300000, guid: 9b5595005d498e941b526997ea66ed3b, type: 3}
-    - {fileID: 5524590292671962877, guid: f7043b7291f49844b9671b3d3dedcbb5, type: 3}
-    - {fileID: 21300006, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
-    - {fileID: 21300008, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
-    - {fileID: 2125737359283935466, guid: f7043b7291f49844b9671b3d3dedcbb5, type: 3}
-    - {fileID: 21300004, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -46,7 +40,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 21
+      Data: 10
     - Name: 
       Entry: 7
       Data: 
@@ -684,19 +678,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: SWORD_TEST_ABILITY
+      Data: SWORD_EXECUTION
     - Name: $v
       Entry: 7
       Data: 18|Skill, Assembly-CSharp
     - Name: AnimationID
       Entry: 1
-      Data: SWORD_TEST_ABILITY_ANIM
+      Data: SWORD_EXECUTION_ANIM
     - Name: Cooldown
       Entry: 4
-      Data: 5
+      Data: 0
     - Name: Damage
       Entry: 4
-      Data: 35
+      Data: 100
     - Name: WeaponType
       Entry: 3
       Data: 0
@@ -705,16 +699,16 @@ MonoBehaviour:
       Data: 19|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: X
       Entry: 4
-      Data: 2.5
+      Data: 9
     - Name: Y
       Entry: 4
-      Data: 1.5
+      Data: 0
     - Name: Z
       Entry: 4
-      Data: 5.5
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
@@ -733,7 +727,46 @@ MonoBehaviour:
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
+        mscorlib
+    - Name: Item1
+      Entry: 1
+      Data: INVINCIBLE
+    - Name: Item2
+      Entry: 4
       Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
+        mscorlib
+    - Name: Item1
+      Entry: 1
+      Data: TELEPORT
+    - Name: Item2
+      Entry: 4
+      Data: 0.1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
+        mscorlib
+    - Name: Item1
+      Entry: 1
+      Data: STUN
+    - Name: Item2
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -755,10 +788,10 @@ MonoBehaviour:
       Data: 
     - Name: Name
       Entry: 1
-      Data: Test Ability
+      Data: Muso Slash
     - Name: Description
       Entry: 1
-      Data: Test
+      Data: 
     - Name: IsStartBuffed
       Entry: 5
       Data: false
@@ -812,13 +845,13 @@ MonoBehaviour:
       Data: UnityEngine.Vector3, UnityEngine.CoreModule
     - Name: 
       Entry: 4
-      Data: 0
+      Data: 1
     - Name: 
       Entry: 4
-      Data: 0
+      Data: 1
     - Name: 
       Entry: 4
-      Data: 0
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
@@ -842,19 +875,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: SWORD_EXECUTION
+      Data: SWORD_DASH
     - Name: $v
       Entry: 7
       Data: 22|Skill, Assembly-CSharp
     - Name: AnimationID
       Entry: 1
-      Data: SWORD_EXECUTION_ANIM
+      Data: SWORD_DASH_ANIM
     - Name: Cooldown
       Entry: 4
-      Data: 0
+      Data: 0.7
     - Name: Damage
       Entry: 4
-      Data: 100
+      Data: 0
     - Name: WeaponType
       Entry: 3
       Data: 0
@@ -863,13 +896,13 @@ MonoBehaviour:
       Data: 23|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
-      Data: 2
+      Data: 1
     - Name: X
       Entry: 4
-      Data: 9
+      Data: 3
     - Name: Y
       Entry: 4
-      Data: 0
+      Data: 3
     - Name: Z
       Entry: 4
       Data: 0
@@ -891,46 +924,7 @@ MonoBehaviour:
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
-      Data: 3
-    - Name: 
-      Entry: 7
-      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
-        mscorlib
-    - Name: Item1
-      Entry: 1
-      Data: INVINCIBLE
-    - Name: Item2
-      Entry: 4
       Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
-        mscorlib
-    - Name: Item1
-      Entry: 1
-      Data: TELEPORT
-    - Name: Item2
-      Entry: 4
-      Data: 0.1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
-        mscorlib
-    - Name: Item1
-      Entry: 1
-      Data: STUN
-    - Name: Item2
-      Entry: 4
-      Data: 0.5
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -952,7 +946,7 @@ MonoBehaviour:
       Data: 
     - Name: Name
       Entry: 1
-      Data: Muso Slash
+      Data: Dash
     - Name: Description
       Entry: 1
       Data: 
@@ -1039,19 +1033,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: TEST
+      Data: SWORD_FURIOUS_STRIKE
     - Name: $v
       Entry: 7
       Data: 26|Skill, Assembly-CSharp
     - Name: AnimationID
       Entry: 1
-      Data: TEST_ANIM
+      Data: SWORD_FURIOUS_STRIKE_ANIM
     - Name: Cooldown
       Entry: 4
-      Data: 1
+      Data: 0.7
     - Name: Damage
       Entry: 4
-      Data: 40
+      Data: 50
     - Name: WeaponType
       Entry: 3
       Data: 0
@@ -1060,16 +1054,16 @@ MonoBehaviour:
       Data: 27|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
-      Data: 2
+      Data: 1
     - Name: X
       Entry: 4
-      Data: 3
+      Data: 2
     - Name: Y
       Entry: 4
-      Data: 0
+      Data: 1
     - Name: Z
       Entry: 4
-      Data: 0
+      Data: 2.5
     - Name: 
       Entry: 8
       Data: 
@@ -1095,7 +1089,7 @@ MonoBehaviour:
         mscorlib
     - Name: Item1
       Entry: 1
-      Data: TELEPORT
+      Data: ANTISTUN
     - Name: Item2
       Entry: 4
       Data: 0
@@ -1111,1928 +1105,6 @@ MonoBehaviour:
     - Name: Debuffs
       Entry: 7
       Data: 29|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: 
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 6
-      Data: 
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_DASH
-    - Name: $v
-      Entry: 7
-      Data: 30|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_DASH_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 0.7
-    - Name: Damage
-      Entry: 4
-      Data: 0
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 31|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 1
-    - Name: X
-      Entry: 4
-      Data: 3
-    - Name: Y
-      Entry: 4
-      Data: 3
-    - Name: Z
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 0
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 32|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 33|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Dash
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 10
-      Data: 6
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_ABILITY2
-    - Name: $v
-      Entry: 7
-      Data: 34|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_TEST_ABILITY_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1
-    - Name: Damage
-      Entry: 4
-      Data: 1
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 35|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 0
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 1
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 36|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 37|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Ability2
-    - Name: Description
-      Entry: 1
-      Data: Test
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 10
-      Data: 7
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_ABILITY3
-    - Name: $v
-      Entry: 7
-      Data: 38|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_TEST_ABILITY_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1
-    - Name: Damage
-      Entry: 4
-      Data: 1
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 39|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 0
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 2
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 40|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 41|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Ability3
-    - Name: Description
-      Entry: 1
-      Data: Test
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 10
-      Data: 8
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_ABILITY4
-    - Name: $v
-      Entry: 7
-      Data: 42|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_TEST_ABILITY_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1
-    - Name: Damage
-      Entry: 4
-      Data: 1
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 43|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 0
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 3
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 44|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 45|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Ability4
-    - Name: Description
-      Entry: 1
-      Data: Test
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 10
-      Data: 9
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_ABILITY5
-    - Name: $v
-      Entry: 7
-      Data: 46|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_TEST_ABILITY_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1
-    - Name: Damage
-      Entry: 4
-      Data: 1
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 47|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 0
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 1
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 48|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 49|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Ability5
-    - Name: Description
-      Entry: 1
-      Data: Test
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 10
-      Data: 10
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_ABILITY6
-    - Name: $v
-      Entry: 7
-      Data: 50|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_TEST_ABILITY_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1
-    - Name: Damage
-      Entry: 4
-      Data: 1
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 51|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 0
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 2
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 52|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 53|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Ability6
-    - Name: Description
-      Entry: 1
-      Data: Test
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 10
-      Data: 11
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_NORMAL
-    - Name: $v
-      Entry: 7
-      Data: 54|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_BASIC_01_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1.2
-    - Name: Damage
-      Entry: 4
-      Data: 25
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 55|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 2.5
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 160
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 0
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 56|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 57|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Normal Skill
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 6
-      Data: 
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_RARE
-    - Name: $v
-      Entry: 7
-      Data: 58|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_BASIC_01_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1.2
-    - Name: Damage
-      Entry: 4
-      Data: 35
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 59|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 2.5
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 160
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 1
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 60|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 61|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Rare Skill
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 6
-      Data: 
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_EPIC
-    - Name: $v
-      Entry: 7
-      Data: 62|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_BASIC_01_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1.2
-    - Name: Damage
-      Entry: 4
-      Data: 45
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 63|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 2.5
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 160
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 2
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 64|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 65|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Epic Skill
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 6
-      Data: 
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_TEST_LEGENDARY
-    - Name: $v
-      Entry: 7
-      Data: 66|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_BASIC_01_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1.2
-    - Name: Damage
-      Entry: 4
-      Data: 55
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 67|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 3
-    - Name: X
-      Entry: 4
-      Data: 2.5
-    - Name: Y
-      Entry: 4
-      Data: 0
-    - Name: Z
-      Entry: 4
-      Data: 160
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 3
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 68|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 69|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Test Legendary Skill
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 6
-      Data: 
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_VOM_TAG
-    - Name: $v
-      Entry: 7
-      Data: 70|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_VOM_TAG_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 1.2
-    - Name: Damage
-      Entry: 4
-      Data: 30
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 71|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 1
-    - Name: X
-      Entry: 4
-      Data: 2
-    - Name: Y
-      Entry: 4
-      Data: 1
-    - Name: Z
-      Entry: 4
-      Data: 2.5
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 1
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 72|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
-        mscorlib
-    - Name: Item1
-      Entry: 1
-      Data: ANTISTUN
-    - Name: Item2
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 73|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Name
-      Entry: 1
-      Data: Vom Tag
-    - Name: Description
-      Entry: 1
-      Data: 
-    - Name: IsStartBuffed
-      Entry: 5
-      Data: false
-    - Name: IsMidBuffed
-      Entry: 5
-      Data: false
-    - Name: IsEndBuffed
-      Entry: 5
-      Data: false
-    - Name: Icon
-      Entry: 6
-      Data: 
-    - Name: VFXInfo
-      Entry: 7
-      Data: VFXInfo, Assembly-CSharp
-    - Name: Pos
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rot
-      Entry: 7
-      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Scale
-      Entry: 7
-      Data: UnityEngine.Vector3, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: IsPersistent
-      Entry: 5
-      Data: false
-    - Name: UsingIndicator
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: SWORD_FURIOUS_STRIKE
-    - Name: $v
-      Entry: 7
-      Data: 74|Skill, Assembly-CSharp
-    - Name: AnimationID
-      Entry: 1
-      Data: SWORD_FURIOUS_STRIKE_ANIM
-    - Name: Cooldown
-      Entry: 4
-      Data: 0.7
-    - Name: Damage
-      Entry: 4
-      Data: 50
-    - Name: WeaponType
-      Entry: 3
-      Data: 0
-    - Name: SkillRange
-      Entry: 7
-      Data: 75|SkillRange, Assembly-CSharp
-    - Name: AreaType
-      Entry: 3
-      Data: 1
-    - Name: X
-      Entry: 4
-      Data: 2
-    - Name: Y
-      Entry: 4
-      Data: 1
-    - Name: Z
-      Entry: 4
-      Data: 2.5
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Rarity
-      Entry: 3
-      Data: 1
-    - Name: TargetSelf
-      Entry: 5
-      Data: false
-    - Name: IsTargetedGroundAOE
-      Entry: 5
-      Data: false
-    - Name: Buffs
-      Entry: 7
-      Data: 76|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
-        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
-        mscorlib
-    - Name: Item1
-      Entry: 1
-      Data: ANTISTUN
-    - Name: Item2
-      Entry: 4
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: Debuffs
-      Entry: 7
-      Data: 77|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
@@ -3135,7 +1207,7 @@ MonoBehaviour:
       Data: SWORD_THRUST
     - Name: $v
       Entry: 7
-      Data: 78|Skill, Assembly-CSharp
+      Data: 30|Skill, Assembly-CSharp
     - Name: AnimationID
       Entry: 1
       Data: SWORD_THRUST_ANIM
@@ -3150,7 +1222,7 @@ MonoBehaviour:
       Data: 0
     - Name: SkillRange
       Entry: 7
-      Data: 79|SkillRange, Assembly-CSharp
+      Data: 31|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
       Data: 1
@@ -3177,7 +1249,7 @@ MonoBehaviour:
       Data: false
     - Name: Buffs
       Entry: 7
-      Data: 80|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+      Data: 32|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
@@ -3190,7 +1262,7 @@ MonoBehaviour:
       Data: 
     - Name: Debuffs
       Entry: 7
-      Data: 81|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+      Data: 33|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
@@ -3293,7 +1365,7 @@ MonoBehaviour:
       Data: SWORD_LIGHTNING_STRIKE
     - Name: $v
       Entry: 7
-      Data: 82|Skill, Assembly-CSharp
+      Data: 34|Skill, Assembly-CSharp
     - Name: AnimationID
       Entry: 1
       Data: SWORD_LIGHTNING_STRIKE_ANIM
@@ -3308,7 +1380,7 @@ MonoBehaviour:
       Data: 0
     - Name: SkillRange
       Entry: 7
-      Data: 83|SkillRange, Assembly-CSharp
+      Data: 35|SkillRange, Assembly-CSharp
     - Name: AreaType
       Entry: 3
       Data: 1
@@ -3335,7 +1407,7 @@ MonoBehaviour:
       Data: false
     - Name: Buffs
       Entry: 7
-      Data: 84|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+      Data: 36|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
@@ -3348,7 +1420,7 @@ MonoBehaviour:
       Data: 
     - Name: Debuffs
       Entry: 7
-      Data: 85|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+      Data: 37|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
         mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
@@ -3362,6 +1434,177 @@ MonoBehaviour:
     - Name: Name
       Entry: 1
       Data: Lightning Strike
+    - Name: Description
+      Entry: 1
+      Data: 
+    - Name: IsStartBuffed
+      Entry: 5
+      Data: false
+    - Name: IsMidBuffed
+      Entry: 5
+      Data: false
+    - Name: IsEndBuffed
+      Entry: 5
+      Data: false
+    - Name: Icon
+      Entry: 6
+      Data: 
+    - Name: VFXInfo
+      Entry: 7
+      Data: VFXInfo, Assembly-CSharp
+    - Name: Pos
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Rot
+      Entry: 7
+      Data: UnityEngine.Quaternion, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Scale
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: IsPersistent
+      Entry: 5
+      Data: false
+    - Name: UsingIndicator
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: SWORD_HILT_SMASH
+    - Name: $v
+      Entry: 7
+      Data: 38|Skill, Assembly-CSharp
+    - Name: AnimationID
+      Entry: 1
+      Data: SWORD_HILT_SMASH_ANIM
+    - Name: Cooldown
+      Entry: 4
+      Data: 1.2
+    - Name: Damage
+      Entry: 4
+      Data: 20
+    - Name: WeaponType
+      Entry: 3
+      Data: 0
+    - Name: SkillRange
+      Entry: 7
+      Data: 39|SkillRange, Assembly-CSharp
+    - Name: AreaType
+      Entry: 3
+      Data: 3
+    - Name: X
+      Entry: 4
+      Data: 1.5
+    - Name: Y
+      Entry: 4
+      Data: 0
+    - Name: Z
+      Entry: 4
+      Data: 100
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Rarity
+      Entry: 3
+      Data: 0
+    - Name: TargetSelf
+      Entry: 5
+      Data: false
+    - Name: IsTargetedGroundAOE
+      Entry: 5
+      Data: false
+    - Name: Buffs
+      Entry: 7
+      Data: 40|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: System.ValueTuple`2[[System.String, mscorlib],[System.Single, mscorlib]],
+        mscorlib
+    - Name: Item1
+      Entry: 1
+      Data: STUN
+    - Name: Item2
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Debuffs
+      Entry: 7
+      Data: 41|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.String,
+        mscorlib],[System.Single, mscorlib]], mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Name
+      Entry: 1
+      Data: Hilt Smash
     - Name: Description
       Entry: 1
       Data: 

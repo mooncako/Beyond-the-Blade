@@ -20,31 +20,19 @@ MonoBehaviour:
     CanAppear: 0
   - SkillId: SWORD_BASIC_03
     CanAppear: 0
-  - SkillId: SWORD_TEST_NORMAL
-    CanAppear: 1
-  - SkillId: SWORD_TEST_EPIC
-    CanAppear: 1
-  - SkillId: SWORD_TEST_RARE
-    CanAppear: 1
-  - SkillId: SWORD_TEST_LEGENDARY
-    CanAppear: 1
   - SkillId: SWORD_FURIOUS_STRIKE
     CanAppear: 1
   - SkillId: SWORD_THRUST
+    CanAppear: 1
+  - SkillId: SWORD_HILT_SMASH
     CanAppear: 1
   NormalSkills:
-  - SkillId: SWORD_TEST_NORMAL
-    CanAppear: 1
   - SkillId: SWORD_THRUST
     CanAppear: 1
-  RareSkills:
-  - SkillId: SWORD_TEST_RARE
+  - SkillId: SWORD_HILT_SMASH
     CanAppear: 1
+  RareSkills:
   - SkillId: SWORD_FURIOUS_STRIKE
     CanAppear: 1
-  EpicSkills:
-  - SkillId: SWORD_TEST_EPIC
-    CanAppear: 1
-  LegendarySkills:
-  - SkillId: SWORD_TEST_LEGENDARY
-    CanAppear: 1
+  EpicSkills: []
+  LegendarySkills: []

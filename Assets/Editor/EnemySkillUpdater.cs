@@ -165,13 +165,20 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                     .Where(r => !string.IsNullOrWhiteSpace(r.Key))
                     .ToDictionary(r => r.Key, r => r);
 
-                int updated = 0, created = 0;
+                int updated = 0, created = 0, removed = 0;
+
                 foreach (var so in _sources.Where(s => s != null))
                 {
                     bool dirty = false;
 
+                    // Track existing keys in this SO; anything left after applying the sheet will be deleted.
+                    var existingKeys = new HashSet<string>(so.SkillDict.Keys);
+
                     foreach (var (key, r) in map)
                     {
+                        // Key is present in sheet, so we do NOT want to delete it.
+                        existingKeys.Remove(key);
+
                         if (!so.SkillDict.TryGetValue(key, out var skill))
                         {
                             skill = new Skill();
@@ -226,11 +233,23 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         skill.Buffs = ParsePairs(r.Buffs);
                         skill.Debuffs = ParsePairs(r.Debuffs);
 
-                        skill.Name        = r.Name ?? "";
+                        skill.Name = r.Name ?? "";
                         skill.Description = r.Description ?? "";
 
                         dirty = true;
                         updated++;
+                    }
+
+                    // Remove any skills that are not present on the sheet
+                    if (existingKeys.Count > 0)
+                    {
+                        foreach (var keyToRemove in existingKeys)
+                        {
+                            so.SkillDict.Remove(keyToRemove);
+                            removed++;
+                        }
+
+                        dirty = true;
                     }
 
                     if (dirty)
@@ -238,8 +257,10 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                 }
 
                 AssetDatabase.SaveAssets();
-                Debug.Log($"[SheetSync] PULL OK. Updated: {updated}, Created: {created}");
-                EditorUtility.DisplayDialog("PULL", $"Updated: {updated}\nCreated: {created}", "OK");
+                Debug.Log($"[SheetSync] PULL OK (Enemy). Updated: {updated}, Created: {created}, Removed: {removed}");
+                EditorUtility.DisplayDialog("PULL",
+                    $"Updated: {updated}\nCreated: {created}\nRemoved: {removed}",
+                    "OK");
             }
             catch (Exception ex)
             {
@@ -248,6 +269,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
             }
         });
     }
+
 
     // ---------- Helpers ----------
     private static List<string> SplitList(string s)
