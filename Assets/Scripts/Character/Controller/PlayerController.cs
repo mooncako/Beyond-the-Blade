@@ -306,9 +306,12 @@ public class PlayerController : Controller,
             Plane plane = new Plane(Vector3.up, transform.position);
             if (plane.Raycast(mouseRay, out float planeDistance))
             {
+                
                 _aimPoint = mouseRay.GetPoint(planeDistance);
                 _aimPoint.y = transform.position.y;
-                if(FindClosestEnemyToPosition(_aimPoint, .5f, out Vector3 aimPoint))
+                Vector3 direction = (_aimPoint - transform.position).normalized;
+                Vector3 playerAimForward = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.z);
+                if(FindClosestEnemyToPosition(playerAimForward, .5f, out Vector3 aimPoint))
                 {
                     return aimPoint;
                 }
