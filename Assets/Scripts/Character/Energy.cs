@@ -7,6 +7,7 @@ public class Energy : MonoBehaviour
 {
     [SerializeField, BoxGroup("Stats"), ReadOnly] private float _maxEnergy;
     [field: SerializeField, BoxGroup("Stats"), ReadOnly] private float _energy = 0;
+    public float EnergyPercentage => _energy / _maxEnergy;
 
     [ShowInInspector, BoxGroup("Stats"), ReadOnly] public bool IsFull => _energy.Approx(_maxEnergy);
 
@@ -25,10 +26,7 @@ public class Energy : MonoBehaviour
         _energy = 0;
         OnExecution.Invoke();
     }
-    public float GetCurrentPercentage()
-    {
-        return _energy / _maxEnergy;
-    }
+
 
     public float GetCurrentEnergy()
     {

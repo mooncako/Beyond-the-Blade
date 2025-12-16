@@ -7,7 +7,9 @@ Shader "Hidden/Custom/SS_Outline_Distort_HDRP"
         _Distort("Distort", Float) = 0
         _DistortSpeed("Distort Speed", Float) = 0
         _OutlineWidth("Outline Width", Float) = 1
-        _OutlineColor("Outline Color", Color) = (0,0,0,1)
+        [HDR]_OutlineColor("Outline Color", Color) = (0,0,0,1)
+        _OutlineIntensity("Outline intensity", Float) = 10
+        _ExposureWeight("Exposure Weight", Range(0, 1)) = 0
     }
 
     SubShader
@@ -39,6 +41,8 @@ Shader "Hidden/Custom/SS_Outline_Distort_HDRP"
             float4 _DistortTex_ST;
 
             float4 _OutlineColor;
+            float  _OutlineIntensity;
+            float  _ExposureWeight;
             float  _OutlineWidth;
             float  _Distort;
             float  _DistortSpeed;
@@ -111,8 +115,13 @@ Shader "Hidden/Custom/SS_Outline_Distort_HDRP"
                     edge = max(edge, step(0.001, m));
                 }
 
+                float3 hdr = _OutlineColor.rgb * _OutlineIntensity;
+
+                float invExp = GetInverseCurrentExposureMultiplier();
+                hdr = lerp(hdr * invExp, hdr, _ExposureWeight);
+
                 if (edge > 0.0)
-                    return float4(_OutlineColor.rgb, 1);
+                    return float4(hdr, 1);
 
                 return 0;
             }

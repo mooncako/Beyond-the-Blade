@@ -48,6 +48,7 @@ public sealed class DistortedOutlineCustomPass : CustomPass
 
     protected override void Execute(CustomPassContext ctx)
     {
+
         if (_shaderTags == null)
         {
             _shaderTags = new[]

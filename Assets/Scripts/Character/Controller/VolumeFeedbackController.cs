@@ -10,17 +10,22 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(DontDestroy))]
 public class VolumeFeedbackController : MonoBehaviour,
     MMEventListener<PlayerOnHealthChangeEvent>,
-    MMEventListener<PlayerOnDamageEvent>
+    MMEventListener<PlayerOnDamageEvent>,
+    MMEventListener<PlayerInitializedEvent>
 {
     [SerializeField, BoxGroup("References")] private VolumeProfile _profile;
     [SerializeField, BoxGroup("Settings")] private float _startVignetteIntensity = 0;
     [SerializeField, BoxGroup("Settings")] private float _maxVignetteIntensity = .4f;
     [SerializeField, BoxGroup("Settings")] private float _startChromaticAberrationIntensity = 0f;
     [SerializeField, BoxGroup("Settings")] private float _maxChromaticAberrationIntensity = .3f;
+    [SerializeField, BoxGroup("Settings")] private AnimationCurve _outlineDistortionCurve;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private Vignette _vignette;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private ChromaticAberration _chromaticAberration;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private DistortedOutlineSettings _distortedOutline;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private PlayerController _pC;
     private Tween _vignetteTween;
     private Tween _chromaticAberrationTween;
+    private Tween _distortedOutlineTween;
 
     void Start()
     {
@@ -28,6 +33,7 @@ public class VolumeFeedbackController : MonoBehaviour,
         {
             _profile.TryGet(out _vignette);
             _profile.TryGet(out _chromaticAberration);
+            _profile.TryGet(out _distortedOutline);
         }
     }
 
@@ -35,6 +41,7 @@ public class VolumeFeedbackController : MonoBehaviour,
     {
         this.MMEventStartListening<PlayerOnHealthChangeEvent>();
         this.MMEventStartListening<PlayerOnDamageEvent>();
+        this.MMEventStartListening<PlayerInitializedEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -42,6 +49,9 @@ public class VolumeFeedbackController : MonoBehaviour,
     {
         this.MMEventStopListening<PlayerOnHealthChangeEvent>();
         this.MMEventStopListening<PlayerOnDamageEvent>();
+        this.MMEventStopListening<PlayerInitializedEvent>();
+        _pC.Energy.OnEnergyGain.RemoveListener(OnEnergyGain);
+        _pC.Energy.OnExecution.RemoveListener(OnExecution);
         SceneManager.sceneLoaded -= OnSceneLoaded;
         Reset();
     }
@@ -94,6 +104,26 @@ public class VolumeFeedbackController : MonoBehaviour,
         OnDamage(e.Health);
     }
 
+    public void OnMMEvent(PlayerInitializedEvent e)
+    {
+        _pC = e.Player;
+        _pC.Energy.OnEnergyGain.AddListener(OnEnergyGain);
+        _pC.Energy.OnExecution.AddListener(OnExecution);
+    }
+
+    private void OnEnergyGain(float gain)
+    {
+        _distortedOutlineTween.Stop();
+        _distortedOutlineTween = Tween.Custom(0, _pC.Energy.EnergyPercentage, .3f, onValueChange: newVal => _distortedOutline.distort.value = _outlineDistortionCurve.Evaluate(newVal));
+    }
+
+    private void OnExecution()
+    {
+        _distortedOutlineTween.Stop();
+        float currentVal = _distortedOutline.distort.value;
+        _distortedOutlineTween = Tween.Custom(currentVal, 0, .5f, onValueChange: newVal => _distortedOutline.distort.value = newVal);
+    }
+
     public void Reset()
     {
         _vignetteTween.Stop();
@@ -102,5 +132,10 @@ public class VolumeFeedbackController : MonoBehaviour,
         _chromaticAberrationTween.Stop();
         if (_chromaticAberration != null)
             _chromaticAberration.intensity.value = _startChromaticAberrationIntensity;
-    }   
+        _distortedOutlineTween.Stop();
+        if (_distortedOutline != null)
+            _distortedOutline.distort.value = 0;
+    }
+
+    
 }
