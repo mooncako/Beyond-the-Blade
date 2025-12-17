@@ -48,6 +48,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_1c573dac237d4b84ba97be32279b842b_Texture_1_Texture2D:
         m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
@@ -83,11 +87,11 @@ Material:
     - _EnableBlendModePreserveSpecularLighting: 0
     - _EnableFogOnTransparent: 1
     - _ExcludeFromTUAndAA: 0
-    - _NoiseDensity: 6
+    - _NoiseDensity: 7.6
     - _OpaqueCullMode: 2
     - _PerPixelSorting: 0
     - _RenderQueueType: 4
-    - _Rotation: 0
+    - _Rotation: 0.64
     - _SrcBlend: 1
     - _StencilRef: 0
     - _StencilRefDepth: 1
@@ -114,5 +118,6 @@ Material:
     - _Color: {r: 0.9023573, g: 0, b: 4.22663, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Tiling: {r: 0.83, g: 0.05, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
