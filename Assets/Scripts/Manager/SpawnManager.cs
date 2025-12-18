@@ -85,6 +85,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     { 
         if (_canSpawn)
         {
+            Array.Clear(_enemySpawnPos, 0, _enemySpawnPos.Length);
             _enemySpawnPos = e.EnemySpawnPositions;
             SetupWaveInfo();
         }
