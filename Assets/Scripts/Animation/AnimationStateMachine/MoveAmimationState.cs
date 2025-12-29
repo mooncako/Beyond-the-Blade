@@ -128,9 +128,6 @@ public class MoveAnimationState : AnimationState
                 _smoothedParameter = null;
             }
         }
-        
-        if(Owner != null)
-            Owner.Movement.Stop();
     }
 
     public override void OnInterrupt()

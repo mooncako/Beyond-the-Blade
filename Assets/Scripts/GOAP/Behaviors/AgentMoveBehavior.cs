@@ -43,9 +43,21 @@ public class AgentMoveBehavior : MonoBehaviour
 
     void Update()
     {
-        if (_agentBehavior.IsPaused) return;
-        if (_currentTarget == null) return;
-        if (!_controller.CanMove) return;
+        if (_agentBehavior.IsPaused) 
+        {
+            _controller.Movement.Stop();
+            return;
+        }
+        if (_currentTarget == null) 
+        {
+            _controller.Movement.Stop();
+            return;
+        }
+        if (!_controller.CanMove) 
+        {
+            _controller.Movement.Stop();
+            return;
+        }
         if (_controller.AnimationStateMachine.IsInStaggerState())
         {
             _controller.Movement.Stop();

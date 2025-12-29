@@ -91,7 +91,7 @@ public class EnemyController : Controller, IPoolable
 
     private void FixedUpdate()
     {
-        if (CurrentTargetTransform != null && _canRotate)
+        if (CurrentTargetTransform != null && _canRotate && !AnimationStateMachine.IsInStaggerState())
         {
             Movement.SetLookPosition(CurrentTargetTransform.position);
         }
@@ -285,6 +285,7 @@ public class EnemyController : Controller, IPoolable
                 _stunTween = Tween.Delay(duration).OnComplete(() =>
                 {
                     AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+                    _canRotate = true;
                     _currentStunDuration = 0;
                 });
             }
