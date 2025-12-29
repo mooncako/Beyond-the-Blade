@@ -942,16 +942,40 @@ MonoBehaviour:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
-    _enableCustomEvents: 1
+    _enableCustomEvents: 0
     _onEnterEvent:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleRotation
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     _onInterruptEvent:
       m_PersistentCalls:
         m_Calls: []
     _onExitEvent:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleRotation
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
     Clip:
       _FadeDuration: 0.25
       _Speed: 1

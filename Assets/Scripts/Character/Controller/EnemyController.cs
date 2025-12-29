@@ -311,16 +311,9 @@ public class EnemyController : Controller, IPoolable
         _matController.ResetDissolve();
     }
 
-    public void ToggleRotationAnimEvent(int toggle)
+    public void ToggleRotation(bool toggle)
     {
-        if (toggle == 0)
-        {
-            _canRotate = true;
-        }
-        else
-        {
-            _canRotate = false;
-        }
+        _canRotate = toggle;
 
     }
 
