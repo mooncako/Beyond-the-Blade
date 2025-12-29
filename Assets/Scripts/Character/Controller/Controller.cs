@@ -220,6 +220,11 @@ public class Controller : MonoBehaviour
         _isSkillPlaying = toggle;
     }
 
+    public void ToggleIsDamageable(bool toggle)
+    {
+        Health.IsDamageable = toggle;
+    }
+
     [Button]
     public virtual void ApplyStats()
     {

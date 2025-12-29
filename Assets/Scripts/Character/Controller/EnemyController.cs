@@ -235,6 +235,7 @@ public class EnemyController : Controller, IPoolable
     {
         base.OnParried(duration);
         Posture.IncreaseStun(UnityEngine.Random.Range(_currentSkill.Damage/10, _currentSkill.Damage/10 + _currentSkill.Damage/20), duration);
+        Movement.KnockBack(AttackPoint, 3500);
         Stun(.2f, null, false);
         ParrySuccessEvent.Trigger();
         CameraShakeEvent.Trigger(new LightShake());

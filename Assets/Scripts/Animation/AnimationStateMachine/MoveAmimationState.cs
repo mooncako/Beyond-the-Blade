@@ -55,6 +55,7 @@ public class MoveAnimationState : AnimationState
 
     public override void OnEnterState()
     {
+        _onEnterEvent.Invoke();
         // Handle upper body layer
         if (UpperBodyClip != null && _stateMachine.IsHumanoid)
         {

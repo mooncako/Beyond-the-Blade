@@ -30,15 +30,12 @@ public class AgentMoveBehavior : MonoBehaviour
     {
         _agentBehavior.Events.OnTargetChanged += OnTargetChanged;
         _agentBehavior.Events.OnTargetNotInRange += OnTargetNotInRange;
-        // _controller.Movement.Stop();
-        // StartCoroutine(MovementCO());
     }
 
     private void OnDisable()
     {
         _agentBehavior.Events.OnTargetChanged -= OnTargetChanged;
         _agentBehavior.Events.OnTargetNotInRange -= OnTargetNotInRange;
-        // StopCoroutine(MovementCO());
     }
 
     void Update()
@@ -78,21 +75,6 @@ public class AgentMoveBehavior : MonoBehaviour
 
     private void OnTargetNotInRange(ITarget target)
     {
-        
-    }
-
-    private IEnumerator MovementCO()
-    {
-        while(true)
-        {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(.1f, .5f));
-            if (_agentBehavior.IsPaused) continue;
-            if (_currentTarget == null) continue;
-            if (!_controller.CanMove) continue;
-
-            // if(!AnimationStateMachine.IsInMoveState()) return;
-            _controller.MoveTo(_currentTarget.Position);
-        }
         
     }
     

@@ -10,17 +10,20 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _modifierDatabase;
     [SerializeField, BoxGroup("References")] private AnimancerComponent _animancer;
     [SerializeField, BoxGroup("References")] private Controller _owner;
-    [SerializeField] private IdleAnimationState _idleState;
-    [SerializeField] private MoveAnimationState _moveState;
-    [SerializeField] private ActionAnimationState _readyActionState;
-    [SerializeField] private ActionAnimationState _attackActionState;
-    [SerializeField] private ActionAnimationState _parryActionState;
-    [SerializeField] private ActionAnimationState _dashActionState;
-    [SerializeField] private ActionAnimationState _abilityActionState;
-    [SerializeField] private ActionAnimationState _executionActionState;
-    [SerializeField] private StaggerAnimationState _staggerState;
-    [SerializeField] private DeathAnimationState _deathState;
-    [SerializeField] private ReviveAnimationState _reviveState;
+    
+    [SerializeField] private AnimationStateType _displayStates = AnimationStateType.All;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Idle)")] private IdleAnimationState _idleState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Move)")] private MoveAnimationState _moveState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Ready)")] private ActionAnimationState _readyActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Attack)")] private ActionAnimationState _attackActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Parry)")] private ActionAnimationState _parryActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Dash)")] private ActionAnimationState _dashActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Ability)")] private ActionAnimationState _abilityActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Execution)")] private ActionAnimationState _executionActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Stagger)")] private StaggerAnimationState _staggerState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Death)")] private DeathAnimationState _deathState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Revive)")] private ReviveAnimationState _reviveState;
+
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
     [SerializeField] public bool IsHumanoid { get; private set;} = true;
@@ -501,6 +504,6 @@ public class AnimationStateMachine : MonoBehaviour
         InterruptState(type);
     }
 
-
+    public static bool Has(AnimationStateType value, AnimationStateType flag) => (value & flag) == flag; 
 
 }

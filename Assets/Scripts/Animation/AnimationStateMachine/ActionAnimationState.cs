@@ -38,6 +38,7 @@ public class ActionAnimationState : AnimationState
 
     public override void OnEnterState()
     {
+        _onEnterEvent.Invoke();
         if (Owner != null)
         {
             Owner.CanMove = false;

@@ -15,6 +15,10 @@ public abstract class AnimationState
     [SerializeField, FoldoutGroup("References")] protected AnimationStateMachine _stateMachine;
     [SerializeField, FoldoutGroup("References")] protected AnimancerComponent _animancer;
     [SerializeField, FoldoutGroup("References")] public Controller Owner;
+    [SerializeField, BoxGroup("Custom Events"), EnumToggleButtons, HideLabel] private ToggleType _enableCustomEvents = ToggleType.Off;
+    [SerializeField, BoxGroup("Custom Events"), ShowIf("_enableCustomEvents", ToggleType.On)] protected UnityEvent _onEnterEvent;
+    [SerializeField, BoxGroup("Custom Events"), ShowIf("_enableCustomEvents", ToggleType.On)] protected UnityEvent _onInterruptEvent;
+    [SerializeField, BoxGroup("Custom Events"), ShowIf("_enableCustomEvents", ToggleType.On)] protected UnityEvent _onExitEvent;
     [SerializeField, BoxGroup("Modifiers")] public List<(float eventIndex, ModifierSO modifier)> Modifiers = new List<(float, ModifierSO)>();
 
     // [SerializeField] private ClipTransition _defaultClip;
@@ -47,6 +51,7 @@ public abstract class AnimationState
 
     public virtual void OnEnterState()
     {
+        _onEnterEvent.Invoke();
         if (Clip != null && Clip.Clip != null)
         {
             AnimancerState = _animancer.Play(Clip);
@@ -57,7 +62,7 @@ public abstract class AnimationState
 
     public virtual void OnInterrupt()
     {
-
+        _onInterruptEvent.Invoke();
     }
 
     public virtual void OnExitState()
@@ -67,6 +72,7 @@ public abstract class AnimationState
             ToggleInterruption(true);
         }
 
+        _onExitEvent.Invoke();
         Owner.ToggleRootMotionOffAnimEvent();
     }
 

@@ -731,4 +731,48 @@ public class PlayerController : Controller,
     {
         _isInAimMode = toggle;
     }
+
+    public override void DamageAnimEvent(string animationID)
+    {
+        if (_animationStateMachine.IsInStaggerState()) return;
+
+        _hitTargets.Clear();
+        if (_currentSkill.IsTargetedGroundAOE)
+        {
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, TargetPos, _attackableMask);
+        }
+        else
+        {
+            if (AttackPoint != null)
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
+            }
+            else
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
+
+            }
+        }
+
+        foreach (GameObject target in _hitTargets)
+        {
+            Health health = target.GetComponent<Health>();
+            DamageInfo info = new DamageInfo(_currentSkill.Damage * Stats.DamageMultiplier, target, health, gameObject, DamageType.Regular);
+            if(!Health.IsDamageable)
+            {
+                health.Damage(info, true);
+            }
+            else
+            {
+                health.Damage(info);
+            }
+            
+        }
+
+        if (_hitTargets.Count > 0)
+        {
+            HitStop.Begin(AnimationStateMachine.CurrentState.AnimancerState, _hitStopDuration, _hitStopTween);
+            CameraShakeEvent.Trigger(new LightShake());
+        }
+    }
 }
