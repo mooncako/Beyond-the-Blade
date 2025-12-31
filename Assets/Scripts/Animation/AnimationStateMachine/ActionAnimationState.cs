@@ -1,12 +1,8 @@
 using System;
 using Animancer;
 using UnityEngine;
-using Animancer.TransitionLibraries;
-using System.Collections;
 using PrimeTween;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using sc.splines.spawner.runtime;
 using Sirenix.OdinInspector;
 
 [Serializable]
