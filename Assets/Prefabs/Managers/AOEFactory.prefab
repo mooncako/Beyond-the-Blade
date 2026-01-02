@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3112938055056044628}
   - component: {fileID: 8848536863482710836}
   m_Layer: 0
-  m_Name: OffloadAOEFactory
+  m_Name: AOEFactory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,6 +51,10 @@ MonoBehaviour:
     InitialSize: 5
     MaxSize: 15
     CanExpand: 1
+  - Prefab: {fileID: 3944172096809165114, guid: 340f88f5375193e40bccf8e925c99f89, type: 3}
+    InitialSize: 5
+    MaxSize: 15
+    CanExpand: 1
   _logPoolStats: 0
   _turnOnDebugLog: 0
   _initializeOnStart: 1
@@ -69,6 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objectPool: {fileID: 7269838820044047468}
   _offLoadAOEPrefab: {fileID: 3944172096809165114, guid: c3d38ca7e6b7f274d90602cefd9fd6ee, type: 3}
+  _continuousAOEPrefab: {fileID: 3944172096809165114, guid: 340f88f5375193e40bccf8e925c99f89, type: 3}
 --- !u!114 &8848536863482710836
 MonoBehaviour:
   m_ObjectHideFlags: 0

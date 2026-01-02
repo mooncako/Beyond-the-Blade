@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ContinuousAOE : AreaOfEffect
 {
@@ -10,6 +11,7 @@ public class ContinuousAOE : AreaOfEffect
     [SerializeField, BoxGroup("Debug"), ReadOnly] private DamageType _damageType = DamageType.Regular;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private GameObject _instigator;
     [SerializeField] private HashSet<GameObject> _currentAffectedEnemies = new HashSet<GameObject>();
+    [HideInInspector] public ObjectPool ObjectPool;
 
 #if UNITY_EDITOR
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] private List<GameObject> _currentAffectedEnemyList => _currentAffectedEnemies.ToList();
@@ -42,9 +44,17 @@ public class ContinuousAOE : AreaOfEffect
         }
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
         StopAllCoroutines();
+    }
+
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        if(ObjectPool != null)
+        {
+            ObjectPool.Return(gameObject);
+        }
     }
 
     public void UpdateAttack(Skill skill, float damageTickTime, DamageType damageType, GameObject instigator)

@@ -1,8 +1,9 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AOEApplier))]
-public class AreaOfEffect : MonoBehaviour
+public class AreaOfEffect : MonoBehaviour, IPoolable
 {
     [SerializeField, BoxGroup("References")] protected MeshFilter _meshFilter;
     [SerializeField, BoxGroup("References")] protected MeshRenderer _meshRenderer;
@@ -19,6 +20,26 @@ public class AreaOfEffect : MonoBehaviour
         if (_meshRenderer == null) _meshRenderer = GetComponent<MeshRenderer>();
         if (_meshCollider == null) _meshCollider = GetComponent<MeshCollider>();
         if (_aoeApplier == null) _aoeApplier = GetComponent<AOEApplier>();
+    }
+
+    protected virtual void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    protected virtual void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    protected virtual void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    protected virtual void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        
     }
 
     protected virtual void OnTriggerStay(Collider other)
@@ -56,5 +77,15 @@ public class AreaOfEffect : MonoBehaviour
         _aoeApplier.Y = _range.Y;
         _aoeApplier.Z = _range.Z;
         _enabled = true;
+    }
+
+    public virtual void OnPoolGet()
+    {
+        
+    }
+
+    public virtual void OnPoolReturn()
+    {
+        
     }
 }

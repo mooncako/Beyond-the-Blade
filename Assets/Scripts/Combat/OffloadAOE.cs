@@ -5,28 +5,28 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(AOEApplier))]
-public class OffloadAOE : AreaOfEffect, IPoolable
+
+public class OffloadAOE : AreaOfEffect
 {
     [HideInInspector] public UnityEvent OnAOETriggered;
     [HideInInspector] public ObjectPool ObjectPool;
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void OnDestroy()
+    protected override void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
         if(ObjectPool != null)
         {
@@ -57,12 +57,12 @@ public class OffloadAOE : AreaOfEffect, IPoolable
     }
 
 
-    public void OnPoolGet()
+    public override void OnPoolGet()
     {
         
     }
 
-    public void OnPoolReturn()
+    public override void OnPoolReturn()
     {
         OnAOETriggered.RemoveAllListeners();
     }
