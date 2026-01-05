@@ -7,30 +7,27 @@ public struct SpawnContinuousAOEEvent
 {
     public Skill Skill;
     public Transform Transform;
-    public float DamageTickTime;
     public float SkillDuration;
-    public DamageType DamageType;
     public GameObject Instigator;
+    public LayerMask EnemyMask;
 
-    public SpawnContinuousAOEEvent(Skill skill, Transform transform, float damageTickTime, float skillDuration, DamageType damageType, GameObject instigator)
+    public SpawnContinuousAOEEvent(Skill skill, Transform transform, float skillDuration, GameObject instigator, LayerMask enemyMask)
     {
         Skill = skill;
         Transform = transform;
-        DamageTickTime = damageTickTime;
         SkillDuration = skillDuration;
-        DamageType = damageType;
         Instigator = instigator;
+        EnemyMask = enemyMask;
     }
 
     public static SpawnContinuousAOEEvent e;
-    public static void Trigger(Skill skill, Transform transform, float damageTickTime, float skillDuration, DamageType damageType, GameObject instigator)
+    public static void Trigger(Skill skill, Transform transform, float skillDuration, GameObject instigator, LayerMask enemyMask)
     {
         e.Skill = skill;
         e.Transform = transform;
-        e.DamageTickTime = damageTickTime;
         e.SkillDuration = skillDuration;
-        e.DamageType = damageType;
         e.Instigator = instigator;
+        e.EnemyMask = enemyMask;
         MMEventManager.TriggerEvent(e);
     }
 }

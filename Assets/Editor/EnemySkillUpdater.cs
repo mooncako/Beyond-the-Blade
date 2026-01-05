@@ -11,7 +11,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 {
     // ---------- Rows expected from the Sheet ----------
     // Columns expected (names must match your Apps Script JSON):
-    // Key, AnimationID, Cooldown, Damage,
+    // Key, AnimationID, Cooldown, Damage, DamageTickTime, DamageType,
     // WeaponType,
     // AreaType, RangeX, RangeY, RangeZ,
     // Rarity, TargetSelf, IsTargetedGroundAOE,
@@ -24,14 +24,17 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
         public float Cooldown;
         public float Damage;
 
-        public string WeaponType;   // enum as string (NEW)
+        public float DamageTickTime;
+        public string DamageType;
 
-        public string AreaType; // enum as string
+        public string WeaponType;
+
+        public string AreaType;
         public float RangeX;
         public float RangeY;
         public float RangeZ;
 
-        public string Rarity; // enum as string
+        public string Rarity;
         public bool TargetSelf;
         public bool IsTargetedGroundAOE;
 
@@ -190,6 +193,18 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         skill.AnimationID = r.AnimationID ?? "";
                         skill.Cooldown = r.Cooldown;
                         skill.Damage = r.Damage;
+                        skill.DamageTickTime = r.DamageTickTime;
+
+                        var dmgTypeStr = (r.DamageType ?? "").Trim();
+                        if(Enum.TryParse<DamageType>(dmgTypeStr, true, out var damageType))
+                        {
+                            skill.DamageType = damageType;
+                        }
+                        else if(!string.IsNullOrEmpty(dmgTypeStr))
+                        {
+                            Debug.LogWarning($"[SheetSync] Unknown DamageType '{r.DamageType}' for Key '{key}'");
+                        }
+
                         skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
 

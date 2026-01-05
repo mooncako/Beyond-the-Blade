@@ -9,7 +9,9 @@ public class Skill
     public string AnimationID;
     public float Cooldown;
     public float Damage;
+    [Tooltip("Only applicable if the skill is a continuous AOE, this is the time between damage ticks")] public float DamageTickTime;
     public WeaponType WeaponType;
+    public DamageType DamageType;
     public SkillRange SkillRange;
     public Rarity Rarity;
     public bool TargetSelf;
@@ -29,7 +31,9 @@ public class Skill
         AnimationID = skill.AnimationID;
         Cooldown = skill.Cooldown;
         Damage = skill.Damage;
+        DamageTickTime = skill.DamageTickTime;
         WeaponType = skill.WeaponType;
+        DamageType = skill.DamageType;
         SkillRange = skill.SkillRange;
         Rarity = skill.Rarity;
         TargetSelf = skill.TargetSelf;

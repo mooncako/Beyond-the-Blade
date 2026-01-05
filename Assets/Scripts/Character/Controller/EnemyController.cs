@@ -317,6 +317,11 @@ public class EnemyController : Controller, IPoolable
 
     }
 
+    public void SpawnContinuousAOEAnimEvent(float skillDuration)
+    {
+        SpawnContinuousAOEEvent.Trigger(_currentSkill, AttackPoint, skillDuration, gameObject, _attackableMask);
+    }
+
     public void OnDeath(DamageInfo info)
     {
         _persistentVFXHelper.StopPersistentEffects();

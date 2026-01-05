@@ -1,7 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(ObjectPool))]
@@ -12,6 +12,7 @@ public class AOESpawner : MonoBehaviour,
     [SerializeField, BoxGroup("References")] private ObjectPool _objectPool;
     [SerializeField, BoxGroup("References")] private GameObject _offLoadAOEPrefab;
     [SerializeField, BoxGroup("References")] private GameObject _continuousAOEPrefab;
+    private HashSet<(GameObject, Skill)> _continuousAOEInstigatorPairs = new HashSet<(GameObject, Skill)>();
 
     void OnValidate()
     {
@@ -43,15 +44,26 @@ public class AOESpawner : MonoBehaviour,
 
     public void OnMMEvent(SpawnContinuousAOEEvent e)
     {
+        if(_continuousAOEInstigatorPairs.Contains((e.Instigator, e.Skill)))
+        {
+            return;
+        }
+        _continuousAOEInstigatorPairs.Add((e.Instigator, e.Skill));
         ContinuousAOE aoe = _objectPool.Get(_continuousAOEPrefab).GetComponent<ContinuousAOE>();
         aoe.ObjectPool = _objectPool;
-        StartCoroutine(AOEReturnCO(e.SkillDuration, aoe));
-        aoe.UpdateAttack(e.Skill, e.DamageTickTime, e.DamageType, e.Instigator);
+        aoe.transform.parent = e.Transform;
+        aoe.transform.localPosition = Vector3.zero;
+        aoe.transform.localRotation = Quaternion.identity;
+        StartCoroutine(AOEReturnCO(e.SkillDuration, aoe, (e.Instigator, e.Skill)));
+        aoe.UpdateAttack(e.Skill, e.Skill.DamageTickTime, e.Skill.DamageType, e.Instigator, e.EnemyMask);
+
     }
 
-    private IEnumerator AOEReturnCO(float duration, AreaOfEffect aoe)
+    private IEnumerator AOEReturnCO(float duration, AreaOfEffect aoe, (GameObject, Skill) instigatorPair)
     {
         yield return new WaitForSeconds(duration);
+        _continuousAOEInstigatorPairs.Remove(instigatorPair);
+        aoe.transform.parent = null;
         _objectPool.Return(aoe.gameObject);
     }
 }

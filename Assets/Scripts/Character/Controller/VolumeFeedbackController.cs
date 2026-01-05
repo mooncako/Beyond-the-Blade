@@ -50,8 +50,11 @@ public class VolumeFeedbackController : MonoBehaviour,
         this.MMEventStopListening<PlayerOnHealthChangeEvent>();
         this.MMEventStopListening<PlayerOnDamageEvent>();
         this.MMEventStopListening<PlayerInitializedEvent>();
-        _pC.Energy.OnEnergyGain.RemoveListener(OnEnergyGain);
-        _pC.Energy.OnExecution.RemoveListener(OnExecution);
+        if(_pC != null)
+        {
+            _pC.Energy.OnEnergyGain.RemoveListener(OnEnergyGain);
+            _pC.Energy.OnExecution.RemoveListener(OnExecution);
+        }
         SceneManager.sceneLoaded -= OnSceneLoaded;
         Reset();
     }

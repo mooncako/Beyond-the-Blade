@@ -12,12 +12,13 @@ public class ContinuousAOE : AreaOfEffect
     [SerializeField, BoxGroup("Debug"), ReadOnly] private GameObject _instigator;
     [SerializeField] private HashSet<GameObject> _currentAffectedEnemies = new HashSet<GameObject>();
     [HideInInspector] public ObjectPool ObjectPool;
+    private Dictionary<GameObject, Coroutine> _damageCoroutines = new Dictionary<GameObject, Coroutine>();
 
 #if UNITY_EDITOR
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] private List<GameObject> _currentAffectedEnemyList => _currentAffectedEnemies.ToList();
 #endif
 
-    protected override void OnTriggerStay(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if(_enabled)
         {
@@ -28,7 +29,8 @@ public class ContinuousAOE : AreaOfEffect
                 {
                     if(!_currentAffectedEnemies.Contains(gameObjects[i]))
                     {
-                        StartCoroutine(DamageCO(gameObjects[i].GetComponent<Health>()));
+                        _currentAffectedEnemies.Add(gameObjects[i]);
+                        _damageCoroutines.Add(gameObjects[i],StartCoroutine(DamageCO(gameObjects[i].GetComponent<Health>())));
                     }
                 }
             }
@@ -40,12 +42,19 @@ public class ContinuousAOE : AreaOfEffect
         if(_currentAffectedEnemies.Contains(other.gameObject))
         {
             _currentAffectedEnemies.Remove(other.gameObject);
-            StopCoroutine(DamageCO(other.GetComponent<Health>()));
+            StopCoroutine(_damageCoroutines[other.gameObject]);
+            _damageCoroutines.Remove(other.gameObject);
         }
     }
 
     protected override void OnDisable()
     {
+        StopAllCoroutines();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
         StopAllCoroutines();
     }
 
@@ -57,12 +66,13 @@ public class ContinuousAOE : AreaOfEffect
         }
     }
 
-    public void UpdateAttack(Skill skill, float damageTickTime, DamageType damageType, GameObject instigator)
+    public void UpdateAttack(Skill skill, float damageTickTime, DamageType damageType, GameObject instigator, LayerMask enemyMask)
     {
         AssignData(skill);
         _damageTickTime = damageTickTime;
         _damageType = damageType;
         _instigator = instigator;
+        _enemyMask = enemyMask;
         Generate();
     }
 
