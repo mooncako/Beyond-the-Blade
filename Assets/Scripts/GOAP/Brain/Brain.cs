@@ -12,15 +12,15 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected AgentBehaviour _agent;
     [SerializeField, BoxGroup("References")] protected GoapActionProvider _provider;
     [SerializeField, BoxGroup("References")] protected GoapBehaviour _goap;
-    [SerializeField, BoxGroup("References")] protected PlayerSensor _playerSensor;
+    [SerializeField, BoxGroup("References")] protected PlayerSensor _combatRangeSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
     [SerializeField, BoxGroup("References")] protected EnemyController _controller;
     [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
     [SerializeField, BoxGroup("Settings")] public PersonalityType Personality;
 
-    [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInRange = false;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerDetected = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInCombatRange = false;
+    public bool IsPlayerInCombatRange => _isPlayerInCombatRange;
 
     protected Tween _spawnDelayTween;
     protected Tween _staggerDelayTween;
@@ -30,25 +30,24 @@ public class Brain : MonoBehaviour
         if (_agent == null) _agent = GetComponent<AgentBehaviour>();
         if (_provider == null) _provider = GetComponent<GoapActionProvider>();
         if (_goap == null) _goap = GetComponent<GoapBehaviour>();
-        if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+        if (_combatRangeSensor == null) _combatRangeSensor = GetComponentInChildren<PlayerSensor>();
         if (_movement == null) _movement = GetComponent<CustomCharacterMovement>();
         if (_controller == null) _controller = GetComponent<EnemyController>();
     }
 
     protected virtual void OnEnable()
     {
-        _playerSensor.OnPlayerEnter += OnPlayerEnter;
-        _playerSensor.OnPlayerExit += OnPlayerExit;
+        _combatRangeSensor.OnPlayerEnter += OnPlayerEnter;
+        _combatRangeSensor.OnPlayerExit += OnPlayerExit;
         _agent.Events.OnActionEnd += OnActionEnd;
         _agent.IsPaused = false;
-        _isPlayerDetected = false;
         _provider.ClearGoal();
     }
 
     protected virtual void OnDisable()
     {
-        _playerSensor.OnPlayerEnter -= OnPlayerEnter;
-        _playerSensor.OnPlayerExit -= OnPlayerExit;
+        _combatRangeSensor.OnPlayerEnter -= OnPlayerEnter;
+        _combatRangeSensor.OnPlayerExit -= OnPlayerExit;
         _agent.Events.OnActionEnd -= OnActionEnd;
         _spawnDelayTween.Stop();
         _staggerDelayTween.Stop();
@@ -61,7 +60,7 @@ public class Brain : MonoBehaviour
 
     protected virtual void Start()
     {
-        _playerSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
+        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 
     protected virtual void OnActionEnd(IAction action)

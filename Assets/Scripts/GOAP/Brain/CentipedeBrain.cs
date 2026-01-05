@@ -36,7 +36,7 @@ public class CentipedeBrain : Brain
     protected override void Start()
     {
         _provider.RequestGoal<KillPlayerGoal>(false);
-        _playerSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
+        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 
     protected override void OnActionEnd(IAction action)

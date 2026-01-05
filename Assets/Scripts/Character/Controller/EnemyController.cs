@@ -54,12 +54,9 @@ public class EnemyController : Controller, IPoolable
         {
             _parryCollider.OnParried.AddListener(OnParried);
         }
-
-        _playerSensor.OnPlayerEnter += playerTransform =>
-        {
-            CurrentTargetTransform = playerTransform;
-            Movement.LookInMoveDirection = false;
-        };
+        
+        CurrentTargetTransform = PlayerBroadcast.Instance.Players[0].transform;
+        Movement.LookInMoveDirection = false;
 
         Health.OnDamage.AddListener(DamageFeedback);
         Health.OnDeath.AddListener(OnDeath);
@@ -74,11 +71,6 @@ public class EnemyController : Controller, IPoolable
         {
             _parryCollider.OnParried.RemoveListener(OnParried);
         }
-        _playerSensor.OnPlayerEnter -= playerTransform =>
-        {
-            CurrentTargetTransform = playerTransform;
-            Movement.LookInMoveDirection = false;
-        };
 
         Health.OnDamage.RemoveListener(DamageFeedback);
         Health.OnDeath.RemoveListener(OnDeath);
@@ -104,7 +96,7 @@ public class EnemyController : Controller, IPoolable
             if (Movement.IsAgentMoving())
             {
                 if(!AnimationStateMachine.IsInMoveState())
-                    AnimationStateMachine.SwitchState(AnimationStateType.Move);
+                    AnimationStateMachine.SwitchState(AnimationStateType.Move); 
             }
         }
     }
@@ -132,6 +124,24 @@ public class EnemyController : Controller, IPoolable
         else
         {
             Movement.Stop();
+        }
+    }
+
+    public void ToggleWalkRun(bool isRunning)
+    {
+        if (isRunning)
+        {
+            if(Stats.TempMovementSpeedMultiplier > 0)
+                Stats.TempMovementSpeedMultiplier *= (Stats as EnemyStatsSO).RunSpeedMultiplier;
+            else
+                Stats.TempMovementSpeedMultiplier = (Stats as EnemyStatsSO).RunSpeedMultiplier;
+        }
+        else
+        {
+            if(Stats.TempMovementSpeedMultiplier > 0)
+                Stats.TempMovementSpeedMultiplier *= (Stats as EnemyStatsSO).WalkSpeedMultiplier;
+            else
+                Stats.TempMovementSpeedMultiplier = (Stats as EnemyStatsSO).WalkSpeedMultiplier;
         }
     }
 

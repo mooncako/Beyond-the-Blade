@@ -10,10 +10,33 @@ public class CapabilityFactory : CapabilityFactoryBase
         throw new System.NotImplementedException();
     }
 
-    protected virtual void BuildGoals(CapabilityBuilder builder) { }
-    protected virtual void BuildActions(CapabilityBuilder builder) { }
+    protected virtual void BuildGoals(CapabilityBuilder builder)
+    {
+        builder.AddGoal<ChasePlayerGoal>()
+            .AddCondition<IsPlayerInCombatRange>(Comparison.GreaterThanOrEqual, 1);
+
+        builder.AddGoal<KillPlayerGoal>()
+            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
+
+        builder.AddGoal<KillPlayerCautiousGoal>()
+            .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
+
+        builder.AddGoal<StrafeGoal>()
+            .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
+    }
+    protected virtual void BuildActions(CapabilityBuilder builder) 
+    {
+        builder.AddAction<ChasePlayerAction>()
+            .SetTarget<PlayerTarget>()
+            .AddEffect<IsPlayerInCombatRange>(EffectType.Increase)
+            .SetStoppingDistance(2f)
+            .SetBaseCost(2);
+    }
     protected virtual void BuildSensors(CapabilityBuilder builder)
     {
+        builder.AddWorldSensor<PlayerCombatRangeSensor>()
+            .SetKey<IsPlayerInCombatRange>();
+        
         builder.AddWorldSensor<HeavyAttackEnergySensor>()
             .SetKey<HeavyAttackEnergy>();
 
@@ -28,5 +51,11 @@ public class CapabilityFactory : CapabilityFactoryBase
 
         builder.AddWorldSensor<StrafingSensor>()
             .SetKey<IsStrafe>();
+        
+        builder.AddTargetSensor<PlayerTargetSensor>()
+            .SetTarget<PlayerTarget>();
+
+        builder.AddTargetSensor<StrafeTargetSensor>()
+            .SetTarget<StrafeTarget>();
     }
 }

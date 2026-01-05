@@ -43,6 +43,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
+            data.Controller.Stop();
             if (data.Controller.CanAttack && data.AnimationStateMachine.CanEnter(AnimationStateType.Attack) && !data.Controller.IsSkillPlaying())
             {
 
@@ -80,7 +81,7 @@ namespace CrashKonijn.Goap.GenTest
             }
             
 
-            data.Controller.Stop();
+            
             return data.AnimationStateMachine.IsInAttackActionState() ? ActionRunState.Continue : ActionRunState.Completed;
         }
 

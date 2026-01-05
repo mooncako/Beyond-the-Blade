@@ -1,12 +1,12 @@
 using CrashKonijn.Agent.Core;
-using CrashKonijn.Goap.Runtime;
 using CrashKonijn.Agent.Runtime;
+using CrashKonijn.Goap.Runtime;
 using UnityEngine;
 
 namespace CrashKonijn.Goap.GenTest
 {
-    [GoapId("Strafe-b798426d-a1db-4915-ab52-73994ebef808")]
-    public class StrafeAction : GoapActionBase<StrafeAction.Data>
+    [GoapId("ChasePlayer-5919ec01-40fa-457f-9192-bb989edfc4d4")]
+    public class ChasePlayerAction : GoapActionBase<ChasePlayerAction.Data>
     {
         // This method is called when the action is created
         // This method is optional and can be removed
@@ -26,29 +26,19 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = Random.Range(1, 2);
-
         }
 
         // This method is called once before the action is performed
         // This method is optional and can be removed
         public override void BeforePerform(IMonoAgent agent, Data data)
         {
-            data.Controller.ToggleWalkRun(false);
         }
 
         // This method is called every frame while the action is running
         // This method is required
         public override IActionRunState Perform(IMonoAgent agent, Data data, IActionContext context)
         {
-            data.Timer -= context.DeltaTime;
-
-            if (data.Timer > 0)
-            {
-                return ActionRunState.Continue;
-            }
-
-            return ActionRunState.Completed;
+            return data.Brain.IsPlayerInCombatRange ? ActionRunState.Completed : ActionRunState.Continue;
         }
 
         // This method is called when the action is completed
@@ -67,7 +57,6 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void End(IMonoAgent agent, Data data)
         {
-            data.Controller.ToggleWalkRun(true);
         }
 
         // The action class itself must be stateless!
@@ -75,13 +64,9 @@ namespace CrashKonijn.Goap.GenTest
         public class Data : IActionData
         {
             public ITarget Target { get; set; }
-            public float Timer { get; set; }
 
             [GetComponent]
-            public AnimationStateMachine AnimationStateMachine { get; set; }
-
-            [GetComponent]
-            public EnemyController Controller { get; set; }
+            public Brain Brain { get; set; }
         }
     }
 }

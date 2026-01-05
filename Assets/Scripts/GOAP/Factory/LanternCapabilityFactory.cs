@@ -22,19 +22,12 @@ public class LanternCapabilityFactory : CapabilityFactory
 
     protected override void BuildGoals(CapabilityBuilder builder)
     {
-
-        builder.AddGoal<KillPlayerGoal>()
-            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
-
-        builder.AddGoal<KillPlayerCautiousGoal>()
-            .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
-
-        builder.AddGoal<StrafeGoal>()
-            .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
+        base.BuildGoals(builder);
     }
 
     protected override void BuildActions(CapabilityBuilder builder)
     {
+        base.BuildActions(builder);
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
@@ -69,13 +62,7 @@ public class LanternCapabilityFactory : CapabilityFactory
     protected override void BuildSensors(CapabilityBuilder builder)
     {
         base.BuildSensors(builder);
-
-        builder.AddTargetSensor<PlayerTargetSensor>()
-            .SetTarget<PlayerTarget>();
-
-        builder.AddTargetSensor<StrafeTargetSensor>()
-            .SetTarget<StrafeTarget>();
-
+        
         builder.AddWorldSensor<TargetDistanceSensor>()
             .SetKey<PlayerDistance>();
     }
