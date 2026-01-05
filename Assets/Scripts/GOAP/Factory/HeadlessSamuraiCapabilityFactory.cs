@@ -54,12 +54,6 @@ public class HeadlessSamuraiCapabilityFactory : CapabilityFactory
     protected override void BuildSensors(CapabilityBuilder builder)
     {
         base.BuildSensors(builder);
-
-        builder.AddTargetSensor<PlayerTargetSensor>()
-            .SetTarget<PlayerTarget>();
-
-        builder.AddTargetSensor<StrafeTargetSensor>()
-            .SetTarget<StrafeTarget>();
     }
 
 
