@@ -26,8 +26,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = Random.Range(1, 2);
-
+            data.Timer = Random.Range(1, 3);
         }
 
         // This method is called once before the action is performed
