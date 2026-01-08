@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class DistanceCheck : MonoBehaviour
 {
+    [SerializeField, BoxGroup("Settings")] private float _distanceThreshold = 1.5f;
 
-    [BoxGroup("Debug")] public float Distance = 0;
-
-    void Update()
+    public bool GetCheckResult()
     {
         if(PlayerBroadcast.Instance.Players[0] != null)
         {
-            Distance = Vector3.Distance(PlayerBroadcast.Instance.Players[0].transform.position, transform.position);
-        }        
+           return Vector3.Distance(PlayerBroadcast.Instance.Players[0].transform.position, transform.position) <= _distanceThreshold;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

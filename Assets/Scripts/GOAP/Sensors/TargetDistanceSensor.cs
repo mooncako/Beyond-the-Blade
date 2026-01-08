@@ -20,6 +20,6 @@ public class TargetDistanceSensor : LocalWorldSensorBase
         var distanceCheck = references.GetCachedComponent<DistanceCheck>();
         if (distanceCheck == null) return false;
 
-        return Mathf.FloorToInt(distanceCheck.Distance);
+        return distanceCheck.GetCheckResult();
     }
 }
