@@ -1,5 +1,6 @@
 using PrimeTween;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.VFX;
@@ -55,11 +56,11 @@ public class Health : MonoBehaviour
         PlayerOnHealthChangeEvent.Trigger(this);
     }
 
-    public void Damage(DamageInfo info)
+    public void Damage(DamageInfo info, bool isForce = false)
     {
         if (_health <= 0) return;
         
-        if (!IsDamageable)
+        if (!IsDamageable && !isForce)
         {
             if (_controller is PlayerController p)
             {
@@ -105,6 +106,13 @@ public class Health : MonoBehaviour
         if (_controller is EnemyController)
         {
             EnemyDeathEvent.Trigger(info);
+            if(info.Instigator.TryGetComponent(out PlayerController pC))
+            {
+                if(Random.Range(0f, 1f) > ((PlayerStatsSO)pC.Stats).GoldDropRate)
+                {
+                    DropCurrencyEvent.Trigger(CurrencyType.Gold, 1, transform.position);
+                }
+            }
             _deathDelayTween = Tween.Delay(2.5f).OnComplete(() => ReturnEnemyEvent.Trigger(gameObject));
             // gameObject.SetActive(false);
         }

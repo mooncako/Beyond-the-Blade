@@ -10,7 +10,8 @@ public class AbilityChoice : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _name;
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _damage;
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _desc;
-    [SerializeField, BoxGroup("References")] private Image _rarity;
+    [SerializeField, BoxGroup("References")] private Image[] _rarity;
+    [SerializeField, BoxGroup("References")] private Image _skillIcon;
     [SerializeField, BoxGroup("Settings")] private int _index;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public string _skillId;
 
@@ -41,7 +42,12 @@ public class AbilityChoice : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         _name.text = skill.Name;
         _desc.text = skill.Description;
         _damage.text = $"{skill.Damage}";
-        _rarity.color = RarityUtil.GetRarityColor(skill.Rarity);
+        _skillIcon.sprite = skill.Icon;
+        for(int i = 0; i < _rarity.Length; i++)
+        {
+            _rarity[i].color = RarityUtil.GetRarityColor(skill.Rarity);
+        }
+        
         _skillId = SkillId;
     }
 }

@@ -15,7 +15,6 @@ public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     {
         if (_title == null) _title = GetComponentsInChildren<TextMeshProUGUI>()[0];
         if (_desc == null) _desc = GetComponentsInChildren<TextMeshProUGUI>()[1];
-        if (_icon == null) _icon = GetComponentsInChildren<Image>()[1];
     }
 
     public void AssignData(ShopItemSO item)

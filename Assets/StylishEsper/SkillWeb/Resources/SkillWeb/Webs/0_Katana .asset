@@ -1,0 +1,201 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcc82362ad5662847b32093b40128fd0, type: 3}
+  m_Name: '0_Katana '
+  m_EditorClassIdentifier: 
+  id: 0
+  webName: Katana
+  changeGuid: a5c9f027-1b42-463e-8231-059633899f88
+  skillNodes:
+  - webGraphID: 0
+    id: 0
+    guid: 7426cd38-7736-4f4e-9e6f-df8b27e15844
+    position: {x: 522, y: 55}
+    connections: []
+    skill: {fileID: 11400000, guid: 8a7baa45a26f1384b9d63087b9ae2737, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 2
+    guid: c0e0ae1d-61b6-4ec6-98e5-cdca80e26ae0
+    position: {x: 786, y: 55}
+    connections: []
+    skill: {fileID: 11400000, guid: e1ab97d412879d5449b6d70310cc537c, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 3
+    guid: c0e0ae1d-61b6-4ec6-98e5-cdca80e26ae0
+    position: {x: 1142, y: 55}
+    connections: []
+    skill: {fileID: 11400000, guid: e1ab97d412879d5449b6d70310cc537c, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 1
+    guid: b13ce18b-1ef8-4521-82ef-79a9121b3d21
+    position: {x: 1453, y: 55}
+    connections: []
+    skill: {fileID: 11400000, guid: 79def7c10beadd64d894896a3a40d3a1, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 4
+    guid: 5197d29d-eaa0-4e40-b41d-a5f4ceaba99e
+    position: {x: 1763, y: 262}
+    connections: []
+    skill: {fileID: 11400000, guid: c90b4aeeb9cf63e4ea03743b71fdff9d, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 5
+    guid: 8d2a0776-b44b-4ec1-994e-10c678508873
+    position: {x: 2167, y: 80}
+    connections: []
+    skill: {fileID: 11400000, guid: 0aea56ecd9a1ff143836258e6fad32ac, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 6
+    guid: 983dbaae-1650-4441-b0be-014d9bc19ef8
+    position: {x: 2798, y: 105}
+    connections: []
+    skill: {fileID: 11400000, guid: b49df3ba8cd69d443b2618d8b6237a27, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 7
+    guid: fb025058-1cc4-42c3-82db-996b8ee79a90
+    position: {x: 2512, y: 105}
+    connections: []
+    skill: {fileID: 11400000, guid: ca4665cb473538749a6f70c6c662d86a, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 8
+    guid: 5d6d865e-6d05-4126-b5f0-3d661392218f
+    position: {x: 3575, y: 105}
+    connections: []
+    skill: {fileID: 11400000, guid: dac37855730e3834cabd9fff03232778, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 9
+    guid: dd19a84e-e67f-44d0-9a45-bc5b90f01fab
+    position: {x: 3181, y: 80}
+    connections: []
+    skill: {fileID: 11400000, guid: 883e4959cbba9a0479b62942334862a6, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  - webGraphID: 0
+    id: 10
+    guid: 6cf014e8-b856-40e5-b530-2b890e022d6a
+    position: {x: 1763, y: -120}
+    connections: []
+    skill: {fileID: 11400000, guid: 9106b2ce554388144a399d5f4eb0ce93, type: 2}
+    hasConnectionDependency: 1
+    dependencyCount: 1
+    maxedRequirementCount: 0
+    dataset: {fileID: 0}
+    hideFieldsInWebGraphEditor: 0
+  connections:
+  - webGraphID: 0
+    outputNodeID: 0
+    inputNodeID: 2
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 2
+    inputNodeID: 3
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 3
+    inputNodeID: 1
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 1
+    inputNodeID: 10
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 1
+    inputNodeID: 4
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 4
+    inputNodeID: 5
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 10
+    inputNodeID: 5
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 5
+    inputNodeID: 7
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 7
+    inputNodeID: 6
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 0
+    outputNodeID: 6
+    inputNodeID: 9
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  dataset: {fileID: 0}

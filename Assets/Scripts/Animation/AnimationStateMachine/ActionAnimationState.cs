@@ -1,17 +1,17 @@
 using System;
 using Animancer;
 using UnityEngine;
-using Animancer.TransitionLibraries;
-using System.Collections;
 using PrimeTween;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using sc.splines.spawner.runtime;
+using Sirenix.OdinInspector;
 
 [Serializable]
 public class ActionAnimationState : AnimationState
 {
     private AnimancerEvent.Sequence _events;
+
+    [SerializeField, BoxGroup("Settings")] private bool _canNaturalInterrupt = true;
+    [SerializeField, BoxGroup("Settings")] private bool _autoTransition = true;
 
     public ActionAnimationState()
     {
@@ -34,8 +34,13 @@ public class ActionAnimationState : AnimationState
 
     public override void OnEnterState()
     {
+        _onEnterEvent.Invoke();
         if (Owner != null)
+        {
             Owner.CanMove = false;
+            Owner.ToggleRootMotionOnAnimEvent();
+        }
+            
         if (Clip.Clip != null)
         {
             ToggleInterruption(false);
@@ -45,10 +50,14 @@ public class ActionAnimationState : AnimationState
         }
         else
         {
-            Tween.Delay(.5f).OnComplete(() =>
+            if(_autoTransition)
             {
-                _stateMachine.SwitchState(AnimationStateType.Idle);
-            });
+                Tween.Delay(.5f).OnComplete(() =>
+                {
+                    _stateMachine.SwitchState(AnimationStateType.Idle);
+                });
+            }
+            
         }
 
     }
@@ -66,6 +75,11 @@ public class ActionAnimationState : AnimationState
             Owner.CanMove = true;
         Owner?.StartAttackCooldown();
         Owner?.ToggleIsSkillPlaying(false);
+        if(Owner is PlayerController pC)
+        {
+            pC.ToggleAimMode(false);
+        }
+
     }
     
     public void UpdateModifiers(List<(float, ModifierSO)> modifiers)
@@ -83,12 +97,20 @@ public class ActionAnimationState : AnimationState
         {
             state.Events(this).Add(modifierTuple.eventIndex, () => Owner.ModifierRelayAnimEvent(modifierTuple.modifier));
         }
-        state.Events(this).Add(.3f, () => ToggleInterruption(true));
-        state.Events(this).OnEnd ??= () =>
+
+        if(_canNaturalInterrupt)
         {
-            _stateMachine.SwitchState(AnimationStateType.Idle);
-            
-        };
+            state.Events(this).Add(.3f, () => ToggleInterruption(true));
+        }
+
+        if (_autoTransition)
+        {
+            state.Events(this).OnEnd ??= () =>
+            {
+                _stateMachine.SwitchState(AnimationStateType.Idle);
+            };
+        }
+
         Modifiers.Clear();
     }
 }

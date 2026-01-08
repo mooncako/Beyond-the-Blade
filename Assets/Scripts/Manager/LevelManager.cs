@@ -1,6 +1,7 @@
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,10 +20,13 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
     [SerializeField, BoxGroup("Settings")] private LevelType _defaultLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private BiomeType _currentBiome;
+    [SerializeField, HideInInspector] public BiomeType CurrentBiome => _currentBiome;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public LevelType CurrentLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
+    [SerializeField, HideInInspector] public LevelSystem CurrentLevel => _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelCount = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
@@ -32,6 +36,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     void OnValidate()
     {
         if (_pickupFactory == null) _pickupFactory = GetComponent<PickupFactory>();
+        
     }
 
     protected override void Awake()
@@ -79,7 +84,6 @@ public class LevelManager : MMSingleton<LevelManager>,
         if (_doOnce)
         {
             _doOnce = false;
-            CurrentLevelIndex++;
 
             if (!_isSetupComplete)
             {
@@ -87,7 +91,8 @@ public class LevelManager : MMSingleton<LevelManager>,
                 CurrentLevelType = _defaultLevelType;
                 _isSetupComplete = true;
             }
-
+            
+            SpawnManager.Instance.UpdateEnemyList();
             // Choose the current level based on CurrentLeveltype and biome
             SelectLevel();
         }
@@ -97,37 +102,40 @@ public class LevelManager : MMSingleton<LevelManager>,
     private void ResetManager()
     {
         CurrentLevelIndex = 0;
+        _currentLevelCount = 0;
     }
 
     private void SelectLevel()
     {
 
-        switch (CurrentLevelType)
-        {
-            case LevelType.Reguler:
-                _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
-                break;
-            case LevelType.Recover:
-                _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
-                break;
-            case LevelType.Shop:
-                _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
-                break;
-            case LevelType.Boss:
-                switch (CurrentLevelIndex)
-                {
-                    case 4:
-                        _selectedSystemPrefab = _bossLevelPrefabs[0];
-                        break;
-                    case 9:
-                        _selectedSystemPrefab = _bossLevelPrefabs[1];
-                        break;
-                    case 14:
-                        _selectedSystemPrefab = _bossLevelPrefabs[2];
-                        break;
-                }
-                break;
-        }
+        // switch (CurrentLevelType)
+        // {
+        //     case LevelType.Reguler:
+        //         _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
+        //         break;
+        //     case LevelType.Recover:
+        //         _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
+        //         break;
+        //     case LevelType.Shop:
+        //         _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
+        //         break;
+        //     case LevelType.Boss:
+        //         switch (CurrentLevelIndex)
+        //         {
+        //             case 4:
+        //                 _selectedSystemPrefab = _bossLevelPrefabs[0];
+        //                 break;
+        //             case 9:
+        //                 _selectedSystemPrefab = _bossLevelPrefabs[1];
+        //                 break;
+        //             case 14:
+        //                 _selectedSystemPrefab = _bossLevelPrefabs[2];
+        //                 break;
+        //         }
+        //         break;
+        // }
+
+        _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
         
         _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
 
@@ -148,34 +156,75 @@ public class LevelManager : MMSingleton<LevelManager>,
         return possibleLevels[Random.Range(0, possibleLevels.Count)];
     }
 
-    private void CalculateExitTypes()
-    {
-        float possibilityIndex;
-        _exitsLevelType.Clear();
-        for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
-        {
-            possibilityIndex = Random.Range(0, 1);
-            if (possibilityIndex <= _currentLevel.ExitsProbability.RegularExitPercentage)
-            {
-                _exitsLevelType.Add(LevelType.Reguler);
-            }
-            else if (possibilityIndex <= _currentLevel.ExitsProbability.RegularExitPercentage + _currentLevel.ExitsProbability.RecoveryExitPercentage)
-            {
-                _exitsLevelType.Add(LevelType.Recover);
-            }
-            else
-            {
-                _exitsLevelType.Add(LevelType.Shop);
-            }
-        }
-    }
+    
 
     public void OnMMEvent(LevelRandomizeCompleteEvent e)
     {
+        
         if (e.State == EventStateType.OnEventEnd)
         {
-            CalculateExitTypes();
+            if(_currentLevelCount == 5)
+            {
+                BuildNavMeshEvent.Trigger(false);
+                
+                LevelSetupCompleteEvent.Trigger(_currentLevel.SpawnPos.transform.position);
+                return;
+            }
+
+            if(_currentLevelCount != 0)
+            {
+                e.Level.ShiftLevel();
+            }
+            e.Level.CalculateExitTypes();
+            _currentLevelCount++;
+            if (IsNextLevelBossRoom())
+            {
+                Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
+                gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
+                gate.AssignExit(e.Level.ExitPosList[0], e.Level); 
+                // Instantiating boss level
+                switch(_currentBiome)
+                {
+                    case BiomeType.City:
+                        _selectedSystemPrefab = _bossLevelPrefabs[0];
+                        break;
+                    case BiomeType.Market:
+                        _selectedSystemPrefab = _bossLevelPrefabs[1];
+                        break;
+                    case BiomeType.Shrine:
+                        _selectedSystemPrefab = _bossLevelPrefabs[2];
+                        break;
+                }
+
+                Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
+            }
+            else
+            {
+                for (int i = 0; i < e.Level.ExitPosList.Count; i++)
+                {
+                    Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[i].transform.position, e.Level.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
+                    gate.SetLevelName(SceneManager.GetActiveScene().name, e.Level.ExitsLevelType[i]);
+                    gate.AssignExit(e.Level.ExitPosList[i], e.Level);
+                    // Instantiating next level
+
+                    switch(e.Level.ExitsLevelType[i])
+                    {
+                        case LevelType.Reguler:
+                            _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
+                            break;
+                        case LevelType.Recover:
+                            _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
+                            break;
+                        case LevelType.Shop:
+                            _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
+                            break;
+                    }
+
+                    Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
+                }
+            }
         }
+ 
     }
 
     public void OnMMEvent(EnterNewLevelEvent e)
@@ -188,19 +237,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         _doOnce = true;
         //TODO: Spawn exits
 
-        if (IsNextLevelBossRoom())
-        {
-            Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[0].transform.position, _currentLevel.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
-            gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
-        }
-        else
-        {
-            for (int i = 0; i < _currentLevel.ExitPosList.Count; i++)
-            {
-                Gate gate = Instantiate(_gatePrefab, _currentLevel.ExitPosList[i].transform.position, _currentLevel.ExitPosList[i].transform.rotation).GetComponentInChildren<Gate>();
-                gate.SetLevelName(SceneManager.GetActiveScene().name, _exitsLevelType[i]);
-            }
-        }
+        
     }
 
     public void OnMMEvent(SpawnRewardEvent e)
@@ -212,9 +249,21 @@ public class LevelManager : MMSingleton<LevelManager>,
                 break;
         }
     }
-    
+
     private bool IsNextLevelBossRoom()
     {
-        return CurrentLevelIndex == 4 || CurrentLevelIndex == 9 || CurrentLevelIndex == 14;
+        return _currentLevelCount == 4;
+    }
+
+    public Vector3 GetCurrentPickupSpawnPos(Vector3 offset)
+    {
+        return new Vector3(_currentLevel.PickupSpawnPosition.position.x + offset.x, _currentLevel.PickupSpawnPosition.position.y + offset.y, _currentLevel.PickupSpawnPosition.position.z + offset.z);
+    }
+
+    public void ChangeLevel(LevelSystem system)
+    {
+        CurrentLevelIndex++;
+        _currentLevel = system;
+        EnemyStartSpawnEvent.Trigger(_currentLevel.EnemySpawnPositions);
     }
 }

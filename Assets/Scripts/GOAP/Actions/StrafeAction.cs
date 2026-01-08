@@ -26,13 +26,14 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void Start(IMonoAgent agent, Data data)
         {
-            data.Timer = Random.Range(1, 2);
+            data.Timer = Random.Range(1, 3);
         }
 
         // This method is called once before the action is performed
         // This method is optional and can be removed
         public override void BeforePerform(IMonoAgent agent, Data data)
         {
+            data.Controller.ToggleWalkRun(false);
         }
 
         // This method is called every frame while the action is running
@@ -65,6 +66,7 @@ namespace CrashKonijn.Goap.GenTest
         // This method is optional and can be removed
         public override void End(IMonoAgent agent, Data data)
         {
+            data.Controller.ToggleWalkRun(true);
         }
 
         // The action class itself must be stateless!
@@ -76,6 +78,9 @@ namespace CrashKonijn.Goap.GenTest
 
             [GetComponent]
             public AnimationStateMachine AnimationStateMachine { get; set; }
+
+            [GetComponent]
+            public EnemyController Controller { get; set; }
         }
     }
 }

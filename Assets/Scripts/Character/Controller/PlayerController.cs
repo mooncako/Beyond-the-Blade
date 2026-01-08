@@ -10,22 +10,26 @@ using PrimeTween;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.Splines;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CustomCharacterMovement))]
 public class PlayerController : Controller,
     MMEventListener<PlayerAnimationStateChangeEvent>,
-    MMEventListener<LevelRandomizeCompleteEvent>,
+    MMEventListener<LevelSetupCompleteEvent>,
     MMEventListener<SkillSwapEvent>,
     MMEventListener<AbilitySwapEvent>,
-    MMEventListener<AddNewAbilityEvent>
+    MMEventListener<AddNewAbilityEvent>,
+    MMEventListener<ParrySuccessEvent>,
+    MMEventListener<CurrencyEarnedEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
-    [field: SerializeField, FoldoutGroup("Base Reference")] private Collider _weaponCollider;
-    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
+    // [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
+    // [field: SerializeField, FoldoutGroup("Base Reference")] private LineRenderer _lineRenderer;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Stamina Stamina;
+    [SerializeField, FoldoutGroup("Base Reference")] private SplineAnimate _splineAnimate;
+    [SerializeField, FoldoutGroup("Base Reference")] private GameObject _playerMesh;
+    [SerializeField, FoldoutGroup("Base Reference")] private VisualEffect _teleportEffect;
     [Header("General Settings")]
     [BoxGroup("Input")] public InputProcessor InputProcessor;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
@@ -34,25 +38,28 @@ public class PlayerController : Controller,
     [BoxGroup("Input"), ReadOnly] private Vector3 _aimPoint;
     private Dictionary<PlayerActionType, bool> _availableActions = new Dictionary<PlayerActionType, bool>();
     [BoxGroup("Ability"), ReadOnly] public Skill CurrentAbility { get; private set; }
-    [BoxGroup("Ability"), ReadOnly] private bool _abilityInCooldown;
     [BoxGroup("Ability"), ReadOnly] public UnityEvent<float> OnAbilityStartCooldown;
+
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isInAimMode = false;
 
     // [SerializeField] private ParryHit _parryHitVFX;
 
     [Header("Animancer")]
     [SerializeField] private AnimancerComponent _animancerComponent;
 
+    public PlayerStatsSO PlayerStats => (PlayerStatsSO)Stats;
 
     private Vector3 _forward;
-    private HashSet<int> _hitEnemiesThisAttack = new HashSet<int>();
+
     private bool _isPerfectParryWindowActive = false;
-    public bool MusoReady { get; private set; }
+    public bool IsPerfectParryWindowActive => _isPerfectParryWindowActive;
 
     [HideInInspector] public UnityEngine.Events.UnityEvent OnExecutionStarted;
     [HideInInspector] public UnityEngine.Events.UnityEvent OnAbilityCycled;
     [ReadOnly] public bool IsNewSession = true;
 
     private Tween _iframeTween;
+    private static readonly Collider[] _enemyOverlapBuffer = new Collider[64];
 
     protected override void OnValidate()
     {
@@ -62,6 +69,7 @@ public class PlayerController : Controller,
         if (_animancerComponent == null) _animancerComponent = GetComponent<AnimancerComponent>();
         if (Energy == null) Energy = GetComponent<Energy>();
         if (Stamina == null) Stamina = GetComponent<Stamina>();
+        if (_splineAnimate == null) _splineAnimate = GetComponent<SplineAnimate>();
         if ((_attackableMask & (1 << 8)) == 0)
         {
             _attackableMask |= 1 << 8;
@@ -92,7 +100,20 @@ public class PlayerController : Controller,
 
     protected override void Update()
     {
-        base.Update();
+        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
+        {
+            if (Movement.MoveInput != Vector3.zero)
+            {
+                if(!AnimationStateMachine.IsInMoveState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Move);
+            }
+            else
+            {
+                if(!AnimationStateMachine.IsInIdleState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+            }
+        }
+
         HandleRotation();
         InputProcessor.SetInputActive(AnimationStateMachine.IsMovable());
 
@@ -106,48 +127,44 @@ public class PlayerController : Controller,
         {
             DetectParry();
         }
-        // if (MusoReady)
-        // {
-        //     if (_musoTarget != null)
-        //         // _musoTarget.MaterialController.UnHightlight();
-
-        //         // _musoTarget = FindClosestEnemyToPosition(GetLookDirection(), 100);
-
-        //         if (_musoTarget == null)
-        //         {
-        //             _lineRenderer.enabled = false;
-        //         }
-
-        //     if (_musoTarget != null)
-        //     {
-        //         _lineRenderer.enabled = true;
-        //         // _musoTarget.MaterialController.Highlight();
-        //         _bezierLine.endPoint = _musoTarget.transform;
-        //     }
-        // }
     }
 
     protected override void OnEnable()
     {
         base.OnEnable();
         this.MMEventStartListening<PlayerAnimationStateChangeEvent>();
-        this.MMEventStartListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStartListening<LevelSetupCompleteEvent>();
         this.MMEventStartListening<SkillSwapEvent>();
         this.MMEventStartListening<AbilitySwapEvent>();
         this.MMEventStartListening<AddNewAbilityEvent>();
+        this.MMEventStartListening<ParrySuccessEvent>();
+        this.MMEventStartListening<CurrencyEarnedEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
+        
+        //Listen for projectile deflection
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnProjectileDeflected.AddListener(OnProjectileDeflected);
+        }
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         this.MMEventStopListening<PlayerAnimationStateChangeEvent>();
-        this.MMEventStopListening<LevelRandomizeCompleteEvent>();
+        this.MMEventStopListening<LevelSetupCompleteEvent>();
         this.MMEventStopListening<SkillSwapEvent>();
         this.MMEventStopListening<AbilitySwapEvent>();
         this.MMEventStopListening<AddNewAbilityEvent>();
+        this.MMEventStopListening<ParrySuccessEvent>();
+        this.MMEventStopListening<CurrencyEarnedEvent>();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
+        
+        if (_parryCollider != null)
+        {
+            _parryCollider.OnProjectileDeflected.RemoveListener(OnProjectileDeflected);
+        }
     }
 
     void OnDestroy()
@@ -178,13 +195,11 @@ public class PlayerController : Controller,
         CurrentState = e.State;
     }
 
-    public void OnMMEvent(LevelRandomizeCompleteEvent e)
+    public void OnMMEvent(LevelSetupCompleteEvent e)
     {
-        if (e.State == EventStateType.OnEventEnd)
-        {
-            Movement.Teleport(e.SpawnPoint.position);
-        }
+        Movement.Teleport(e.SpawnPosition);
     }
+
     public void OnMMEvent(SkillSwapEvent e)
     {
         CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
@@ -210,13 +225,40 @@ public class PlayerController : Controller,
             NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, false, CurrentWeapon.SkillDict[e.SkillId]);
         }
     }
+    public void OnMMEvent(ParrySuccessEvent e)
+    {
+        SpawnVFXEvent.Trigger(AttackPoint, "PARRY_SUCCESS", new VFXInfo(new Vector3(0, 0.2f, 0.5f), Quaternion.identity, Vector3.one, false, false));
+        _animationStateMachine.CurrentState.ToggleInterruption(true);
+        Stamina.GainStamina(Stats.ParryStaminaCost/2);
+    }
+
+    public void OnMMEvent(CurrencyEarnedEvent e)
+    {
+        if (e.CurrencyType == CurrencyType.Gold)
+        {
+            PlayerStats.GoldCount += e.Amount;
+        }
+        else if (e.CurrencyType == CurrencyType.SoulShard)
+        {
+            PlayerStats.SoulShardCount += e.Amount;
+        }
+    }
 
     private void HandleRotation()
     {
         if (Mathf.Approximately(Time.deltaTime, 0)) return;
         if (!CanRotate) return;
-        if (GetMoveDir() == Vector3.zero) return;
-        Movement.SetLookDirection(GetMoveDir());
+        
+
+        if(!_isInAimMode)
+        {
+            if (GetMoveDir() == Vector3.zero) return;
+            Movement.SetLookDirection(GetMoveDir());
+        } 
+        else
+        {
+            Movement.SetLookPosition(GetAimPoint());
+        }  
     }
 
     private Vector3 GetMoveDir()
@@ -264,8 +306,15 @@ public class PlayerController : Controller,
             Plane plane = new Plane(Vector3.up, transform.position);
             if (plane.Raycast(mouseRay, out float planeDistance))
             {
+                
                 _aimPoint = mouseRay.GetPoint(planeDistance);
                 _aimPoint.y = transform.position.y;
+                Vector3 direction = (_aimPoint - transform.position).normalized;
+                Vector3 playerAimForward = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.z);
+                if(FindClosestEnemyToPosition(playerAimForward, .5f, out Vector3 aimPoint))
+                {
+                    return aimPoint;
+                }
                 return _aimPoint;
             }
 
@@ -281,6 +330,55 @@ public class PlayerController : Controller,
         return Vector3.zero;
     }
 
+    private bool FindClosestEnemyToPosition(Vector3 position, float maxDistance, out Vector3 pos)
+    {
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            position,
+            maxDistance,
+            _enemyOverlapBuffer,
+            _attackableMask,
+            QueryTriggerInteraction.Ignore
+        );
+
+        if (hitCount == 0)
+        {
+            pos = position;
+            return false;
+        }
+
+        EnemyController closestEnemy = null;
+        float maxDistanceSqr = maxDistance * maxDistance;
+        float closestSqr = maxDistanceSqr;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            var col = _enemyOverlapBuffer[i];
+            if (!col) continue;
+
+            if (!col.TryGetComponent<EnemyController>(out var enemy))
+                continue;
+
+            Vector3 toEnemy = enemy.transform.position - position;
+            float sqr = toEnemy.sqrMagnitude;
+
+            if (sqr < closestSqr)
+            {
+                closestSqr = sqr;
+                closestEnemy = enemy;
+            }
+        }
+
+        if (closestEnemy == null)
+        {
+            pos = position;   // no valid enemy found, despite colliders in range
+            return false;
+        }
+
+        pos = closestEnemy.transform.position;
+        return true;
+    }
+
+
     public void InputMovement(InputAction.CallbackContext context)
     {
         // Always process the input vector, regardless of action availability
@@ -289,11 +387,6 @@ public class PlayerController : Controller,
 
         // Store the input in the InputProcessor
         InputProcessor.ProcessInputVector(inputValue);
-
-        // Only apply movement if the action is available
-        //InputProcessor.SetInputActive(_animationStateMachine.IsMovable());
-        //if (!_animationStateMachine.IsInActionState())
-        //    _animationStateMachine.SwitchState(AnimationStateType.Move);
 
 
     }
@@ -311,10 +404,9 @@ public class PlayerController : Controller,
         if (context.started && IsActionAvailable(AnimationStateType.Attack))
         { 
             ExecuteLightAttack(GetAimPoint());
-            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            UpdateCurrentSkill(CurrentWeapon.LoopBasicAttack());
             if (_currentSkill != null)
             {
-                CameraRotateEvent.Trigger();
                 SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Attack, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Attack);
@@ -335,15 +427,11 @@ public class PlayerController : Controller,
             if (Stamina.ConsumeStamina(Stats.ParryStaminaCost))
             {
                 Parry(GetAimPoint());
-                _currentSkill = CurrentWeapon.GetParrySkill();
+                UpdateCurrentSkill(CurrentWeapon.GetParrySkill());
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Parry);
                 Movement.Stop();
             }
-        }
-        else
-        {
-
         }
     }
 
@@ -357,8 +445,8 @@ public class PlayerController : Controller,
 
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
                 StartIframe();
-                _currentSkill = CurrentWeapon.GetParrySkill();
-                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
+                UpdateCurrentSkill(CurrentWeapon.GetDashSkill());
+                AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Dash, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Dash);
 
             }
@@ -368,18 +456,23 @@ public class PlayerController : Controller,
 
     public void InputUseAbility(InputAction.CallbackContext context)
     {
-        if (context.started && IsActionAvailable(AnimationStateType.Ability))
-        {
-            if (CurrentAbility == null) return;
-            if (_abilityInCooldown) return;
 
-            _currentSkill = CurrentAbility;
+        if (context.performed && !CurrentWeapon.IsCurrentAbilityInCooldown())
+        {
+            AnimationStateMachine.SwitchState(AnimationStateType.Ready);
+            _isInAimMode = true;
+            
+        }
+        else if (context.canceled && AnimationStateMachine.IsInReadyActionState())
+        {
+            _isInAimMode = false;
+            if (CurrentAbility == null) return;
+
+            CurrentWeapon.StartAbilityCooldown();
+            UpdateCurrentSkill(CurrentAbility);
             AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(CurrentAbility.AnimationID), AnimationStateType.Ability, _currentSkill);
-            if (AnimationStateMachine.InterruptState(AnimationStateType.Ability))
-            {
-                OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
-                StartCoroutine(AbilityCooldownCo(CurrentAbility.Cooldown));
-            }
+            AnimationStateMachine.SwitchState(AnimationStateType.Ability);
+            OnAbilityStartCooldown.Invoke(CurrentAbility.Cooldown);
 
         }
     }
@@ -456,17 +549,8 @@ public class PlayerController : Controller,
 
     public void ExecuteLightAttack(Vector3 aimPosition)
     {
-        // _movement.Dash(_movement.LookDirection, 10f);
-        // _lastAttackTime = Time.time;
         Movement.SetLookPosition(aimPosition);
-        // _animator.SetLayerWeight(1, 0); //set lower body layer mask to 0
-    }
 
-
-    public void CleanUpLightAttack()
-    {
-        _weaponCollider.enabled = false;
-        _hitEnemiesThisAttack.Clear();
     }
 
     public void Parry(Vector3 aimPosition)
@@ -496,13 +580,19 @@ public class PlayerController : Controller,
 
         for (int i = 0; i < _hitTargets.Count; i++)
         {
-            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.HitStunDuration); // TODO: Add Stats regarding parry and stagger
+            _hitTargets[i].GetComponent<ParryCollider>().OnParry(Stats.RegulerStunDuration); // TODO: Add Stats regarding parry and stagger
         }
 
 
     }
 
-    private EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
+    private void UpdateCurrentSkill(Skill skill)
+    {
+        _currentSkill = skill;
+        ApplySkillEffect();
+    }
+
+    public EnemyController FindClosestEnemyToPosition(Vector3 position, float maxDistance)
     {
         // Find all enemies in scene within the attack layer
         Collider[] colliders = Physics.OverlapSphere(position, maxDistance, _attackableMask);
@@ -528,6 +618,16 @@ public class PlayerController : Controller,
     public void StopParryAnimEvent()
     {
         _isPerfectParryWindowActive = false;
+    }
+    
+    public void OnProjectileDeflected(BaseProjectile projectile)
+    {
+        Energy.GainEnergy(Stats.ParryEnergyGain * Stats.ResourceGainMultiplier);
+        
+        ParrySuccessEvent.Trigger();
+        
+        CameraShakeEvent.Trigger(new LightShake());
+        
     }
 
 
@@ -557,12 +657,6 @@ public class PlayerController : Controller,
     public void SetCurrentAbility(string skillId)
     {
         CurrentAbility = CurrentWeapon.GetSkill(skillId);
-    }
-    private IEnumerator AbilityCooldownCo(float cooldownTime)
-    {
-        _abilityInCooldown = true;
-        yield return new WaitForSeconds(cooldownTime);
-        _abilityInCooldown = false;
     }
 
     [Button]
@@ -595,9 +689,9 @@ public class PlayerController : Controller,
         _matController.ResetDissolve();
     }
 
-    public override void Stun(float duration, Action onComplete = null)
+    public override void Stun(float duration, Action onComplete = null, bool forceStun = false)
     {
-        if (IsStunImmune) return;
+        if (IsStunImmune && !forceStun) return;
         
         _animationStateMachine.InterruptState(AnimationStateType.Stagger);
         Tween.Delay(duration).OnComplete(() =>
@@ -616,4 +710,69 @@ public class PlayerController : Controller,
         _input.SwitchCurrentActionMap("UI");
     }
 
+    public void PortalTrigger(SplineContainer container, Vector3 exitPos)
+    {
+        ToggleKillzEvent.Trigger(false);
+        _splineAnimate.Container = container;
+        _splineAnimate.NormalizedTime = 0;
+        _splineAnimate.Play();
+        _playerMesh.SetActive(false);
+        _teleportEffect.Play();
+        Tween.Delay(_splineAnimate.Duration).OnComplete(() =>
+        {
+            _playerMesh.SetActive(true);
+            _teleportEffect.Stop();
+            Movement.Teleport(exitPos);
+            ToggleKillzEvent.Trigger(true);
+        });
+    }
+
+    public void ToggleAimMode(bool toggle)
+    {
+        _isInAimMode = toggle;
+    }
+
+    public override void DamageAnimEvent(string animationID)
+    {
+        if (_animationStateMachine.IsInStaggerState()) return;
+
+        _hitTargets.Clear();
+        if (_currentSkill.IsTargetedGroundAOE)
+        {
+            _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, TargetPos, _attackableMask);
+        }
+        else
+        {
+            if (AttackPoint != null)
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, AttackPoint.position, _attackableMask);
+            }
+            else
+            {
+                _hitTargets = AOEApplier.GetDamagedEntities(_currentSkill.SkillRange.AreaType, transform.position, _attackableMask);
+
+            }
+        }
+
+        foreach (GameObject target in _hitTargets)
+        {
+            Health health = target.GetComponent<Health>();
+            DamageInfo info = new DamageInfo(_currentSkill.Damage * Stats.DamageMultiplier, target, health, gameObject, DamageType.Regular);
+            if(!Health.IsDamageable)
+            {
+                health.Damage(info, true);
+            }
+            else
+            {
+                health.Damage(info);
+            }
+            
+        }
+
+        if (_hitTargets.Count > 0)
+        {
+            HitStop.Begin(AnimationStateMachine.CurrentState.AnimancerState, _hitStopDuration, _hitStopTween);
+            CameraShakeEvent.Trigger(new LightShake());
+        }
+    }
 }

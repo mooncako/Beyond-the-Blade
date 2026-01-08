@@ -48,7 +48,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
                 playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
             }
 
-            Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+            Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, PlayerStats.SoulShardCount, playerWeaponSkills);
 
             var context = new SerializationContext();
             var resolver = new UnityReferenceResolver();
@@ -72,7 +72,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
                 playerWeaponSkills.Add(DefaultWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
             }
 
-            Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, playerWeaponSkills);
+            Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, DefaultPlayerStats.SoulShardCount, playerWeaponSkills);
 
             var context = new SerializationContext();
             var resolver = new UnityReferenceResolver();
@@ -104,6 +104,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         Save save = SerializationUtility.DeserializeValue<Save>(bytes, DataFormat.Binary, context);
         PlayerSkillDatabase.SkillDict = save.PlayerSkillDatabase.CloneToRuntime(v => new Skill(v));
         PlayerStats.CopyValue(save.StatsData);
+        PlayerStats.SoulShardCount = save.SoulShardCount;
         for (int i = 0; i < PlayerWeaponSkills.Count; i++)
         {
             PlayerWeaponSkills[i].SkillDict = save.PlayerWeaponSkills[i].CloneToRuntime(v => new List<string>(v));
@@ -126,7 +127,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
                 playerWeaponSkills.Add(PlayerWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
             }
 
-            Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, playerWeaponSkills);
+            Save save = new Save(PlayerSkillDatabase.SkillDict, PlayerStats.StatsData, PlayerStats.SoulShardCount, playerWeaponSkills);
 
 
             bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
@@ -140,7 +141,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
                 playerWeaponSkills.Add(DefaultWeaponSkills[i].SkillDict.CloneToRuntime(v => new List<string>(v)));
             }
 
-            Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, playerWeaponSkills);
+            Save save = new Save(DefaultPlayerSkillDatabase.SkillDict, DefaultPlayerStats.StatsData, DefaultPlayerStats.SoulShardCount, playerWeaponSkills);
             bytes = SerializationUtility.SerializeValue(save, DataFormat.Binary);
         }
 

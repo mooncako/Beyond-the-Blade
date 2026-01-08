@@ -51,6 +51,8 @@ public static class AVAILABLESKILLKEY
     public const int Ability = 2;
     public const int Execution = 3;
     public const int Dash = 4;
+    public const int Projectile = 5;
+    public const int HeavyAttack = 6;
 }
 
 public static class RARITYCOLOR
@@ -59,6 +61,14 @@ public static class RARITYCOLOR
     public static readonly Color Rare = new Color(87f / 255f, 164f / 255f, 253f / 255f);
     public static readonly Color Epic = new Color(179f / 255f, 125f / 255f, 248f / 255f);
     public static readonly Color Legendary = new Color(248f / 255f, 210f / 255f, 125f / 255f);
+}
+
+public static class PORTALCOLOR
+{
+    public static readonly Color Reguler = new Color(191 / 255f, 4f / 255f, 0f / 255f);
+    public static readonly Color Shop = new Color(191 / 255f, 81f / 255f, 0f / 255f);
+    public static readonly Color Recover = new Color(0 / 255f, 191f / 255f, 17f / 255f);
+    public static readonly Color Boss = new Color(191 / 255f, 0f / 255f, 0f / 255f);
 }
 
 public static class LIMIT

@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 9c145131c64104d48a370cf8b8fb0117, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _TOGGLE_OFF
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -23,6 +24,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 53d9ca26583edb7428bc64e1ce6b604f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -38,10 +43,17 @@ Material:
     m_Ints: []
     m_Floats:
     - _Alpha: 1
+    - _Degree: 45
+    - _Density: 13.8
     - _NoiseScale: 0.5
+    - _ONEMINUSTOGGLE: 0
     - _RealmStrength: 0
+    - _TOGGLE: 1
+    - _TargetDensity: 10
+    - _Test: 15.6
     - _TilingY: 75
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 1}
+    - _GridX_Y: {r: 16, g: 9, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

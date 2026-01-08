@@ -12,7 +12,6 @@ public class HososhiBrain : Brain
     protected override void OnEnable()
     {
         base.OnEnable();
-        _provider.RequestGoal<WanderGoal>(false);
     }
 
     protected override void OnDisable()
@@ -33,13 +32,14 @@ public class HososhiBrain : Brain
 
     protected override void Start()
     {
-        _provider.RequestGoal<KillPlayerGoal>(false);
-        _playerSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
+        _provider.RequestGoal<ChasePlayerGoal>(false);
+        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 
     protected override void OnActionEnd(IAction action)
     {
-        if (_isPlayerDetected)
+        if (!gameObject.activeSelf) return;
+        if(_isPlayerInCombatRange)
         {
             switch (Personality)
             {
@@ -56,8 +56,10 @@ public class HososhiBrain : Brain
         }
         else
         {
-            _provider.RequestGoal<WanderGoal>();
+            _provider.RequestGoal<ChasePlayerGoal>();
         }
+        
+
     }
 
     protected override void OnPlayerEnter(Transform player)
@@ -75,12 +77,14 @@ public class HososhiBrain : Brain
                 _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
                 break;
         }
-        _isPlayerInRange = true;
-        _isPlayerDetected = true;
+        
+        _isPlayerInCombatRange = true;
     }
 
     protected override void OnPlayerExit(Vector3 lastKnownPosition)
     {
-        _isPlayerInRange = false;
+        _provider.ClearGoal();
+        _provider.RequestGoal<ChasePlayerGoal>();
+        _isPlayerInCombatRange = false;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using Sirenix.OdinInspector;
@@ -29,7 +30,6 @@ public class AgentMoveBehavior : MonoBehaviour
     {
         _agentBehavior.Events.OnTargetChanged += OnTargetChanged;
         _agentBehavior.Events.OnTargetNotInRange += OnTargetNotInRange;
-        _controller.Movement.Stop();
     }
 
     private void OnDisable()
@@ -40,13 +40,27 @@ public class AgentMoveBehavior : MonoBehaviour
 
     void Update()
     {
-        if (_agentBehavior.IsPaused) return;
-        if (_currentTarget == null) return;
-        if (!_controller.CanMove) return;
-
-        // if(!AnimationStateMachine.IsInMoveState()) return;
+        if (_agentBehavior.IsPaused) 
+        {
+            _controller.Movement.Stop();
+            return;
+        }
+        if (_currentTarget == null) 
+        {
+            _controller.Movement.Stop();
+            return;
+        }
+        if (!_controller.CanMove) 
+        {
+            _controller.Movement.Stop();
+            return;
+        }
+        if (_controller.AnimationStateMachine.IsInStaggerState())
+        {
+            _controller.Movement.Stop();
+            return;
+        }
         
-
         _controller.MoveTo(_currentTarget.Position);
     }
 
@@ -61,7 +75,6 @@ public class AgentMoveBehavior : MonoBehaviour
     {
         
     }
-
     
     
 }

@@ -16,13 +16,13 @@ public class EnemySpawner : MonoBehaviour, IPoolable
 
     void OnEnable()
     {
-        _spawnVFXEventHandler.OnSpawnFinished.AddListener(SpawnEntity);
+        _spawnVFXEventHandler.OnVfxFinished.AddListener(SpawnEntity);
         
     }
 
     void OnDisable()
     {
-        _spawnVFXEventHandler.OnSpawnFinished.RemoveListener(SpawnEntity);
+        _spawnVFXEventHandler.OnVfxFinished.RemoveListener(SpawnEntity);
     }
 
     [Button]

@@ -169,7 +169,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 10
+  m_Radius: 5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5061576002193979983
 MonoBehaviour:
@@ -294,6 +294,9 @@ GameObject:
   - component: {fileID: 5263547530667358367}
   - component: {fileID: 1379345722282491249}
   - component: {fileID: 5162801268352820049}
+  - component: {fileID: 3185499813960374161}
+  - component: {fileID: 7963954931857946615}
+  - component: {fileID: 8564739311905814571}
   m_Layer: 8
   m_Name: HeadlessSamurai
   m_TagString: Untagged
@@ -457,6 +460,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 8598472387181080395}
   <NavMeshAgent>k__BackingField: {fileID: 3926015235504465536}
   <CapsuleCollider>k__BackingField: {fileID: 4191314971418661949}
+  _isHumanoid: 1
 --- !u!114 &6264934010256777202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,7 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Range: 4
   AlertRange: 6
-  FieldOfView: 200
+  FieldOfView: 140
   _occlusionMask:
     serializedVersion: 2
     m_Bits: 768
@@ -646,8 +650,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Movement>k__BackingField: {fileID: 3418439087366576687}
   _animationStateMachine: {fileID: 1379345722282491249}
+  _animator: {fileID: 6233116775064065168}
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
+  Energy: {fileID: 3185499813960374161}
   <Vision>k__BackingField: {fileID: 2515946022723110387}
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
@@ -672,6 +678,9 @@ MonoBehaviour:
     AnimationID: 
     Cooldown: 0
     Damage: 0
+    DamageTickTime: 0
+    WeaponType: 0
+    DamageType: 0
     SkillRange:
       AreaType: 0
       X: 0
@@ -698,9 +707,12 @@ MonoBehaviour:
   IsStunImmune: 0
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 5062411154900718218}
+  Agent: {fileID: 3926015235504465536}
+  Posture: {fileID: 7963954931857946615}
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
+  _currentStunDuration: 0
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,14 +761,13 @@ MonoBehaviour:
   _agent: {fileID: 6420835648838700933}
   _provider: {fileID: 7628456600314050354}
   _goap: {fileID: 2652234782751008208}
-  _playerSensor: {fileID: 5061576002193979983}
+  _combatRangeSensor: {fileID: 5061576002193979983}
   _attackSensorConfigSO: {fileID: 11400000, guid: 2bf44a9d65f705d4bb12aa68c2459ba8, type: 2}
   _movement: {fileID: 3418439087366576687}
+  _controller: {fileID: 4962864894029839974}
   _spanwDelay: 0.5
-  IsTank: 0
   Personality: 0
-  _isPlayerInRange: 0
-  _isPlayerDetected: 0
+  _isPlayerInCombatRange: 0
 --- !u!114 &2652234782751008208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -869,10 +880,21 @@ MonoBehaviour:
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
   _owner: {fileID: 4962864894029839974}
+  _displayStates: -681
   _idleState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -893,8 +915,18 @@ MonoBehaviour:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
-      _FadeDuration: 0.25
+      _FadeDuration: 0.10333335
       _Speed: 1
       _Events:
         _NormalizedTimes: []
@@ -912,7 +944,7 @@ MonoBehaviour:
     _isDirectionalMovement: 1
     _parameterSmoothTime: 0.15
     _stopProximity: 0.1
-    _characterMovement: {fileID: 0}
+    _characterMovement: {fileID: 3418439087366576687}
     UpperBodyClip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -922,10 +954,52 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 7400000, guid: fbc856ca8ad1b7245a8dee27060572da, type: 2}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _attackActionState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -942,10 +1016,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -962,10 +1048,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -982,10 +1080,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1002,10 +1112,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1022,10 +1144,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1046,6 +1180,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 1379345722282491249}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.114999995
       _Speed: 1
@@ -1066,6 +1210,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
     Owner: {fileID: 0}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1083,7 +1237,7 @@ MonoBehaviour:
     _tempStates: 0
     _isInterruptionBlocked: 0
   _locomotionAnimation: {fileID: 0}
-  _directionalMovementAnimations: {fileID: 11400000, guid: bd82bddf3ec44d74aa1ea3a1e83377cf, type: 2}
+  _directionalMovementAnimations: {fileID: 11400000, guid: 5eb0bb91a0cf11a489fadf0fae225275, type: 2}
   UpperBodyMask: {fileID: 31900000, guid: 3bb8c1934e898ea46af7f86f215a8d84, type: 2}
   OnStateExit:
     m_PersistentCalls:
@@ -1104,6 +1258,64 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PersistentEffects: []
+--- !u!114 &3185499813960374161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxEnergy: 10
+  _energy: 0
+  OnExecution:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEnergyGain:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStatsUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7963954931857946615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b712d2bb0af172d48b825431ff3be938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentStunValue: 0
+  _stunned: 0
+  StunThreshold: 5
+  OnStunned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStunUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8564739311905814571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb9852087f39824f9647d710481937e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Animator: {fileID: 6233116775064065168}
+  _Target: {fileID: 8598472387181080395}
 --- !u!1001 &394492389435386265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1224,10 +1436,6 @@ PrefabInstance:
     - target: {fileID: 1293788373825033345, guid: 86a1058bd89d2ad4d9eb83d4ede24c9b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6380718470727031547, guid: 86a1058bd89d2ad4d9eb83d4ede24c9b, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6380718470727031547, guid: 86a1058bd89d2ad4d9eb83d4ede24c9b, type: 3}
       propertyPath: _controller
@@ -1750,11 +1958,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.11696303
+      value: 0.11696315
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.67962575
+      value: 0.679626
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1762,11 +1970,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.38121483
+      value: 0.38121465
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.54660726
+      value: 0.54660714
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1921,7 +2129,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.16952434
+      value: -0.16952443
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1929,7 +2137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.021623492
+      value: 0.021623373
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.w

@@ -16,6 +16,7 @@ public class StaggerAnimationState : AnimationState
     {
         base.OnEnterState();
         Owner?.ToggleIsSkillPlaying(false);
+        Owner?.ToggleRootMotionOnAnimEvent();
     }
     public override void OnInterrupt()
     {
@@ -25,5 +26,6 @@ public class StaggerAnimationState : AnimationState
     public override void OnExitState()
     {
         base.OnExitState();
+        Owner?.ToggleRootMotionOffAnimEvent();
     }
 }

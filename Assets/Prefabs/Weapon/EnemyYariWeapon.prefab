@@ -48,4 +48,12 @@ MonoBehaviour:
   _animationDatabase: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
   SkillDatabase: {fileID: 11400000, guid: 0d1da641e3f0cca41b1c513983bfb6c0, type: 2}
   WeaponSkillSO: {fileID: 11400000, guid: 706c52249e6cb454da0c0e5aa55d6c6a, type: 2}
-  SkillModifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
+  Combos:
+  - Combo:
+    - HOSOSHI_ATTACK_01
+    - HOSOSHI_ATTACK_02
+    - HOSOSHI_ATTACK_03
+  _abilityIndex: 0
+  _currentComboIndex: 0
+  _comboSelectionIndex: 0
+  _inCombo: 0

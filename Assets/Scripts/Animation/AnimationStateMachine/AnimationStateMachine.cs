@@ -10,18 +10,23 @@ public class AnimationStateMachine : MonoBehaviour
     [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _modifierDatabase;
     [SerializeField, BoxGroup("References")] private AnimancerComponent _animancer;
     [SerializeField, BoxGroup("References")] private Controller _owner;
-    [SerializeField] private IdleAnimationState _idleState;
-    [SerializeField] private MoveAnimationState _moveState;
-    [SerializeField] private ActionAnimationState _attackActionState;
-    [SerializeField] private ActionAnimationState _parryActionState;
-    [SerializeField] private ActionAnimationState _dashActionState;
-    [SerializeField] private ActionAnimationState _abilityActionState;
-    [SerializeField] private ActionAnimationState _executionActionState;
-    [SerializeField] private StaggerAnimationState _staggerState;
-    [SerializeField] private DeathAnimationState _deathState;
-    [SerializeField] private ReviveAnimationState _reviveState;
+    
+    [SerializeField] private AnimationStateType _displayStates = AnimationStateType.All;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Idle)")] private IdleAnimationState _idleState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Move)")] private MoveAnimationState _moveState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Ready)")] private ActionAnimationState _readyActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Attack)")] private ActionAnimationState _attackActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Parry)")] private ActionAnimationState _parryActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Dash)")] private ActionAnimationState _dashActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Ability)")] private ActionAnimationState _abilityActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Execution)")] private ActionAnimationState _executionActionState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Stagger)")] private StaggerAnimationState _staggerState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Death)")] private DeathAnimationState _deathState;
+    [SerializeField, ShowIf("@Has(_displayStates, AnimationStateType.Revive)")] private ReviveAnimationState _reviveState;
+
     [SerializeField] private LocomotionAnimationSO _locomotionAnimation;
     [SerializeField] private DirectionalMovementAnimationsSO _directionalMovementAnimations;
+    [SerializeField] public bool IsHumanoid { get; private set;} = true;
     [SerializeField] public LinearMixerTransition LocomotionBlendtree { get; set; }
     [SerializeField] public AvatarMask UpperBodyMask;
     public AnimancerLayer BaseLayer;
@@ -48,6 +53,7 @@ public class AnimationStateMachine : MonoBehaviour
             _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
             _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
             _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
+            _readyActionState = new ActionAnimationState(this, _animancer, "Ready");
             _staggerState = new StaggerAnimationState(this, _animancer);
             _deathState = new DeathAnimationState(this, _animancer);
             _reviveState = new ReviveAnimationState(this, _animancer);
@@ -66,6 +72,7 @@ public class AnimationStateMachine : MonoBehaviour
         _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
         _dashActionState = new ActionAnimationState(this, _animancer, "Dash");
         _executionActionState = new ActionAnimationState(this, _animancer, "Execution");
+        _readyActionState = new ActionAnimationState(this, _animancer, "Ready");
         _staggerState = new StaggerAnimationState(this, _animancer);
         _deathState = new DeathAnimationState(this, _animancer);
         _reviveState = new ReviveAnimationState(this, _animancer);
@@ -86,7 +93,6 @@ public class AnimationStateMachine : MonoBehaviour
         UpperBodyLayer.Mask = UpperBodyMask;
         UpperBodyLayer.SetDebugName("Upper Body Layer");
         UpperBodyLayer.Weight = 0;
-
 
     }
 
@@ -138,6 +144,10 @@ public class AnimationStateMachine : MonoBehaviour
 
                 break;
             case AnimationStateType.Revive:
+
+                break;
+            case AnimationStateType.Ready:
+
                 break;
         }
         CurrentState.SwapClip(clip);
@@ -194,6 +204,10 @@ public class AnimationStateMachine : MonoBehaviour
             case AnimationStateType.Revive:
                 CurrentState = _reviveState;
                 _currentState = AnimationStateType.Revive;
+                break;
+            case AnimationStateType.Ready:
+                CurrentState = _readyActionState;
+                _currentState = AnimationStateType.Ready;
                 break;
         }
 
@@ -256,6 +270,10 @@ public class AnimationStateMachine : MonoBehaviour
                 CurrentState = _reviveState;
                 _currentState = AnimationStateType.Revive;
                 break;
+            case AnimationStateType.Ready:
+                CurrentState = _readyActionState;
+                _currentState = AnimationStateType.Ready;
+                break;
         }
         CurrentState.OnEnterState();
         return true;
@@ -316,6 +334,9 @@ public class AnimationStateMachine : MonoBehaviour
                 _dashActionState.Clip = clip;
                 _dashActionState.UpdateModifiers(_currentModifiers);
                 break;
+            case AnimationStateType.Ready:
+                _readyActionState.Clip = clip;
+                break;
         }
 
 
@@ -347,6 +368,8 @@ public class AnimationStateMachine : MonoBehaviour
                 _deathState.Owner = _owner;
             if (_reviveState != null)
                 _reviveState.Owner = _owner;
+            if (_readyActionState != null)
+                _readyActionState.Owner = _owner;
         }
         else
         {
@@ -371,6 +394,8 @@ public class AnimationStateMachine : MonoBehaviour
                 _deathState.Owner = owner;
             if (_reviveState != null)
                 _reviveState.Owner = owner;
+            if (_readyActionState != null)
+                _readyActionState.Owner = _owner;
         }
         
 
@@ -407,13 +432,19 @@ public class AnimationStateMachine : MonoBehaviour
         return CurrentState == _abilityActionState;
     }
 
+    public bool IsInReadyActionState()
+    {
+        return CurrentState == _readyActionState;
+    }
+
     public bool IsInActionState()
     {
         return _currentState == AnimationStateType.Attack
                             || _currentState == AnimationStateType.Parry
                             || _currentState == AnimationStateType.Ability
                             || _currentState == AnimationStateType.Dash
-                            || _currentState == AnimationStateType.Execution;
+                            || _currentState == AnimationStateType.Execution
+                            || _currentState == AnimationStateType.Ready;
     }
 
     public bool IsInStaggerState()
@@ -473,6 +504,6 @@ public class AnimationStateMachine : MonoBehaviour
         InterruptState(type);
     }
 
-
+    public static bool Has(AnimationStateType value, AnimationStateType flag) => (value & flag) == flag; 
 
 }

@@ -7,7 +7,7 @@ public class HososhiAgent : AgentTypeFactoryBase
     {
         var factory = new AgentTypeBuilder("Hososhi");
 
-        factory.AddCapability<HeadlessSamuraiCapabilityFactory>();
+        factory.AddCapability<HososhiCapabilityFactory>();
 
         return factory.Build();
     }

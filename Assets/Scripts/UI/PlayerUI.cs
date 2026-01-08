@@ -26,7 +26,7 @@ public class PlayerUI : CharacterUI
         if (_energy != null)
         {
             _energy.OnEnergyGain.AddListener(OnEnergyChanged);
-            _energy.OnExecution.AddListener(() => OnEnergyChanged(_energy.GetCurrentPercentage()));
+            _energy.OnExecution.AddListener(() => OnEnergyChanged(_energy.EnergyPercentage));
             _energy.OnStatsUpdated.AddListener(OnReset);
         }
         if (_stamina != null)
@@ -46,7 +46,7 @@ public class PlayerUI : CharacterUI
         if (_energy != null)
             {
                 _energy.OnEnergyGain.RemoveListener(OnEnergyChanged);
-                _energy.OnExecution.RemoveListener(() => OnEnergyChanged(_energy.GetCurrentPercentage()));
+                _energy.OnExecution.RemoveListener(() => OnEnergyChanged(_energy.EnergyPercentage));
                 _energy.OnStatsUpdated.RemoveListener(OnReset);
             }
         if (_stamina != null)
@@ -59,7 +59,7 @@ public class PlayerUI : CharacterUI
 
     private void OnEnergyChanged(float fillAmount)
     {
-        _energyBar.UpdateFillAmount(_energy.GetCurrentPercentage());
+        _energyBar.UpdateFillAmount(_energy.EnergyPercentage);
     }
     private void OnStaminaChanged(float fillAmount)
     {
@@ -68,7 +68,7 @@ public class PlayerUI : CharacterUI
 
     private void OnReset()
     {
-        _energyBar.UpdateFillAmount(_energy.GetCurrentPercentage());
+        _energyBar.UpdateFillAmount(_energy.EnergyPercentage);
         _staminaBar.UpdateFillAmount(_stamina.GetCurrentPercentage());
         _healthBar.UpdateFillAmount(_health.HealthPercentage);
     }

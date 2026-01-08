@@ -22,8 +22,10 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public CustomCharacterMovement Movement { get; private set; }  // get / private set is effectively read only
     [SerializeField, FoldoutGroup("Base Reference")] protected AnimationStateMachine _animationStateMachine;
     public AnimationStateMachine AnimationStateMachine => _animationStateMachine;
+    [SerializeField, FoldoutGroup("Base Reference")] protected Animator _animator;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Targetable Targetable { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Health Health { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
@@ -67,6 +69,7 @@ public class Controller : MonoBehaviour
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
         if (_persistentVFXHelper == null) _persistentVFXHelper = GetComponent<PersistentVFXHelper>();
         if (_matController == null) _matController = GetComponentInChildren<MaterialController>();
+        if (_animator == null) _animator = GetComponent<Animator>();
         _weapons = GetComponentsInChildren<Weapon>();
 
         if ((_parryMask & (1 << 11)) == 0)
@@ -81,6 +84,7 @@ public class Controller : MonoBehaviour
         {
             _parryCollider.OnParried.AddListener(OnParried);
         }
+
     }
 
     protected virtual void OnDisable()
@@ -95,17 +99,7 @@ public class Controller : MonoBehaviour
     protected virtual void Update()
     {
 
-        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
-        {
-            if (Movement.MoveInput != Vector3.zero)
-            {
-                AnimationStateMachine.SwitchState(AnimationStateType.Move);
-            }
-            else
-            {
-                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
-            }
-        }
+        
     }
 
     public virtual void ActivateSkill()
@@ -130,14 +124,36 @@ public class Controller : MonoBehaviour
 
     }
 
+    public bool IsSkillNull()
+    {
+        return _currentSkill == null;
+    }
 
+    public bool CheckSkill()
+    {
+        if (_currentSkill == null) return false;
+        if (_currentSkill.VFXInfo.UsingIndicator)
+        {
+            SpawnVFXEvent.Trigger(transform, "ATTACK_WARNING", new VFXInfo(new Vector3(0, .9f, 0), transform.rotation, Vector3.one, true, false));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void PlaySkillEffect()
+    {
+        SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
+    }
 
     protected virtual void ApplySkillEffect(Skill skill = null)
     {
-
         //TODO buffs & debuffs
         if (skill == null)
         {
+            if(_currentSkill == null) return;
             AOEApplier.X = _currentSkill.SkillRange.X;
             AOEApplier.Y = _currentSkill.SkillRange.Y;
             AOEApplier.Z = _currentSkill.SkillRange.Z;
@@ -149,11 +165,13 @@ public class Controller : MonoBehaviour
             AOEApplier.Z = skill.SkillRange.Z;
         }
 
-
+    
     }
 
-    public virtual void DamageAnimEvent()
+    public virtual void DamageAnimEvent(string animationID)
     {
+        if (_animationStateMachine.IsInStaggerState()) return;
+
         _hitTargets.Clear();
         if (_currentSkill.IsTargetedGroundAOE)
         {
@@ -202,6 +220,11 @@ public class Controller : MonoBehaviour
         _isSkillPlaying = toggle;
     }
 
+    public void ToggleIsDamageable(bool toggle)
+    {
+        Health.IsDamageable = toggle;
+    }
+
     [Button]
     public virtual void ApplyStats()
     {
@@ -227,6 +250,16 @@ public class Controller : MonoBehaviour
     protected virtual void OnParried(float duration)
     {
         AnimationStateMachine.InterruptState(AnimationStateType.Stagger);
+    }
+
+    public void ToggleRootMotionOnAnimEvent()
+    {
+        _animator.applyRootMotion = true;
+    }
+
+    public void ToggleRootMotionOffAnimEvent()
+    {
+        _animator.applyRootMotion = false;
     }
 
     public virtual void StartAttackCooldown()
@@ -265,7 +298,7 @@ public class Controller : MonoBehaviour
 
     }
 
-    public virtual void Stun(float duration, Action onComplete = null)
+    public virtual void Stun(float duration, Action onComplete = null, bool forceStun = false)
     {
         
     }

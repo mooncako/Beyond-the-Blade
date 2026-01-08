@@ -1,0 +1,46 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/StylishEsper/SkillWeb/Scripts/Editor/SkillWebSettingsEditorWindow.uss?fileID=7433441132597879392&amp;guid=fd6481cb672bf20479caec614d8cad79&amp;type=3#SkillWebSettingsEditorWindow" />
+    <uie:Toolbar />
+    <ui:ScrollView>
+        <ui:VisualElement style="flex-grow: 1; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px;">
+            <ui:Label tabindex="-1" text="General" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 14px;" />
+            <ui:EnumField label="Debug Log Mode" type="Esper.SkillWeb.Settings.SkillWebSettings+DebugLogMode, SkillWeb" name="DebugLogField" class="field" />
+            <ui:Toggle label="Enable Lvl Requirement" name="EnablePlayerLevelRequirementToggle" class="field" />
+            <ui:Toggle label="Enable Downgrading" name="EnableDowngradingToggle" class="field" />
+            <ui:EnumField label="Delta Time" type="Esper.SkillWeb.Settings.SkillWebSettings+DeltaTime, SkillWeb" name="DeltaTimeField" class="field" />
+            <ui:Label tabindex="-1" text="Database" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 14px;" />
+            <ui:TextField picking-mode="Ignore" label="DB Name" name="DatabaseNameField" class="field" />
+            <ui:Button text="Validate" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ValidateButton" class="field" />
+            <ui:Label tabindex="-1" text="Editing" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 14px;" />
+            <uie:ObjectField label="Skill Dataset Reference" type="Esper.SkillWeb.SkillDataset, SkillWeb" name="SkillDatasetField" class="field" />
+            <uie:ObjectField label="Web Dataset Reference" type="Esper.SkillWeb.WebDataset, SkillWeb" name="WebDatasetField" class="field" />
+            <ui:Label tabindex="-1" text="Tags" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 13px;" />
+            <ui:ListView show-border="true" name="TagsList" reorderable="true" show-foldout-header="true" horizontal-scrolling="false" show-add-remove-footer="true" show-alternating-row-backgrounds="None" fixed-item-height="20" show-bound-collection-size="true" />
+            <ui:Label tabindex="-1" text="Runtime Graph" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 14px;" />
+            <ui:FloatField label="Zoom Strength" value="0" name="ZoomStrengthField" class="field" />
+            <ui:FloatField label="Zoom Smoothing" value="0" name="ZoomSmoothingField" class="field" />
+            <ui:FloatField label="Min Scale" value="0" name="MinScaleField" class="field" />
+            <ui:FloatField label="Normal Scale" value="1" name="NormalScaleField" readonly="true" class="field" />
+            <ui:FloatField label="Max Scale" value="0" name="MaxScaleField" class="field" />
+            <ui:EnumField label="Starting Scale" type="Esper.SkillWeb.Settings.SkillWebSettings+StartingScale, SkillWeb" name="StartingScaleField" />
+            <ui:FloatField label="Pan Smoothing" value="0" name="PanSmoothingField" class="field" />
+            <ui:FloatField label="After Snap Delay" value="0" name="AfterSnapDelayField" class="field" />
+            <ui:Toggle label="Automatic Bounds" name="AutomaticBoundsToggle" class="field" />
+            <ui:FloatField label="Reset / Focus Speed" value="0" name="ResetFocusSpeedField" class="field" />
+            <ui:EnumField label="Mouse Pan Button" type="UnityEngine.EventSystems.PointerEventData+InputButton, UnityEngine.UI" name="MousePanButtonField" class="field" />
+            <ui:Label tabindex="-1" text="Sizes" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 13px;" />
+            <ui:FloatField label="Tiny" value="0" name="TinySizeField" class="field" />
+            <ui:FloatField label="Small" value="0" name="SmallSizeField" class="field" />
+            <ui:FloatField label="Medium" value="0" name="MediumSizeField" class="field" />
+            <ui:FloatField label="Large" value="0" name="LargeSizeField" class="field" />
+            <ui:FloatField label="Giant" value="0" name="GiantSizeField" class="field" />
+            <ui:Label tabindex="-1" text="Danger Zone" parse-escape-sequences="true" display-tooltip-when-elided="true" class="heading" style="font-size: 14px; color: rgb(255, 0, 0);" />
+            <ui:Foldout text="Options" value="false">
+                <ui:Button text="Reset All Skill Datasets" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ResetSkillDatasetsButton" class="field" />
+                <ui:Button text="Reset All Web Datasets" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ResetWebDatasetsButton" class="field" />
+                <ui:Button text="Delete All Skills" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DeleteAllSkillsButton" class="field" />
+                <ui:Button text="Delete All Webs" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DeleteAllWebsButton" class="field" />
+            </ui:Foldout>
+        </ui:VisualElement>
+    </ui:ScrollView>
+</ui:UXML>

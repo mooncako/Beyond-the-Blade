@@ -11,10 +11,11 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 {
     // ---------- Rows expected from the Sheet ----------
     // Columns expected (names must match your Apps Script JSON):
-    // Key, AnimationID, Cooldown, Damage,
+    // Key, AnimationID, Cooldown, Damage, DamageTickTime, DamageType,
+    // WeaponType,
     // AreaType, RangeX, RangeY, RangeZ,
     // Rarity, TargetSelf, IsTargetedGroundAOE,
-    // Buffs, Debuffs
+    // Buffs, Debuffs, Name, Description
     [Serializable]
     private class SkillRow
     {
@@ -23,12 +24,17 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
         public float Cooldown;
         public float Damage;
 
-        public string AreaType; // enum as string
+        public float DamageTickTime;
+        public string DamageType;
+
+        public string WeaponType;
+
+        public string AreaType;
         public float RangeX;
         public float RangeY;
         public float RangeZ;
 
-        public string Rarity; // enum as string
+        public string Rarity;
         public bool TargetSelf;
         public bool IsTargetedGroundAOE;
 
@@ -49,7 +55,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 
     // ---------- UI State ----------
     [Header("Google Apps Script Web App")]
-    [SerializeField] private string _webAppUrl = "https://script.google.com/macros/s/AKfycbw-fe8xucRwRdbBlrM8r5yLFZGbHe7WZNIKMH-F_a2Dv9iiw7B3uNG_p04U3g6FeudR9w/exec"; // e.g. https://script.google.com/macros/s/AKfycb.../exec
+    [SerializeField] private string _webAppUrl = "https://script.google.com/macros/s/AKfycbw-fe8xucRwRdbBlrM8r5yLFZGbHe7WZNIKMH-F_a2Dv9iiw7B3uNG_p04U3g6FeudR9w/exec";
     [SerializeField] private string _sharedSecret = "BYTHEBLADE";
     [SerializeField] private string _sheetName = "EnemySkills"; // tab name inside the Google Sheet
 
@@ -120,7 +126,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
 
         EditorGUILayout.HelpBox(
             "This tool pulls data from the Google Sheet and updates the selected ScriptableObjects.\n\n" +
-            "Expected columns: Key, AnimationID, Cooldown, Damage, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs.\n" +
+            "Expected columns: Key, AnimationID, Cooldown, Damage, WeaponType, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs, Name, Description.\n" +
             "Lists are semicolon-separated; escape literal semicolons as \\;.",
             MessageType.Info);
     }
@@ -162,13 +168,20 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                     .Where(r => !string.IsNullOrWhiteSpace(r.Key))
                     .ToDictionary(r => r.Key, r => r);
 
-                int updated = 0, created = 0;
+                int updated = 0, created = 0, removed = 0;
+
                 foreach (var so in _sources.Where(s => s != null))
                 {
                     bool dirty = false;
 
+                    // Track existing keys in this SO; anything left after applying the sheet will be deleted.
+                    var existingKeys = new HashSet<string>(so.SkillDict.Keys);
+
                     foreach (var (key, r) in map)
                     {
+                        // Key is present in sheet, so we do NOT want to delete it.
+                        existingKeys.Remove(key);
+
                         if (!so.SkillDict.TryGetValue(key, out var skill))
                         {
                             skill = new Skill();
@@ -180,14 +193,37 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         skill.AnimationID = r.AnimationID ?? "";
                         skill.Cooldown = r.Cooldown;
                         skill.Damage = r.Damage;
+                        skill.DamageTickTime = r.DamageTickTime;
+
+                        var dmgTypeStr = (r.DamageType ?? "").Trim();
+                        if(Enum.TryParse<DamageType>(dmgTypeStr, true, out var damageType))
+                        {
+                            skill.DamageType = damageType;
+                        }
+                        else if(!string.IsNullOrEmpty(dmgTypeStr))
+                        {
+                            Debug.LogWarning($"[SheetSync] Unknown DamageType '{r.DamageType}' for Key '{key}'");
+                        }
+
                         skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
+
+                        // WeaponType enum (NEW)
+                        var weaponStr = (r.WeaponType ?? "").Trim();
+                        if (Enum.TryParse<WeaponType>(weaponStr, true, out var weaponType))
+                        {
+                            skill.WeaponType = weaponType;
+                        }
+                        else if (!string.IsNullOrEmpty(weaponStr))
+                        {
+                            Debug.LogWarning($"[SheetSync] Unknown WeaponType '{r.WeaponType}' for Key '{key}'");
+                        }
 
                         // Rarity enum
                         var rarityStr = (r.Rarity ?? "").Trim();
                         if (Enum.TryParse<Rarity>(rarityStr, true, out var rarity))
                             skill.Rarity = rarity;
-                        else
+                        else if (!string.IsNullOrEmpty(rarityStr))
                             Debug.LogWarning($"[SheetSync] Unknown Rarity '{r.Rarity}' for Key '{key}'");
 
                         // Range & AreaType
@@ -197,12 +233,9 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         var areaStr = (r.AreaType ?? "").Trim();
                         if (Enum.TryParse<SkillAreaType>(areaStr, true, out var area))
                         {
-                            // If SkillRange.AreaType is a property, this will set it.
-                            // If Unity doesn't serialize auto-properties in your setup,
-                            // consider making it a field or [SerializeField] backing field.
                             skill.SkillRange.AreaType = area;
                         }
-                        else
+                        else if (!string.IsNullOrEmpty(areaStr))
                         {
                             Debug.LogWarning($"[SheetSync] Unknown AreaType '{r.AreaType}' for Key '{key}'");
                         }
@@ -215,11 +248,23 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                         skill.Buffs = ParsePairs(r.Buffs);
                         skill.Debuffs = ParsePairs(r.Debuffs);
 
-                        skill.Name        = r.Name ?? "";
+                        skill.Name = r.Name ?? "";
                         skill.Description = r.Description ?? "";
 
                         dirty = true;
                         updated++;
+                    }
+
+                    // Remove any skills that are not present on the sheet
+                    if (existingKeys.Count > 0)
+                    {
+                        foreach (var keyToRemove in existingKeys)
+                        {
+                            so.SkillDict.Remove(keyToRemove);
+                            removed++;
+                        }
+
+                        dirty = true;
                     }
 
                     if (dirty)
@@ -227,8 +272,10 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
                 }
 
                 AssetDatabase.SaveAssets();
-                Debug.Log($"[SheetSync] PULL OK. Updated: {updated}, Created: {created}");
-                EditorUtility.DisplayDialog("PULL", $"Updated: {updated}\nCreated: {created}", "OK");
+                Debug.Log($"[SheetSync] PULL OK (Enemy). Updated: {updated}, Created: {created}, Removed: {removed}");
+                EditorUtility.DisplayDialog("PULL",
+                    $"Updated: {updated}\nCreated: {created}\nRemoved: {removed}",
+                    "OK");
             }
             catch (Exception ex)
             {
@@ -237,6 +284,7 @@ public class EnemySkillsSheetSyncWindow : EditorWindow
             }
         });
     }
+
 
     // ---------- Helpers ----------
     private static List<string> SplitList(string s)
@@ -376,5 +424,3 @@ public static class EditorHttp
     }
 }
 #endif
-
-

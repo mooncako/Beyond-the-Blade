@@ -21,56 +21,38 @@ public class HososhiCapabilityFactory : CapabilityFactory
 
     protected override void BuildGoals(CapabilityBuilder builder)
     {
-        builder.AddGoal<WanderGoal>()
-            .AddCondition<IsWander>(Comparison.GreaterThanOrEqual, 1);
-
-        builder.AddGoal<KillPlayerGoal>()
-            .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);
-
-        builder.AddGoal<KillPlayerCautiousGoal>()
-            .AddCondition<PlayerHealthCautious>(Comparison.SmallerThanOrEqual, 0);
-
-        builder.AddGoal<StrafeGoal>()
-            .AddCondition<IsStrafe>(Comparison.GreaterThanOrEqual, 1);
+        base.BuildGoals(builder);
     }
 
     protected override void BuildActions(CapabilityBuilder builder)
     {
-        builder.AddAction<WanderAction>()
-            .SetTarget<WanderTarget>()
-            .AddEffect<IsWander>(EffectType.Increase)
-            .SetStoppingDistance(1)
-            .SetBaseCost(5);
+        base.BuildActions(builder);
 
         builder.AddAction<AttackAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(3)
             .SetBaseCost(4);
 
         builder.AddAction<AttackCautiousAction>()
             .SetTarget<PlayerTarget>()
+            .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
             .SetStoppingDistance(3)
             .SetBaseCost(6);
 
         builder.AddAction<StrafeAction>()
             .SetTarget<StrafeTarget>()
+            .AddEffect<IsTargetVisible>(EffectType.Increase)
             .AddEffect<IsStrafe>(EffectType.Increase)
-            .SetStoppingDistance(.5f)
+            .SetStoppingDistance(3f)
             .SetBaseCost(4);    
     }
 
     protected override void BuildSensors(CapabilityBuilder builder)
     {
-        builder.AddTargetSensor<WanderTargetSensor>()
-            .SetTarget<WanderTarget>();
-
-        builder.AddTargetSensor<PlayerTargetSensor>()
-            .SetTarget<PlayerTarget>();
-
-        builder.AddTargetSensor<StrafeTargetSensor>()
-            .SetTarget<StrafeTarget>();
+        base.BuildSensors(builder);
     }
 
 

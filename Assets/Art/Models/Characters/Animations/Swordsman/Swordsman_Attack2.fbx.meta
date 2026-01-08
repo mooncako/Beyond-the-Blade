@@ -34,7 +34,7 @@ ModelImporter:
       name: SwordsmanAttack2
       takeName: Take 001
       internalID: 1827226128182048838
-      firstFrame: 56
+      firstFrame: 44
       lastFrame: 89
       wrapMode: 0
       orientationOffsetY: 0
@@ -55,9 +55,23 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.5913886
-        functionName: DamageAnimEvent
+      - time: 0.40947437
+        functionName: ParryColliderOpenAnimEvent
         data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.6724383
+        functionName: ParryColliderCloseAnimEvent
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.6925819
+        functionName: DamageAnimEvent
+        data: SAMURAI_ATTACK_02_ANIM
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
