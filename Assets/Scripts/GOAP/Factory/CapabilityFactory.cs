@@ -57,5 +57,11 @@ public class CapabilityFactory : CapabilityFactoryBase
 
         builder.AddTargetSensor<StrafeTargetSensor>()
             .SetTarget<StrafeTarget>();
+
+        builder.AddTargetSensor<IdleTargetSensor>()
+            .SetTarget<IdleTarget>();
+        
+        builder.AddTargetSensor<EvasiveTargetSensor>()
+            .SetTarget<EvasiveTarget>();
     }
 }

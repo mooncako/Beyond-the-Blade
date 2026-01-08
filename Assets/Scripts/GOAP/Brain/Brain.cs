@@ -13,6 +13,7 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected GoapActionProvider _provider;
     [SerializeField, BoxGroup("References")] protected GoapBehaviour _goap;
     [SerializeField, BoxGroup("References")] protected PlayerSensor _combatRangeSensor;
+    [SerializeField, BoxGroup("References"), ShowIf("Personality", PersonalityType.Evasive)] protected PlayerSensor _evadeSensor;
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
     [SerializeField, BoxGroup("References")] protected EnemyController _controller;
@@ -30,7 +31,15 @@ public class Brain : MonoBehaviour
         if (_agent == null) _agent = GetComponent<AgentBehaviour>();
         if (_provider == null) _provider = GetComponent<GoapActionProvider>();
         if (_goap == null) _goap = GetComponent<GoapBehaviour>();
-        if (_combatRangeSensor == null) _combatRangeSensor = GetComponentInChildren<PlayerSensor>();
+        if (_combatRangeSensor == null) _combatRangeSensor = GetComponentsInChildren<PlayerSensor>()[0];
+        if(Personality == PersonalityType.Evasive && _evadeSensor == null)
+        {
+            var sensors = GetComponentsInChildren<PlayerSensor>();
+            if(sensors.Length > 1)
+            {
+                _evadeSensor = sensors[1];
+            }
+        }
         if (_movement == null) _movement = GetComponent<CustomCharacterMovement>();
         if (_controller == null) _controller = GetComponent<EnemyController>();
     }

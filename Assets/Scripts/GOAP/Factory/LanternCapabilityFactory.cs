@@ -30,7 +30,7 @@ public class LanternCapabilityFactory : CapabilityFactory
         base.BuildActions(builder);
 
         builder.AddAction<AttackAction>()
-            .SetTarget<PlayerTarget>()
+            .SetTarget<IdleTarget>()
             .AddCondition<PlayerDistance>(Comparison.SmallerThanOrEqual, 1)
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
@@ -38,14 +38,14 @@ public class LanternCapabilityFactory : CapabilityFactory
             .SetBaseCost(2);
         
         builder.AddAction<FireProjectileAction>()
-            .SetTarget<PlayerTarget>()
+            .SetTarget<EvasiveTarget>()
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
-            .SetStoppingDistance(20f)
+            .SetStoppingDistance(.5f)
             .SetBaseCost(3);
 
         builder.AddAction<AttackCautiousAction>()
-            .SetTarget<PlayerTarget>()
+            .SetTarget<IdleTarget>()
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealthCautious>(EffectType.Decrease)
             .SetStoppingDistance(2f)
