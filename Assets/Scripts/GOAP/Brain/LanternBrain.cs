@@ -42,8 +42,8 @@ public class LanternBrain : Brain
 
     protected override void Start()
     {
+        base.Start();
         _provider.RequestGoal<ChasePlayerGoal>(false);
-        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 
     protected override void OnActionEnd(IAction action)
@@ -60,7 +60,7 @@ public class LanternBrain : Brain
                     _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
                     break;
                 case PersonalityType.Evasive:
-                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
                     break;
             }
         }
@@ -72,7 +72,7 @@ public class LanternBrain : Brain
 
     }
 
-    protected override void OnPlayerEnter(Transform player)
+    protected override void OnPlayerEnterCombatRange(Transform player)
     {
         _provider.ClearGoal();
         switch(Personality)
@@ -91,11 +91,48 @@ public class LanternBrain : Brain
         _isPlayerInCombatRange = true;
     }
 
-    protected override void OnPlayerExit(Vector3 lastKnownPosition)
+    protected override void OnPlayerExitCombatRange(Vector3 lastKnownPosition)
     {
         _provider.ClearGoal();
         _provider.RequestGoal<ChasePlayerGoal>();
         _isPlayerInCombatRange = false;
+    }
+
+    protected override void OnPlayerEnterCloseRange(Transform player)
+    {
+        base.OnPlayerEnterCloseRange(player);
+        _provider.ClearGoal();
+        _isPlayerInCloseRange = true;
+        _provider.RequestGoal<EvadeGoal>();
+        
+    }
+
+    protected override void OnPlayerExitCloseRange(Vector3 lastKnownPosition)
+    {
+        base.OnPlayerExitCloseRange(lastKnownPosition);
+        _provider.ClearGoal();
+        _isPlayerInCloseRange = false;
+        
+        if (!gameObject.activeSelf) return;
+        if(_isPlayerInCombatRange)
+        {
+            switch (Personality)
+            {
+                case PersonalityType.Aggressive:
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                    break;
+                case PersonalityType.Cautious:
+                    _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
+                    break;
+                case PersonalityType.Evasive:
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                    break;
+            }
+        }
+        else
+        {
+            _provider.RequestGoal<ChasePlayerGoal>();
+        }
     }
 
     

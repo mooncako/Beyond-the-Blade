@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class LanternCapabilityFactory : CapabilityFactory
 {
-    //TODO: Add new goals to represent different personality
 
     public override ICapabilityConfig Create()
     {

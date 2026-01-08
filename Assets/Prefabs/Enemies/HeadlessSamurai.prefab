@@ -762,12 +762,14 @@ MonoBehaviour:
   _provider: {fileID: 7628456600314050354}
   _goap: {fileID: 2652234782751008208}
   _combatRangeSensor: {fileID: 5061576002193979983}
+  _evadeSensor: {fileID: 0}
   _attackSensorConfigSO: {fileID: 11400000, guid: 2bf44a9d65f705d4bb12aa68c2459ba8, type: 2}
   _movement: {fileID: 3418439087366576687}
   _controller: {fileID: 4962864894029839974}
-  _spanwDelay: 0.5
+  _spawnDelay: 0.2
   Personality: 0
   _isPlayerInCombatRange: 0
+  _isPlayerInCloseRange: 0
 --- !u!114 &2652234782751008208
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -747,12 +747,14 @@ MonoBehaviour:
   _provider: {fileID: 7628456600314050354}
   _goap: {fileID: 2652234782751008208}
   _combatRangeSensor: {fileID: 5061576002193979983}
+  _evadeSensor: {fileID: 0}
   _attackSensorConfigSO: {fileID: 11400000, guid: cfbe3a311fea9814a806689341af2304, type: 2}
   _movement: {fileID: 3418439087366576687}
   _controller: {fileID: 4962864894029839974}
-  _spanwDelay: 0.2
+  _spawnDelay: 0.2
   Personality: 0
   _isPlayerInCombatRange: 0
+  _isPlayerInCloseRange: 0
 --- !u!114 &5667961458422474831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1247,7 +1249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76788a8e35ad0fa428b47d9308537aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Distance: 0
+  _distanceThreshold: 1.5
 --- !u!114 &1916950120843236822
 MonoBehaviour:
   m_ObjectHideFlags: 0
