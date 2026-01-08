@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6985952433721055015}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -24.933552, y: -12.845753, z: 17.231638}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -48,4 +48,11 @@ MonoBehaviour:
   _animationDatabase: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
   SkillDatabase: {fileID: 11400000, guid: 0d1da641e3f0cca41b1c513983bfb6c0, type: 2}
   WeaponSkillSO: {fileID: 11400000, guid: f5e16739e77c1dc49b32ca4f2a5e0d06, type: 2}
-  SkillModifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
+  Combos:
+  - Combo:
+    - SAMURAI_ATTACK_01
+    - SAMURAI_ATTACK_02
+  _abilityIndex: 0
+  _currentComboIndex: 0
+  _comboSelectionIndex: 0
+  _inCombo: 0

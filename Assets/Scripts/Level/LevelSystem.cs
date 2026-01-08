@@ -6,13 +6,13 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityUtils;
 
-[RequireComponent(typeof(NavMeshSurface))]
+
 public class LevelSystem : MonoBehaviour
 {
     [field: SerializeField, FoldoutGroup("References")] private EnvironmentalObjectSpawner[] _environmentalObjectSpawners;
     [field: SerializeField, FoldoutGroup("References")] private GameplayObjectSpawner[] _gameplayObjectSpawners;
-    [SerializeField, FoldoutGroup("References")] private NavMeshSurface _navMeshSurface;
     [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
+    [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
 
     [SerializeField, BoxGroup("Settings")] public BiomeType BiomeType;
     [SerializeField, BoxGroup("Settings"), Range(1, 3)] private int _exitsAmount = 1;
@@ -27,10 +27,11 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug")] public SpawnPos SpawnPos;
     [SerializeField, BoxGroup("Debug")] public PlayerController _player;
     [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList = new List<ExitPos>();
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _navMeshSurface == null || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -40,14 +41,13 @@ public class LevelSystem : MonoBehaviour
         SpawnPositions = GetComponentsInChildren<SpawnPos>();
         EnemySpawnPositions = GetComponentsInChildren<EnemySpawnPos>();
         ExitPositions = GetComponentsInChildren<ExitPos>();
-        _navMeshSurface = GetComponent<NavMeshSurface>();
         _levelMesh = GetComponentInChildren<LevelMesh>();
+        _levelAssigner = GetComponentInChildren<LevelAssigner>();
     }
 #endif
 
     void OnValidate()
     {
-        if (_navMeshSurface == null) _navMeshSurface = GetComponent<NavMeshSurface>();
         if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
     }
 
@@ -65,21 +65,43 @@ public class LevelSystem : MonoBehaviour
         GenerateGameplayProps();
 
         // Rebuild Navmesh
-        RebuildNavmesh();
+        // RebuildNavmesh();
 
         // Select Spawn/Exit Locations
         SelectSpawnExitLocations();
 
-        Tween.Delay(.1f).OnComplete(() => {
+        Tween.Delay(.01f).OnComplete(() => {
             
-            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, EnemySpawnPositions);
+            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, this);
 
-            Tween.Delay(.5f).OnComplete(() =>
+            Tween.Delay(.01f).OnComplete(() =>
             {
-                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, EnemySpawnPositions);
+                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, this);
             });
             
         });
+    }
+
+    public void CalculateExitTypes()
+    {
+        float possibilityIndex;
+        ExitsLevelType.Clear();
+        for (int i = 0; i < ExitPosList.Count; i++)
+        {
+            possibilityIndex = Random.Range(0, 1);
+            if (possibilityIndex <= ExitsProbability.RegularExitPercentage)
+            {
+                ExitsLevelType.Add(LevelType.Reguler);
+            }
+            else if (possibilityIndex <= ExitsProbability.RegularExitPercentage + ExitsProbability.RecoveryExitPercentage)
+            {
+                ExitsLevelType.Add(LevelType.Recover);
+            }
+            else
+            {
+                ExitsLevelType.Add(LevelType.Shop);
+            }
+        }
     }
 
     private void SelectSpawnExitLocations()
@@ -153,12 +175,12 @@ public class LevelSystem : MonoBehaviour
         }
     }
 
-    private void RebuildNavmesh()
-    {
-        _navMeshSurface.BuildNavMesh();
-        // Generate Enemies
+    // private void RebuildNavmesh()
+    // {
+    //     _navMeshSurface.BuildNavMesh();
+    //     // Generate Enemies
         
-    }
+    // }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)
     {
@@ -183,6 +205,12 @@ public class LevelSystem : MonoBehaviour
 
         return ints;
 
+    }
+
+    public void ShiftLevel()
+    {
+        Vector3 shiftDistance = transform.position - SpawnPos.transform.position;
+        transform.position += shiftDistance;
     }
 }
     

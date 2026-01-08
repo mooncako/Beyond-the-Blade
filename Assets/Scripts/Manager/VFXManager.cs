@@ -67,7 +67,7 @@ public class VFXManager : MonoBehaviour,
                 });
             }
 
-            go.GetComponent<VFXFinishedEventHandler>().OnSpawnFinished.AddListener(() => ReturnVFX(go));
+            go.GetComponent<VFXFinishedEventHandler>().OnVfxFinished.AddListener(() => ReturnVFX(go));
         }
 
     }
@@ -85,6 +85,6 @@ public class VFXManager : MonoBehaviour,
         if (go != null)
             go.transform.SetParent(null);
         _pool.Return(go);
-        go.GetComponent<VFXFinishedEventHandler>().OnSpawnFinished.RemoveAllListeners();
+        go.GetComponent<VFXFinishedEventHandler>().OnVfxFinished.RemoveAllListeners();
     }
 }

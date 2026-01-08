@@ -5,7 +5,7 @@ public interface IProjectile
     /// <summary>
     /// Initialize the projectile with configuration data
     /// </summary>
-    void Initialize(ProjectileData data);
+    void Initialize();
     
     /// <summary>
     /// Activate the projectile and start movement

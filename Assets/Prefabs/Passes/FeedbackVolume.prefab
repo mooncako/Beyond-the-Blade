@@ -68,8 +68,34 @@ MonoBehaviour:
   _maxVignetteIntensity: 0.4
   _startChromaticAberrationIntensity: 0
   _maxChromaticAberrationIntensity: 0.4
+  _outlineDistortionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 11
+      inSlope: 32.73963
+      outSlope: 32.73963
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.018380225
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _vignette: {fileID: 0}
   _chromaticAberration: {fileID: 0}
+  _distortedOutline: {fileID: 0}
+  _pC: {fileID: 0}
 --- !u!114 &5404794747653502708
 MonoBehaviour:
   m_ObjectHideFlags: 0

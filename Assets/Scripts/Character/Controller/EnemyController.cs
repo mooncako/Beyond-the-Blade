@@ -5,6 +5,7 @@ using Animancer;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityUtils;
 
 public class EnemyController : Controller, IPoolable
@@ -12,21 +13,28 @@ public class EnemyController : Controller, IPoolable
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerSensor _playerSensor;
     
     [SerializeField, FoldoutGroup("Base Reference")] private Brain _brain;
+    [SerializeField, FoldoutGroup("Base Reference")] public NavMeshAgent Agent;
+    [SerializeField, FoldoutGroup("Base Reference")] public Posture Posture;
+    
 
     
     [field: SerializeField, BoxGroup("Debug")] private float _attackCooldown = .3f;
     [field: SerializeField, BoxGroup("Debug")] private bool _canRotate = true;
 
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] public Transform CurrentTargetTransform;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentStunDuration;
 
     private Tween _attackDelayTween;
-    private Tween _staggerTween;
+    private Tween _stunTween;
 
 
     protected override void OnValidate()
     {
         base.OnValidate();
+        if (Energy == null) Energy = GetComponent<Energy>();
         if (_playerSensor == null) _playerSensor = GetComponentInChildren<PlayerSensor>();
+        if (Agent == null) Agent = GetComponent<NavMeshAgent>();
+        if (Posture == null) Posture = GetComponent<Posture>();
 
         if (_brain == null) _brain = GetComponent<Brain>();
         if ((_attackableMask & (1 << 7)) == 0)
@@ -46,15 +54,15 @@ public class EnemyController : Controller, IPoolable
         {
             _parryCollider.OnParried.AddListener(OnParried);
         }
-
-        _playerSensor.OnPlayerEnter += playerTransform =>
-        {
-            CurrentTargetTransform = playerTransform;
-            Movement.LookInMoveDirection = false;
-        };
+        
+        CurrentTargetTransform = PlayerBroadcast.Instance.Players[0].transform;
+        Movement.LookInMoveDirection = false;
 
         Health.OnDamage.AddListener(DamageFeedback);
         Health.OnDeath.AddListener(OnDeath);
+        Posture.OnStunned.AddListener(OnStunned);
+
+        // StartCoroutine(UpdateStateCO());
     }
 
     protected override void OnDisable()
@@ -63,28 +71,49 @@ public class EnemyController : Controller, IPoolable
         {
             _parryCollider.OnParried.RemoveListener(OnParried);
         }
-        _playerSensor.OnPlayerEnter -= playerTransform =>
-        {
-            CurrentTargetTransform = playerTransform;
-            Movement.LookInMoveDirection = false;
-        };
 
         Health.OnDamage.RemoveListener(DamageFeedback);
         Health.OnDeath.RemoveListener(OnDeath);
+        Posture.OnStunned.AddListener(OnStunned);
 
         _attackDelayTween.Stop();
-        _staggerTween.Stop();
+        _stunTween.Stop();
+        // StopCoroutine(UpdateStateCO());
     }
 
     private void FixedUpdate()
     {
-        if (CurrentTargetTransform != null && _canRotate)
+        if (CurrentTargetTransform != null && _canRotate && !AnimationStateMachine.IsInStaggerState())
         {
             Movement.SetLookPosition(CurrentTargetTransform.position);
         }
     }
 
-    
+    protected override void Update()
+    {
+        if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
+        {
+            if (Movement.IsAgentMoving())
+            {
+                if(!AnimationStateMachine.IsInMoveState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Move); 
+            }
+        }
+    }
+
+    private IEnumerator UpdateStateCO()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(.5f, .8f));
+            if (!AnimationStateMachine.IsInActionState() && !AnimationStateMachine.IsInStaggerState() && !AnimationStateMachine.IsInDeathState())
+            {
+                if(AnimationStateMachine.IsInMoveState())
+                    AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+            }
+        }
+        
+    }
 
     public void MoveTo(Vector3 destination)
     {
@@ -98,14 +127,32 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
+    public void ToggleWalkRun(bool isRunning)
+    {
+        if (isRunning)
+        {
+            if(Stats.TempMovementSpeedMultiplier > 0)
+                Stats.TempMovementSpeedMultiplier *= (Stats as EnemyStatsSO).RunSpeedMultiplier;
+            else
+                Stats.TempMovementSpeedMultiplier = (Stats as EnemyStatsSO).RunSpeedMultiplier;
+        }
+        else
+        {
+            if(Stats.TempMovementSpeedMultiplier > 0)
+                Stats.TempMovementSpeedMultiplier *= (Stats as EnemyStatsSO).WalkSpeedMultiplier;
+            else
+                Stats.TempMovementSpeedMultiplier = (Stats as EnemyStatsSO).WalkSpeedMultiplier;
+        }
+    }
+
     public void Stop()
     {
         Movement.Stop();
     }
 
-    public override void DamageAnimEvent()
+    public override void DamageAnimEvent(string animationID)
     {
-        if (AnimationStateMachine.IsInStaggerState()) return;
+        if (animationID != _currentSkill.AnimationID || !_animationStateMachine.IsInActionState()) return;
 
         _hitTargets.Clear();
 
@@ -141,7 +188,41 @@ public class EnemyController : Controller, IPoolable
         if (CurrentWeapon == null) return;
         if (!IsSkillPlaying())
         {
-            _currentSkill = CurrentWeapon.LoopBasicAttack();
+            _currentSkill = CurrentWeapon.LoopBasicAttack(true);
+            if (_currentSkill != null)
+            {
+                _isSkillPlaying = true;
+
+            }
+
+            ApplySkillEffect();
+
+        }
+
+    }
+
+    public void ActivateHeavySkill()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.LoopHeavyAttack();
+            if (_currentSkill != null)
+            {
+                _isSkillPlaying = true;
+
+            }
+
+            ApplySkillEffect();
+        }
+    }
+    
+    public void ActivateProjectile()
+    {
+        if (CurrentWeapon == null) return;
+        if (!IsSkillPlaying())
+        {
+            _currentSkill = CurrentWeapon.GetProjectile();
             if (_currentSkill != null)
             {
                 _isSkillPlaying = true;
@@ -154,37 +235,27 @@ public class EnemyController : Controller, IPoolable
         }
     }
 
-    public bool CheckSkill()
-    {
-        if (_currentSkill == null) return false;
-        if (_currentSkill.VFXInfo.UsingIndicator)
-        {
-            SpawnVFXEvent.Trigger(transform, "ATTACK_WARNING", new VFXInfo(new Vector3(0, .9f, 0), transform.rotation, Vector3.one, true, false));
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool IsSkillNull()
-    {
-        return _currentSkill == null;
-    }
     
-    public void PlaySkillEffect()
-    {
-        SpawnVFXEvent.Trigger(transform, _currentSkill.AnimationID, _currentSkill.VFXInfo);
-        ApplySkillEffect();
-    }
+
+    
+    
+    
 
     protected override void OnParried(float duration)
     {
         base.OnParried(duration);
-        Stun(duration);
+        Posture.IncreaseStun(UnityEngine.Random.Range(_currentSkill.Damage/10, _currentSkill.Damage/10 + _currentSkill.Damage/20), duration);
+        Movement.KnockBack(AttackPoint, 3500);
+        Stun(.2f, null, false);
+        ParrySuccessEvent.Trigger();
         CameraShakeEvent.Trigger(new LightShake());
     }
+
+    private void OnStunned(float duration)
+    {
+        Stun(duration, null, true);
+    }
+
 
     public override void StartAttackCooldown()
     {
@@ -196,26 +267,45 @@ public class EnemyController : Controller, IPoolable
 
     private void DamageFeedback(DamageInfo info)
     {
-        if (!_brain.IsTank)
+        Movement.KnockBack(info.Instigator.transform, 500);
+    }
+
+    public override void Stun(float duration, Action onComplete = null, bool forceStun = false)
+    {
+        if (IsStunImmune && !forceStun) return;
+        _persistentVFXHelper.StopPersistentEffects();
+        _brain.Stun(duration, onComplete);
+
+        if(!AnimationStateMachine.IsInStaggerState())
+            AnimationStateMachine.SwitchState(AnimationStateType.Stagger);
+        if (_currentStunDuration.Approx(0))
         {
-            Stun(.1f, () => Movement.KnockBack(info.Instigator.transform, 500));
+            _currentStunDuration = duration;
+            _stunTween = Tween.Delay(duration).OnComplete(() =>
+            {
+                AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+                _currentStunDuration = 0;
+            });
         }
         else
         {
-            Movement.KnockBack(info.Instigator.transform, 500);
+            if(_currentStunDuration < duration)
+            {
+                _currentStunDuration = duration;
+                _stunTween.Stop();
+                _stunTween = Tween.Delay(duration).OnComplete(() =>
+                {
+                    AnimationStateMachine.SwitchState(AnimationStateType.Idle);
+                    _canRotate = true;
+                    _currentStunDuration = 0;
+                });
+            }
         }
-    }
 
-    public override void Stun(float duration, Action onComplete = null)
-    {
-        if (IsStunImmune) return;
-        _persistentVFXHelper.StopPersistentEffects();
-        _brain.Stun(duration, onComplete);
-        AnimationStateMachine.SwitchState(AnimationStateType.Stagger);
-        _staggerTween = Tween.Delay(duration).OnComplete(() =>
+        if( duration >= 1)
         {
-            AnimationStateMachine.SwitchState(AnimationStateType.Idle);
-        });
+            CurrentWeapon.ResetCombo();
+        }
     }
 
     public void OnPoolGet()
@@ -231,19 +321,17 @@ public class EnemyController : Controller, IPoolable
         _matController.ResetDissolve();
     }
 
-    public void ToggleRotationAnimEvent(int toggle)
+    public void ToggleRotation(bool toggle)
     {
-        if (toggle == 0)
-        {
-            _canRotate = true;
-        }
-        else
-        {
-            _canRotate = false;
-        }
+        _canRotate = toggle;
 
     }
-    
+
+    public void SpawnContinuousAOEAnimEvent(float skillDuration)
+    {
+        SpawnContinuousAOEEvent.Trigger(_currentSkill, AttackPoint, skillDuration, gameObject, _attackableMask);
+    }
+
     public void OnDeath(DamageInfo info)
     {
         _persistentVFXHelper.StopPersistentEffects();
@@ -252,5 +340,16 @@ public class EnemyController : Controller, IPoolable
         Movement.CanMove = false;
         _canRotate = false;
         gameObject.layer = LayerMask.NameToLayer("Corpse");
+    }
+
+    public override void ApplyStats()
+    {
+        base.ApplyStats();
+        Energy.ApplyStats(Stats);
+        if(Stats is EnemyStatsSO enemyStats)
+        {
+            Posture?.ApplyStats(enemyStats.StunThreshold);
+        }
+        
     }
 }

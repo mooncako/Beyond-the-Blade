@@ -34,8 +34,8 @@ ModelImporter:
       name: SpearAttack02
       takeName: Take 001
       internalID: 1827226128182048838
-      firstFrame: 38
-      lastFrame: 55
+      firstFrame: 34
+      lastFrame: 43
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -55,13 +55,6 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.30722532
-        functionName: DamageAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
       - time: 0.08702621
         functionName: ParryColliderOpenAnimEvent
         data: 
@@ -69,9 +62,16 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.30058724
+      - time: 0.93933475
         functionName: ParryColliderCloseAnimEvent
         data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.96945626
+        functionName: DamageAnimEvent
+        data: HOSOSHI_ATTACK_02_ANIM
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0

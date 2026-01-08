@@ -1,0 +1,211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcc82362ad5662847b32093b40128fd0, type: 3}
+  m_Name: -2_Runes
+  m_EditorClassIdentifier: 
+  id: -2
+  webName: Runes
+  skillNodes:
+  - webGraphID: 1
+    id: 0
+    position: {x: -400, y: 0}
+    connections: []
+    skill: {fileID: 11400000, guid: 0aea56ecd9a1ff143836258e6fad32ac, type: 2}
+    hasConnectionDependency: 0
+  - webGraphID: 1
+    id: 1
+    position: {x: 400, y: 0}
+    connections: []
+    skill: {fileID: 11400000, guid: 4f9f4d3e2e2cf6941977b27cf54e2a5b, type: 2}
+    hasConnectionDependency: 0
+  - webGraphID: 1
+    id: 2
+    position: {x: 0, y: 400}
+    connections: []
+    skill: {fileID: 11400000, guid: b49df3ba8cd69d443b2618d8b6237a27, type: 2}
+    hasConnectionDependency: 0
+  - webGraphID: 1
+    id: 3
+    position: {x: 0, y: -400}
+    connections: []
+    skill: {fileID: 11400000, guid: cb328d62e277e564dbea390c77ff3111, type: 2}
+    hasConnectionDependency: 0
+  - webGraphID: 1
+    id: 4
+    position: {x: -300, y: -800}
+    connections: []
+    skill: {fileID: 11400000, guid: 365c68b3b55ac404bb807eb8eb21887f, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 5
+    position: {x: 300, y: -800}
+    connections: []
+    skill: {fileID: 11400000, guid: 365c68b3b55ac404bb807eb8eb21887f, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 6
+    position: {x: 800, y: 0}
+    connections: []
+    skill: {fileID: 11400000, guid: da7cab0a4661e31488d1145f62d3b5fd, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 7
+    position: {x: -800, y: 0}
+    connections: []
+    skill: {fileID: 11400000, guid: f8e2fcf29a9ee8a448131e57af242254, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 8
+    position: {x: -300, y: 800}
+    connections: []
+    skill: {fileID: 11400000, guid: 365c68b3b55ac404bb807eb8eb21887f, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 9
+    position: {x: 300, y: 800}
+    connections: []
+    skill: {fileID: 11400000, guid: 365c68b3b55ac404bb807eb8eb21887f, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 10
+    position: {x: 300, y: 300}
+    connections: []
+    skill: {fileID: 11400000, guid: 3f9787ab454ada6458bc8c99f41850db, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 11
+    position: {x: -1300, y: 700}
+    connections: []
+    skill: {fileID: 11400000, guid: ac2c1c62b2b48e8428f49a46313f14fb, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 12
+    position: {x: 1300, y: -700}
+    connections: []
+    skill: {fileID: 11400000, guid: 275e6028f773d984d85d6c5ea1455c79, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 13
+    position: {x: -300, y: 300}
+    connections: []
+    skill: {fileID: 11400000, guid: cb328d62e277e564dbea390c77ff3111, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 14
+    position: {x: 300, y: -300}
+    connections: []
+    skill: {fileID: 11400000, guid: 0aea56ecd9a1ff143836258e6fad32ac, type: 2}
+    hasConnectionDependency: 1
+  - webGraphID: 1
+    id: 15
+    position: {x: -300, y: -300}
+    connections: []
+    skill: {fileID: 11400000, guid: 4f9f4d3e2e2cf6941977b27cf54e2a5b, type: 2}
+    hasConnectionDependency: 1
+  connections:
+  - webGraphID: 1
+    outputNodeID: 4
+    inputNodeID: 3
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 3
+    inputNodeID: 5
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 1
+    inputNodeID: 6
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 7
+    inputNodeID: 0
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 8
+    inputNodeID: 2
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 2
+    inputNodeID: 9
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 6
+    inputNodeID: 10
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 10
+    inputNodeID: 9
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 7
+    inputNodeID: 13
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 13
+    inputNodeID: 8
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 5
+    inputNodeID: 14
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 14
+    inputNodeID: 6
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 15
+    inputNodeID: 7
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 4
+    inputNodeID: 15
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 0
+  - webGraphID: 1
+    outputNodeID: 11
+    inputNodeID: 13
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 1
+  - webGraphID: 1
+    outputNodeID: 14
+    inputNodeID: 12
+    outputPortIndex: 0
+    inputPortIndex: 0
+    styleIndex: 2
+  dataset: {fileID: 11400000, guid: 3b9218b42033fac438371d52d26db267, type: 2}

@@ -1,0 +1,72 @@
+.field {
+    margin-top: 4px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
+.unlinked {
+    background-color: rgb(255, 0, 0);
+}
+
+.linked {
+    background-color: rgb(0, 255, 0);
+}
+
+.blank {
+    background-color: rgb(35, 35, 35);
+    text-shadow: 0 0 0 rgba(41, 41, 41, 0);
+}
+
+.skillRoot {
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 6px;
+    margin-left: 0;
+    height: 57px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.skillContent {
+    padding-top: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    flex-direction: row;
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.skillIcon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.skillLabel {
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    margin-left: 6px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    white-space: normal;
+    flex-wrap: wrap;
+    text-overflow: ellipsis;
+    max-width: 50%;
+    flex-grow: 1;
+}

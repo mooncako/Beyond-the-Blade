@@ -1,6 +1,7 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Goap.Runtime;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class StrafeTargetSensor : LocalTargetSensorBase, IInjectable
 {
@@ -19,7 +20,7 @@ public class StrafeTargetSensor : LocalTargetSensorBase, IInjectable
 
     public override ITarget Sense(IActionReceiver agent, IComponentReference references, ITarget existingTarget)
     {
-        Vector3 position = GetNextPosition(agent, references.GetCachedComponent<EnemyController>().CurrentTargetTransform.position);
+        Vector3 position = GetNextPosition(agent, references.GetCachedComponent<EnemyController>().CurrentTargetTransform.position, references.GetCachedComponent<EnemyController>().Agent);
         if (position != Vector3.zero)
         {
             return new PositionTarget(position);
@@ -36,8 +37,8 @@ public class StrafeTargetSensor : LocalTargetSensorBase, IInjectable
 
     }
 
-    private Vector3 GetNextPosition(IActionReceiver agent, Vector3 center)
+    private Vector3 GetNextPosition(IActionReceiver agent, Vector3 center, NavMeshAgent navMeshAgent)
     {
-        return CircleCalculation.RandomPointOnCircleFromEdge(center, agent.Transform.position, _strafeSensorConfig.Distance, maxAttempts: 40);
+        return CircleCalculation.RandomPointOnCircleFromEdgeSafe(center, agent.Transform.position, _strafeSensorConfig.Distance, navMeshAgent, maxAttempts: 40);
     }
 }

@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/StylishEsper/SkillWeb/Scripts/Editor/PlayerWebLinkEditor.uss?fileID=7433441132597879392&amp;guid=13e7c4f4086a62f4fa7e170f3197a27a&amp;type=3#PlayerWebLinkEditor" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:TextField picking-mode="Ignore" label="Web Name" name="WebNameField" class="field" />
+        <ui:Toggle label="Link Automatically" name="LinkAutomaticallyField" class="field" />
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 8px; height: 22px;">
+            <ui:VisualElement style="flex-grow: 0; justify-content: center; padding-top: 2px; padding-right: 5px; padding-bottom: 2px; padding-left: 5px; border-left-color: rgb(28, 28, 28); border-right-color: rgb(28, 28, 28); border-top-color: rgb(28, 28, 28); border-bottom-color: rgb(28, 28, 28); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 0; border-left-width: 1px; min-width: 60px; flex-direction: row; background-color: rgba(157, 157, 157, 0.1);">
+                <ui:VisualElement name="LinkedIndicator" class="unlinked" style="flex-grow: 0; width: 6px; height: 6px; flex-shrink: 0; border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; align-self: center; transition-duration: 0.5s; transition-property: background-color;" />
+                <ui:Label tabindex="-1" text="Unlinked" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LinkLabel" style="-unity-text-align: middle-center; margin-left: 8px; margin-top: 4px; margin-right: 0; margin-bottom: 4px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:ScrollView horizontal-scroller-visibility="Hidden" style="height: 300px; background-color: rgba(0, 0, 0, 0.3); border-left-color: rgb(28, 28, 28); border-right-color: rgb(28, 28, 28); border-top-color: rgb(28, 28, 28); border-bottom-color: rgb(28, 28, 28); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;">
+            <ui:VisualElement name="SkillContent" style="flex-grow: 1; margin-top: 4px; margin-right: 4px; margin-bottom: 4px; margin-left: 4px;" />
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

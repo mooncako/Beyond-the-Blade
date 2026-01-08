@@ -52,7 +52,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 10
+  m_Radius: 50
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5061576002193979983
 MonoBehaviour:
@@ -177,6 +177,8 @@ GameObject:
   - component: {fileID: 1533565009318372079}
   - component: {fileID: -5065653963056194739}
   - component: {fileID: 5162801268352820049}
+  - component: {fileID: 4452831636959043059}
+  - component: {fileID: 9068663134935549255}
   m_Layer: 8
   m_Name: Hososhi
   m_TagString: Untagged
@@ -340,6 +342,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 8598472387181080395}
   <NavMeshAgent>k__BackingField: {fileID: 3926015235504465536}
   <CapsuleCollider>k__BackingField: {fileID: 4191314971418661949}
+  _isHumanoid: 1
 --- !u!114 &6264934010256777202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,8 +463,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Movement>k__BackingField: {fileID: 3418439087366576687}
   _animationStateMachine: {fileID: -5065653963056194739}
+  _animator: {fileID: 6233116775064065168}
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
+  Energy: {fileID: 4452831636959043059}
   <Vision>k__BackingField: {fileID: 2515946022723110387}
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
@@ -486,6 +491,9 @@ MonoBehaviour:
     AnimationID: 
     Cooldown: 0
     Damage: 0
+    DamageTickTime: 0
+    WeaponType: 0
+    DamageType: 0
     SkillRange:
       AreaType: 0
       X: 0
@@ -512,9 +520,12 @@ MonoBehaviour:
   IsStunImmune: 0
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 6241636426159505488}
+  Agent: {fileID: 3926015235504465536}
+  Posture: {fileID: 9068663134935549255}
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
+  _currentStunDuration: 0
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,14 +658,13 @@ MonoBehaviour:
   _agent: {fileID: 6420835648838700933}
   _provider: {fileID: 7628456600314050354}
   _goap: {fileID: 2652234782751008208}
-  _playerSensor: {fileID: 5061576002193979983}
+  _combatRangeSensor: {fileID: 5061576002193979983}
   _attackSensorConfigSO: {fileID: 11400000, guid: 344e4cfc96751e9449f7cdf938f5cc67, type: 2}
   _movement: {fileID: 3418439087366576687}
+  _controller: {fileID: 4962864894029839974}
   _spanwDelay: 0.5
-  IsTank: 1
   Personality: 0
-  _isPlayerInRange: 0
-  _isPlayerDetected: 0
+  _isPlayerInCombatRange: 0
 --- !u!114 &3351228736764815849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -752,10 +762,33 @@ MonoBehaviour:
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
   _owner: {fileID: 4962864894029839974}
+  _displayStates: -673
   _idleState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleIsDamageable
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -776,6 +809,28 @@ MonoBehaviour:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleIsDamageable
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -795,7 +850,7 @@ MonoBehaviour:
     _isDirectionalMovement: 1
     _parameterSmoothTime: 0.15
     _stopProximity: 0.1
-    _characterMovement: {fileID: 0}
+    _characterMovement: {fileID: 3418439087366576687}
     UpperBodyClip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -805,10 +860,64 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 1827226128182048838, guid: 4bb4416193a8b2949a691e1cec79722d, type: 3}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleIsDamageable
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -825,10 +934,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -845,10 +966,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -865,10 +998,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -885,10 +1030,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -905,10 +1062,34 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleIsDamageable
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -929,6 +1110,16 @@ MonoBehaviour:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -949,6 +1140,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
     Owner: {fileID: 0}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -987,6 +1188,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PersistentEffects: []
+--- !u!114 &4452831636959043059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxEnergy: 10
+  _energy: 0
+  OnExecution:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEnergyGain:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStatsUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &9068663134935549255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b712d2bb0af172d48b825431ff3be938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentStunValue: 0
+  _stunned: 0
+  StunThreshold: 7
+  OnStunned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStunUpdate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7372532104410388795
 GameObject:
   m_ObjectHideFlags: 0
@@ -1122,7 +1367,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.114358306
+      value: 0.11435835
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1379,7 +1624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c77f12c21edfbd642819241408d4ab15, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.12316668
+      value: 0.123166665
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c77f12c21edfbd642819241408d4ab15, type: 3}
       propertyPath: m_LocalRotation.w

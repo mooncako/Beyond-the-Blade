@@ -5,22 +5,22 @@ public struct LevelRandomizeCompleteEvent
 {
     public EventStateType State;
     public Transform SpawnPoint;
-    public EnemySpawnPos[] EnemySpawnPositions;
+    public LevelSystem Level;
 
-    public LevelRandomizeCompleteEvent(EventStateType state, Transform spawnPoint, EnemySpawnPos[] enemySpawnPositions)
+    public LevelRandomizeCompleteEvent(EventStateType state, Transform spawnPoint, LevelSystem level)
     {
         State = state;
         SpawnPoint = spawnPoint;
-        EnemySpawnPositions = enemySpawnPositions;
+        Level = level;
     }
 
     private static LevelRandomizeCompleteEvent e;
 
-    public static void Trigger(EventStateType state, Transform spawnPoint, EnemySpawnPos[] enemySpawnPositions)
+    public static void Trigger(EventStateType state, Transform spawnPoint, LevelSystem level)
     {
         e.State = state;
         e.SpawnPoint = spawnPoint;
-        e.EnemySpawnPositions = enemySpawnPositions;
+        e.Level = level;
         MMEventManager.TriggerEvent(e);
     }
 }

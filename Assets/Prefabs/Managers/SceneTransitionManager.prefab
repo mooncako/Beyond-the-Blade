@@ -48,9 +48,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transitionVolume: {fileID: 1495043265437472129}
   _transitionMaterial: {fileID: 2100000, guid: 1e7b3d96f2e376d419cc030e8b4c68fe, type: 2}
+  _transitionBackMaterial: {fileID: 2100000, guid: 8ca870ba1f79e8f45aed567a2f4d1848, type: 2}
+  _strengthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.0590987
+      outSlope: 3.0590987
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.123188436
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _startStrength: 0
-  _endStrength: 6
-  _duration: 0.5
+  _duration: 1
+  _isTransitioning: 0
 --- !u!114 &1495043265437472129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,23 +83,24 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 162051183469332586}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26d6499a6bd256e47b859377446493a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsGlobal: 1
   fadeRadius: 0
-  priority: 0
+  priority: -2
   customPasses:
-  - rid: 520470345427976303
+  - rid: 8438268202098098346
+  - rid: 8438268202098098347
   injectionPoint: 2
   m_TargetCamera: {fileID: 0}
   useTargetCamera: 0
   references:
     version: 2
     RefIds:
-    - rid: 520470345427976303
+    - rid: 8438268202098098346
       type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:
         m_Name: Custom Pass
@@ -85,6 +111,20 @@ MonoBehaviour:
         passFoldout: 0
         m_Version: 0
         fullscreenPassMaterial: {fileID: 2100000, guid: 1e7b3d96f2e376d419cc030e8b4c68fe, type: 2}
+        materialPassIndex: 0
+        materialPassName: Custom Pass 0
+        fetchColorBuffer: 0
+    - rid: 8438268202098098347
+      type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
+      data:
+        m_Name: Custom Pass
+        enabled: 0
+        targetColorBuffer: 0
+        targetDepthBuffer: 0
+        clearFlags: 0
+        passFoldout: 0
+        m_Version: 0
+        fullscreenPassMaterial: {fileID: 2100000, guid: 8ca870ba1f79e8f45aed567a2f4d1848, type: 2}
         materialPassIndex: 0
         materialPassName: Custom Pass 0
         fetchColorBuffer: 0

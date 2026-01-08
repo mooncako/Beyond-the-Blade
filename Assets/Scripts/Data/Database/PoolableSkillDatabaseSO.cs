@@ -18,6 +18,10 @@ public class PoolableSkillDatabaseSO : ScriptableObject
     [Button]
     public void UpdateProbabilities()
     {
+        NormalSkills.Clear();
+        RareSkills.Clear();
+        EpicSkills.Clear();
+        LegendarySkills.Clear();
 
         for (int i = 0; i < Skills.Count; i++)
         {

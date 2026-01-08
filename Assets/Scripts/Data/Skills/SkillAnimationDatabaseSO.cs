@@ -6,5 +6,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SkillAnimationDatabase", menuName = "BytheBlade/SkillAnimationDatabase")]
 public class SkillAnimationDatabaseSO : SerializedScriptableObject
 {
-    public Dictionary<string, ClipTransition> SkillAnimDict = new Dictionary<string, ClipTransition>();
+    public Dictionary<string, ClipTransition[]> SkillAnimDict = new Dictionary<string, ClipTransition[]>();
 }

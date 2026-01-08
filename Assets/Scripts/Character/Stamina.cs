@@ -49,6 +49,12 @@ public class Stamina : MonoBehaviour
         return true;
     }
 
+    public void GainStamina(float amount)
+    {
+        _stamina = Mathf.Clamp(_stamina + amount, 0, _maxStamina);
+        OnStaminaGain.Invoke(amount);
+    }
+
     public bool CanConsumeStamina(float amount)
     {
         return _stamina >= amount;

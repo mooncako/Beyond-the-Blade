@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667bd03725a384d4ab1ecf0aeb10d25e, type: 3}
+  m_Name: HeadlessSamuraiDirectionalMovement
+  m_EditorClassIdentifier: 
+  _idle: {fileID: 1827226128182048838, guid: ce63507fc3e25e34693dc040adbc37c9, type: 3}
+  _runForward: {fileID: 7400000, guid: 5865157bf10971741bc253292d64f966, type: 2}
+  _runBackward: {fileID: -203655887218126122, guid: 81530735d2ef9b147980921d78db2081, type: 3}
+  _strafeLeft: {fileID: -203655887218126122, guid: 74818c5e9f917274d80a14275529db54, type: 3}
+  _strafeRight: {fileID: -203655887218126122, guid: 5af2828e5ec8c7d4b9ac75c2f9cde880, type: 3}
+  _fadeDuration: 0.25

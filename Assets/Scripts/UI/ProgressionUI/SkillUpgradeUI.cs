@@ -16,6 +16,7 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _modifierDescText;
     [SerializeField, BoxGroup("References")] private TextMeshProUGUI _modifierSlotText;
     [SerializeField, BoxGroup("References")] private Image _modifierRarity;
+    [SerializeField, BoxGroup("References")] private Image _modifierIcon;
     [SerializeField, BoxGroup("References")] private ModifierDatabaseSO _skillModifierDatabase;
     [SerializeField, BoxGroup("References")] private Button _discardButton;
 
@@ -53,6 +54,7 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
             _modifierNameText.text = _skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Name;
             _modifierDescText.text = _skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Description;
             _modifierRarity.color = RarityUtil.GetRarityColor(_skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Rarity);
+            _modifierIcon.sprite = _skillModifierDatabase.SkillModifierDict[e.Modifier.Item1].Icon;
             switch (e.Modifier.Item2)
             {
                 case UpgradeSlotType.Start:

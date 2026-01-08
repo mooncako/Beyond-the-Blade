@@ -52,7 +52,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 50
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5061576002193979983
 MonoBehaviour:
@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 3418439087366576687}
   - component: {fileID: 6264934010256777202}
   - component: {fileID: 2640687494238271249}
+  - component: {fileID: 4340876250974595323}
   - component: {fileID: 2515946022723110387}
   - component: {fileID: 6233116775064065168}
   - component: {fileID: 8394953832475103564}
@@ -293,6 +294,8 @@ GameObject:
   - component: {fileID: 7909133857443672914}
   - component: {fileID: 4932681416210436455}
   - component: {fileID: 5162801268352820049}
+  - component: {fileID: 2277548745975462270}
+  - component: {fileID: 1916950120843236822}
   m_Layer: 8
   m_Name: Lantern
   m_TagString: Untagged
@@ -456,6 +459,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 8598472387181080395}
   <NavMeshAgent>k__BackingField: {fileID: 3926015235504465536}
   <CapsuleCollider>k__BackingField: {fileID: 4191314971418661949}
+  _isHumanoid: 1
 --- !u!114 &6264934010256777202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +508,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   IsDamageable: 1
+--- !u!114 &4340876250974595323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fb7bc0cab29c04baa105cf2018c9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxEnergy: 10
+  _energy: 0
+  OnExecution:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEnergyGain:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStatsUpdated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2515946022723110387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,8 +603,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Movement>k__BackingField: {fileID: 3418439087366576687}
   _animationStateMachine: {fileID: 4932681416210436455}
+  _animator: {fileID: 6233116775064065168}
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
+  Energy: {fileID: 4340876250974595323}
   <Vision>k__BackingField: {fileID: 2515946022723110387}
   <AOEApplier>k__BackingField: {fileID: 7909133857443672914}
   <AttackPoint>k__BackingField: {fileID: 1560458968914386357}
@@ -602,6 +631,9 @@ MonoBehaviour:
     AnimationID: 
     Cooldown: 0
     Damage: 0
+    DamageTickTime: 0
+    WeaponType: 0
+    DamageType: 0
     SkillRange:
       AreaType: 0
       X: 0
@@ -628,9 +660,12 @@ MonoBehaviour:
   IsStunImmune: 0
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 3011173388331776581}
+  Agent: {fileID: 3926015235504465536}
+  Posture: {fileID: 1916950120843236822}
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
+  _currentStunDuration: 0
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -711,14 +746,13 @@ MonoBehaviour:
   _agent: {fileID: 6420835648838700933}
   _provider: {fileID: 7628456600314050354}
   _goap: {fileID: 2652234782751008208}
-  _playerSensor: {fileID: 5061576002193979983}
+  _combatRangeSensor: {fileID: 5061576002193979983}
   _attackSensorConfigSO: {fileID: 11400000, guid: cfbe3a311fea9814a806689341af2304, type: 2}
   _movement: {fileID: 3418439087366576687}
+  _controller: {fileID: 4962864894029839974}
   _spanwDelay: 0.2
-  IsTank: 0
   Personality: 0
-  _isPlayerInRange: 0
-  _isPlayerDetected: 0
+  _isPlayerInCombatRange: 0
 --- !u!114 &5667961458422474831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -799,10 +833,21 @@ MonoBehaviour:
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
   _owner: {fileID: 4962864894029839974}
+  _displayStates: -745
   _idleState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -823,6 +868,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -852,10 +907,76 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 1827226128182048838, guid: ea566cf350bf4954cb3a62e3a30ac318, type: 3}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _attackActionState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleRotation
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 4962864894029839974}
+          m_TargetAssemblyTypeName: EnemyController, Assembly-CSharp
+          m_MethodName: ToggleRotation
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -872,10 +993,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -892,10 +1025,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -912,10 +1057,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -932,10 +1089,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -952,10 +1121,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -976,6 +1157,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 4932681416210436455}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.114999995
       _Speed: 1
@@ -996,6 +1187,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
     Owner: {fileID: 0}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1034,6 +1235,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PersistentEffects: []
+--- !u!114 &2277548745975462270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76788a8e35ad0fa428b47d9308537aab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Distance: 0
+--- !u!114 &1916950120843236822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b712d2bb0af172d48b825431ff3be938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentStunValue: 0
+  _stunned: 0
+  StunThreshold: 0
+  OnStunned:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStunUpdate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &972372032365803414
 PrefabInstance:
   m_ObjectHideFlags: 0

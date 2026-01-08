@@ -41,6 +41,11 @@ public class Vision : MonoBehaviour
         return true;
     }
 
+    public bool TestTargetVisibility(int team)
+    {
+        return GetVisibleTargets(team).Count > 0;
+    }
+
     public List<Targetable> GetVisibleTargets(int team)
     {
         List<Targetable> targets = new List<Targetable>();

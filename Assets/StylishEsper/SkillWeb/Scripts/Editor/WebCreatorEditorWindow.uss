@@ -1,0 +1,366 @@
+GridBackground {
+    --line-color: rgba(193, 196, 192, 0.02);
+    --thick-line-color: rgba(193, 196, 192, 0.04);
+    --spacing: 20;
+}
+
+.webList {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    background-color: rgba(60, 60, 60, 0);
+}
+
+.itemRoot {
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    height: 40px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 6px;
+    margin-left: 0;
+}
+
+.itemContent {
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    flex-direction: row;
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.itemLabel {
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    flex-wrap: wrap;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.paginationButton {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    -unity-background-image-tint-color: rgb(100, 100, 100);
+    transition-duration: 0.2s;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 0;
+    margin-right: 4px;
+    margin-bottom: 0;
+    margin-left: 4px;
+}
+
+.paginationButton:hover {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.paginationButton:active {
+    -unity-background-image-tint-color: rgb(118, 207, 255);
+}
+
+.skillRoot {
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 6px;
+    margin-left: 0;
+    height: 50px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.skillContent {
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    flex-direction: row;
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.skillIcon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.skillLabel {
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.dependantField {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    background-color: rgba(60, 60, 60, 0.9);
+    border-top-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-top-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    border-bottom-width: 1px;
+    flex-grow: 1;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    left: -150px;
+    top: 49px;
+    width: 150px;
+}
+
+.coreRoot {
+    width: 50px;
+    height: 50px;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+.positionField {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    background-color: rgba(60, 60, 60, 0.9);
+    border-top-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-top-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    border-bottom-width: 1px;
+    flex-grow: 1;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    left: -150px;
+    top: 28px;
+    width: 150px;
+}
+
+.hideFieldsButton {
+    position: absolute;
+    width: 21px;
+    height: 30px;
+    left: -21px;
+    top: -1px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+}
+
+.hiddenIcon {
+    background-image: url("project://database/Assets/StylishEsper/SkillWeb/Editor/Icons/left_icon.png?fileID=2800000&guid=7cfbf676d9a06dc49baf34609e82b07a&type=3#left_icon");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.5);
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.visibleIcon {
+    background-image: url("project://database/Assets/StylishEsper/SkillWeb/Editor/Icons/right_icon.png?fileID=2800000&guid=6a8490a5115c53046a77e4cb3bd3f512&type=3#right_icon");
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.5);
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.idLabel {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    background-color: rgba(60, 60, 60, 0.9);
+    border-top-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-top-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    border-bottom-width: 1px;
+    flex-grow: 0;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    top: -19px;
+    left: -1px;
+}
+
+.filterRoot {
+    left: auto;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    height: 22px;
+    -unity-text-align: middle-left;
+    justify-content: center;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+    overflow: hidden;
+    width: 50%;
+    white-space: normal;
+}
+
+.dependencyCountField {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    background-color: rgba(60, 60, 60, 0.9);
+    border-top-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-top-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    border-bottom-width: 1px;
+    flex-grow: 1;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    left: -150px;
+    top: 67px;
+    width: 150px;
+}
+
+.dependencyCountToMaxedField {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    background-color: rgba(60, 60, 60, 0.9);
+    border-top-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-top-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    border-bottom-width: 1px;
+    flex-grow: 1;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    left: -150px;
+    top: 88px;
+    width: 150px;
+}
+
+.unity-integer-field__label {
+    margin-right: -16px;
+}
+
+.maxLvlLabel {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    background-color: rgba(60, 60, 60, 0.9);
+    border-top-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-top-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    border-bottom-width: 1px;
+    flex-grow: 0;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    position: absolute;
+    top: 100%;
+    left: -1px;
+}

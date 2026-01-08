@@ -18,6 +18,8 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
         public float Cooldown;
         public float Damage;
 
+        public string WeaponType;   // NEW
+
         public string AreaType;
         public float RangeX;
         public float RangeY;
@@ -110,7 +112,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
 
         EditorGUILayout.HelpBox(
             "Pulls data from the 'PlayerSkills' tab and updates selected PlayerSkillsSO assets.\n" +
-            "Expected columns: Key, AnimationID, Cooldown, Damage, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs.\n" +
+            "Expected columns: Key, AnimationID, Cooldown, Damage, WeaponType, AreaType, RangeX, RangeY, RangeZ, Rarity, TargetSelf, IsTargetedGroundAOE, Buffs, Debuffs, Name, Description.\n" +
             "Lists use semicolons; escape literal semicolons as \\;.",
             MessageType.Info);
     }
@@ -151,18 +153,25 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                     .Where(r => !string.IsNullOrWhiteSpace(r.Key))
                     .ToDictionary(r => r.Key, r => r);
 
-                int updated = 0, created = 0;
+                int updated = 0, created = 0, removed = 0;
+
                 foreach (var so in _sources.Where(s => s != null))
                 {
                     bool dirty = false;
+
+                    // Track which keys already exist in the SO.
+                    // Anything left in here after applying the sheet will be deleted.
+                    var existingKeys = new HashSet<string>(so.SkillDict.Keys);
 
                     foreach (var kv in map)
                     {
                         var key = kv.Key;
                         var r = kv.Value;
 
-                        // ---- NOTE ----
-                        // Change 'PlayerSkillDict' to your actual dictionary/property name if different
+                        // If this key exists already, we keep it by removing from existingKeys set.
+                        existingKeys.Remove(key);
+
+                        // Ensure skill exists
                         if (!so.SkillDict.TryGetValue(key, out var skill))
                         {
                             skill = new Skill();
@@ -177,11 +186,22 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         skill.TargetSelf = r.TargetSelf;
                         skill.IsTargetedGroundAOE = r.IsTargetedGroundAOE;
 
+                        // WeaponType enum ------------- NEW
+                        var weaponStr = (r.WeaponType ?? "").Trim();
+                        if (Enum.TryParse<WeaponType>(weaponStr, true, out var weaponType))
+                        {
+                            skill.WeaponType = weaponType;
+                        }
+                        else if (!string.IsNullOrEmpty(weaponStr))
+                        {
+                            Debug.LogWarning($"[SheetSync] Unknown WeaponType '{r.WeaponType}' for Key '{key}'");
+                        }
+
                         // Rarity enum
                         var rarityStr = (r.Rarity ?? "").Trim();
                         if (Enum.TryParse<Rarity>(rarityStr, true, out var rarity))
                             skill.Rarity = rarity;
-                        else
+                        else if (!string.IsNullOrEmpty(rarityStr))
                             Debug.LogWarning($"[SheetSync] Unknown Rarity '{r.Rarity}' for Key '{key}'");
 
                         // Range & AreaType
@@ -191,7 +211,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         var areaStr = (r.AreaType ?? "").Trim();
                         if (Enum.TryParse<SkillAreaType>(areaStr, true, out var area))
                             skill.SkillRange.AreaType = area;
-                        else
+                        else if (!string.IsNullOrEmpty(areaStr))
                             Debug.LogWarning($"[SheetSync] Unknown AreaType '{r.AreaType}' for Key '{key}'");
 
                         skill.SkillRange.X = r.RangeX;
@@ -202,11 +222,23 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                         skill.Buffs = ParsePairs(r.Buffs);
                         skill.Debuffs = ParsePairs(r.Debuffs);
 
-                        skill.Name        = r.Name ?? "";
+                        skill.Name = r.Name ?? "";
                         skill.Description = r.Description ?? "";
 
                         dirty = true;
                         updated++;
+                    }
+
+                    // Delete any skills that are NOT present in the sheet
+                    if (existingKeys.Count > 0)
+                    {
+                        foreach (var keyToRemove in existingKeys)
+                        {
+                            so.SkillDict.Remove(keyToRemove);
+                            removed++;
+                        }
+
+                        dirty = true;
                     }
 
                     if (dirty)
@@ -214,8 +246,9 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
                 }
 
                 AssetDatabase.SaveAssets();
-                Debug.Log($"[SheetSync] PULL OK (Player). Updated: {updated}, Created: {created}");
-                EditorUtility.DisplayDialog("PULL", $"Updated: {updated}\nCreated: {created}", "OK");
+                Debug.Log($"[SheetSync] PULL OK (Player). Updated: {updated}, Created: {created}, Removed: {removed}");
+                EditorUtility.DisplayDialog("PULL",
+                    $"Updated: {updated}\nCreated: {created}\nRemoved: {removed}", "OK");
             }
             catch (Exception ex)
             {
@@ -225,6 +258,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
         });
     }
 
+
     private static List<string> SplitList(string s)
     {
         if (string.IsNullOrEmpty(s)) return new List<string>();
@@ -233,6 +267,7 @@ public class PlayerSkillsSheetSyncWindow : EditorWindow
             parts[i] = parts[i].Replace("\\;", ";");
         return parts;
     }
+
     private static List<(string, float)> ParsePairs(string s)
     {
         var result = new List<(string, float)>();
