@@ -15,6 +15,7 @@ using UnityUtils;
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Vision))]
 [RequireComponent(typeof(AnimancerComponent))]
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(AOEApplier))]
 [RequireComponent(typeof(PersistentVFXHelper))]
 public class Controller : MonoBehaviour

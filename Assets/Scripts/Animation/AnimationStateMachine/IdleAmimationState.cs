@@ -21,6 +21,13 @@ public class IdleAnimationState : AnimationState
         Clip = clip;
     }
 
+    public IdleAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer)
+    {
+        _stateMachine = stateMachine;
+        _animancer = animancer;
+        Key = "Idle";
+    }
+
     public override void OnEnterState()
     {
         base.OnEnterState();

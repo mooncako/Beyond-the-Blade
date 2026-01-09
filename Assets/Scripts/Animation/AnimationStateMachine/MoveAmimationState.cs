@@ -42,6 +42,14 @@ public class MoveAnimationState : AnimationState
         _isDirectionalMovement = false;
     }
 
+    public MoveAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer)
+    {
+        _stateMachine = stateMachine;
+        _animancer = animancer;
+        Key = "Move";
+        _isDirectionalMovement = false;
+    }
+
     public MoveAnimationState(AnimationStateMachine stateMachine, AnimancerComponent animancer, 
         ClipTransition clip, bool isDirectional)
     {

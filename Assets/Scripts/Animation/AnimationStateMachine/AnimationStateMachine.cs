@@ -46,8 +46,16 @@ public class AnimationStateMachine : MonoBehaviour
         if (_animancer == null)
         {
             _animancer = GetComponent<AnimancerComponent>();
-            _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
-            _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
+            if(_locomotionAnimation != null)
+            {
+                _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
+                _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
+            }
+            else
+            {
+                _idleState = new IdleAnimationState(this, _animancer);
+                _moveState = new MoveAnimationState(this, _animancer);
+            }
             _attackActionState = new ActionAnimationState(this, _animancer, "Attack");
             _parryActionState = new ActionAnimationState(this, _animancer, "Parry");
             _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
@@ -65,8 +73,16 @@ public class AnimationStateMachine : MonoBehaviour
     private void ApplyChanges()
     {
         _animancer = GetComponent<AnimancerComponent>();
-        // _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
-        // _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
+        if (_locomotionAnimation != null)
+        {
+            _idleState = new IdleAnimationState(this, _animancer, _locomotionAnimation.Idle);
+            _moveState = new MoveAnimationState(this, _animancer, _locomotionAnimation.Run);
+        }
+        else
+        {
+            _idleState = new IdleAnimationState(this, _animancer);
+            _moveState = new MoveAnimationState(this, _animancer);
+        }
         _attackActionState = new ActionAnimationState(this, _animancer, "Attack");
         _parryActionState = new ActionAnimationState(this, _animancer, "Parry");
         _abilityActionState = new ActionAnimationState(this, _animancer, "Ability");
