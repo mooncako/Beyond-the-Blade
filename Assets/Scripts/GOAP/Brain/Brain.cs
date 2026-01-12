@@ -137,4 +137,9 @@ public class Brain : MonoBehaviour
         _staggerDelayTween.Stop();
         _spawnDelayTween.Stop();
     }
+
+    public void AssignAttackSensorConfig(AttackSensorConfigSO config)
+    {
+        _attackSensorConfigSO = config;
+    }
 }

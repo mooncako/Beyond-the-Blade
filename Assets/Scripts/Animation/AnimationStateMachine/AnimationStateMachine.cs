@@ -522,4 +522,9 @@ public class AnimationStateMachine : MonoBehaviour
 
     public static bool Has(AnimationStateType value, AnimationStateType flag) => (value & flag) == flag; 
 
+    public void AssignModifierDatabase(ModifierDatabaseSO modifierDatabase)
+    {
+        _modifierDatabase = modifierDatabase;
+    }
+
 }

@@ -29,7 +29,7 @@ public class Controller : MonoBehaviour
     [field: SerializeField, FoldoutGroup("Base Reference")] public Energy Energy;
     [field: SerializeField, FoldoutGroup("Base Reference")] public Vision Vision { get; private set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] public AOEApplier AOEApplier { get; private set; }
-    [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; private set; }
+    [field: SerializeField, FoldoutGroup("Base Reference")] public Transform AttackPoint { get; set; }
     [field: SerializeField, FoldoutGroup("Base Reference")] protected Weapon[] _weapons;
     [field: SerializeField, FoldoutGroup("Base Reference")] protected PersistentVFXHelper _persistentVFXHelper;
     [SerializeField, FoldoutGroup("Base Reference")] protected ParryCollider _parryCollider;
@@ -302,6 +302,12 @@ public class Controller : MonoBehaviour
     public virtual void Stun(float duration, Action onComplete = null, bool forceStun = false)
     {
         
+    }
+
+    public void AssignStatsSO(Stats stats)
+    {
+        Stats = stats;
+        ApplyStats();
     }
 
 }

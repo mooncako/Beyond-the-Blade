@@ -13,7 +13,7 @@ public class Weapon : MonoBehaviour
 
     [field: SerializeField, BoxGroup("Data")] private SkillAnimationDatabaseSO _animationDatabase;
     [SerializeField, BoxGroup("Data")] public SkillsSO SkillDatabase;
-    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkillSO;
+    [SerializeField, BoxGroup("Data")] public AvailableSkillSO WeaponSkill;
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, Skill> SkillDict = new Dictionary<string, Skill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<string, PlayableSkill> AvailableSkills { get; private set; } = new Dictionary<string, PlayableSkill>();
     [field: SerializeField, BoxGroup("Skills")] public Dictionary<AvailableSkillType, List<string>> WeaponSkillDict = new Dictionary<AvailableSkillType, List<string>>();
@@ -75,9 +75,9 @@ public class Weapon : MonoBehaviour
 
     public void RefreshAvailableWeaponSkills()
     {
-        foreach (var key in WeaponSkillSO.SkillDict.Keys)
+        foreach (var key in WeaponSkill.SkillDict.Keys)
         {
-            List<string> list = WeaponSkillSO.SkillDict[key].Clone();
+            List<string> list = WeaponSkill.SkillDict[key].Clone();
             if (!WeaponSkillDict.ContainsKey(key))
                 WeaponSkillDict.Add(key, list);
             else
@@ -85,12 +85,6 @@ public class Weapon : MonoBehaviour
         }
 
         RefreshAvailableSkills();
-    }
-
-    [Button]
-    private void SetupAnimEvents()
-    {
-
     }
 
     public Skill LoopBasicAttack(bool useCombo = false)
@@ -411,6 +405,13 @@ public class Weapon : MonoBehaviour
         RefreshAvailableWeaponSkills();
         AvailableSkills.OrderBy(kvp => kvp.Value.BaseWeight);
         UniversalAttackModifiers.Clear();
+    }
+
+    public void AssignDatabase(SkillAnimationDatabaseSO animationDatabase, SkillsSO skillDatabase, AvailableSkillSO weaponSkill)
+    {
+        _animationDatabase = animationDatabase;
+        SkillDatabase = skillDatabase;
+        WeaponSkill = weaponSkill;
     }
 
 }
