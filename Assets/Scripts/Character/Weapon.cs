@@ -133,7 +133,7 @@ public class Weapon : MonoBehaviour
             
         }
 
-        foreach (string key in WeaponSkillDict[AVAILABLESKILLKEY.Attack])
+        foreach (string key in WeaponSkillDict[AvailableSkillType.Attack])
         {
             if (!AvailableSkills[key].IsInCooldown)
                 if (SkillDict.ContainsKey(AvailableSkills[key].SkillId) &&

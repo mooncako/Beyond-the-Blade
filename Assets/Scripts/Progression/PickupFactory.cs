@@ -46,7 +46,7 @@ public class PickupFactory : MonoBehaviour,
         for (int i = 0; i < _poolableSkillDatabase.NormalSkills.Count; i++)
         {
             _normalSkills.Add(new PoolableSkill(_poolableSkillDatabase.NormalSkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack].Contains(_normalSkills[i].SkillId))
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_normalSkills[i].SkillId))
             {
                 _normalSkills[i].CanAppear = false;
             }
@@ -55,7 +55,7 @@ public class PickupFactory : MonoBehaviour,
         for (int i = 0; i < _poolableSkillDatabase.RareSkills.Count; i++)
         {
             _rareSkills.Add(new PoolableSkill(_poolableSkillDatabase.RareSkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack].Contains(_rareSkills[i].SkillId))
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_rareSkills[i].SkillId))
             {
                 _rareSkills[i].CanAppear = false;
             }
@@ -64,7 +64,7 @@ public class PickupFactory : MonoBehaviour,
         for (int i = 0; i < _poolableSkillDatabase.EpicSkills.Count; i++)
         {
             _epicSkills.Add(new PoolableSkill(_poolableSkillDatabase.EpicSkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack].Contains(_epicSkills[i].SkillId))
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_epicSkills[i].SkillId))
             {
                 _epicSkills[i].CanAppear = false;
             }
@@ -73,7 +73,7 @@ public class PickupFactory : MonoBehaviour,
         for (int i = 0; i < _poolableSkillDatabase.LegendarySkills.Count; i++)
         {
             _legendarySkills.Add(new PoolableSkill(_poolableSkillDatabase.LegendarySkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack].Contains(_legendarySkills[i].SkillId))
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_legendarySkills[i].SkillId))
             {
                 _legendarySkills[i].CanAppear = false;
             }

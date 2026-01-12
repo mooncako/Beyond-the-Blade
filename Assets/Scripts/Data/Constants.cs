@@ -44,17 +44,6 @@ public static class LIGHTING
     public const float MaxAppliedBrightness = 40f;
 }
 
-public static class AVAILABLESKILLKEY
-{
-    public const int Attack = 0;
-    public const int Parry = 1;
-    public const int Ability = 2;
-    public const int Execution = 3;
-    public const int Dash = 4;
-    public const int Projectile = 5;
-    public const int HeavyAttack = 6;
-}
-
 public static class RARITYCOLOR
 {
     public static readonly Color Normal = new Color(198f / 255f, 250f / 255f, 162f / 255f);
