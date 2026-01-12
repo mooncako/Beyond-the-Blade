@@ -92,9 +92,9 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
     private void AssignData(Weapon weapon, (string, UpgradeSlotType) modifier)
     {
         _attackSlot.AssignName("Attack", "");
-        _parrySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Parry][0]);
-        _dashSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Dash][0]);
-        _executionSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]).Name, weapon.WeaponSkillDict[AVAILABLESKILLKEY.Execution][0]);
+        _parrySlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AvailableSkillType.Parry][0]).Name, weapon.WeaponSkillDict[AvailableSkillType.Parry][0]);
+        _dashSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AvailableSkillType.Dash][0]).Name, weapon.WeaponSkillDict[AvailableSkillType.Dash][0]);
+        _executionSlot.AssignName(weapon.GetSkill(weapon.WeaponSkillDict[AvailableSkillType.Execution][0]).Name, weapon.WeaponSkillDict[AvailableSkillType.Execution][0]);
 
         _attackSlot.AssignModifier(weapon, modifier);
         _parrySlot.AssignModifier(weapon, modifier);

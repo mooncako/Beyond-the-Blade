@@ -105,9 +105,9 @@ public class AbilitySelectionUI : MonoBehaviour,
             _swapPanel.blocksRaycasts = true;
             _swapPanel.interactable = true;
 
-            for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count; i++)
+            for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count; i++)
             {
-                _abilitySwapUIs[i].AssignData(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][i]], i);
+                _abilitySwapUIs[i].AssignData(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability][i]], i);
             }
         }
 

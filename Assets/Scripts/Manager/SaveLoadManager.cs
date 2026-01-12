@@ -41,7 +41,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
 
         if (File.Exists($"{DIRECTORY.SavePath}{e.SaveName}.save"))
         {
-            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+            List<Dictionary<AvailableSkillType, List<string>>> playerWeaponSkills = new List<Dictionary<AvailableSkillType, List<string>>>();
 
             for (int i = 0; i < PlayerWeaponSkills.Count; i++)
             {
@@ -65,7 +65,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         }
         else
         {
-            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+            List<Dictionary<AvailableSkillType, List<string>>> playerWeaponSkills = new List<Dictionary<AvailableSkillType, List<string>>>();
 
             for (int i = 0; i < DefaultWeaponSkills.Count; i++)
             {
@@ -120,7 +120,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
 
         if (File.Exists($"{DIRECTORY.SavePath}Save01.save"))
         {
-            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+            List<Dictionary<AvailableSkillType, List<string>>> playerWeaponSkills = new List<Dictionary<AvailableSkillType, List<string>>>();
 
             for (int i = 0; i < PlayerWeaponSkills.Count; i++)
             {
@@ -134,7 +134,7 @@ public class SaveLoadManager : MMSingleton<SaveLoadManager>,
         }
         else
         {
-            List<Dictionary<int, List<string>>> playerWeaponSkills = new List<Dictionary<int, List<string>>>();
+            List<Dictionary<AvailableSkillType, List<string>>> playerWeaponSkills = new List<Dictionary<AvailableSkillType, List<string>>>();
 
             for (int i = 0; i < DefaultWeaponSkills.Count; i++)
             {

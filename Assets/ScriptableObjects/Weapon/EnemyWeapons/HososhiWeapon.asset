@@ -23,12 +23,18 @@ MonoBehaviour:
     SerializationNodes:
     - Name: SkillDict
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Collections.Generic.List`1[[System.String,
+      Data: 0|System.Collections.Generic.Dictionary`2[[AvailableSkillType, Assembly-CSharp],[System.Collections.Generic.List`1[[System.String,
         mscorlib]], mscorlib]], mscorlib
     - Name: comparer
       Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
-        mscorlib]], mscorlib
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[AvailableSkillType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
     - Name: 
       Entry: 8
       Data: 

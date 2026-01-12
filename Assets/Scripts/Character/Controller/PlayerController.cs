@@ -202,23 +202,23 @@ public class PlayerController : Controller,
 
     public void OnMMEvent(SkillSwapEvent e)
     {
-        CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
+        CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
     }
     public void OnMMEvent(AbilitySwapEvent e)
     {
-        CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][e.Index] = e.SkillId;
+        CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability][e.Index] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
         NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, true, CurrentWeapon.SkillDict[e.SkillId]);
     }
 
     public void OnMMEvent(AddNewAbilityEvent e)
     {
-        if (CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count < LIMIT.MaxAbilityCount)
+        if (CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count < LIMIT.MaxAbilityCount)
         {
-            CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Add(e.SkillId);
+            CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Add(e.SkillId);
             CurrentWeapon.RefreshAvailableSkills();
-            NewAbilityCallbackEvent.Trigger(e.SkillId, CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count - 1, true, CurrentWeapon.SkillDict[e.SkillId]);
+            NewAbilityCallbackEvent.Trigger(e.SkillId, CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count - 1, true, CurrentWeapon.SkillDict[e.SkillId]);
         }
         else
         {

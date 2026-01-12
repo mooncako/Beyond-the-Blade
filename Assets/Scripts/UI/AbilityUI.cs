@@ -71,9 +71,9 @@ public class AbilityUI : MonoBehaviour,
     [Button]
     private void UpdateIcons()
     {
-        for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count; i++)
+        for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count; i++)
         {
-            _abilityIcons[i].AssignIcon(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][i]].Icon);
+            _abilityIcons[i].AssignIcon(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability][i]].Icon);
         }
     }
 
