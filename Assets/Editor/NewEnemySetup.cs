@@ -4,26 +4,27 @@ using Animancer;
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Runtime;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 public class NewEnemySetup : EditorWindow
 {
     private Vector2 _scroll;
-    private GameObject _model;
-    private GameObject _attackPoint;
-    private string _enemyName = "";
-    private PersonalityType _personalityType;
-    private Vector3 _attackPointOffset = new Vector3(0, .9f, .25f);
-    private Vector3 _playerSensorOffset = new Vector3(0, .9f, 0f);
-    private Vector3 _parryColliderOffset = new Vector3(0, .9f, 0f);
-    private Vector3 _characterUIOffset = new Vector3(0, 2.4f, 0f);
-    private EnemyStatsSO _enemyStatsSO;
-    private AttackSensorConfigSO _attackSensorConfigSO;
-    private StrafeSensorConfigSO _strafeSensorConfigSO;
-    private AvailableSkillSO _availableSkillSO;
-    private ModifierDatabaseSO _modifierDatabaseSO;
-    private SkillAnimationDatabaseSO _skillAnimationDatabaseSO;
-    private EnemySkillsSO _enemySkillsSO;
+    [SerializeField] private GameObject _model;
+    [SerializeField] private GameObject _attackPoint;
+    [SerializeField] private string _enemyName = "";
+    [SerializeField] private PersonalityType _personalityType;
+    [SerializeField] private Vector3 _attackPointOffset = new Vector3(0, .9f, .25f);
+    [SerializeField] private Vector3 _playerSensorOffset = new Vector3(0, .9f, 0f);
+    [SerializeField] private Vector3 _parryColliderOffset = new Vector3(0, .9f, 0f);
+    [SerializeField] private Vector3 _characterUIOffset = new Vector3(0, 2.4f, 0f);
+    [SerializeField] private EnemyStatsSO _enemyStatsSO;
+    [SerializeField] private AttackSensorConfigSO _attackSensorConfigSO;
+    [SerializeField] private StrafeSensorConfigSO _strafeSensorConfigSO;
+    [SerializeField] private AvailableSkillSO _availableSkillSO;
+    [SerializeField] private ModifierDatabaseSO _modifierDatabaseSO;
+    [SerializeField] private SkillAnimationDatabaseSO _skillAnimationDatabaseSO;
+    [SerializeField] private EnemySkillsSO _enemySkillsSO;
 
     void OnGUI()
     {
@@ -37,13 +38,13 @@ public class NewEnemySetup : EditorWindow
 
         _scroll = EditorGUILayout.BeginScrollView(_scroll);
         GUILayout.Space(8);
-        
 
-        if(newModel != _model)
+
+        if (newModel != _model)
         {
             _model = newModel;
 
-            if(_model != null && string.IsNullOrWhiteSpace(_enemyName))
+            if (_model != null && string.IsNullOrWhiteSpace(_enemyName))
             {
                 _enemyName = _model.name;
             }
@@ -80,7 +81,7 @@ public class NewEnemySetup : EditorWindow
                 _characterUIOffset
             );
 
-#region Enemy Stats
+            #region Enemy Stats
             GUILayout.Space(8);
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -147,9 +148,9 @@ public class NewEnemySetup : EditorWindow
 
             }
 
-            
-#endregion
-#region AI Configs
+
+            #endregion
+            #region AI Configs
             GUILayout.Space(8);
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -170,46 +171,48 @@ public class NewEnemySetup : EditorWindow
                         }
                     }
                 }
-                
 
-                if (GUILayout.Button("New", GUILayout.MaxWidth(80)))
+                using (new EditorGUI.DisabledScope(_attackSensorConfigSO != null))
                 {
-                    const string configsFolder = "Assets/ScriptableObjects/AI/Configs";
-                    string newConfigsFolder = $"{configsFolder}/{_enemyName}";
-                    bool createdThisCall = false;
-
-                    if(!AssetDatabase.IsValidFolder(newConfigsFolder))
+                    if (GUILayout.Button("New", GUILayout.MaxWidth(80)))
                     {
-                        Directory.CreateDirectory(newConfigsFolder);
-                        AssetDatabase.Refresh();
-                        createdThisCall = true;
-                    }
+                        const string configsFolder = "Assets/ScriptableObjects/AI/Configs";
+                        string newConfigsFolder = $"{configsFolder}/{_enemyName}";
+                        bool createdThisCall = false;
 
-                    string path = EditorUtility.SaveFilePanelInProject(
-                        "Save Attack Sensor Config",
-                        $"{_enemyName}AttackSensorConfig",
-                        "asset",
-                        "Specify where to save the new Attack Sensor Config.",
-                        newConfigsFolder
-                    );
-
-                    if(string.IsNullOrWhiteSpace(path))
-                    {
-                        if(createdThisCall)
+                        if (!AssetDatabase.IsValidFolder(newConfigsFolder))
                         {
-                            AssetDatabase.DeleteAsset(newConfigsFolder);
+                            Directory.CreateDirectory(newConfigsFolder);
                             AssetDatabase.Refresh();
+                            createdThisCall = true;
                         }
-                        return;
+
+                        string path = EditorUtility.SaveFilePanelInProject(
+                            "Save Attack Sensor Config",
+                            $"{_enemyName}AttackSensorConfig",
+                            "asset",
+                            "Specify where to save the new Attack Sensor Config.",
+                            newConfigsFolder
+                        );
+
+                        if (string.IsNullOrWhiteSpace(path))
+                        {
+                            if (createdThisCall)
+                            {
+                                AssetDatabase.DeleteAsset(newConfigsFolder);
+                                AssetDatabase.Refresh();
+                            }
+                            return;
+                        }
+
+                        AttackSensorConfigSO newAttackSensorConfigSO = CreateInstance<AttackSensorConfigSO>();
+                        AssetDatabase.CreateAsset(newAttackSensorConfigSO, path);
+                        AssetDatabase.SaveAssets();
+                        AssetDatabase.Refresh();
+
+                        _attackSensorConfigSO = newAttackSensorConfigSO;
+
                     }
-
-                    AttackSensorConfigSO newAttackSensorConfigSO = CreateInstance<AttackSensorConfigSO>();
-                    AssetDatabase.CreateAsset(newAttackSensorConfigSO, path);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-
-                    _attackSensorConfigSO = newAttackSensorConfigSO;
-                    
                 }
             }
 
@@ -233,50 +236,53 @@ public class NewEnemySetup : EditorWindow
                         }
                     }
                 }
-                
 
-                if (GUILayout.Button("New", GUILayout.MaxWidth(80)))
+                using(new EditorGUI.DisabledScope(_strafeSensorConfigSO != null))
                 {
-                    const string configsFolder = "Assets/ScriptableObjects/AI/Configs";
-                    string newConfigsFolder = $"{configsFolder}/{_enemyName}";
-                    bool createdThisCall = false;
-
-                    if(!AssetDatabase.IsValidFolder(newConfigsFolder))
+                    if (GUILayout.Button("New", GUILayout.MaxWidth(80)))
                     {
-                        Directory.CreateDirectory(newConfigsFolder);
-                        AssetDatabase.Refresh();
-                        createdThisCall = true;
-                    }
+                        const string configsFolder = "Assets/ScriptableObjects/AI/Configs";
+                        string newConfigsFolder = $"{configsFolder}/{_enemyName}";
+                        bool createdThisCall = false;
 
-                    string path = EditorUtility.SaveFilePanelInProject(
-                        "Save Strafe Sensor Config",
-                        $"{_enemyName}StrafeSensorConfig",
-                        "asset",
-                        "Specify where to save the new Strafe Sensor Config.",
-                        newConfigsFolder
-                    );
-
-                    if(string.IsNullOrWhiteSpace(path))
-                    {
-                        if(createdThisCall)
+                        if (!AssetDatabase.IsValidFolder(newConfigsFolder))
                         {
-                            AssetDatabase.DeleteAsset(newConfigsFolder);
+                            Directory.CreateDirectory(newConfigsFolder);
                             AssetDatabase.Refresh();
+                            createdThisCall = true;
                         }
-                        return;
+
+                        string path = EditorUtility.SaveFilePanelInProject(
+                            "Save Strafe Sensor Config",
+                            $"{_enemyName}StrafeSensorConfig",
+                            "asset",
+                            "Specify where to save the new Strafe Sensor Config.",
+                            newConfigsFolder
+                        );
+
+                        if (string.IsNullOrWhiteSpace(path))
+                        {
+                            if (createdThisCall)
+                            {
+                                AssetDatabase.DeleteAsset(newConfigsFolder);
+                                AssetDatabase.Refresh();
+                            }
+                            return;
+                        }
+
+                        StrafeSensorConfigSO newStrafeSensorConfigSO = CreateInstance<StrafeSensorConfigSO>();
+                        AssetDatabase.CreateAsset(newStrafeSensorConfigSO, path);
+                        AssetDatabase.SaveAssets();
+                        AssetDatabase.Refresh();
+
+                        _strafeSensorConfigSO = newStrafeSensorConfigSO;
+
                     }
-
-                    StrafeSensorConfigSO newStrafeSensorConfigSO = CreateInstance<StrafeSensorConfigSO>();
-                    AssetDatabase.CreateAsset(newStrafeSensorConfigSO, path);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-
-                    _strafeSensorConfigSO = newStrafeSensorConfigSO;
-                    
                 }
+                
             }
-#endregion
-#region Skills
+            #endregion
+            #region Skills
             GUILayout.Space(8);
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -297,47 +303,50 @@ public class NewEnemySetup : EditorWindow
                         }
                     }
                 }
-                
 
-                if (GUILayout.Button("New", GUILayout.MaxWidth(80)))
+                using (new EditorGUI.DisabledScope(_availableSkillSO != null))
                 {
-                    const string skillsFolder = "Assets/ScriptableObjects/Weapon/EnemyWeapons";
-                    string newSkillsFolder = $"{skillsFolder}";
-                    bool createdThisCall = false;
-
-                    if(!AssetDatabase.IsValidFolder(newSkillsFolder))
+                    if (GUILayout.Button("New", GUILayout.MaxWidth(80)))
                     {
-                        Directory.CreateDirectory(newSkillsFolder);
-                        AssetDatabase.Refresh();
-                        createdThisCall = true;
-                    }
+                        const string skillsFolder = "Assets/ScriptableObjects/Weapon/EnemyWeapons";
+                        string newSkillsFolder = $"{skillsFolder}";
+                        bool createdThisCall = false;
 
-                    string path = EditorUtility.SaveFilePanelInProject(
-                        "Save Available Skill SO",
-                        $"{_enemyName}Weapon",
-                        "asset",
-                        "Specify where to save the new Available Skill SO.",
-                        newSkillsFolder
-                    );
-
-                    if(string.IsNullOrWhiteSpace(path))
-                    {
-                        if(createdThisCall)
+                        if (!AssetDatabase.IsValidFolder(newSkillsFolder))
                         {
-                            AssetDatabase.DeleteAsset(newSkillsFolder);
+                            Directory.CreateDirectory(newSkillsFolder);
                             AssetDatabase.Refresh();
+                            createdThisCall = true;
                         }
-                        return;
+
+                        string path = EditorUtility.SaveFilePanelInProject(
+                            "Save Available Skill SO",
+                            $"{_enemyName}Weapon",
+                            "asset",
+                            "Specify where to save the new Available Skill SO.",
+                            newSkillsFolder
+                        );
+
+                        if (string.IsNullOrWhiteSpace(path))
+                        {
+                            if (createdThisCall)
+                            {
+                                AssetDatabase.DeleteAsset(newSkillsFolder);
+                                AssetDatabase.Refresh();
+                            }
+                            return;
+                        }
+
+                        AvailableSkillSO newAvailableSkillSO = CreateInstance<AvailableSkillSO>();
+                        AssetDatabase.CreateAsset(newAvailableSkillSO, path);
+                        AssetDatabase.SaveAssets();
+                        AssetDatabase.Refresh();
+
+                        _availableSkillSO = newAvailableSkillSO;
+
                     }
-
-                    AvailableSkillSO newAvailableSkillSO = CreateInstance<AvailableSkillSO>();
-                    AssetDatabase.CreateAsset(newAvailableSkillSO, path);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-
-                    _availableSkillSO = newAvailableSkillSO;
-                    
                 }
+                
             }
 
             GUILayout.Space(8);
@@ -393,64 +402,12 @@ public class NewEnemySetup : EditorWindow
             EditorGUILayout.HelpBox("Can't find modifier database at 'Assets/ScriptableObjects/Database/SkillModifierDatabase.asset'", MessageType.Error);
         }
 
-        
+
         GUILayout.Space(8);
 
-        if (GUILayout.Button("Setup New Enemy"))
+        if (GUILayout.Button("Generate Required Scripts"))
         {
-            CreateEnemy();
-        }
-
-        EditorGUILayout.EndScrollView();
-    }
-#region Creation Logic
-    private void CreateEnemy()
-    {
-        if (_model == null)
-        {
-            EditorUtility.DisplayDialog("Missing Model", "Please assign a model for the enemy.", "OK");
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(_enemyName))
-        {
-            EditorUtility.DisplayDialog("Missing Name", "Please enter a name for the enemy.", "OK");
-            return;
-        }
-
-        if (_attackSensorConfigSO == null || _availableSkillSO == null || _enemyStatsSO == null || _strafeSensorConfigSO == null || _modifierDatabaseSO == null)
-        {
-            EditorUtility.DisplayDialog("Incomplete Setup", "Please ensure all required Scriptable Objects are assigned.", "OK");
-            return;
-        }
-
-        const string prefabFolder = "Assets/Prefabs/Enemies";
-        if(!AssetDatabase.IsValidFolder(prefabFolder))
-        {
-            Directory.CreateDirectory(prefabFolder);
-            AssetDatabase.Refresh();
-        }
- 
-        GameObject root = new GameObject(_enemyName);
-        Undo.RegisterCreatedObjectUndo(root, "Create Enemy (Temp)");
-
-#region Setup Child
-        GameObject modelinstance = (GameObject)PrefabUtility.InstantiatePrefab(_model);
-        Undo.RegisterCreatedObjectUndo(modelinstance, "Create Enemy Model (Temp)");
-        modelinstance.name = "Model";
-        modelinstance.transform.SetParent(root.transform, false);
-        modelinstance.transform.localPosition = Vector3.zero;
-        modelinstance.transform.localRotation = Quaternion.identity;
-        modelinstance.transform.localScale = Vector3.one;
-
-
-        GameObject agent = new GameObject("Agent");
-        Undo.RegisterCreatedObjectUndo(agent, "Create Enemy Agent (Temp)");
-        agent.transform.SetParent(root.transform, false);
-        agent.transform.localPosition = Vector3.zero;
-        agent.transform.localRotation = Quaternion.identity;
-        agent.transform.localScale = Vector3.one;
-        DerivedComponentGenerator.CreateDerivedScriptOnly(typeof(CapabilityFactory), $"{_enemyName}CapabilityFactory", "Assets/Scripts/GOAP/Factory/", null, 
+            DerivedComponentGenerator.CreateDerivedScriptOnly(typeof(CapabilityFactory), $"{_enemyName}CapabilityFactory", "Assets/Scripts/GOAP/Factory/", null,
 $@"
 using CrashKonijn.Agent.Runtime;
 using CrashKonijn.Goap.Core;
@@ -489,10 +446,10 @@ public class {_enemyName}CapabilityFactory : CapabilityFactory
         base.BuildSensors(builder);
     }}
 }}
-"       );
+");
 
-        CreateComponent(agent, typeof(AgentTypeFactoryBase), $"{_enemyName}Agent", "Assets/Scripts/GOAP/Agent", null,
-$@"
+            DerivedComponentGenerator.CreateDerivedScriptOnly(typeof(AgentTypeFactoryBase), $"{_enemyName}Agent", "Assets/Scripts/GOAP/Agent", null,
+    $@"
 using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.Runtime;
 
@@ -506,6 +463,171 @@ public class {_enemyName}Agent : AgentTypeFactoryBase
     }}
 }}
 ");
+            DerivedComponentGenerator.CreateDerivedScriptOnly(typeof(Brain), $"{_enemyName}Brain", "Assets/Scripts/GOAP/Brain", null,
+    $@"
+using CrashKonijn.Agent.Core;
+using CrashKonijn.Goap.GenTest;
+using UnityEngine;
+
+public class {_enemyName}Brain : Brain
+{{
+    protected override void OnValidate()
+    {{
+        base.OnValidate();
+    }}
+
+    protected override void OnEnable()
+    {{
+        base.OnEnable();
+    }}
+
+    protected override void OnDisable()
+    {{
+        base.OnDisable();
+    }}
+
+    protected override void Awake()
+    {{
+        if(_provider != null && _goap != null)
+        {{
+            if(_provider.AgentTypeBehaviour == null)
+            {{
+                _provider.AgentType = _goap.GetAgentType(""{_enemyName}"");
+            }}
+        }}
+    }}
+
+    protected override void Start()
+    {{
+        base.Start();
+        _provider.RequestGoal<ChasePlayerGoal>(false);
+    }}
+
+    protected override void OnActionEnd(IAction action)
+    {{
+        if (!gameObject.activeSelf) return;
+        if(_isPlayerInCombatRange)
+        {{
+            switch (Personality)
+            {{
+                case PersonalityType.Aggressive:
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                    break;
+                case PersonalityType.Cautious:
+                    _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
+                    break;
+                case PersonalityType.Evasive:
+                    _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
+                    break;
+            }}
+        }}
+        else
+        {{
+            _provider.RequestGoal<ChasePlayerGoal>();
+        }}
+    }}
+
+    protected override void OnPlayerEnterCombatRange(Transform player)
+    {{
+        _provider.ClearGoal();
+        switch(Personality)
+        {{
+            case PersonalityType.Aggressive:
+                _provider.RequestGoal<KillPlayerGoal, StrafeGoal>();
+                break;
+            case PersonalityType.Cautious:
+                _provider.RequestGoal<KillPlayerCautiousGoal, StrafeGoal>();
+                break;
+            case PersonalityType.Evasive:
+                _provider.RequestGoal<KillPlayerGoal, StrafeGoal>(); // TODO: Add evasive goal
+                break;
+        }}
+        
+        _isPlayerInCombatRange = true;
+    }}
+
+    protected override void OnPlayerExitCombatRange(Vector3 lastKnownPosition)
+    {{
+        _provider.ClearGoal();
+        _provider.RequestGoal<ChasePlayerGoal>();
+        _isPlayerInCombatRange = false;
+    }}
+}}
+        "
+            );
+
+            CompilationPipeline.RequestScriptCompilation();
+
+        }
+
+
+        if (GUILayout.Button("Setup New Enemy"))
+        {
+            CreateEnemy();
+        }
+
+
+        EditorGUILayout.EndScrollView();
+    }
+    #region Creation Logic
+    private void CreateEnemy()
+    {
+        if (_model == null)
+        {
+            EditorUtility.DisplayDialog("Missing Model", "Please assign a model for the enemy.", "OK");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_enemyName))
+        {
+            EditorUtility.DisplayDialog("Missing Name", "Please enter a name for the enemy.", "OK");
+            return;
+        }
+
+        if (_attackSensorConfigSO == null || _availableSkillSO == null || _enemyStatsSO == null || _strafeSensorConfigSO == null || _modifierDatabaseSO == null)
+        {
+            EditorUtility.DisplayDialog("Incomplete Setup", "Please ensure all required Scriptable Objects are assigned.", "OK");
+            return;
+        }
+
+        if (TypeFinder.FindType($"{_enemyName}CapabilityFactory") == null ||
+            TypeFinder.FindType($"{_enemyName}Agent") == null ||
+            TypeFinder.FindType($"{_enemyName}Brain") == null)
+        {
+            EditorUtility.DisplayDialog("Missing Scripts", "Please generate the required scripts before setting up the enemy.", "OK");
+            return;
+        }
+
+        const string prefabFolder = "Assets/Prefabs/Enemies";
+        if (!AssetDatabase.IsValidFolder(prefabFolder))
+        {
+            Directory.CreateDirectory(prefabFolder);
+            AssetDatabase.Refresh();
+        }
+
+        GameObject root = new GameObject(_enemyName);
+        Undo.RegisterCreatedObjectUndo(root, "Create Enemy (Temp)");
+
+        #region Setup Child
+        GameObject modelinstance = (GameObject)PrefabUtility.InstantiatePrefab(_model);
+        Undo.RegisterCreatedObjectUndo(modelinstance, "Create Enemy Model (Temp)");
+        modelinstance.name = "Model";
+        modelinstance.transform.SetParent(root.transform, false);
+        modelinstance.transform.localPosition = Vector3.zero;
+        modelinstance.transform.localRotation = Quaternion.identity;
+        modelinstance.transform.localScale = Vector3.one;
+
+
+        GameObject agent = new GameObject("Agent");
+        Undo.RegisterCreatedObjectUndo(agent, "Create Enemy Agent (Temp)");
+        agent.transform.SetParent(root.transform, false);
+        agent.transform.localPosition = Vector3.zero;
+        agent.transform.localRotation = Quaternion.identity;
+        agent.transform.localScale = Vector3.one;
+        agent.AddComponent(TypeFinder.FindType($"{_enemyName}Agent"));
+
+
+
 
         GameObject playerSensor = new GameObject("PlayerSensor");
         Undo.RegisterCreatedObjectUndo(playerSensor, "Create Enemy PlayerSensor (Temp)");
@@ -534,7 +656,7 @@ public class {_enemyName}Agent : AgentTypeFactoryBase
         parryColliderInstance.transform.localRotation = Quaternion.identity;
         parryColliderInstance.transform.localScale = Vector3.one;
 
-#endregion
+        #endregion
 
         AddRootComponents(root); // Adding required components
 
@@ -543,8 +665,8 @@ public class {_enemyName}Agent : AgentTypeFactoryBase
         Weapon weapon = weaponObj.AddComponent<Weapon>();
         weapon.AssignDatabase(_skillAnimationDatabaseSO, _enemySkillsSO, _availableSkillSO);
         string weaponPrefabPath = $"Assets/Prefabs/Weapon/Enemy{_enemyName}Weapon.prefab";
-        weaponPrefabPath = AssetDatabase.GenerateUniqueAssetPath(weaponPrefabPath); 
-        GameObject weaponPrefab =PrefabUtility.SaveAsPrefabAsset(weaponObj, weaponPrefabPath);
+        weaponPrefabPath = AssetDatabase.GenerateUniqueAssetPath(weaponPrefabPath);
+        GameObject weaponPrefab = PrefabUtility.SaveAsPrefabAsset(weaponObj, weaponPrefabPath);
         DestroyImmediate(weaponObj);
         GameObject weaponInstance = (GameObject)PrefabUtility.InstantiatePrefab(weaponPrefab);
         Undo.RegisterCreatedObjectUndo(weaponInstance, "Create Enemy Weapon Instance (Temp)");
@@ -589,84 +711,89 @@ public class {_enemyName}Agent : AgentTypeFactoryBase
         EditorGUIUtility.PingObject(prefabAsset);
         EditorUtility.DisplayDialog("Success", "New enemy setup complete!", "OK");
     }
-#endregion
+    #endregion
 
-#region Helper Methods
+    #region Helper Methods
 
     private void AddRootComponents(GameObject root)
     {
-        if(root.GetComponent<DependencyInjector>() == null)
+        if (root.GetComponent<DependencyInjector>() == null)
         {
             DependencyInjector injector = root.AddComponent<DependencyInjector>();
             injector.AttackSensorConfig = _attackSensorConfigSO;
             injector.StrafeSensorConfig = _strafeSensorConfigSO;
         }
-        if(root.GetComponent<ProactiveControllerBehaviour>() == null)
+        if (root.GetComponent<ProactiveControllerBehaviour>() == null)
         {
             root.AddComponent<ProactiveControllerBehaviour>();
         }
-        if(root.GetComponent<GoapActionProvider>() == null)
+        if (root.GetComponent<GoapActionProvider>() == null)
         {
             root.AddComponent<GoapActionProvider>();
         }
-        if(root.GetComponent<GoapBehaviour>() == null)
+        if (root.GetComponent<GoapBehaviour>() == null)
         {
             GoapBehaviour behavior = root.AddComponent<GoapBehaviour>();
             DependencyInjector injector = root.GetComponent<DependencyInjector>();
             behavior.configInitializer = injector;
         }
-        if(root.GetComponent<AgentBehaviour>() == null)
+        if (root.GetComponent<AgentBehaviour>() == null)
         {
             AgentBehaviour agentBehaviour = root.AddComponent<AgentBehaviour>();
             GoapActionProvider actionProvider = root.GetComponent<GoapActionProvider>();
             agentBehaviour.ActionProviderBase = actionProvider;
         }
-        if(root.GetComponent<AgentMoveBehavior>() == null)
+        if (root.GetComponent<AgentMoveBehavior>() == null)
         {
             root.AddComponent<AgentMoveBehavior>();
         }
 
-        if(root.GetComponent<Vision>() != null)
+        if (root.GetComponent<Vision>() != null)
         {
             root.GetComponent<Vision>().SetupMasks(
                 LayerMask.GetMask("Player", "Corpse"),
                 LayerMask.GetMask("Character", "Corpse")
             );
         }
-        if(root.GetComponent<AnimancerComponent>() != null)
+        if (root.GetComponent<AnimancerComponent>() != null)
         {
             root.GetComponent<AnimancerComponent>().Animator = root.GetComponent<Animator>();
         }
-        if(root.GetComponent<Posture>() == null)
+        if (root.GetComponent<Posture>() == null)
         {
             root.AddComponent<Posture>();
         }
-        if(root.GetComponent<Energy>() == null)
+        if (root.GetComponent<Energy>() == null)
         {
             root.AddComponent<Energy>();
         }
-        if(root.GetComponent<RedirectRootMotionToRigidbody>() == null)
+        if (root.GetComponent<RedirectRootMotionToRigidbody>() == null)
         {
             root.AddComponent<RedirectRootMotionToRigidbody>();
         }
-        if(root.GetComponent<EnemyController>() == null)
+
+        if (root.GetComponent(TypeFinder.FindType($"{_enemyName}Brain")) == null)
         {
-            EnemyController controller = root.AddComponent<EnemyController>();
-            controller.AssignStatsSO(_enemyStatsSO);
-            controller.AttackPoint = _attackPoint.transform;
+            root.AddComponent(TypeFinder.FindType($"{_enemyName}Brain"));
         }
-        CreateComponent(root, typeof(Brain), $"{_enemyName}Brain", "Assets/Scripts/GOAP/Brain");
-        if(root.GetComponent<Brain>() != null)
+
+        var controller = root.GetComponent<EnemyController>();
+        if (controller == null) controller = root.AddComponent<EnemyController>();
+        controller.AssignStatsSO(_enemyStatsSO);
+        controller.AttackPoint = _attackPoint.transform;
+
+
+        if (root.GetComponent<Brain>() != null)
         {
             root.GetComponent<Brain>().Personality = _personalityType;
             root.GetComponent<Brain>().AssignAttackSensorConfig(_attackSensorConfigSO);
         }
-        if(root.GetComponent<AnimationStateMachine>() == null)
+        if (root.GetComponent<AnimationStateMachine>() == null)
         {
             AnimationStateMachine animationStateMachine = root.AddComponent<AnimationStateMachine>();
             animationStateMachine.AssignModifierDatabase(_modifierDatabaseSO);
         }
-        
+
     }
 
     private void CreateComponent(GameObject root, Type derivedType, string className, string folder, string @namespace = null, string script = "")
@@ -688,5 +815,5 @@ public class {_enemyName}Agent : AgentTypeFactoryBase
 
         GetWindow(typeof(NewEnemySetup), false, "New Enemy Setup");
     }
-#endregion
+    #endregion
 }

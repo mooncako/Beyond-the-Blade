@@ -307,7 +307,6 @@ public class Controller : MonoBehaviour
     public void AssignStatsSO(Stats stats)
     {
         Stats = stats;
-        ApplyStats();
     }
 
 }
