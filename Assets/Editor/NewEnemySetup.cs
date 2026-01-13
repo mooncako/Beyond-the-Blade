@@ -560,7 +560,7 @@ public class {_enemyName}Brain : Brain
 
         }
 
-
+        GUILayout.Space(20);
         if (GUILayout.Button("Setup New Enemy"))
         {
             CreateEnemy();
