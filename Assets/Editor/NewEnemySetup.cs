@@ -44,7 +44,7 @@ public class NewEnemySetup : EditorWindow
         {
             _model = newModel;
 
-            if (_model != null && string.IsNullOrWhiteSpace(_enemyName))
+            if (_model != null)
             {
                 _enemyName = _model.name;
             }
