@@ -566,6 +566,15 @@ public class {_enemyName}Brain : Brain
             CreateEnemy();
         }
 
+        GUILayout.Space(20);
+        using(new EditorGUI.DisabledScope(_model == null))
+        {
+            if (GUILayout.Button("Clear"))
+            {
+                ClearFields();
+            }
+        }
+    
 
         EditorGUILayout.EndScrollView();
     }
@@ -715,6 +724,26 @@ public class {_enemyName}Brain : Brain
 
     #region Helper Methods
 
+    private void ClearFields()
+    {
+        _model = null;
+        _attackPoint = null;
+        _enemyName = "";
+        _personalityType = PersonalityType.Aggressive;
+        _attackPointOffset = new Vector3(0, .9f, .25f);
+        _playerSensorOffset = new Vector3(0, .9f, 0f);
+        _parryColliderOffset = new Vector3(0, .9f, 0f);
+        _characterUIOffset = new Vector3(0, 2.4f, 0f);
+        _enemyStatsSO = null;
+        _attackSensorConfigSO = null;
+        _strafeSensorConfigSO = null;
+        _availableSkillSO = null;
+        _modifierDatabaseSO = null;
+        _skillAnimationDatabaseSO = null;
+        _enemySkillsSO = null;
+    }
+
+
     private void AddRootComponents(GameObject root)
     {
         if (root.GetComponent<DependencyInjector>() == null)
@@ -794,18 +823,6 @@ public class {_enemyName}Brain : Brain
             animationStateMachine.AssignModifierDatabase(_modifierDatabaseSO);
         }
 
-    }
-
-    private void CreateComponent(GameObject root, Type derivedType, string className, string folder, string @namespace = null, string script = "")
-    {
-        DerivedComponentGenerator.CreateDerivedAndAddComponent(
-            root,
-            derivedType,
-            className,
-            folder,
-            @namespace,
-            script
-        );
     }
 
 
