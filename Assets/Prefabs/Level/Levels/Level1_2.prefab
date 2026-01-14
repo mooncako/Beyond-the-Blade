@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2154560750089111414}
   - component: {fileID: 4119437450696860020}
   - component: {fileID: 736820936015979706}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LevelMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1105,9 +1105,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 294343454693272879, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
+      propertyPath: SpawnPos
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 294343454693272879, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
       propertyPath: _levelMesh
       value: 
       objectReference: {fileID: 736820936015979706}
+    - target: {fileID: 294343454693272879, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
+      propertyPath: <ExitPositions>k__BackingField.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 294343454693272879, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
+      propertyPath: '<ExitPositions>k__BackingField.Array.data[1]'
+      value: 
+      objectReference: {fileID: 531167884786559144}
     - target: {fileID: 834521523099875384, guid: 6be574ba87bbc6846881569ec006601f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1895,6 +1907,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc53f635a4965a444b583e0b58d65748, type: 3}
+--- !u!114 &531167884786559144 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3437466516304320013, guid: cc53f635a4965a444b583e0b58d65748, type: 3}
+  m_PrefabInstance: {fileID: 2948525100713000613}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 135858e0ff264ca4288054e5b9b79ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4719290298166873368 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7607998624642708413, guid: cc53f635a4965a444b583e0b58d65748, type: 3}

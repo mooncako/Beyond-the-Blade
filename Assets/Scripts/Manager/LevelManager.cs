@@ -184,18 +184,32 @@ public class LevelManager : MMSingleton<LevelManager>,
                 _exitsProbability.ShopExitPercentage = 0;
                 _exitsProbability.RecoveryExitPercentage = 0;
             }
+            else
+            {
+                _exitsProbability.RegularExitPercentage = 0.6f;
+                _exitsProbability.ShopExitPercentage = 0.2f;
+                _exitsProbability.RecoveryExitPercentage = 0.2f;
+            }
 
+            _currentLevelCount++;
+            
             if(IsNextLevelBossRoom())
             {
-                e.Level.SelectSpawnExitLocations(1);
+                e.Level.SelectExitLocations(1);
             }
             else
             {
-                e.Level.SelectSpawnExitLocations(2);
+                e.Level.SelectExitLocations(2);
             }
-            
-            e.Level.CalculateExitTypes(_exitsProbability);
-            _currentLevelCount++;
+
+            if(_currentLevelCount == 3)
+            {
+                e.Level.AssignExitTypes(new List<LevelType>() { LevelType.Shop, LevelType.Recover });
+            }
+            else
+            {
+                e.Level.CalculateExitTypes(_exitsProbability);
+            }
             if (IsNextLevelBossRoom())
             {
                 Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();

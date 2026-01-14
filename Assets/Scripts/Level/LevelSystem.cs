@@ -29,8 +29,8 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -66,8 +66,13 @@ public class LevelSystem : MonoBehaviour
         // Rebuild Navmesh
         // RebuildNavmesh();
 
-        // Select Spawn/Exit Locations
-        // SelectSpawnExitLocations();
+        // Select Spawn Position
+        if (SpawnPositions.IsNullOrEmpty())
+        {
+            return;
+        }
+        int spawnPosIndex = Random.Range(0, SpawnPositions.Length);
+        SpawnPos = SpawnPositions[spawnPosIndex];
 
         Tween.Delay(.01f).OnComplete(() => {
             
@@ -87,7 +92,7 @@ public class LevelSystem : MonoBehaviour
         ExitsLevelType.Clear();
         for (int i = 0; i < ExitPosList.Count; i++)
         {
-            possibilityIndex = Random.Range(0, 1);
+            possibilityIndex = Random.Range(0f, 1f);
             if (possibilityIndex <= exitsProbability.RegularExitPercentage)
             {
                 ExitsLevelType.Add(LevelType.Regular);
@@ -103,17 +108,23 @@ public class LevelSystem : MonoBehaviour
         }
     }
 
-    public void SelectSpawnExitLocations(int exitsAmount)
+    public void AssignExitTypes(List<LevelType> exitTypes)
     {
-        if (SpawnPositions.IsNullOrEmpty())
+        for(int i = 0; i < exitTypes.Count; i++)
         {
-            return;
+            ExitsLevelType.Add(exitTypes[i]);
         }
-        int spawnPosIndex = Random.Range(0, SpawnPositions.Length);
-        SpawnPos = SpawnPositions[spawnPosIndex];
+    }
+
+    public void SelectExitLocations(int exitsAmount)
+    {
 
         if (ExitPositions.IsNullOrEmpty() || exitsAmount > ExitPositions.Length)
         {
+            if(exitsAmount > ExitPositions.Length)
+                Debug.LogError($"{gameObject} Exit amount exceeded, {exitsAmount} exit positions. Available exit positions: {ExitPositions.Length}");
+            else
+                Debug.LogError($"{gameObject} No exit positions found");
             return;
         }
 
