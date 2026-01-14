@@ -515,6 +515,100 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6790eee50f3aa8b4b9ea1b6c2a40a9b4, type: 3}
+--- !u!84 &1025237969
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
+--- !u!1001 &1078874867
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 603448548755864768, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_Name
+      value: PlayerBroadcast
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.9023123
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.9628465
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.5707335
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225427877128512465, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8fedde7d41c111e42bc1b4bcb98e642a, type: 3}
 --- !u!1001 &1185176589
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -823,43 +917,6 @@ MonoBehaviour:
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
   m_ObsoleteContactShadows: 0
---- !u!84 &1633274936
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &217798821855413280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1478,3 +1535,4 @@ SceneRoots:
   - {fileID: 5330437461415134776}
   - {fileID: 217798821855413280}
   - {fileID: 1185176589}
+  - {fileID: 1078874867}

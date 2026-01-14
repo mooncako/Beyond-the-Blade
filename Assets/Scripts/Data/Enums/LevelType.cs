@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum LevelType
 {
-    Reguler,
+    Regular,
     Recover,
     Shop,
     Boss

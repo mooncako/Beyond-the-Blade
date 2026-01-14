@@ -19,6 +19,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("References")] private PickupFactory _pickupFactory;
     [SerializeField, BoxGroup("Settings")] private BiomeType _defaultBiome;
     [SerializeField, BoxGroup("Settings")] private LevelType _defaultLevelType;
+    [SerializeField, BoxGroup("Settings")] private ExitsProbability _exitsProbability;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private BiomeType _currentBiome;
     [SerializeField, HideInInspector] public BiomeType CurrentBiome => _currentBiome;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public LevelType CurrentLevelType;
@@ -26,7 +27,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, HideInInspector] public LevelSystem CurrentLevel => _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentLevelCount = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _currentLevelCount = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
@@ -171,11 +172,29 @@ public class LevelManager : MMSingleton<LevelManager>,
                 return;
             }
 
-            if(_currentLevelCount != 0)
+            if (_currentLevelCount != 0)
             {
                 e.Level.ShiftLevel();
             }
-            e.Level.CalculateExitTypes();
+
+            // Adjust the exit probabilities based on current level and level count
+            if (e.Level.LevelType == LevelType.Recover || e.Level.LevelType == LevelType.Shop)
+            {
+                _exitsProbability.RegularExitPercentage = 1;
+                _exitsProbability.ShopExitPercentage = 0;
+                _exitsProbability.RecoveryExitPercentage = 0;
+            }
+
+            if(IsNextLevelBossRoom())
+            {
+                e.Level.SelectSpawnExitLocations(1);
+            }
+            else
+            {
+                e.Level.SelectSpawnExitLocations(2);
+            }
+            
+            e.Level.CalculateExitTypes(_exitsProbability);
             _currentLevelCount++;
             if (IsNextLevelBossRoom())
             {
@@ -209,7 +228,7 @@ public class LevelManager : MMSingleton<LevelManager>,
 
                     switch(e.Level.ExitsLevelType[i])
                     {
-                        case LevelType.Reguler:
+                        case LevelType.Regular:
                             _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
                             break;
                         case LevelType.Recover:
@@ -244,7 +263,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     {
         switch (CurrentLevelType)
         {
-            case LevelType.Reguler:
+            case LevelType.Regular:
                 _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
                 break;
         }

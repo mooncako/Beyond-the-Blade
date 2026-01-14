@@ -15,10 +15,9 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
 
     [SerializeField, BoxGroup("Settings")] public BiomeType BiomeType;
-    [SerializeField, BoxGroup("Settings"), Range(1, 3)] private int _exitsAmount = 1;
     [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardTypes;
     [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
-    [SerializeField, BoxGroup("Settings")] public ExitsProbability ExitsProbability;
+    public LevelType LevelType => _levelType;
     [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
     [field: SerializeField, BoxGroup("Settings")] public SpawnPos[] SpawnPositions { get; private set; }
     [field: SerializeField, BoxGroup("Settings")] public EnemySpawnPos[] EnemySpawnPositions { get; private set; }
@@ -30,8 +29,8 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
 
 #if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
+    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
 
     [Button(ButtonHeight = 60)]
     private void ApplySetting()
@@ -68,7 +67,7 @@ public class LevelSystem : MonoBehaviour
         // RebuildNavmesh();
 
         // Select Spawn/Exit Locations
-        SelectSpawnExitLocations();
+        // SelectSpawnExitLocations();
 
         Tween.Delay(.01f).OnComplete(() => {
             
@@ -82,18 +81,18 @@ public class LevelSystem : MonoBehaviour
         });
     }
 
-    public void CalculateExitTypes()
+    public void CalculateExitTypes(ExitsProbability exitsProbability)
     {
         float possibilityIndex;
         ExitsLevelType.Clear();
         for (int i = 0; i < ExitPosList.Count; i++)
         {
             possibilityIndex = Random.Range(0, 1);
-            if (possibilityIndex <= ExitsProbability.RegularExitPercentage)
+            if (possibilityIndex <= exitsProbability.RegularExitPercentage)
             {
-                ExitsLevelType.Add(LevelType.Reguler);
+                ExitsLevelType.Add(LevelType.Regular);
             }
-            else if (possibilityIndex <= ExitsProbability.RegularExitPercentage + ExitsProbability.RecoveryExitPercentage)
+            else if (possibilityIndex <= exitsProbability.RegularExitPercentage + exitsProbability.RecoveryExitPercentage)
             {
                 ExitsLevelType.Add(LevelType.Recover);
             }
@@ -104,7 +103,7 @@ public class LevelSystem : MonoBehaviour
         }
     }
 
-    private void SelectSpawnExitLocations()
+    public void SelectSpawnExitLocations(int exitsAmount)
     {
         if (SpawnPositions.IsNullOrEmpty())
         {
@@ -113,19 +112,19 @@ public class LevelSystem : MonoBehaviour
         int spawnPosIndex = Random.Range(0, SpawnPositions.Length);
         SpawnPos = SpawnPositions[spawnPosIndex];
 
-        if (ExitPositions.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length)
+        if (ExitPositions.IsNullOrEmpty() || exitsAmount > ExitPositions.Length)
         {
             return;
         }
 
-        if (_exitsAmount == 1)
+        if (exitsAmount == 1)
         {
             int exitPosIndex = Random.Range(0, ExitPositions.Length);
             ExitPosList.Add(ExitPositions[exitPosIndex]);
         }
-        else if (_exitsAmount > 1)
+        else if (exitsAmount > 1)
         {
-            if (_exitsAmount == ExitPositions.Length)
+            if (exitsAmount == ExitPositions.Length)
             {
                 for (int i = 0; i < ExitPositions.Length; i++)
                 {
@@ -134,7 +133,7 @@ public class LevelSystem : MonoBehaviour
             }
             else
             {
-                List<int> indexes = GenerateRandomIndexes(_exitsAmount, ExitPositions.Length, 0);
+                List<int> indexes = GenerateRandomIndexes(exitsAmount, ExitPositions.Length, 0);
                 for (int i = 0; i < indexes.Count; i++)
                 {
                     ExitPosList.Add(ExitPositions[i]);

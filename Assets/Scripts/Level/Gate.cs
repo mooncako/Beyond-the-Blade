@@ -135,7 +135,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     {
         switch(_levelType)
         {
-            case LevelType.Reguler:
+            case LevelType.Regular:
                 _portalVFX.SetInt("Icon", 0);
                 _portalVFX.SetVector4("IconColor", PORTALCOLOR.Reguler * 20);
                 _portalVFX.SetVector4("VoidColor", PORTALCOLOR.Reguler * 3.4f);
