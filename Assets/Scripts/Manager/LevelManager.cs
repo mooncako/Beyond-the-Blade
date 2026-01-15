@@ -1,9 +1,11 @@
 using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
-using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using System.Linq;
+#endif
 
 public class LevelManager : MMSingleton<LevelManager>,
     MMEventListener<LevelRandomizeCompleteEvent>,
@@ -26,6 +28,10 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
     [SerializeField, HideInInspector] public LevelSystem CurrentLevel => _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
+    [SerializeField, BoxGroup("Debug")] private HashSet<LevelSystem> _instantiatedLevels = new HashSet<LevelSystem>();
+#if UNITY_EDITOR
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelSystem> _instantiatedLevelsList => _instantiatedLevels.ToList();
+#endif
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
     // [SerializeField, BoxGroup("Debug"), ReadOnly] private int _currentLevelCount = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
@@ -107,34 +113,6 @@ public class LevelManager : MMSingleton<LevelManager>,
 
     private void SelectLevel()
     {
-
-        // switch (CurrentLevelType)
-        // {
-        //     case LevelType.Reguler:
-        //         _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
-        //         break;
-        //     case LevelType.Recover:
-        //         _selectedSystemPrefab = PickPossibleLevel(_availableRecoveryLevelPrefabs);
-        //         break;
-        //     case LevelType.Shop:
-        //         _selectedSystemPrefab = PickPossibleLevel(_availableShopLevelPrefabs);
-        //         break;
-        //     case LevelType.Boss:
-        //         switch (CurrentLevelIndex)
-        //         {
-        //             case 4:
-        //                 _selectedSystemPrefab = _bossLevelPrefabs[0];
-        //                 break;
-        //             case 9:
-        //                 _selectedSystemPrefab = _bossLevelPrefabs[1];
-        //                 break;
-        //             case 14:
-        //                 _selectedSystemPrefab = _bossLevelPrefabs[2];
-        //                 break;
-        //         }
-        //         break;
-        // }
-
         _selectedSystemPrefab = PickPossibleLevel(_availableNormalLevelPrefabs);
         
         _currentLevel = Instantiate(_selectedSystemPrefab, Vector3.zero, Quaternion.identity);
@@ -163,7 +141,6 @@ public class LevelManager : MMSingleton<LevelManager>,
         
         if (e.State == EventStateType.OnEventEnd)
         {
-            Debug.Log(e.Level, e.Level.gameObject);
             if(e.Level.LevelIndex == 5)
             {
                 BuildNavMeshEvent.Trigger(false);
@@ -231,6 +208,8 @@ public class LevelManager : MMSingleton<LevelManager>,
 
                 LevelSystem levelSystem = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
                 levelSystem.LevelIndex = e.Level.LevelIndex + 1;
+                _instantiatedLevels.Add(levelSystem);
+                gate.AssignTargetLevel(levelSystem);
             }
             else
             {
@@ -256,6 +235,8 @@ public class LevelManager : MMSingleton<LevelManager>,
 
                     LevelSystem levelSystem = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
                     levelSystem.LevelIndex = e.Level.LevelIndex + 1;
+                    _instantiatedLevels.Add(levelSystem);
+                    gate.AssignTargetLevel(levelSystem);
                 }
             }
         }

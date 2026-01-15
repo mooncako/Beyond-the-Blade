@@ -3,9 +3,12 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Splines;
 using UnityEngine.VFX;
 
-public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
+public class Gate : MonoBehaviour,
+    MMEventListener<GateOpenEvent>,
+    MMEventListener<GateSplineAdjustEvent>
 {
     [SerializeField, BoxGroup("References")] private VisualEffect _portalVFX;
     [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenVFX;
@@ -21,6 +24,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _gateLevel;
     [SerializeField, BoxGroup("Debug")] private ExitPos _exit;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _targetLevel;
 
     private Tween _toriiGenTween;
     private Tween _portalTween;
@@ -48,6 +52,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     void OnEnable()
     {
         this.MMEventStartListening<GateOpenEvent>();
+        this.MMEventStartListening<GateSplineAdjustEvent>();
         _toriiGenVFX.Play();
         
     }
@@ -55,6 +60,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     void OnDisable()
     {
         this.MMEventStopListening<GateOpenEvent>();
+        this.MMEventStopListening<GateSplineAdjustEvent>();
         _toriiGenTween.Stop();
         _portalTween.Stop();
     }
@@ -99,10 +105,24 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
             OpenGate();
     }
 
+    public void OnMMEvent(GateSplineAdjustEvent e)
+    {
+        if(_targetLevel == null) return;
+        if(e.LevelSystem != _targetLevel) return;
+        BezierKnot knot = _exit.GetLastKnot();
+        knot.Position = _exit.SplineContainer.transform.InverseTransformPoint(_targetLevel.SpawnPos.transform.position);
+        _exit.SplineContainer.Spline.SetKnot(_exit.SplineContainer.Spline.Count - 1, knot);
+    }
+
     public void AssignExit(ExitPos exit, LevelSystem gateLevel)
     {
         _exit = exit;
         _gateLevel = gateLevel;
+    }
+
+    public void AssignTargetLevel(LevelSystem targetLevel)
+    {
+        _targetLevel = targetLevel;
     }
 
     [Button]

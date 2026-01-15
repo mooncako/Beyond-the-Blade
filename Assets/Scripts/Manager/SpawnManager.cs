@@ -87,7 +87,10 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         {
             Array.Clear(_enemySpawnPos, 0, _enemySpawnPos.Length);
             _enemySpawnPos = e.EnemySpawnPositions;
-            SetupWaveInfo();
+            Tween.Delay(1.5f).OnComplete(() =>
+            {
+                SetupWaveInfo();
+            });
         }
         
     }
@@ -198,6 +201,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     {
         EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
         spawner.transform.position = AIUtil.GetRandomSpawnPos(_enemySpawnPos);
+        Debug.Log(_enemySpawnPos.Length);
         spawner.StartSpawn();
     }
 

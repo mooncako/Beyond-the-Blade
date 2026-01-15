@@ -228,6 +228,7 @@ public class LevelSystem : MonoBehaviour
         Vector3 shiftDistance = transform.position - SpawnPos.transform.position;
         transform.position += shiftDistance;
         transform.position -= new Vector3(0, 30, 0);
+        GateSplineAdjustEvent.Trigger(this);
     }
 }
     

@@ -20,4 +20,9 @@ public class ExitPos : DrawPos
         
         return SplineContainer.transform.TransformPoint(splineExitPos);
     }
+
+    public BezierKnot GetLastKnot()
+    {
+        return SplineContainer.Spline.ToArray()[SplineContainer.Spline.ToArray().Length - 1];
+    }
 }
