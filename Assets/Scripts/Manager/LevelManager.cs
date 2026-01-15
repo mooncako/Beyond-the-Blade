@@ -27,7 +27,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     [SerializeField, HideInInspector] public LevelSystem CurrentLevel => _currentLevel;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<LevelType> _exitsLevelType = new List<LevelType>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public float CurrentLevelIndex = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _currentLevelCount = 0;
+    // [SerializeField, BoxGroup("Debug"), ReadOnly] private int _currentLevelCount = 0;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _doOnce = true;
 
     [SerializeField, HideInInspector] private bool _isSetupComplete = false;
@@ -103,7 +103,6 @@ public class LevelManager : MMSingleton<LevelManager>,
     private void ResetManager()
     {
         CurrentLevelIndex = 0;
-        _currentLevelCount = 0;
     }
 
     private void SelectLevel()
@@ -164,7 +163,8 @@ public class LevelManager : MMSingleton<LevelManager>,
         
         if (e.State == EventStateType.OnEventEnd)
         {
-            if(_currentLevelCount == 5)
+            Debug.Log(e.Level, e.Level.gameObject);
+            if(e.Level.LevelIndex == 5)
             {
                 BuildNavMeshEvent.Trigger(false);
                 
@@ -172,7 +172,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                 return;
             }
 
-            if (_currentLevelCount != 0)
+            if (e.Level.LevelIndex != 0)
             {
                 e.Level.ShiftLevel();
             }
@@ -191,9 +191,9 @@ public class LevelManager : MMSingleton<LevelManager>,
                 _exitsProbability.RecoveryExitPercentage = 0.2f;
             }
 
-            _currentLevelCount++;
+            // _currentLevelCount++;
             
-            if(IsNextLevelBossRoom())
+            if(IsNextLevelBossRoom(e.Level.LevelIndex))
             {
                 e.Level.SelectExitLocations(1);
             }
@@ -202,7 +202,7 @@ public class LevelManager : MMSingleton<LevelManager>,
                 e.Level.SelectExitLocations(2);
             }
 
-            if(_currentLevelCount == 3)
+            if(e.Level.LevelIndex == 3)
             {
                 e.Level.AssignExitTypes(new List<LevelType>() { LevelType.Shop, LevelType.Recover });
             }
@@ -210,7 +210,7 @@ public class LevelManager : MMSingleton<LevelManager>,
             {
                 e.Level.CalculateExitTypes(_exitsProbability);
             }
-            if (IsNextLevelBossRoom())
+            if (IsNextLevelBossRoom(e.Level.LevelIndex))
             {
                 Gate gate = Instantiate(_gatePrefab, e.Level.ExitPosList[0].transform.position, e.Level.ExitPosList[0].transform.rotation).GetComponentInChildren<Gate>();
                 gate.SetLevelName(SceneManager.GetActiveScene().name, LevelType.Boss);
@@ -229,7 +229,8 @@ public class LevelManager : MMSingleton<LevelManager>,
                         break;
                 }
 
-                Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
+                LevelSystem levelSystem = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[0].GetTeleportExit(), Quaternion.identity);
+                levelSystem.LevelIndex = e.Level.LevelIndex + 1;
             }
             else
             {
@@ -253,7 +254,8 @@ public class LevelManager : MMSingleton<LevelManager>,
                             break;
                     }
 
-                    Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
+                    LevelSystem levelSystem = Instantiate(_selectedSystemPrefab, e.Level.ExitPosList[i].GetTeleportExit(), Quaternion.identity);
+                    levelSystem.LevelIndex = e.Level.LevelIndex + 1;
                 }
             }
         }
@@ -283,9 +285,9 @@ public class LevelManager : MMSingleton<LevelManager>,
         }
     }
 
-    private bool IsNextLevelBossRoom()
+    private bool IsNextLevelBossRoom(int levelIndex)
     {
-        return _currentLevelCount == 4;
+        return levelIndex == 4;
     }
 
     public Vector3 GetCurrentPickupSpawnPos(Vector3 offset)

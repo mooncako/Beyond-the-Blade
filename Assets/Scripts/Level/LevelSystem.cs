@@ -27,6 +27,7 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, BoxGroup("Debug")] public PlayerController _player;
     [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList = new List<ExitPos>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public int LevelIndex;
 
 #if UNITY_EDITOR
     [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || PickupSpawnPosition == null || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
@@ -67,12 +68,7 @@ public class LevelSystem : MonoBehaviour
         // RebuildNavmesh();
 
         // Select Spawn Position
-        if (SpawnPositions.IsNullOrEmpty())
-        {
-            return;
-        }
-        int spawnPosIndex = Random.Range(0, SpawnPositions.Length);
-        SpawnPos = SpawnPositions[spawnPosIndex];
+        SelectSpawnLocation();
 
         Tween.Delay(.01f).OnComplete(() => {
             
@@ -114,6 +110,16 @@ public class LevelSystem : MonoBehaviour
         {
             ExitsLevelType.Add(exitTypes[i]);
         }
+    }
+
+    private void SelectSpawnLocation()
+    {
+        if (SpawnPositions.IsNullOrEmpty())
+        {
+            return;
+        }
+        int spawnPosIndex = Random.Range(0, SpawnPositions.Length);
+        SpawnPos = SpawnPositions[spawnPosIndex];
     }
 
     public void SelectExitLocations(int exitsAmount)
@@ -221,6 +227,7 @@ public class LevelSystem : MonoBehaviour
     {
         Vector3 shiftDistance = transform.position - SpawnPos.transform.position;
         transform.position += shiftDistance;
+        transform.position -= new Vector3(0, 30, 0);
     }
 }
     
