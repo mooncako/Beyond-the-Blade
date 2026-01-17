@@ -28,6 +28,7 @@ public class Posture : MonoBehaviour
         OnStunUpdate.Invoke(StunPercentile);
         if(CurrentStunValue.Approx(StunThreshold))
         {
+            BeginHitStopEvent.Trigger();
             OnStunned.Invoke(duration);
             StopCoroutine(StunCO(duration));
             StartCoroutine(StunCO(duration));

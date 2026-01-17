@@ -4,22 +4,26 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class RoomClearFeedbackPlayer : MonoBehaviour,
-    MMEventListener<RoomClearedEvent>
+    MMEventListener<RoomClearedEvent>,
+    MMEventListener<BeginHitStopEvent>
 {
     [SerializeField, BoxGroup("References")] private FissurePlayer _fissurePlayerPrefab;
 
     [SerializeField, BoxGroup("Settings")] private AnimationCurve _timeScaleCurve;
+    [SerializeField, BoxGroup("Settings")] private AnimationCurve _hitStopTimeScaleCurve;
 
     private Tween _timeScaleTween;
  
     void OnEnable()
     {
         this.MMEventStartListening<RoomClearedEvent>();
+        this.MMEventStartListening<BeginHitStopEvent>();
     }
 
     void OnDisable()
     {
         this.MMEventStopListening<RoomClearedEvent>();
+        this.MMEventStopListening<BeginHitStopEvent>();
         _timeScaleTween.Stop();
     }
 
@@ -37,6 +41,12 @@ public class RoomClearFeedbackPlayer : MonoBehaviour,
             });
             fissurePlayer.Play();
         });
+    }
+
+    public void OnMMEvent(BeginHitStopEvent e)
+    {
+        _timeScaleTween.Stop();
+        _timeScaleTween = Tween.Custom(0, 1, .2f, onValueChange: newVal => Time.timeScale = _hitStopTimeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true);
     }
 
     [Button]
