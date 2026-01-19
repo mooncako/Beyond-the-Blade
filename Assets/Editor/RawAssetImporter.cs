@@ -10,25 +10,41 @@ public class RawAssetImporter : EditorWindow
         GetWindow<RawAssetImporter>("Raw Asset Importer");
     }
 
-    private string _targetFolder = "Assets/Art/Environment/Props";
+    private static string _targetAssetFolder = "Assets/Art/Environment/Props/";
+    private static string _targetPrefabFolder = "Assets/Prefabs/Environment/";
 
     private void OnGUI()
     {
         GUILayout.Label("Raw Asset Importer", EditorStyles.boldLabel);
         
         using(new EditorGUI.DisabledScope(true))
-            _targetFolder = EditorGUILayout.TextField("Target Folder", _targetFolder);
-        
-        if(GUILayout.Button("Select Target Folder"))
         {
-            string folder = EditorUtility.OpenFolderPanel("Select Target Folder", "Assets", "");
+            _targetAssetFolder = EditorGUILayout.TextField("Target Asset Folder", _targetAssetFolder);
+            _targetPrefabFolder = EditorGUILayout.TextField("Target Prefab Folder", _targetPrefabFolder);
+        }
+            
+        if(GUILayout.Button("Select Target Asset Folder"))
+        {
+            string folder = EditorUtility.OpenFolderPanel("Select Target Asset Folder", "Assets/Art/Environment/Props/", "");
             if (!string.IsNullOrEmpty(folder))
             {
-                _targetFolder = folder.StartsWith(Application.dataPath) 
+                _targetAssetFolder = folder.StartsWith(Application.dataPath) 
                     ? "Assets" + folder[Application.dataPath.Length..] 
-                    : _targetFolder;
+                    : _targetAssetFolder;
             }
         }
+
+        if(GUILayout.Button("Select Target Prefab Folder"))
+        {
+            string folder = EditorUtility.OpenFolderPanel("Select Target Prefab Folder", "Assets/Prefabs/Environment/", "");
+            if (!string.IsNullOrEmpty(folder))
+            {
+                _targetPrefabFolder = folder.StartsWith(Application.dataPath) 
+                    ? "Assets" + folder[Application.dataPath.Length..] 
+                    : _targetPrefabFolder;
+            }
+        }
+
 
         if (GUILayout.Button("Select and Import FBX"))
         {
@@ -44,15 +60,27 @@ public class RawAssetImporter : EditorWindow
                 return;
 
             // 1) Ensure target folder is valid and in Assets
-            if (string.IsNullOrEmpty(_targetFolder) || !_targetFolder.StartsWith("Assets/"))
+            if (string.IsNullOrEmpty(_targetPrefabFolder) || !_targetPrefabFolder.StartsWith("Assets/"))
             {
-                Debug.LogError($"_targetFolder must be an 'Assets/...' folder. Current: {_targetFolder}");
+                Debug.LogError($"_targetFolder must be an 'Assets/...' folder. Current: {_targetPrefabFolder}");
                 return;
             }
 
-            if (!AssetDatabase.IsValidFolder(_targetFolder))
+            if (!AssetDatabase.IsValidFolder(_targetPrefabFolder))
             {
-                Debug.LogError($"Target folder does not exist in project: {_targetFolder}");
+                Debug.LogError($"Target folder does not exist in project: {_targetPrefabFolder}");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_targetAssetFolder) || !_targetAssetFolder.StartsWith("Assets/"))
+            {
+                Debug.LogError($"_targetFolder must be an 'Assets/...' folder. Current: {_targetAssetFolder}");
+                return;
+            }
+
+            if (!AssetDatabase.IsValidFolder(_targetAssetFolder))
+            {
+                Debug.LogError($"Target folder does not exist in project: {_targetAssetFolder}");
                 return;
             }
 
@@ -77,20 +105,21 @@ public class RawAssetImporter : EditorWindow
                 return;
             }
 
-            // 5) Instantiate and save as prefab
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(fbxAsset);
+            // 5) Create parent object, add FBX as child, and save as prefab
+            GameObject parent = new GameObject(fbxAsset.name);
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(fbxAsset, parent.transform);
             try
             {
-                string prefabAssetPath = $"{_targetFolder}/{fbxAsset.name}.prefab".Replace("\\", "/");
+                string prefabAssetPath = $"{_targetPrefabFolder}/{fbxAsset.name}.prefab".Replace("\\", "/");
                 prefabAssetPath = AssetDatabase.GenerateUniqueAssetPath(prefabAssetPath);
 
-                PrefabUtility.SaveAsPrefabAsset(instance, prefabAssetPath);
+                PrefabUtility.SaveAsPrefabAsset(parent, prefabAssetPath);
                 Debug.Log($"FBX imported as prefab to: {prefabAssetPath}");
             }
             finally
             {
-                if (instance != null)
-                    Object.DestroyImmediate(instance);
+                if (parent != null)
+                    Object.DestroyImmediate(parent);
             }
 
             AssetDatabase.Refresh();
@@ -104,23 +133,9 @@ public class RawAssetImporter : EditorWindow
         string assetsAbs = Path.GetFullPath(Application.dataPath);
         string projectRootAbs = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
 
-        // Case A: Picked file already under Assets -> convert absolute -> "Assets/..."
-        if (pickedAbsolutePath.StartsWith(assetsAbs))
-        {
-            string rel = pickedAbsolutePath.Substring(assetsAbs.Length).Replace("\\", "/");
-            return ("Assets" + rel).Replace("\\", "/");
-        }
-
-        // Case B: External file -> copy it into Assets/RawImports (or any folder you prefer)
-        const string importFolder = "Assets/RawImports";
-        if (!AssetDatabase.IsValidFolder(importFolder))
-        {
-            // Create Assets/RawImports
-            AssetDatabase.CreateFolder("Assets", "RawImports");
-        }
 
         string fileName = Path.GetFileName(pickedAbsolutePath);
-        string destAssetPath = $"{importFolder}/{fileName}".Replace("\\", "/");
+        string destAssetPath = $"{_targetAssetFolder}/{fileName}".Replace("\\", "/");
         destAssetPath = AssetDatabase.GenerateUniqueAssetPath(destAssetPath);
 
         string destAbs = Path.GetFullPath(Path.Combine(projectRootAbs, destAssetPath));
