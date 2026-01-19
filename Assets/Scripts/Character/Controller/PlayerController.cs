@@ -183,10 +183,12 @@ public class PlayerController : Controller,
         if(scene.name == SCENENAME.Hub)
         {
             Reset();
+            PlayerRespawnTeleportEvent.Trigger(this);
             if(_animationStateMachine.IsInDeathState())
             {
                 _animationStateMachine.InterruptState(AnimationStateType.Revive);
             }
+
         }
     }
 
