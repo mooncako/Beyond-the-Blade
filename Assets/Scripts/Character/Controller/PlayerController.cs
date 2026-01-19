@@ -21,7 +21,8 @@ public class PlayerController : Controller,
     MMEventListener<AbilitySwapEvent>,
     MMEventListener<AddNewAbilityEvent>,
     MMEventListener<ParrySuccessEvent>,
-    MMEventListener<CurrencyEarnedEvent>
+    MMEventListener<CurrencyEarnedEvent>,
+    MMEventListener<LevelTransitionEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     // [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -139,6 +140,7 @@ public class PlayerController : Controller,
         this.MMEventStartListening<AddNewAbilityEvent>();
         this.MMEventStartListening<ParrySuccessEvent>();
         this.MMEventStartListening<CurrencyEarnedEvent>();
+        this.MMEventStartListening<LevelTransitionEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
         
         //Listen for projectile deflection
@@ -158,6 +160,7 @@ public class PlayerController : Controller,
         this.MMEventStopListening<AddNewAbilityEvent>();
         this.MMEventStopListening<ParrySuccessEvent>();
         this.MMEventStopListening<CurrencyEarnedEvent>();
+        this.MMEventStopListening<LevelTransitionEvent>();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
         
@@ -184,11 +187,6 @@ public class PlayerController : Controller,
         {
             Reset();
             PlayerRespawnTeleportEvent.Trigger(this);
-            if(_animationStateMachine.IsInDeathState())
-            {
-                _animationStateMachine.InterruptState(AnimationStateType.Revive);
-            }
-
         }
     }
 
@@ -243,6 +241,17 @@ public class PlayerController : Controller,
         else if (e.CurrencyType == CurrencyType.SoulShard)
         {
             PlayerStats.SoulShardCount += e.Amount;
+        }
+    }
+
+    public void OnMMEvent(LevelTransitionEvent e)
+    {
+        if(e.Type == EventStateType.OnEventFinished)
+        {
+            if(_animationStateMachine.IsInDeathState())
+            {
+                _animationStateMachine.InterruptState(AnimationStateType.Revive);
+            }
         }
     }
 

@@ -79,6 +79,7 @@ public class LoadSceneManager : MonoBehaviour,
                         _transitionVolume.customPasses[1].enabled = false;
                         _transitionMaterial.SetFloat("_RealmStrength", _startStrength);
                         _transitionBackMaterial.SetFloat("_RealmStrength", _startStrength);
+                        LevelTransitionEvent.Trigger(EventStateType.OnEventFinished);
                     });
                 });
             });
