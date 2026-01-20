@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RawAssetImporter : EditorWindow
 {
-    [MenuItem("Tools/Raw Asset Importer")]
+    [MenuItem("Tools/Raw Asset Importer", false, 20)]
     public static void ShowWindow()
     {
         GetWindow<RawAssetImporter>("Raw Asset Importer");
@@ -108,21 +108,35 @@ public class RawAssetImporter : EditorWindow
             // 5) Create parent object, add FBX as child, and save as prefab
             GameObject parent = new GameObject(fbxAsset.name);
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(fbxAsset, parent.transform);
+            GameObject prefab;
             try
             {
                 string prefabAssetPath = $"{_targetPrefabFolder}/{fbxAsset.name}.prefab".Replace("\\", "/");
+
+                if(File.Exists(prefabAssetPath))
+                {
+                    Debug.LogWarning($"Prefab already exists at: {prefabAssetPath}");
+                    if (parent != null)
+                        DestroyImmediate(parent);
+                    return;
+                }
                 prefabAssetPath = AssetDatabase.GenerateUniqueAssetPath(prefabAssetPath);
 
-                PrefabUtility.SaveAsPrefabAsset(parent, prefabAssetPath);
+                prefab = PrefabUtility.SaveAsPrefabAsset(parent, prefabAssetPath);
                 Debug.Log($"FBX imported as prefab to: {prefabAssetPath}");
             }
             finally
             {
                 if (parent != null)
-                    Object.DestroyImmediate(parent);
+                    DestroyImmediate(parent);
             }
 
             AssetDatabase.Refresh();
+            if(prefab != null)
+            {
+                Selection.activeObject = prefab;
+                EditorGUIUtility.PingObject(prefab);
+            }
         }
     }
 
@@ -136,6 +150,11 @@ public class RawAssetImporter : EditorWindow
 
         string fileName = Path.GetFileName(pickedAbsolutePath);
         string destAssetPath = $"{_targetAssetFolder}/{fileName}".Replace("\\", "/");
+        if (File.Exists(destAssetPath))
+        {
+            Debug.LogWarning($"Asset already exists at: {destAssetPath}");
+            return destAssetPath;
+        }
         destAssetPath = AssetDatabase.GenerateUniqueAssetPath(destAssetPath);
 
         string destAbs = Path.GetFullPath(Path.Combine(projectRootAbs, destAssetPath));
