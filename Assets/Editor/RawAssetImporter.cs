@@ -143,8 +143,6 @@ public class RawAssetImporter : EditorWindow
     private static string ToAssetPathOrCopyIntoAssets(string pickedAbsolutePath)
     {
         pickedAbsolutePath = Path.GetFullPath(pickedAbsolutePath);
-
-        string assetsAbs = Path.GetFullPath(Application.dataPath);
         string projectRootAbs = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
 
 
