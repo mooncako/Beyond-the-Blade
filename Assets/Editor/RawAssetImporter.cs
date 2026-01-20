@@ -108,6 +108,28 @@ public class RawAssetImporter : EditorWindow
             // 5) Create parent object, add FBX as child, and save as prefab
             GameObject parent = new GameObject(fbxAsset.name);
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(fbxAsset, parent.transform);
+            
+            // Set layer to "Environment" and add colliders to all objects
+            int environmentLayer = LayerMask.NameToLayer("Environment");
+            if (environmentLayer == -1)
+            {
+                Debug.LogWarning("Layer 'Environment' does not exist. Please create it in Tags & Layers.");
+            }
+            else
+            {
+                foreach (Transform child in instance.GetComponentsInChildren<Transform>(true))
+                {
+                    child.gameObject.layer = environmentLayer;
+                    
+                    // Add MeshCollider if the object has a MeshFilter and doesn't already have a collider
+                    MeshFilter meshFilter = child.GetComponent<MeshFilter>();
+                    if (meshFilter != null && child.GetComponent<Collider>() == null)
+                    {
+                        MeshCollider collider = child.gameObject.AddComponent<MeshCollider>();
+                        collider.convex = false;
+                    }
+                }
+            }
             GameObject prefab;
             try
             {

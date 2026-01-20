@@ -179,6 +179,7 @@ public class PickupFactory : MonoBehaviour,
     private string GetRandomAbilityIndex(Rarity rarity, ProgressionType progressionType)
     {
 
+        // Possible endless loop if no skills are available
         while (!IsRarityAvailable(rarity))
         {
             float index = Random.Range(0f, 1f);
@@ -322,6 +323,28 @@ public class PickupFactory : MonoBehaviour,
         {
             NewProgressionDropEvent.Trigger(ProgressionType.Stats);
             Instantiate(_itemPickup, pos, Quaternion.identity);
+        }
+    }
+
+    public void SpawnPickup(Vector3 pos, ProgressionType type)
+    {
+        switch(type)
+        {
+            case ProgressionType.Skill:
+                UpdateSkills();
+                SkillPickup pickup = Instantiate(_skillPickup, pos, Quaternion.identity);
+                pickup.AssignId(GetRandomPoolableSkill());
+                break;
+            case ProgressionType.Upgrade:
+                UpdateModifiers();
+                SkillUpgradePickup upgradePickup = Instantiate(_skillUpgradePickup, pos, Quaternion.identity);
+                upgradePickup.AssignId(GetRandomPoolableModifier());
+                break;
+            case ProgressionType.Ability:
+                UpdateAbilities();
+                CalculateAndAssignAbilities();
+                Instantiate(_abilityPickup, pos, Quaternion.identity);
+                break;
         }
     }
 
