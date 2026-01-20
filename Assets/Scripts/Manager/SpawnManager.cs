@@ -112,11 +112,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
         foreach (EnemyProfile profile in _enemyDatabase.EnemyDict.Keys)
         {
-            if (profile.BiomeType == LevelManager.Instance.CurrentBiome)
-            {
-                _currentEnemyDict.Add(profile, _enemyDatabase.EnemyDict[profile]);
-                poolList.Add(_enemyDatabase.EnemyDict[profile]);
-            }
+            // if (profile.BiomeType == LevelManager.Instance.CurrentBiome)
+            // {
+            //     _currentEnemyDict.Add(profile, _enemyDatabase.EnemyDict[profile]);
+            //     poolList.Add(_enemyDatabase.EnemyDict[profile]);
+            // }
         }
 
         _pool.InitializeRuntimePool(poolList);

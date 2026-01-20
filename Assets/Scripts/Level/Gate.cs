@@ -14,6 +14,9 @@ public class Gate : MonoBehaviour,
     [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenVFX;
     [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenParticleVFX;
     [SerializeField, BoxGroup("References")] private GameObject _torii;
+    [SerializeField, BoxGroup("References")] private ExitPos _exit;
+    [SerializeField, BoxGroup("References")] private LevelSystem _gateLevel;
+    [SerializeField, BoxGroup("References")] private LevelSystem _targetLevel;
 
     [SerializeField, BoxGroup("Settings")] private string _levelName;
     [SerializeField, BoxGroup("Settings")] private bool _isNewSession;
@@ -22,9 +25,7 @@ public class Gate : MonoBehaviour,
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _gateLevel;
-    [SerializeField, BoxGroup("Debug")] private ExitPos _exit;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _targetLevel;
+    
 
     private Tween _toriiGenTween;
     private Tween _portalTween;
@@ -34,6 +35,10 @@ public class Gate : MonoBehaviour,
         if ((_playerMask & (1 << 7)) == 0)
         {
             _playerMask |= 1 << 7;
+        }
+        if(_exit == null)
+        {
+            _exit = GetComponentInChildren<ExitPos>();
         }
     }
 
@@ -107,11 +112,11 @@ public class Gate : MonoBehaviour,
 
     public void OnMMEvent(GateSplineAdjustEvent e)
     {
-        if(_targetLevel == null) return;
-        if(e.LevelSystem != _targetLevel) return;
-        BezierKnot knot = _exit.GetLastKnot();
-        knot.Position = _exit.SplineContainer.transform.InverseTransformPoint(_targetLevel.SpawnPos.transform.position);
-        _exit.SplineContainer.Spline.SetKnot(_exit.SplineContainer.Spline.Count - 1, knot);
+        // if(_targetLevel == null) return;
+        // if(e.LevelSystem != _targetLevel) return;
+        // BezierKnot knot = _exit.GetLastKnot();
+        // knot.Position = _exit.SplineContainer.transform.InverseTransformPoint(_targetLevel.SpawnPos.transform.position);
+        // _exit.SplineContainer.Spline.SetKnot(_exit.SplineContainer.Spline.Count - 1, knot);
     }
 
     public void AssignExit(ExitPos exit, LevelSystem gateLevel)
