@@ -118,6 +118,23 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
         ZWrite On
         ColorMask 0
         ZClip [_ZClip]
+        Stencil
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
         
             // Debug
             // <None>
@@ -1415,6 +1432,23 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
         
             // Render State
             Cull Off
+            Stencil
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
         
             // Debug
             // <None>
@@ -3935,6 +3969,23 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
         
             // Render State
             Cull [_CullMode]
+            Stencil
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
         
             // Debug
             // <None>
@@ -6500,6 +6551,24 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
         
             // Render State
             Cull Off
+
+            Stencil
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
         
             // Debug
             // <None>
@@ -9068,14 +9137,23 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
             Cull [_CullMode]
         ZWrite On
         Stencil
-        {
-        WriteMask [_StencilWriteMaskMV]
-        Ref [_StencilRefMV]
-        CompFront Always
-        PassFront Replace
-        CompBack Always
-        PassBack Replace
-        }
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
+
         AlphaToMask [_AlphaCutoffEnable]
         
             // Debug
@@ -11644,15 +11722,27 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
             // Render State
             Cull [_CullMode]
         ZWrite On
-        Stencil
-        {
-        WriteMask [_StencilWriteMaskDepth]
-        Ref [_StencilRefDepth]
-        CompFront Always
-        PassFront Replace
-        CompBack Always
-        PassBack Replace
-        }
+// IMPORTANT: do not write stencil in depth pass for portal occlusion use-case
+// (remove stencil block entirely)
+Stencil
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
+
+
         AlphaToMask [_AlphaCutoffEnable]
         
             // Debug
@@ -14216,16 +14306,15 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
             }
         
             // Render State
-            Cull [_CullModeForward]
-        Blend [_SrcBlend] [_DstBlend], [_AlphaSrcBlend] [_AlphaDstBlend]
-        Blend 1 One OneMinusSrcAlpha
-        Blend 2 One [_DstBlend2]
-        Blend 3 One [_DstBlend2]
-        Blend 4 One OneMinusSrcAlpha
-        ZTest [_ZTestDepthEqualForOpaque]
-        ZWrite [_ZWrite]
-        ColorMask [_ColorMaskTransparentVelOne] 1
-        ColorMask [_ColorMaskTransparentVelTwo] 2
+            Cull Off
+            ZTest LEqual
+            ZWrite On
+            
+        Blend One Zero
+        ColorMask RGBA
+
+        
+            
         Stencil
         {
             Ref 1
@@ -16863,6 +16952,23 @@ Shader "Shader Graphs/ToonShaderStencilEdit"
             Cull [_CullMode]
         ZTest LEqual
         ZWrite Off
+        Stencil
+{
+    Ref 1
+    ReadMask 1
+    WriteMask 0
+
+    CompFront NotEqual
+    PassFront Keep
+    FailFront Keep
+    ZFailFront Keep
+
+    CompBack NotEqual
+    PassBack Keep
+    FailBack Keep
+    ZFailBack Keep
+}
+
         
             // Debug
             // <None>
