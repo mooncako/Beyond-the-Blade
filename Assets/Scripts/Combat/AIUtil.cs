@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -59,5 +60,33 @@ public static class AIUtil
         Vector2 offset = Random.insideUnitCircle * spawnPositions[index].Radius;
         Vector3 spawnPos = new Vector3(spawnPositions[index].transform.position.x + offset.x, spawnPositions[index].transform.position.y, spawnPositions[index].transform.position.z + offset.y);
         return spawnPos;
+    }
+
+    public static EnemyProfile PickEnemyBasedOnDifficultyIndex(List<EnemyProfile> eligibleEnemies, float difficultyIndex)
+    {
+        float totalWeight = 0f;
+        foreach (var enemy in eligibleEnemies)
+        {
+            float weight = Mathf.Max(0f, difficultyIndex - enemy.DifficultyIndex + 1f);
+            totalWeight += weight;
+        }
+
+        if (totalWeight <= 0f) return null;
+
+        float r = Random.value * totalWeight;
+        float cumulativeWeight = 0f;
+
+        foreach (var enemy in eligibleEnemies)
+        {
+            float weight = Mathf.Max(0f, difficultyIndex - enemy.DifficultyIndex + 1f);
+            cumulativeWeight += weight;
+
+            if (r <= cumulativeWeight)
+            {
+                return enemy;
+            }
+        }
+
+        return null;
     }
 }

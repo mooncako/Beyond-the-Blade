@@ -38,7 +38,7 @@ public class AgentMoveBehavior : MonoBehaviour
         _agentBehavior.Events.OnTargetNotInRange -= OnTargetNotInRange;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (_agentBehavior.IsPaused) 
         {

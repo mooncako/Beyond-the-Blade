@@ -8,8 +8,11 @@ public class TrainPortal : MonoBehaviour
     [SerializeField, BoxGroup("References")] private EnemyPool _enemyPool;
     [SerializeField, BoxGroup("References")] private Transform _startPoint;
     [SerializeField, BoxGroup("References")] private Transform _endPoint;
+    [SerializeField, BoxGroup("References")] private EnemySpawnPos[] _enemySpawnPositions;
     [SerializeField, BoxGroup("References")] private CollisionTrigger _portalTrigger;
     [SerializeField, BoxGroup("Settings")] private float _moveDuration = 2f;
+    [SerializeField, BoxGroup("Settings")] private int _minEnemyCountPerWave = 3;
+    [SerializeField, BoxGroup("Settings")] private int _maxEnemyCountPerWave = 5;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _stopPoint;
 
     private Tween _moveTween;
@@ -31,12 +34,14 @@ public class TrainPortal : MonoBehaviour
     {
         _portalTrigger.TriggerEnter.AddListener(OnTrigger);
         _train.OnTrainArrived.AddListener(OnTrainGateOpen);
+        _train.OnGateClosed.AddListener(OnGateClosed);
     }
 
     void OnDisable()
     {
         _portalTrigger.TriggerEnter.RemoveListener(OnTrigger);
         _train.OnTrainArrived.RemoveListener(OnTrainGateOpen);
+        _train.OnGateClosed.RemoveListener(OnGateClosed);
         _moveTween.Stop();
     }
 
@@ -56,13 +61,32 @@ public class TrainPortal : MonoBehaviour
 
     private void OnTrainGateOpen()
     {
-        
+        SpawnEnemies();
+        Tween.Delay(.5f).OnComplete(() =>
+        {
+            _train.CloseGate();
+        }
+        );
     }
 
-    void OnDrawGizmosSelected()
+    private void OnGateClosed()
+    {
+        _moveTween.Stop();
+        _moveTween = Tween.Position(_train.transform, _endPoint.position, _moveDuration).OnComplete(() =>
+        {
+            gameObject.SetActive(false);
+        });
+    }
+
+    void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(_stopPoint, .5f);
         Gizmos.DrawLine(_stopPoint, new Vector3(_stopPoint.x, _stopPoint.y+1f, _stopPoint.z));
+    }
+
+    private void SpawnEnemies()
+    {
+        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _enemyPool, _minEnemyCountPerWave, _maxEnemyCountPerWave);
     }
 }

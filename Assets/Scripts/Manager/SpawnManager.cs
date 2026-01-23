@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using System.Linq;
+#endif
 using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
@@ -18,8 +20,8 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [SerializeField, BoxGroup("Settings")] private GameDifficultyDataSO _gameDifficultySettings;
     [SerializeField, BoxGroup("Settings")] private float _minSpawnDelay = .1f;
     [SerializeField, BoxGroup("Settings")] private float _maxSpawnDelay = .4f;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _difficultyIndex = 1;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _encounterAmount = 0;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCountPerWave;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
@@ -31,8 +33,6 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> CurrentSpawningEnemies => _currentSpawningEnemies.ToList();
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> EnemiesWaitingForSpawn => _enemiesWaitingForSpawn.ToList();
 #endif
-
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _budget;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _poolInitialized = false;
 
     private Queue<string> _currentSpawningEnemies = new Queue<string>();
@@ -48,6 +48,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     protected override void Awake()
     {
         base.Awake();
+    }
+
+    void Start()
+    {
+        UpdateEnemyList();
     }
 
     void OnEnable()
@@ -87,10 +92,8 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         {
             Array.Clear(_enemySpawnPos, 0, _enemySpawnPos.Length);
             _enemySpawnPos = e.EnemySpawnPositions;
-            Tween.Delay(1.5f).OnComplete(() =>
-            {
-                SetupWaveInfo();
-            });
+            _maxEnemyCountPerWave = UnityEngine.Random.Range(e.MinEnemyCountPerWave, e.MaxEnemyCountPerWave + 1);
+            SetupWaveInfo(e.EnemySpawnerType, e.EnemyPool);
         }
         
     }
@@ -112,11 +115,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
         foreach (EnemyProfile profile in _enemyDatabase.EnemyDict.Keys)
         {
-            // if (profile.BiomeType == LevelManager.Instance.CurrentBiome)
-            // {
-            //     _currentEnemyDict.Add(profile, _enemyDatabase.EnemyDict[profile]);
-            //     poolList.Add(_enemyDatabase.EnemyDict[profile]);
-            // }
+            if (profile.BiomeType == LevelManager.Instance.CurrentBiome)
+            {
+                _currentEnemyDict.Add(profile, _enemyDatabase.EnemyDict[profile]);
+                poolList.Add(_enemyDatabase.EnemyDict[profile]);
+            }
         }
 
         _pool.InitializeRuntimePool(poolList);
@@ -131,31 +134,91 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         
     }
 
-    private void SetupWaveInfo()
+    private void SetupWaveInfo(EnemySpawnerType spawnerType, EnemyPool enemyPool)
     {
-        _picks.Clear();
-        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        // _picks.Clear();
+        // _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+        // _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
+
+        // List<EnemyProfile> enemies = new List<EnemyProfile>();
+        // foreach (var profile in _currentEnemyDict.Keys)
+        // {
+        //     profile.SpawnedThisWave = 0;
+        //     profile.NextEligibleTime = 0;
+        //     enemies.Add(profile);
+        // }
+        // _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex - 1));
+        // _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex));
+        // float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
+        // _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
+
+        // for (int i = 0; i < _picks.Count; i++)
+        // {
+        //     _enemiesWaitingForSpawn.Enqueue(_picks[i].enemyName);
+        // }
+
+        // EncounterStartEvent.Trigger(timer);
 
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
         {
             profile.SpawnedThisWave = 0;
             profile.NextEligibleTime = 0;
-            enemies.Add(profile);
+            if(enemyPool.Enemies.Contains(profile.EnemyName))
+                enemies.Add(profile);
         }
-        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex - 1));
-        _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex));
-        float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
-        _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
+
+        switch(spawnerType)
+        {
+            case EnemySpawnerType.Train:
+                PickEnemiesForWave(enemies, 0f);
+                break;
+            case EnemySpawnerType.Ground:
+                PickEnemiesForWave(enemies, .25f);
+                break;
+        }
+        
+
+        SpawnWave();
+    }
+
+    private void PickEnemiesForWave(List<EnemyProfile> enemies, float timeOffset)
+    {
+        _picks.Clear();
+        int enemyCount = 0;
+        while (enemyCount < _maxEnemyCountPerWave)
+        {
+            List<EnemyProfile> eligibleEnemies = new List<EnemyProfile>();
+            foreach (EnemyProfile ep in enemies)
+            {
+                if (ep.NextEligibleTime <= Time.time)
+                {
+                    eligibleEnemies.Add(ep);
+                }
+            }
+
+            if (eligibleEnemies.Count == 0) break;
+
+
+
+            EnemyProfile pickedEnemy = AIUtil.PickEnemyBasedOnDifficultyIndex(eligibleEnemies, _difficultyIndex);
+            if (pickedEnemy != null)
+            {
+                _picks.Add((pickedEnemy.EnemyName, timeOffset));
+                pickedEnemy.SpawnedThisWave++;
+                pickedEnemy.NextEligibleTime = Time.time + pickedEnemy.Cooldown;
+                enemyCount++;
+            }
+            else
+            {
+                break;
+            }
+        }
 
         for (int i = 0; i < _picks.Count; i++)
         {
             _enemiesWaitingForSpawn.Enqueue(_picks[i].enemyName);
         }
-
-        EncounterStartEvent.Trigger(timer);
-        SpawnWave();
     }
 
     [Button]
@@ -201,13 +264,13 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     {
         EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
         spawner.transform.position = AIUtil.GetRandomSpawnPos(_enemySpawnPos);
-        Debug.Log(_enemySpawnPos.Length);
         spawner.StartSpawn();
     }
 
     private void ResetManager()
     {
-        _minDifficulty = 0;
+        _difficultyIndex = _gameDifficultySettings.StartingDifficultyIndex;
+        _encounterAmount = 0;
         _poolInitialized = false;
     }
 

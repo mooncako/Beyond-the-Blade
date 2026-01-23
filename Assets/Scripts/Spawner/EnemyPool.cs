@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-public class EnemyPool : MonoBehaviour
+
+public class EnemyPool : SerializedMonoBehaviour
 {
-    [Tooltip("Key: Difficulty Index, Value: Enemy Names")]
-    public SerializedDictionary<int, List<string>> EnemyPoolDict = new SerializedDictionary<int, List<string>>();
+    public List<string> Enemies = new List<string>();
 }

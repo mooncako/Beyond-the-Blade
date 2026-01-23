@@ -11,6 +11,8 @@ public class LevelManager : MMSingleton<LevelManager>,
 {
 
     [SerializeField, BoxGroup("References")] private PickupFactory _pickupFactory;
+
+    [SerializeField, BoxGroup("Debug")] public BiomeType CurrentBiome;
     [SerializeField, BoxGroup("Debug"), ReadOnly] public LevelType CurrentLevelType;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _currentLevel;
     [SerializeField, HideInInspector] public LevelSystem CurrentLevel => _currentLevel;
