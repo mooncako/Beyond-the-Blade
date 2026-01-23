@@ -154,7 +154,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -189,7 +189,7 @@ Light:
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 2
-  m_AreaSize: {x: 1, y: 1}
+  m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 1
@@ -1079,6 +1079,10 @@ PrefabInstance:
       propertyPath: m_outputTexture
       value: 
       objectReference: {fileID: 967735562}
+    - target: {fileID: 575563289218849831, guid: f3f62835031715f49be262a64307856f, type: 3}
+      propertyPath: m_HDRPDirectionalLightList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2300265162278773912, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -1125,7 +1129,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7767335112569887079, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: customRenderingSettings
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7767335112569887079, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: m_RenderingPathCustomFrameSettings.bitDatas.data1
@@ -1133,7 +1137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7767335112569887079, guid: f3f62835031715f49be262a64307856f, type: 3}
       propertyPath: renderingPathCustomFrameSettingsOverrideMask.mask.data1
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1254,10 +1258,68 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 759e2374674588244a4b1025730f3d0b, type: 3}
+--- !u!1001 &5545374108394572823
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -33.92934
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -20.429338
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 47.091084
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804190152055310410, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538510535768110613, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
+      propertyPath: m_Name
+      value: PortalOccludePass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 43dc221253d721647b08f747c5d46b79, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 5545374108394572823}
   - {fileID: 78721497}
   - {fileID: 1126434825}
   - {fileID: 508489286}

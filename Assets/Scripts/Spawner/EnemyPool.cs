@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 
-public class EnemyPool : SerializedMonoBehaviour
+public class EnemyPool : MonoBehaviour
 {
     public List<string> Enemies = new List<string>();
 }

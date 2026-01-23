@@ -24,11 +24,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CentipedeCar
-  m_Shader: {fileID: 4800000, guid: c2d4b46e775aae64b8a5bcfd62b3f107, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ee6672b5ecc5a174ea527f38b966c15c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
+  - _ENABLEPORTAL
   - _REFLECTIONTYPE_NONE
   - _RIMLIGHTDIRECTION_CAMERA_RELATIVE
   m_InvalidKeywords:
@@ -38,7 +39,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
-  m_CustomRenderQueue: 2510
+  m_CustomRenderQueue: 2450
   stringTagMap:
     MotionVector: User
     RenderType: TransparentCutout
@@ -194,6 +195,7 @@ Material:
     - _DoubleSidedNormalMode: 1
     - _DstBlend: 0
     - _DstBlend2: 0
+    - _ENABLEPORTAL: 1
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 1
     - _EmissiveIntensity: 1
@@ -241,9 +243,14 @@ Material:
     - _PPDPrimitiveLength: 1
     - _PPDPrimitiveWidth: 1
     - _PerPixelSorting: 0
+    - _PortalEnabled: 1
+    - _PortalEnabled0: 1.8
+    - _PortalEnabled1: 0
     - _PortalFeather: 0.0149
     - _PortalRadius: 3.37
     - _PortalSide: 0
+    - _PortalThickness: 15.88
+    - _Portalenabled: 0
     - _REFLECTIONTYPE: 0
     - _RIMLIGHTDIRECTION: 2
     - _RayTracing: 0
@@ -251,7 +258,7 @@ Material:
     - _ReceivesSSRTransparent: 0
     - _ReflectionPower: 0
     - _RefractionModel: 0
-    - _RenderQueueType: 2
+    - _RenderQueueType: 1
     - _RimLightCameraRelativePitch: 29
     - _RimLightCameraRelativeYaw: 45
     - _RimLightHardness: 0.462
@@ -304,7 +311,7 @@ Material:
     - _UseEmissiveIntensity: 0
     - _UseNormalMap: 0
     - _UseShadowThreshold: 0
-    - _ZTestDepthEqualForOpaque: 4
+    - _ZTestDepthEqualForOpaque: 3
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
@@ -323,11 +330,27 @@ Material:
     - _MetalRemap: {r: 0, g: 1, b: 0, a: 0}
     - _MinorLightColor: {r: 1, g: 1, b: 1, a: 0}
     - _MinorLightDirection: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalAxisXWS0: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalAxisXWS1: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalAxisYWS0: {r: 0.1, g: 1, b: 0, a: 0}
+    - _PortalAxisYWS1: {r: 0.1, g: 1, b: 0, a: 0}
+    - _PortalAxisZWS0: {r: 1.29, g: 0, b: 0.040193137, a: 0}
+    - _PortalAxisZWS1: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalCenterLS0: {r: 0, g: 0, b: -0.07, a: 0}
+    - _PortalCenterLS1: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalCenterWS0: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalCenterWS1: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalHalfExtents0: {r: 0.55, g: 0.5, b: 0.5000002, a: 0}
+    - _PortalHalfExtents1: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalHalfExtentsWS0: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalHalfExtentsWS1: {r: 0, g: 0, b: 0, a: 0}
     - _PortalHalfSize: {r: 0, g: 0, b: 0, a: 0}
-    - _PortalNormalWS: {r: 1, g: 1, b: 1, a: 0}
-    - _PortalPosWS: {r: -55.7, g: 2.01, b: 39.4, a: 0}
+    - _PortalNormalWS: {r: 0, g: 0, b: 1, a: 0}
+    - _PortalPosWS: {r: -53.35, g: -3.2, b: 42.02, a: 0}
     - _PortalRightWS: {r: 1.02, g: 0, b: 0, a: 0}
     - _PortalUpWS: {r: 0.91, g: 0.027142726, b: -0.25312454, a: 0}
+    - _PortalhalfExtents0: {r: 0, g: 0, b: 0, a: 0}
+    - _PortalhalfExtents1: {r: 0, g: 0, b: 0, a: 0}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 0}
     - _RimColor: {r: 1, g: 0, b: 0, a: 0}
     - _RoughRemap: {r: 0, g: 1, b: 0, a: 0}
