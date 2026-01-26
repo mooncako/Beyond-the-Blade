@@ -93,7 +93,8 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             Array.Clear(_enemySpawnPos, 0, _enemySpawnPos.Length);
             _enemySpawnPos = e.EnemySpawnPositions;
             _maxEnemyCountPerWave = UnityEngine.Random.Range(e.MinEnemyCountPerWave, e.MaxEnemyCountPerWave + 1);
-            SetupWaveInfo(e.EnemySpawnerType, e.EnemyPool, e.IsPrecisePos);
+            SetupSpawnInfo(e.EnemySpawnerType, e.SpawnPositionType, e.EnemyPool, e.IsPrecisePos);
+            
         }
         
     }
@@ -134,31 +135,8 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         
     }
 
-    private void SetupWaveInfo(EnemySpawnerType spawnerType, EnemyPool enemyPool, bool isPrecisePos)
+    private void SetupSpawnInfo(EnemySpawnerType spawnerType, SpawnType spawnPositionType, EnemyPool enemyPool, bool isPrecisePos)
     {
-        // _picks.Clear();
-        // _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-        // _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-
-        // List<EnemyProfile> enemies = new List<EnemyProfile>();
-        // foreach (var profile in _currentEnemyDict.Keys)
-        // {
-        //     profile.SpawnedThisWave = 0;
-        //     profile.NextEligibleTime = 0;
-        //     enemies.Add(profile);
-        // }
-        // _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex - 1));
-        // _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex));
-        // float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
-        // _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
-
-        // for (int i = 0; i < _picks.Count; i++)
-        // {
-        //     _enemiesWaitingForSpawn.Enqueue(_picks[i].enemyName);
-        // }
-
-        // EncounterStartEvent.Trigger(timer);
-
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
         {
@@ -171,18 +149,25 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         switch(spawnerType)
         {
             case EnemySpawnerType.Train:
-                PickEnemiesForWave(enemies, 0f);
+                PickEnemiesToSpawn(enemies, 0f);
                 break;
             case EnemySpawnerType.Ground:
-                PickEnemiesForWave(enemies, .25f);
+                PickEnemiesToSpawn(enemies, .25f);
                 break;
         }
         
-
-        SpawnWave(isPrecisePos);
+        switch(spawnPositionType)
+        {
+            case SpawnType.Wave:
+                StartWave(isPrecisePos);
+                break;
+            case SpawnType.Fixed:
+                StratFixed(isPrecisePos);
+                break;
+        }
     }
 
-    private void PickEnemiesForWave(List<EnemyProfile> enemies, float timeOffset)
+    private void PickEnemiesToSpawn(List<EnemyProfile> enemies, float timeOffset)
     {
         _picks.Clear();
         int enemyCount = 0;
@@ -222,7 +207,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     }
 
     [Button]
-    private void SpawnWave(bool isPrecisePos)
+    private void StartWave(bool isPrecisePos)
     {
         if (_enemiesWaitingForSpawn.Count >= _maxEnemyCountPerWave)
         {
@@ -247,6 +232,34 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         StopCoroutine(SpawnEnemyCO(isPrecisePos));
         StartCoroutine(SpawnEnemyCO(isPrecisePos));
     }
+
+    private void StratFixed(bool isPrecisePos)
+    {
+        if (_enemiesWaitingForSpawn.Count >= _maxEnemyCountPerWave)
+        {
+            for (int i = 0; i < _maxEnemyCountPerWave; i++)
+            {
+                _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
+            }
+        }
+        else if (_enemiesWaitingForSpawn.Count > 0)
+        {
+            while (_enemiesWaitingForSpawn.Count > 0)
+            {
+                _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
+            }
+        }
+        else
+        {
+            EnemySpawnStoppedEvent.Trigger();
+            return;
+        }
+
+        for(int i = 0; i < _enemySpawnPos.Length; i++)
+        {
+            SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()), _enemySpawnPos[i], isPrecisePos);
+        }
+    }
     
     private IEnumerator SpawnEnemyCO(bool isPrecisePos)
     {
@@ -254,19 +267,29 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(_minSpawnDelay, _maxSpawnDelay));
             GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
-            SpawnEnemy(enemy, isPrecisePos);
+            SpawnEnemyWave(enemy, isPrecisePos);
         }
         
     }
 
     [Button]
-    private void SpawnEnemy(GameObject prefab, bool isPrecisePos)
+    private void SpawnEnemyWave(GameObject prefab, bool isPrecisePos)
     {
         EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
         if(!isPrecisePos)
-            spawner.transform.position = AIUtil.GetRandomSpawnPos(_enemySpawnPos);
+            spawner.transform.position = AIUtil.GetRandomSpawnPosFromArry(_enemySpawnPos);
         else
-            spawner.transform.position = AIUtil.GetRandomSpawnPos(_enemySpawnPos, true);
+            spawner.transform.position = AIUtil.GetRandomSpawnPosFromArry(_enemySpawnPos, true);
+        spawner.StartSpawn();
+    }
+
+    private void SpawnEnemyFixed(GameObject prefab, EnemySpawnPos spawnPos, bool isPrecisePos)
+    {
+        EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
+        if(!isPrecisePos)
+            spawner.transform.position = AIUtil.GetRandomSpawnPos(spawnPos);
+        else
+            spawner.transform.position = AIUtil.GetRandomSpawnPos(spawnPos, true);
         spawner.StartSpawn();
     }
 

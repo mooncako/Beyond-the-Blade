@@ -2,26 +2,20 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class TrainPortal : MonoBehaviour
+public class TrainPortal : PoolSpawner
 {
     [SerializeField, BoxGroup("References")] private LevelMechanicTrain _train;
-    [SerializeField, BoxGroup("References")] private EnemyPool _enemyPool;
     [SerializeField, BoxGroup("References")] private Transform _startPoint;
     [SerializeField, BoxGroup("References")] private Transform _endPoint;
-    [SerializeField, BoxGroup("References")] private EnemySpawnPos[] _enemySpawnPositions;
-    [SerializeField, BoxGroup("References")] private CollisionTrigger _portalTrigger;
     [SerializeField, BoxGroup("Settings")] private float _moveDuration = 2f;
-    [SerializeField, BoxGroup("Settings")] private int _minEnemyCountPerWave = 3;
-    [SerializeField, BoxGroup("Settings")] private int _maxEnemyCountPerWave = 5;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private Vector3 _stopPoint;
 
     private Tween _moveTween;
 
-    void OnValidate()
+    protected override void OnValidate()
     {
-        if (_portalTrigger == null) _portalTrigger = GetComponentInChildren<CollisionTrigger>();
+        base.OnValidate();
         if (_train == null) _train = GetComponentInChildren<LevelMechanicTrain>();
-        if (_enemyPool == null) _enemyPool = GetComponentInChildren<EnemyPool>();
         _stopPoint = new Vector3((_startPoint.position.x + _endPoint.position.x) / 2f, _train.transform.position.y, ( _startPoint.position.z + _endPoint.position.z) / 2f);
     }
 
@@ -32,14 +26,14 @@ public class TrainPortal : MonoBehaviour
 
     void OnEnable()
     {
-        _portalTrigger.TriggerEnter.AddListener(OnTrigger);
+        _spawnTrigger.TriggerEnter.AddListener(OnTrigger);
         _train.OnTrainArrived.AddListener(OnTrainGateOpen);
         _train.OnGateClosed.AddListener(OnGateClosed);
     }
 
     void OnDisable()
     {
-        _portalTrigger.TriggerEnter.RemoveListener(OnTrigger);
+        _spawnTrigger.TriggerEnter.RemoveListener(OnTrigger);
         _train.OnTrainArrived.RemoveListener(OnTrainGateOpen);
         _train.OnGateClosed.RemoveListener(OnGateClosed);
         _moveTween.Stop();
@@ -87,6 +81,6 @@ public class TrainPortal : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _enemyPool, true, _minEnemyCountPerWave, _maxEnemyCountPerWave);
+        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _spawnPositionType, _enemyPool, true, _minEnemyCountPerWave, _maxEnemyCountPerWave);
     }
 }

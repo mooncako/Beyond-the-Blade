@@ -54,7 +54,7 @@ public static class AIUtil
         return NavMesh.SamplePosition(p, out var hit, 0.5f, areaMask) ? hit.position : p;
     }
 
-    public static Vector3 GetRandomSpawnPos(EnemySpawnPos[] spawnPositions, bool isPrecisePos = false)
+    public static Vector3 GetRandomSpawnPosFromArry(EnemySpawnPos[] spawnPositions, bool isPrecisePos = false)
     {
         int index = Random.Range(0, spawnPositions.Length);
         if (isPrecisePos)
@@ -63,6 +63,17 @@ public static class AIUtil
         }
         Vector2 offset = Random.insideUnitCircle * spawnPositions[index].Radius;
         Vector3 spawnPos = new Vector3(spawnPositions[index].transform.position.x + offset.x, spawnPositions[index].transform.position.y, spawnPositions[index].transform.position.z + offset.y);
+        return spawnPos;
+    }
+
+    public static Vector3 GetRandomSpawnPos(EnemySpawnPos spawnPosition, bool isPrecisePos = false)
+    {
+        if(isPrecisePos)
+        {
+            return spawnPosition.transform.position;
+        }
+        Vector2 offset = Random.insideUnitCircle * spawnPosition.Radius;
+        Vector3 spawnPos = new Vector3(spawnPosition.transform.position.x + offset.x, spawnPosition.transform.position.y, spawnPosition.transform.position.z + offset.y);
         return spawnPos;
     }
 
