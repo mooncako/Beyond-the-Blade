@@ -10,6 +10,8 @@ public class EnemyProfile
     public string EnemyName;
     [Header("Biome")]
     public BiomeType BiomeType;
+    [Header("Spawner Type")]
+    public EnemySpawnerType EnemySpawnerType;
     [Header("Difficulty Index")]
     public float DifficultyIndex;
     [Header("MaxPerWave")]

@@ -87,6 +87,6 @@ public class TrainPortal : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _enemyPool, _minEnemyCountPerWave, _maxEnemyCountPerWave);
+        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _enemyPool, true, _minEnemyCountPerWave, _maxEnemyCountPerWave);
     }
 }
