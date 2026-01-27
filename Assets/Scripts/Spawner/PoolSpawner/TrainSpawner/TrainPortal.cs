@@ -46,6 +46,7 @@ public class TrainPortal : PoolSpawner
 
     private void MoveTrainToMid()
     {
+        _train.EnableShadow();
         _moveTween.Stop();
         _moveTween = Tween.Position(_train.transform, _stopPoint, _moveDuration).OnComplete(() =>
         {
@@ -79,8 +80,5 @@ public class TrainPortal : PoolSpawner
         Gizmos.DrawLine(_stopPoint, new Vector3(_stopPoint.x, _stopPoint.y+1f, _stopPoint.z));
     }
 
-    private void SpawnEnemies()
-    {
-        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _spawnPositionType, _enemyPool, true, _minEnemyCountPerWave, _maxEnemyCountPerWave);
-    }
+    
 }

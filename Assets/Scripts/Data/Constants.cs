@@ -39,6 +39,8 @@ public static class CHARGEVFX
 
 public static class LIGHTING
 {
+    public const string ShadowIgnoreLayer = "ShadowTracerOccludee";
+    public const string DefaultLayer = "Default";
     public const float MaxCandelaIntensity = 467083800;
     public const float MaxNitsIntensity = 10000000;
     public const float MaxAppliedBrightness = 40f;

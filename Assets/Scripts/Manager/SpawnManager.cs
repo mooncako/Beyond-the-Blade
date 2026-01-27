@@ -9,6 +9,7 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityUtils;
 
 public class SpawnManager : MMSingleton<SpawnManager>,
     MMEventListener<EnemyClearedEvent>,
@@ -152,7 +153,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
                 PickEnemiesToSpawn(enemies, 0f);
                 break;
             case EnemySpawnerType.Ground:
-                PickEnemiesToSpawn(enemies, .25f);
+                PickEnemiesToSpawn(enemies, 0f);
                 break;
         }
         
@@ -162,7 +163,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
                 StartWave(isPrecisePos);
                 break;
             case SpawnType.Fixed:
-                StratFixed(isPrecisePos);
+                StartFixed(isPrecisePos);
                 break;
         }
     }
@@ -233,7 +234,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         StartCoroutine(SpawnEnemyCO(isPrecisePos));
     }
 
-    private void StratFixed(bool isPrecisePos)
+    private void StartFixed(bool isPrecisePos)
     {
         if (_enemiesWaitingForSpawn.Count >= _maxEnemyCountPerWave)
         {
@@ -255,7 +256,10 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             return;
         }
 
-        for(int i = 0; i < _enemySpawnPos.Length; i++)
+        int currentSpawningEnemyCount = _currentSpawningEnemies.Count;
+        _enemySpawnPos.Shuffle();
+
+        for(int i = 0; i < currentSpawningEnemyCount; i++)
         {
             SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()), _enemySpawnPos[i], isPrecisePos);
         }

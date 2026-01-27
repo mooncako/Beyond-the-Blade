@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 6455590215426538048}
   - component: {fileID: 491988227813980852}
   - component: {fileID: 3429431365888608352}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 8596625479193566245}
   - component: {fileID: 6637686974154978968}
   - component: {fileID: 983159235599454520}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 8825004542878879545}
   - component: {fileID: 6851744702500621446}
   - component: {fileID: 272269392862016535}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +418,7 @@ GameObject:
   - component: {fileID: 4332577885671525725}
   - component: {fileID: 6065741482638004374}
   - component: {fileID: 2028661799388899092}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -580,7 +580,7 @@ GameObject:
   - component: {fileID: 4108924478059111132}
   - component: {fileID: 2724963351272958557}
   - component: {fileID: 1896516987982006192}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Train
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -737,7 +737,7 @@ GameObject:
   - component: {fileID: 6253297892514619260}
   - component: {fileID: 2158498597359580394}
   - component: {fileID: 2953802920351059399}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: DoorInner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -883,17 +883,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde78341c2474884f9c701914e5f4dd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _train: {fileID: 2724963351272958557}
   _enemyPool: {fileID: 8107207657627117529}
-  _startPoint: {fileID: 4275935259960127706}
-  _endPoint: {fileID: 6662481688849675406}
   _enemySpawnPositions:
   - {fileID: 8716032709617267107}
-  _portalTrigger: {fileID: 674525323903572651}
-  _moveDuration: 2
+  _spawnTrigger: {fileID: 674525323903572651}
+  _spawnPositionType: 0
+  _isPrecisePos: 0
   _minEnemyCountPerWave: 2
   _maxEnemyCountPerWave: 2
-  _stopPoint: {x: -42.60285, y: 1.32, z: 32.778107}
+  _train: {fileID: 2724963351272958557}
+  _startPoint: {fileID: 4275935259960127706}
+  _endPoint: {fileID: 6662481688849675406}
+  _moveDuration: 2
+  _stopPoint: {x: -42.60284, y: 1.32, z: 32.777878}
 --- !u!1 &8610698501330562205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1010,6 +1012,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 81004992459423524}
     m_Modifications:
+    - target: {fileID: 4336591134085759795, guid: 50a0901f27ac0284bb48ab12dd297d69, type: 3}
+      propertyPath: IsPrecisePos
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7619474044568520724, guid: 50a0901f27ac0284bb48ab12dd297d69, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.38

@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelMechanicTrain : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private Animator _animator;
-    [SerializeField, BoxGroup("References")] private Collider[] _colliders;
+    [field: SerializeField, BoxGroup("References")] private Collider[] _colliders;
 
     [HideInInspector] public UnityEvent OnTrainArrived;
     [HideInInspector] public UnityEvent OnGateClosed;
@@ -14,6 +14,14 @@ public class LevelMechanicTrain : MonoBehaviour
     {
         if (_animator == null) _animator = GetComponent<Animator>();
         _colliders = GetComponentsInChildren<Collider>();
+    }
+
+    public void EnableShadow()
+    {
+        for(int i = 0; i < _colliders.Length; i++)
+        {
+            _colliders[i].gameObject.layer = LayerMask.NameToLayer(LIGHTING.DefaultLayer);
+        }
     }
 
     public void OpenGate()

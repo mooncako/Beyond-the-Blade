@@ -39,7 +39,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 5
+      Data: 6
     - Name: 
       Entry: 7
       Data: 
@@ -52,15 +52,12 @@ MonoBehaviour:
     - Name: BiomeType
       Entry: 3
       Data: 0
-    - Name: Difficulty
+    - Name: EnemySpawnerType
+      Entry: 3
+      Data: 0
+    - Name: DifficultyIndex
       Entry: 4
       Data: 0
-    - Name: Cost
-      Entry: 3
-      Data: 1
-    - Name: Weight
-      Entry: 4
-      Data: 1.5
     - Name: MaxPerWave
       Entry: 3
       Data: 10
@@ -69,7 +66,7 @@ MonoBehaviour:
       Data: 0
     - Name: SpawnedThisWave
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: NextEligibleTime
       Entry: 4
       Data: 0
@@ -94,15 +91,12 @@ MonoBehaviour:
     - Name: BiomeType
       Entry: 3
       Data: 0
-    - Name: Difficulty
-      Entry: 4
-      Data: 2
-    - Name: Cost
+    - Name: EnemySpawnerType
       Entry: 3
-      Data: 3
-    - Name: Weight
+      Data: 0
+    - Name: DifficultyIndex
       Entry: 4
-      Data: 0.8
+      Data: 0
     - Name: MaxPerWave
       Entry: 3
       Data: 10
@@ -111,7 +105,7 @@ MonoBehaviour:
       Data: 0
     - Name: SpawnedThisWave
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: NextEligibleTime
       Entry: 4
       Data: 0
@@ -136,15 +130,12 @@ MonoBehaviour:
     - Name: BiomeType
       Entry: 3
       Data: 0
-    - Name: Difficulty
+    - Name: EnemySpawnerType
+      Entry: 3
+      Data: 0
+    - Name: DifficultyIndex
       Entry: 4
       Data: 0
-    - Name: Cost
-      Entry: 3
-      Data: 1
-    - Name: Weight
-      Entry: 4
-      Data: 1.5
     - Name: MaxPerWave
       Entry: 3
       Data: 10
@@ -178,15 +169,12 @@ MonoBehaviour:
     - Name: BiomeType
       Entry: 3
       Data: 0
-    - Name: Difficulty
-      Entry: 4
-      Data: 1
-    - Name: Cost
+    - Name: EnemySpawnerType
       Entry: 3
-      Data: 2
-    - Name: Weight
+      Data: 0
+    - Name: DifficultyIndex
       Entry: 4
-      Data: 0.8
+      Data: 0
     - Name: MaxPerWave
       Entry: 3
       Data: 10
@@ -220,15 +208,51 @@ MonoBehaviour:
     - Name: BiomeType
       Entry: 3
       Data: 0
-    - Name: Difficulty
-      Entry: 4
+    - Name: EnemySpawnerType
+      Entry: 3
       Data: 1
-    - Name: Cost
+    - Name: DifficultyIndex
+      Entry: 4
+      Data: 0
+    - Name: MaxPerWave
+      Entry: 3
+      Data: 10
+    - Name: Cooldown
+      Entry: 4
+      Data: 0
+    - Name: SpawnedThisWave
       Entry: 3
       Data: 2
-    - Name: Weight
+    - Name: NextEligibleTime
       Entry: 4
-      Data: 1.2
+      Data: 0.759999752
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: 7|EnemyProfile, Assembly-CSharp
+    - Name: EnemyName
+      Entry: 1
+      Data: Lantern
+    - Name: BiomeType
+      Entry: 3
+      Data: 0
+    - Name: EnemySpawnerType
+      Entry: 3
+      Data: 0
+    - Name: DifficultyIndex
+      Entry: 4
+      Data: 0
     - Name: MaxPerWave
       Entry: 3
       Data: 10
