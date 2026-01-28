@@ -4,14 +4,13 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 
-[RequireComponent(typeof(SplineContainer))]
 public class ExitPos : DrawPos
 {
     [BoxGroup("References")] public SplineContainer SplineContainer;
 
     void OnValidate()
     {
-        if(SplineContainer == null) SplineContainer = GetComponent<SplineContainer>();
+        if(SplineContainer == null) SplineContainer = GetComponentInChildren<SplineContainer>();
     }
 
     public Vector3 GetTeleportExit()
@@ -21,8 +20,4 @@ public class ExitPos : DrawPos
         return SplineContainer.transform.TransformPoint(splineExitPos);
     }
 
-    public BezierKnot GetLastKnot()
-    {
-        return SplineContainer.Spline.ToArray()[SplineContainer.Spline.ToArray().Length - 1];
-    }
 }

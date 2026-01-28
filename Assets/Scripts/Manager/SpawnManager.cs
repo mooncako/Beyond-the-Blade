@@ -136,7 +136,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         
     }
 
-    private void SetupSpawnInfo(EnemySpawnerType spawnerType, SpawnType spawnPositionType, EnemyPool enemyPool, bool isPrecisePos)
+    private void SetupSpawnInfo(EnemySpawnerType spawnerType, EnemySpawnModeType spawnPositionType, EnemyPool enemyPool, bool isPrecisePos)
     {
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
@@ -159,10 +159,10 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         
         switch(spawnPositionType)
         {
-            case SpawnType.Wave:
+            case EnemySpawnModeType.Wave:
                 StartWave(isPrecisePos);
                 break;
-            case SpawnType.Fixed:
+            case EnemySpawnModeType.Fixed:
                 StartFixed(isPrecisePos);
                 break;
         }

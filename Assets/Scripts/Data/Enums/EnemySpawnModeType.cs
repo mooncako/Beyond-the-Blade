@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum SpawnType
+public enum EnemySpawnModeType
 {
     Wave,
     Fixed,

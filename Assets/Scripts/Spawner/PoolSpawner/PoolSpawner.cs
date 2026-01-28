@@ -6,7 +6,7 @@ public class PoolSpawner : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected EnemyPool _enemyPool;
     [field: SerializeField, BoxGroup("References"), InlineButton("FindPositions", "Find")] protected EnemySpawnPos[] _enemySpawnPositions;
     [SerializeField, BoxGroup("References")] protected CollisionTrigger _spawnTrigger;
-    [SerializeField, BoxGroup("Settings")] protected SpawnType _spawnPositionType;
+    [SerializeField, BoxGroup("Settings")] protected EnemySpawnModeType _spawnPositionType;
     [SerializeField, BoxGroup("Settings")] protected bool _isPrecisePos = false;
     [SerializeField, BoxGroup("Settings")] protected int _minEnemyCountPerWave = 3;
     [SerializeField, BoxGroup("Settings")] protected int _maxEnemyCountPerWave = 5;

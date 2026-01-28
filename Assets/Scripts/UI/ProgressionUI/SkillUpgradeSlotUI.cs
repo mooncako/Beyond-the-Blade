@@ -28,6 +28,7 @@ public class SkillUpgradeSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerClick(PointerEventData e)
     {
+        Debug.Log("Clicked");
         if (_modifier.Item1 != "")
         {
             if (!_isAttackSlot)
