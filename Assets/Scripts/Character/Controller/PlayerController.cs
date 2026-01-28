@@ -246,7 +246,7 @@ public class PlayerController : Controller,
 
     public void OnMMEvent(LevelTransitionEvent e)
     {
-        if(e.Type == EventStateType.OnEventFinished)
+        if(e.Type == EventStateType.OnEventCompleted)
         {
             if(_animationStateMachine.IsInDeathState())
             {

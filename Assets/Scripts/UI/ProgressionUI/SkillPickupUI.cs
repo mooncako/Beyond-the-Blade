@@ -46,7 +46,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<NewSkillEvent>
     private void SwapSkill()
     {
         SkillSwapEvent.Trigger(_targetSkill, _skillId);
-        NewSkillEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+        NewSkillEvent.Trigger(EventStateType.OnEventEnded, null, null, "");
         ProgressionCanvasCloseEvent.Trigger();
         gameObject.SetActive(false);
     }
@@ -59,7 +59,7 @@ public class SkillPickupUI : MonoBehaviour, MMEventListener<NewSkillEvent>
 
     public void OnMMEvent(NewSkillEvent e)
     {
-        if (e.Type == EventStateType.OnEventStart)
+        if (e.Type == EventStateType.OnEventStarted)
         {
             _alphaTween.Stop();
             _canvasGroup.blocksRaycasts = true;

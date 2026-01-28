@@ -41,7 +41,7 @@ public class SkillUpgradePickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            SkillUpgradeEvent.Trigger(EventStateType.OnEventStart, other.GetComponent<PlayerController>().CurrentWeapon, (_modifierId, _slotType));
+            SkillUpgradeEvent.Trigger(EventStateType.OnEventStarted, other.GetComponent<PlayerController>().CurrentWeapon, (_modifierId, _slotType));
         }
     }
 
@@ -49,7 +49,7 @@ public class SkillUpgradePickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            SkillUpgradeEvent.Trigger(EventStateType.OnEventEnd, null, ("", UpgradeSlotType.Start));
+            SkillUpgradeEvent.Trigger(EventStateType.OnEventEnded, null, ("", UpgradeSlotType.Start));
         }
     }
 

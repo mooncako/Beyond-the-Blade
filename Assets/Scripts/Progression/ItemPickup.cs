@@ -39,7 +39,7 @@ public class ItemPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            NewItemSelectionEvent.Trigger(EventStateType.OnEventStart);
+            NewItemSelectionEvent.Trigger(EventStateType.OnEventStarted);
         }
     }
 
@@ -47,7 +47,7 @@ public class ItemPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            NewItemSelectionEvent.Trigger(EventStateType.OnEventEnd);
+            NewItemSelectionEvent.Trigger(EventStateType.OnEventEnded);
         }
     }
 

@@ -1,15 +1,16 @@
 using MoreMountains.Tools;
 using UnityEngine;
 
-public struct SpawnRewardEvent
+public struct LevelClearedEvent
 {
     public LevelRewardType RewardType;
-    public SpawnRewardEvent(LevelRewardType rewardType)
+    public LevelClearedEvent(LevelRewardType rewardType)
     {
         RewardType = rewardType;
     }
 
-    public static SpawnRewardEvent e;
+
+    public static LevelClearedEvent e;
     public static void Trigger(LevelRewardType rewardType)
     {
         e.RewardType = rewardType;

@@ -13,6 +13,7 @@ public class LevelSystem : MonoBehaviour
     [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
 
     [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardTypes;
+    public LevelRewardType PossibleRewardTypes => _possibleRewardTypes;
 
     [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
 
@@ -20,6 +21,7 @@ public class LevelSystem : MonoBehaviour
     void OnValidate()
     {
         if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
+        if (_levelAssigner == null) _levelAssigner = GetComponentInChildren<LevelAssigner>();
     }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)

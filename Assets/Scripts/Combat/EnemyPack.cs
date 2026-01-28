@@ -98,7 +98,7 @@ public class EnemyPack : MonoBehaviour,
         if (_noExtraEnemies)
         {
             if(_enemies.Count == 0)
-                RoomClearedEvent.Trigger();
+                LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardTypes);
         }
     }
 

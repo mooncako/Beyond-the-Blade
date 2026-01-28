@@ -57,7 +57,7 @@ public class LoadSceneManager : MonoBehaviour,
             _isTransitioning = true;
             _transitionVolume.customPasses[0].enabled = true;
             _strengthTween.Stop();
-            LevelTransitionEvent.Trigger(EventStateType.OnEventStart);
+            LevelTransitionEvent.Trigger(EventStateType.OnEventStarted);
             _strengthTween = Tween.Custom(0, 1, _duration, newVal =>
             {
                 _transitionMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal));
@@ -69,7 +69,7 @@ public class LoadSceneManager : MonoBehaviour,
                     _transitionVolume.customPasses[1].enabled = true;
                     _transitionVolume.customPasses[0].enabled = false;
                     _isTransitioning = false;
-                    LevelTransitionEvent.Trigger(EventStateType.OnEventEnd);
+                    LevelTransitionEvent.Trigger(EventStateType.OnEventEnded);
                     _strengthTween = Tween.Custom(0, 1, _duration, newVal =>
                     {
                         _transitionBackMaterial.SetFloat("_RealmStrength", _strengthCurve.Evaluate(newVal));
@@ -79,7 +79,7 @@ public class LoadSceneManager : MonoBehaviour,
                         _transitionVolume.customPasses[1].enabled = false;
                         _transitionMaterial.SetFloat("_RealmStrength", _startStrength);
                         _transitionBackMaterial.SetFloat("_RealmStrength", _startStrength);
-                        LevelTransitionEvent.Trigger(EventStateType.OnEventFinished);
+                        LevelTransitionEvent.Trigger(EventStateType.OnEventCompleted);
                     });
                 });
             });

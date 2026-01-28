@@ -5,7 +5,8 @@ using UnityEngine;
 public enum LevelRewardType
 {
     None = 0,
-    Gold = 1 << 0,
-    Skill = 1 << 1,
+    Modifier = 1 << 0,
+    Attack = 1 << 1,
+    Ability = 1 << 2,
     All = ~0
 }

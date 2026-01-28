@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MMSingleton<LevelManager>,
-    MMEventListener<RoomClearedEvent>,
+    MMEventListener<LevelClearedEvent>,
     MMEventListener<SpawnRewardEvent>,
     MMEventListener<EnterNewLevelEvent>
 {
@@ -35,7 +35,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-        this.MMEventStartListening<RoomClearedEvent>();
+        this.MMEventStartListening<LevelClearedEvent>();
         this.MMEventStartListening<SpawnRewardEvent>();
         this.MMEventStartListening<EnterNewLevelEvent>();
     }
@@ -43,7 +43,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        this.MMEventStopListening<RoomClearedEvent>();
+        this.MMEventStopListening<LevelClearedEvent>();
         this.MMEventStopListening<SpawnRewardEvent>();
         this.MMEventStopListening<EnterNewLevelEvent>();
     }
@@ -51,7 +51,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        this.MMEventStopListening<RoomClearedEvent>();
+        this.MMEventStopListening<LevelClearedEvent>();
         this.MMEventStopListening<SpawnRewardEvent>();
         this.MMEventStopListening<EnterNewLevelEvent>();
     }
@@ -75,7 +75,7 @@ public class LevelManager : MMSingleton<LevelManager>,
         CurrentLevelType = e.LevelType;
     }
 
-    public void OnMMEvent(RoomClearedEvent e)
+    public void OnMMEvent(LevelClearedEvent e)
     {
 
         

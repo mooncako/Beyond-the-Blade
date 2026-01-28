@@ -44,7 +44,7 @@ public class SkillUpgradeUI : MonoBehaviour, MMEventListener<SkillUpgradeEvent>,
 
     public void OnMMEvent(SkillUpgradeEvent e)
     {
-        if (e.Type == EventStateType.OnEventStart)
+        if (e.Type == EventStateType.OnEventStarted)
         {
             _alphaTween.Stop();
             _alphaTween = Tween.Alpha(_canvasGroup, 1, duration: .5f);

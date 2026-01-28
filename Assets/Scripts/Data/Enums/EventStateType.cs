@@ -1,6 +1,6 @@
 public enum EventStateType
 {
-    OnEventStart,
-    OnEventEnd,
-    OnEventFinished,
+    OnEventStarted,
+    OnEventEnded,
+    OnEventCompleted,
 }
