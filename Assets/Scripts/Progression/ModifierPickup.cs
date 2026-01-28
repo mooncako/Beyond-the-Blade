@@ -3,7 +3,7 @@ using UnityEngine;
 using MoreMountains.Tools;
 
 [RequireComponent(typeof(SphereCollider))]
-public class SkillUpgradePickup : MonoBehaviour, IPickup
+public class ModifierPickup : MonoBehaviour, IPickup
 {
     [SerializeField, FoldoutGroup("References")] private SphereCollider _collider;
 

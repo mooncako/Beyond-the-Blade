@@ -84,7 +84,7 @@ public class LevelManager : MMSingleton<LevelManager>,
     public void OnMMEvent(SpawnRewardEvent e)
     {
 
-        _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position);
+        _pickupFactory.SpawnPickup(_currentLevel.PickupSpawnPosition.position, e.RewardType);
     }
 
     public Vector3 GetCurrentPickupSpawnPos(Vector3 offset)

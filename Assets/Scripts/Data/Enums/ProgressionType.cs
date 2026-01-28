@@ -3,7 +3,7 @@ using UnityEngine;
 public enum ProgressionType
 {
     Stats,
-    Skill,
-    Upgrade,
+    Attack,
+    Modifier,
     Ability
 }

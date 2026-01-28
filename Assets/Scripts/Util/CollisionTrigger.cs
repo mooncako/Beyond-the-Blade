@@ -7,6 +7,11 @@ public class CollisionTrigger : MonoBehaviour
 {
     [SerializeField, BoxGroup("References")] private BoxCollider _collider;
     [SerializeField] private LayerMask _activeMask;
+    public LayerMask LayerMask
+    {
+        get { return _activeMask; }
+        set { _activeMask = value; }
+    }
     [SerializeField] private bool _doOnce = false;
     
     [SerializeField] public UnityEvent<Collider> TriggerEnter;

@@ -10,16 +10,16 @@ public class PickupFactory : MonoBehaviour,
 
     [SerializeField, BoxGroup("References")] private GameObject _abilityPickup;
     [SerializeField, BoxGroup("References")] private SkillPickup _skillPickup;
-    [SerializeField, BoxGroup("References")] private SkillUpgradePickup _skillUpgradePickup;
+    [SerializeField, BoxGroup("References")] private ModifierPickup _skillUpgradePickup;
     [SerializeField, BoxGroup("References")] private PoolableSkillDatabaseSO _poolableSkillDatabase;
     [SerializeField, BoxGroup("References")] private AbilityDatabaseSO _abilityDatabase;
     [SerializeField, BoxGroup("References")] private PoolableModifierDatabaseSO _poolableModifierDatabase;
     [SerializeField, BoxGroup("References")] private PlayerController _player;
 
-    private List<PoolableSkill> _normalSkills = new List<PoolableSkill>();
-    private List<PoolableSkill> _rareSkills = new List<PoolableSkill>();
-    private List<PoolableSkill> _epicSkills = new List<PoolableSkill>();
-    private List<PoolableSkill> _legendarySkills = new List<PoolableSkill>();
+    private List<PoolableSkill> _normalAttacks = new List<PoolableSkill>();
+    private List<PoolableSkill> _rareAttacks = new List<PoolableSkill>();
+    private List<PoolableSkill> _epicAttacks = new List<PoolableSkill>();
+    private List<PoolableSkill> _legendaryAttacks = new List<PoolableSkill>();
 
     private List<PoolableSkill> _normalAbilities = new List<PoolableSkill>();
     private List<PoolableSkill> _rareAbilities = new List<PoolableSkill>();
@@ -45,37 +45,37 @@ public class PickupFactory : MonoBehaviour,
     {
         for (int i = 0; i < _poolableSkillDatabase.NormalSkills.Count; i++)
         {
-            _normalSkills.Add(new PoolableSkill(_poolableSkillDatabase.NormalSkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_normalSkills[i].SkillId))
+            _normalAttacks.Add(new PoolableSkill(_poolableSkillDatabase.NormalSkills[i]));
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_normalAttacks[i].SkillId))
             {
-                _normalSkills[i].CanAppear = false;
+                _normalAttacks[i].CanAppear = false;
             }
         }
 
         for (int i = 0; i < _poolableSkillDatabase.RareSkills.Count; i++)
         {
-            _rareSkills.Add(new PoolableSkill(_poolableSkillDatabase.RareSkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_rareSkills[i].SkillId))
+            _rareAttacks.Add(new PoolableSkill(_poolableSkillDatabase.RareSkills[i]));
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_rareAttacks[i].SkillId))
             {
-                _rareSkills[i].CanAppear = false;
+                _rareAttacks[i].CanAppear = false;
             }
         }
 
         for (int i = 0; i < _poolableSkillDatabase.EpicSkills.Count; i++)
         {
-            _epicSkills.Add(new PoolableSkill(_poolableSkillDatabase.EpicSkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_epicSkills[i].SkillId))
+            _epicAttacks.Add(new PoolableSkill(_poolableSkillDatabase.EpicSkills[i]));
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_epicAttacks[i].SkillId))
             {
-                _epicSkills[i].CanAppear = false;
+                _epicAttacks[i].CanAppear = false;
             }
         }
 
         for (int i = 0; i < _poolableSkillDatabase.LegendarySkills.Count; i++)
         {
-            _legendarySkills.Add(new PoolableSkill(_poolableSkillDatabase.LegendarySkills[i]));
-            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_legendarySkills[i].SkillId))
+            _legendaryAttacks.Add(new PoolableSkill(_poolableSkillDatabase.LegendarySkills[i]));
+            if (_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack].Contains(_legendaryAttacks[i].SkillId))
             {
-                _legendarySkills[i].CanAppear = false;
+                _legendaryAttacks[i].CanAppear = false;
             }
         }
 
@@ -149,15 +149,15 @@ public class PickupFactory : MonoBehaviour,
     {
         float index = Random.Range(0f, 1f);
         Rarity rarity = DropRateManager.Instance.GetRarity(index);
-        string abilityOne = GetRandomAbilityIndex(rarity, ProgressionType.Ability);
+        string abilityOne = GetRandomUpgradeIndex(rarity, ProgressionType.Ability);
 
         index = Random.Range(0f, 1f);
         rarity = DropRateManager.Instance.GetRarity(index);
-        string abilityTwo = GetRandomAbilityIndex(rarity, ProgressionType.Ability);
+        string abilityTwo = GetRandomUpgradeIndex(rarity, ProgressionType.Ability);
 
         index = Random.Range(0f, 1f);
         rarity = DropRateManager.Instance.GetRarity(index);
-        string abilityThree = GetRandomAbilityIndex(rarity, ProgressionType.Ability);
+        string abilityThree = GetRandomUpgradeIndex(rarity, ProgressionType.Ability);
 
         PoolableAbilityAssignDataEvent.Trigger(abilityOne, abilityTwo, abilityThree);
     }
@@ -166,29 +166,26 @@ public class PickupFactory : MonoBehaviour,
     {
         float index = Random.Range(0f, 1f);
         Rarity rarity = DropRateManager.Instance.GetRarity(index);
-        return GetRandomAbilityIndex(rarity, ProgressionType.Skill);
+        return GetRandomUpgradeIndex(rarity, ProgressionType.Attack);
     }
 
     private string GetRandomPoolableModifier()
     {
-        float index = Random.Range(0f, 1f);
-        Rarity rarity = DropRateManager.Instance.GetRarity(index);
-        return GetRandomAbilityIndex(rarity, ProgressionType.Upgrade);
+        Rarity rarity = DropRateManager.Instance.GetRarity(Random.Range(0f, 1f));
+        return GetRandomUpgradeIndex(rarity, ProgressionType.Modifier);
     }
 
-    private string GetRandomAbilityIndex(Rarity rarity, ProgressionType progressionType)
+    private string GetRandomUpgradeIndex(Rarity rarity, ProgressionType progressionType)
     {
 
         // Possible endless loop if no skills are available
-        while (!IsRarityAvailable(rarity))
+        while (!IsRarityAvailable(rarity, progressionType))
         {
-            float index = Random.Range(0f, 1f);
-            rarity = DropRateManager.Instance.GetRarity(index);
+            rarity = DropRateManager.Instance.GetRarity(Random.Range(0f, 1f));
         }
 
         switch (progressionType)
         {
-
             case ProgressionType.Ability:
                 switch (rarity)
                 {
@@ -219,36 +216,36 @@ public class PickupFactory : MonoBehaviour,
                 }
                 break;
 
-            case ProgressionType.Skill:
+            case ProgressionType.Attack:
                 switch (rarity)
                 {
                     case Rarity.Normal:
-                        int id = Random.Range(0, _normalSkills.Count);
-                        string skill = _normalSkills[id].SkillId;
-                        _normalSkills.RemoveAt(id);
+                        int id = Random.Range(0, _normalAttacks.Count);
+                        string skill = _normalAttacks[id].SkillId;
+                        _normalAttacks.RemoveAt(id);
                         return skill;
 
                     case Rarity.Rare:
-                        id = Random.Range(0, _rareSkills.Count);
-                        skill = _rareSkills[id].SkillId;
-                        _rareSkills.RemoveAt(id);
+                        id = Random.Range(0, _rareAttacks.Count);
+                        skill = _rareAttacks[id].SkillId;
+                        _rareAttacks.RemoveAt(id);
                         return skill;
 
                     case Rarity.Epic:
-                        id = Random.Range(0, _epicSkills.Count);
-                        skill = _epicSkills[id].SkillId;
-                        _epicSkills.RemoveAt(id);
+                        id = Random.Range(0, _epicAttacks.Count);
+                        skill = _epicAttacks[id].SkillId;
+                        _epicAttacks.RemoveAt(id);
                         return skill;
 
                     case Rarity.Legendary:
-                        id = Random.Range(0, _legendarySkills.Count);
-                        skill = _legendarySkills[id].SkillId;
-                        _legendarySkills.RemoveAt(id);
+                        id = Random.Range(0, _legendaryAttacks.Count);
+                        skill = _legendaryAttacks[id].SkillId;
+                        _legendaryAttacks.RemoveAt(id);
                         return skill;
                 }
                 break;
 
-            case ProgressionType.Upgrade:
+            case ProgressionType.Modifier:
                 switch (rarity)
                 {
                     case Rarity.Normal:
@@ -282,47 +279,74 @@ public class PickupFactory : MonoBehaviour,
 
     }
 
-    private bool IsRarityAvailable(Rarity rarity)
+    private bool IsRarityAvailable(Rarity rarity, ProgressionType progressionType)
     {
-        switch (rarity)
+        switch(progressionType)
         {
-            case Rarity.Normal:
-                return _normalAbilities.Count > 0;
-            case Rarity.Rare:
-                return _rareAbilities.Count > 0;
-            case Rarity.Epic:
-                return _epicAbilities.Count > 0;
-            case Rarity.Legendary:
-                return _legendaryAbilities.Count > 0;
+            case ProgressionType.Ability:
+                switch (rarity)
+                {
+                    case Rarity.Normal:
+                        return _normalAbilities.Count > 0;
+                    case Rarity.Rare:
+                        return _rareAbilities.Count > 0;
+                    case Rarity.Epic:
+                        return _epicAbilities.Count > 0;
+                    case Rarity.Legendary:
+                        return _legendaryAbilities.Count > 0;
+                }
+                break;
+            case ProgressionType.Attack:
+                switch (rarity)
+                {
+                    case Rarity.Normal:
+                        return _normalAttacks.Count > 0;
+                    case Rarity.Rare:
+                        return _rareAttacks.Count > 0;
+                    case Rarity.Epic:
+                        return _epicAttacks.Count > 0;
+                    case Rarity.Legendary:
+                        return _legendaryAttacks.Count > 0;
+                }
+                break;
+            case ProgressionType.Modifier:
+                switch (rarity)
+                {
+                    case Rarity.Normal:
+                        return _normalModifiers.Count > 0;
+                    case Rarity.Rare:
+                        return _rareModifiers.Count > 0;
+                    case Rarity.Epic:
+                        return _epicModifiers.Count > 0;
+                    case Rarity.Legendary:
+                        return _legendaryModifiers.Count > 0;
+                }
+                break;
+
         }
+        
         return false;
     }
 
-    public void SpawnPickup(Vector3 pos)
+    public void SpawnPickup(Vector3 pos, LevelRewardType rewardType)
     {
-        float index = Random.Range(0f, 1f);
-        if (index <= DropRateManager.Instance.Skill)
+        switch(rewardType)
         {
-            UpdateSkills();
-            SkillPickup pickup = Instantiate(_skillPickup, pos, Quaternion.identity);
-            pickup.AssignId(GetRandomPoolableSkill());
-        }
-        else if (index <= DropRateManager.Instance.Modifier)
-        {
-            UpdateModifiers();
-            SkillUpgradePickup pickup = Instantiate(_skillUpgradePickup, pos, Quaternion.identity);
-            pickup.AssignId(GetRandomPoolableModifier());
-        }
-        else if (index <= DropRateManager.Instance.Ability)
-        {
-            UpdateAbilities();
-            CalculateAndAssignAbilities();
-            Instantiate(_abilityPickup, pos, Quaternion.identity);
-        }
-        else
-        {
-            NewProgressionDropEvent.Trigger(ProgressionType.Stats);
-            Instantiate(_itemPickup, pos, Quaternion.identity);
+            case LevelRewardType.Modifier:
+                UpdateModifiers();
+                ModifierPickup modifier = Instantiate(_skillUpgradePickup, pos, Quaternion.identity);
+                modifier.AssignId(GetRandomPoolableModifier());
+                break;
+            case LevelRewardType.Attack:
+                UpdateSkills();
+                SkillPickup attack = Instantiate(_skillPickup, pos, Quaternion.identity);
+                attack.AssignId(GetRandomPoolableSkill());
+                break;
+            case LevelRewardType.Ability:
+                UpdateAbilities();
+                CalculateAndAssignAbilities();
+                Instantiate(_abilityPickup, pos, Quaternion.identity);
+                break;
         }
     }
 
@@ -330,14 +354,14 @@ public class PickupFactory : MonoBehaviour,
     {
         switch(type)
         {
-            case ProgressionType.Skill:
+            case ProgressionType.Attack:
                 UpdateSkills();
                 SkillPickup pickup = Instantiate(_skillPickup, pos, Quaternion.identity);
                 pickup.AssignId(GetRandomPoolableSkill());
                 break;
-            case ProgressionType.Upgrade:
+            case ProgressionType.Modifier:
                 UpdateModifiers();
-                SkillUpgradePickup upgradePickup = Instantiate(_skillUpgradePickup, pos, Quaternion.identity);
+                ModifierPickup upgradePickup = Instantiate(_skillUpgradePickup, pos, Quaternion.identity);
                 upgradePickup.AssignId(GetRandomPoolableModifier());
                 break;
             case ProgressionType.Ability:

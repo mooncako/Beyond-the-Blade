@@ -29,19 +29,27 @@ public class RoomClearFeedbackPlayer : MonoBehaviour,
 
     public void OnMMEvent(LevelClearedEvent e)
     {
-        CameraFocusEvent.Trigger(new CameraLensSetting(18));
-        _timeScaleTween.Stop();
-        _timeScaleTween = Tween.Custom(0, 1, 1, onValueChange: newVal => Time.timeScale = _timeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true).OnComplete(() =>
+        if(e.TriggerSlowMo)
         {
-            // FissurePlayer fissurePlayer = Instantiate(_fissurePlayerPrefab, LevelManager.Instance.GetCurrentPickupSpawnPos(new Vector3(0, 1.5f, 0)), Quaternion.identity);
-            // fissurePlayer.OnFissureOpen.AddListener(() =>
-            // {
-            //     fissurePlayer.OnFissureOpen.RemoveAllListeners();
-            //     SpawnRewardEvent.Trigger();
-            // });
-            // fissurePlayer.Play();
+            CameraFocusEvent.Trigger(new CameraLensSetting(18));
+            _timeScaleTween.Stop();
+            _timeScaleTween = Tween.Custom(0, 1, 1, onValueChange: newVal => Time.timeScale = _timeScaleCurve.Evaluate(newVal), cycles: 2, cycleMode: CycleMode.Yoyo, useUnscaledTime: true).OnComplete(() =>
+            {
+                // FissurePlayer fissurePlayer = Instantiate(_fissurePlayerPrefab, LevelManager.Instance.GetCurrentPickupSpawnPos(new Vector3(0, 1.5f, 0)), Quaternion.identity);
+                // fissurePlayer.OnFissureOpen.AddListener(() =>
+                // {
+                //     fissurePlayer.OnFissureOpen.RemoveAllListeners();
+                //     SpawnRewardEvent.Trigger();
+                // });
+                // fissurePlayer.Play();
+                SpawnRewardEvent.Trigger(e.RewardType);
+            });
+        }
+        else
+        {
             SpawnRewardEvent.Trigger(e.RewardType);
-        });
+        }
+        
     }
 
     public void OnMMEvent(BeginHitStopEvent e)
