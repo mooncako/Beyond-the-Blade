@@ -11,6 +11,8 @@ public class LevelSystem : MonoBehaviour
 {
     [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
     [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
+    [SerializeField, FoldoutGroup("References")] private Transform _playerSpawnPos;
+    public Transform PlayerSpawnPos => _playerSpawnPos;
 
     [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardType;
     public LevelRewardType PossibleRewardType => _possibleRewardType;

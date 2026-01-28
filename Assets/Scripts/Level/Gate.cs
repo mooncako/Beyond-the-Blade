@@ -70,6 +70,8 @@ public class Gate : MonoBehaviour,
         _portalTween.Stop();
     }
 
+
+
     void OnTriggerEnter(Collider other)
     {
         if (!_isOn) return;

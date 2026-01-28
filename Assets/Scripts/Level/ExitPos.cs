@@ -8,10 +8,6 @@ public class ExitPos : DrawPos
 {
     [BoxGroup("References")] public SplineContainer SplineContainer;
 
-    void OnValidate()
-    {
-        if(SplineContainer == null) SplineContainer = GetComponentInChildren<SplineContainer>();
-    }
 
     public Vector3 GetTeleportExit()
     {
