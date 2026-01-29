@@ -5,36 +5,52 @@ using MoreMountains.Tools;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class EnemyPack : MonoBehaviour,
+public class EncounterManager : MonoBehaviour,
     MMEventListener<EnemySpawnedEvent>,
     MMEventListener<EncounterStartEvent>,
     MMEventListener<EnemySpawnStoppedEvent>,
     MMEventListener<EnemyDeathEvent>
 {
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<Health> _enemies = new List<Health>();
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<BaseEncounter> _onGoingEncounters = new List<BaseEncounter>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _defaultTimer;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentTimer;
     private WaitForSeconds _waitOneSec = new WaitForSeconds(1);
     private bool _isTimerRunning = false;
     [ShowInInspector, ReadOnly] private bool _noExtraEnemies = false;
 
+    private void Update()
+    {
+        for(int i = 0; i < _onGoingEncounters.Count; i++)
+        {
+            if(!_onGoingEncounters[i].IsCompleted && _onGoingEncounters[i].IsStarted)
+            {
+                _onGoingEncounters[i].OnUpdate();
+            }
+        }
+    }
+
+
     public void OnMMEvent(EnemySpawnedEvent e)
     {
-        if (!_isTimerRunning)
-        {
-            StartCoroutine(TimerCO());
-        }
-
-        if(!_enemies.Contains(e.Health))
-            _enemies.Add(e.Health);
+        
     }
 
     public void OnMMEvent(EncounterStartEvent e)
     {
-        _defaultTimer = e.Timer;
-        _currentTimer = e.Timer;
-        StopCoroutine(TimerCO());
-        StartCoroutine(TimerCO());
+        // _defaultTimer = e.Timer;
+        // _currentTimer = e.Timer;
+        // StopCoroutine(TimerCO());
+        // StartCoroutine(TimerCO());
+
+        for(int i = 0; i < _onGoingEncounters.Count; i++)
+        {
+            if(_onGoingEncounters[i].EncounterID == e.EncounterID)
+            {
+                return;
+            }
+        }
+
+        // Add encounter to ongoing encounters and start it
     }
 
     public void OnMMEvent(EnemySpawnStoppedEvent e)
@@ -80,26 +96,26 @@ public class EnemyPack : MonoBehaviour,
     private void OnEnemyDeath(DamageInfo info)
     {
         var h = info.Health != null ? info.Health : info.Victim?.GetComponent<Health>();
-        if (h != null)
-        {
-            _enemies.Remove(h);
-        }
+        // if (h != null)
+        // {
+        //     _enemies.Remove(h);
+        // }
 
-        if (_enemies.Count == 0)
-        {
-            if (!_noExtraEnemies)
-            {
-                RefreshTimer();
-                StopCoroutine(TimerCO());
-                EnemyClearedEvent.Trigger();
-            }
-        }
+        // if (_enemies.Count == 0)
+        // {
+        //     if (!_noExtraEnemies)
+        //     {
+        //         RefreshTimer();
+        //         StopCoroutine(TimerCO());
+        //         EnemyClearedEvent.Trigger();
+        //     }
+        // }
 
-        if (_noExtraEnemies)
-        {
-            if(_enemies.Count == 0)
-                LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType);
-        }
+        // if (_noExtraEnemies)
+        // {
+        //     if(_enemies.Count == 0)
+        //         LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType);
+        // }
     }
 
     private void RefreshTimer()
