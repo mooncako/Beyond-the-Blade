@@ -1,6 +1,8 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+[Serializable]
 public class BaseEncounter
 {
     public string EncounterID;

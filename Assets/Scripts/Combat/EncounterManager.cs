@@ -46,6 +46,16 @@ public class EncounterManager : MonoBehaviour,
 
     public void OnMMEvent(EnemySpawnedEvent e)
     {
+        for(int i = 0; i < _onGoingEncounters.Count; i++)
+        {
+            if(_onGoingEncounters[i].EncounterID == e.EncounterID)
+            {
+                if(_onGoingEncounters[i] is CombatEncounter ce)
+                {
+                    ce.AddEnemy(e.Health);
+                }
+            }
+        }
         
     }
 
@@ -92,6 +102,13 @@ public class EncounterManager : MonoBehaviour,
     public void OnMMEvent(EnemyDeathEvent e)
     {
         OnEnemyDeath(e.Info);
+        for(int i = 0; i < _onGoingEncounters.Count; i++)
+        {
+            if(_onGoingEncounters[i] is CombatEncounter ce)
+            {
+                ce.RemoveEnemy(e.Info.Health);
+            }
+        }
     }
 
     private void OnEnable()

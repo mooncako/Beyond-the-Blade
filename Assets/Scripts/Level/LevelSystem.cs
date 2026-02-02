@@ -32,6 +32,16 @@ public class LevelSystem : MonoBehaviour,
         if (_levelAssigner == null) _levelAssigner = GetComponentInChildren<LevelAssigner>();
     }
 
+    void OnEnable()
+    {
+        this.MMEventStartListening<EncounterClearEvent>();
+    }
+
+    void OnDisable()
+    {
+        this.MMEventStopListening<EncounterClearEvent>();
+    }
+
     void Awake()
     {
         for(int i = 0; i < _encounterClearRequirements.Length; i++)
