@@ -58,9 +58,9 @@ public class CombatEncounter: BaseEncounter
         }
     }
 
-    public override void Copy(BaseEncounter other)
+    public override void MakeCopy(BaseEncounter other)
     {
-        base.Copy(other);
+        base.MakeCopy(other);
         if(other is CombatEncounter ce)
         {
             SpawnModeType = ce.SpawnModeType;

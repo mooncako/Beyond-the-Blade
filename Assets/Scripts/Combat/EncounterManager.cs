@@ -78,7 +78,7 @@ public class EncounterManager : MonoBehaviour,
             {
                 case EncounterType.Combat:
                     var combatEncounter = new CombatEncounter(0, e.EncounterID, EnemySpawnModeType.Fixed);
-                    _encounterDatabase.GetEncounter(e.EncounterID).Copy(combatEncounter);
+                    _encounterDatabase.GetEncounter(e.EncounterID).MakeCopy(combatEncounter);
                     combatEncounter.EnemyCount = e.EnemyCount;
                     combatEncounter.OnStart();
                     _onGoingEncounters.Add(combatEncounter);
