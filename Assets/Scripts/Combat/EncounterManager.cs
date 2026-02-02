@@ -144,26 +144,7 @@ public class EncounterManager : MonoBehaviour,
     private void OnEnemyDeath(DamageInfo info)
     {
         var h = info.Health != null ? info.Health : info.Victim?.GetComponent<Health>();
-        // if (h != null)
-        // {
-        //     _enemies.Remove(h);
-        // }
-
-        // if (_enemies.Count == 0)
-        // {
-        //     if (!_noExtraEnemies)
-        //     {
-        //         RefreshTimer();
-        //         StopCoroutine(TimerCO());
-        //         EnemyClearedEvent.Trigger();
-        //     }
-        // }
-
-        // if (_noExtraEnemies)
-        // {
-        //     if(_enemies.Count == 0)
-        //         LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType);
-        // }
+        
     }
 
     private void RefreshTimer()

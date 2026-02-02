@@ -2767,6 +2767,14 @@ PrefabInstance:
       propertyPath: _stopPoint.z
       value: 32.778107
       objectReference: {fileID: 0}
+    - target: {fileID: 5636784276810652028, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: _maxEnemyCountPerWave
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636784276810652028, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: _minEnemyCountPerWave
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6733853388620416514, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: m_Name
       value: TrainPortal
@@ -2774,6 +2782,18 @@ PrefabInstance:
     - target: {fileID: 7391579616537631968, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: _encounterID
       value: Level1-0-0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107207657627117529, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: Enemies.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107207657627117529, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: 'Enemies.Array.data[2]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107207657627117529, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: 'Enemies.Array.data[3]'
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8716032709617267107, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: IsPrecisePos
@@ -3082,6 +3102,14 @@ PrefabInstance:
     - target: {fileID: 7391579616537631968, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: _encounterID
       value: Level1-0-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107207657627117529, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: Enemies.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107207657627117529, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: 'Enemies.Array.data[2]'
+      value: HososhiCautious
       objectReference: {fileID: 0}
     - target: {fileID: 8958832835021422287, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: m_LocalPosition.x
