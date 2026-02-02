@@ -1622,6 +1622,8 @@ MonoBehaviour:
   _playerSpawnPos: {fileID: 168770587525601605}
   _possibleRewardType: 3
   PickupSpawnPosition: {fileID: 7062575784627487780}
+  _encounterClearRequirements: []
+  _currentEncounters: []
 --- !u!1001 &285372824585737978
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2767,6 +2769,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainPortal
       objectReference: {fileID: 0}
+    - target: {fileID: 7391579616537631968, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: _encounterID
+      value: Level1-0-0
+      objectReference: {fileID: 0}
     - target: {fileID: 8716032709617267107, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: IsPrecisePos
       value: 1
@@ -3070,6 +3076,10 @@ PrefabInstance:
     - target: {fileID: 6851744702500621446, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7391579616537631968, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
+      propertyPath: _encounterID
+      value: Level1-0-1
       objectReference: {fileID: 0}
     - target: {fileID: 8958832835021422287, guid: 726d9b976d38e2c43946e1bc4ef120ef, type: 3}
       propertyPath: m_LocalPosition.x

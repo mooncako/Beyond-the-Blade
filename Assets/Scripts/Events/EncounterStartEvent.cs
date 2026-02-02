@@ -3,22 +3,22 @@ using UnityEngine;
 
 public struct EncounterStartEvent
 {
-    public float Timer;
+    public int EnemyCount;
     public string EncounterID;
     public EncounterType EncounterType;
 
-    public EncounterStartEvent(float timer, string encounterID, EncounterType encounterType)
+    public EncounterStartEvent(int enemyCount, string encounterID, EncounterType encounterType)
     {
-        Timer = timer;
+        EnemyCount = enemyCount;
         EncounterID = encounterID;
         EncounterType = encounterType;
     }
 
     private static EncounterStartEvent e;
 
-    public static void Trigger(float timer, string encounterID, EncounterType encounterType)
+    public static void Trigger(int enemyCount, string encounterID, EncounterType encounterType)
     {
-        e.Timer = timer;
+        e.EnemyCount = enemyCount;
         e.EncounterID = encounterID;
         e.EncounterType = encounterType;
         MMEventManager.TriggerEvent(e);

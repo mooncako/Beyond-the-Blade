@@ -8,6 +8,7 @@ public class EnemySpawner : MonoBehaviour, IPoolable
     [SerializeField, BoxGroup("References")] private VFXFinishedEventHandler _spawnVFXEventHandler;
     [SerializeField, BoxGroup("References")] private GameObject _spawnedEntity;
     [SerializeField, BoxGroup("References")] private CustomCharacterMovement _spawnedEntityMovement;
+    [SerializeField, BoxGroup("Settings"), ReadOnly] public string EncounterID;
 
     void OnValidate()
     {
@@ -40,7 +41,7 @@ public class EnemySpawner : MonoBehaviour, IPoolable
     {
         _spawnedEntity.SetActive(true);
         // _spawnedEntityMovement.Teleport(transform.position);
-        EnemySpawnedEvent.Trigger(_spawnedEntity.GetComponent<Health>());
+        EnemySpawnedEvent.Trigger(_spawnedEntity.GetComponent<Health>(), EncounterID);
     }
 
     public void OnPoolGet()

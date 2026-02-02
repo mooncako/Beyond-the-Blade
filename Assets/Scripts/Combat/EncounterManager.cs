@@ -11,21 +11,35 @@ public class EncounterManager : MonoBehaviour,
     MMEventListener<EnemySpawnStoppedEvent>,
     MMEventListener<EnemyDeathEvent>
 {
+    [SerializeField, BoxGroup("Database")] private EncounterDatabaseSO _encounterDatabase;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<BaseEncounter> _onGoingEncounters = new List<BaseEncounter>();
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<BaseEncounter> _completedEncounters = new List<BaseEncounter>();
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _defaultTimer;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private float _currentTimer;
     private WaitForSeconds _waitOneSec = new WaitForSeconds(1);
     private bool _isTimerRunning = false;
-    [ShowInInspector, ReadOnly] private bool _noExtraEnemies = false;
 
     private void Update()
     {
         for(int i = 0; i < _onGoingEncounters.Count; i++)
         {
-            if(!_onGoingEncounters[i].IsCompleted && _onGoingEncounters[i].IsStarted)
+            if(_onGoingEncounters[i].IsStarted)
             {
-                _onGoingEncounters[i].OnUpdate();
+                if(!_onGoingEncounters[i].IsCompleted)
+                {
+                    _onGoingEncounters[i].OnUpdate();
+                }
+                else
+                {
+                    var completedEncounter = _onGoingEncounters[i];
+                    _completedEncounters.Add(completedEncounter);
+                    EncounterClearEvent.Trigger(completedEncounter.EncounterID);
+                    _onGoingEncounters.RemoveAt(i);
+                    
+
+                }
             }
+            
         }
     }
 
@@ -37,11 +51,8 @@ public class EncounterManager : MonoBehaviour,
 
     public void OnMMEvent(EncounterStartEvent e)
     {
-        // _defaultTimer = e.Timer;
-        // _currentTimer = e.Timer;
-        // StopCoroutine(TimerCO());
-        // StartCoroutine(TimerCO());
 
+        // Check if encounter is already ongoing
         for(int i = 0; i < _onGoingEncounters.Count; i++)
         {
             if(_onGoingEncounters[i].EncounterID == e.EncounterID)
@@ -49,13 +60,33 @@ public class EncounterManager : MonoBehaviour,
                 return;
             }
         }
-
+        
         // Add encounter to ongoing encounters and start it
+        if(_encounterDatabase.GetEncounter(e.EncounterID) != null)
+        {
+            switch(e.EncounterType)
+            {
+                case EncounterType.Combat:
+                    var combatEncounter = new CombatEncounter(0, e.EncounterID, EnemySpawnModeType.Fixed);
+                    _encounterDatabase.GetEncounter(e.EncounterID).Copy(combatEncounter);
+                    combatEncounter.EnemyCount = e.EnemyCount;
+                    combatEncounter.OnStart();
+                    _onGoingEncounters.Add(combatEncounter);
+                    break;
+
+            }
+        }
+        else
+        {
+            Debug.LogError("Encounter with ID " + e.EncounterID + " not found in database.");
+            return;
+        }
+        
     }
 
     public void OnMMEvent(EnemySpawnStoppedEvent e)
     {
-        _noExtraEnemies = true;
+        
     }
 
     public void OnMMEvent(EnemyDeathEvent e)

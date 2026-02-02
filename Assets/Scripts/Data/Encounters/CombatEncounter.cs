@@ -6,15 +6,15 @@ using Sirenix.OdinInspector;
 [Serializable]
 public class CombatEncounter: BaseEncounter
 {
-    
-    public int EnemyCount;
     public EnemySpawnModeType SpawnModeType; 
-    [SerializeField, BoxGroup("Enemies")] private List<Health> _enemies;
-    [SerializeField, ReadOnly] private bool _startCountingEnemies = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public int EnemyCount;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<Health> _enemies;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _startCountingEnemies = false;
 
-    public CombatEncounter(int enemyCount, EnemySpawnModeType spawnModeType)
+    public CombatEncounter(int enemyCount, string encounterID, EnemySpawnModeType spawnModeType)
     {
         EnemyCount = enemyCount;
+        EncounterID = encounterID;
         SpawnModeType = spawnModeType;
         _enemies = new List<Health>();
     }
@@ -55,6 +55,15 @@ public class CombatEncounter: BaseEncounter
         else
         {
             return false;
+        }
+    }
+
+    public override void Copy(BaseEncounter other)
+    {
+        base.Copy(other);
+        if(other is CombatEncounter ce)
+        {
+            SpawnModeType = ce.SpawnModeType;
         }
     }
 

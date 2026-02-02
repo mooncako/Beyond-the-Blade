@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
@@ -7,7 +8,8 @@ using UnityEngine;
 using UnityUtils;
 
 
-public class LevelSystem : MonoBehaviour
+public class LevelSystem : MonoBehaviour,
+    MMEventListener<EncounterClearEvent>
 {
     [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
     [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
@@ -18,12 +20,24 @@ public class LevelSystem : MonoBehaviour
     public LevelRewardType PossibleRewardType => _possibleRewardType;
 
     [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
+    [SerializeField, BoxGroup("Settings")] private string[] _encounterClearRequirements;
+
+
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<string> _currentEncounters;
 
 
     void OnValidate()
     {
         if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
         if (_levelAssigner == null) _levelAssigner = GetComponentInChildren<LevelAssigner>();
+    }
+
+    void Awake()
+    {
+        for(int i = 0; i < _encounterClearRequirements.Length; i++)
+        {
+            _currentEncounters.Add(_encounterClearRequirements[i]);
+        }
     }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)
@@ -51,5 +65,18 @@ public class LevelSystem : MonoBehaviour
 
     }
 
+    public void OnMMEvent(EncounterClearEvent e)
+    {
+        if(_currentEncounters.Contains(e.EncounterID))
+        {
+            _currentEncounters.Remove(e.EncounterID);
+
+
+            if(_currentEncounters.Count == 0)
+            {
+                LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType, true);
+            }
+        }
+    }
 }
     

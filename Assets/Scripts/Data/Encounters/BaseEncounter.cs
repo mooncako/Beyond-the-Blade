@@ -21,4 +21,9 @@ public class BaseEncounter
     {
         
     }
+
+    public virtual void Copy(BaseEncounter other)
+    {
+        
+    }
 }
