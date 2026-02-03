@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3278186244356218540}
   - component: {fileID: 2553532717415576835}
-  - component: {fileID: 8172973013824393944}
   m_Layer: 0
   m_Name: NavMeshBuilder
   m_TagString: Untagged
@@ -55,7 +54,7 @@ MonoBehaviour:
     m_Bits: 5120
   m_UseGeometry: 0
   m_DefaultArea: 0
-  m_GenerateLinks: 0
+  m_GenerateLinks: 1
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
@@ -65,17 +64,3 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 338b20452abea9f46ac6c9b8262e4952, type: 2}
   m_BuildHeightMesh: 0
---- !u!114 &8172973013824393944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8809732593411231306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b7182043bbd6154dbe9611af46f9b76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _navMeshSurface: {fileID: 2553532717415576835}
-  _hasTriggered: 0

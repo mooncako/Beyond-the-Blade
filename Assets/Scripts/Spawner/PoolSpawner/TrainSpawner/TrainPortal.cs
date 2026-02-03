@@ -26,20 +26,24 @@ public class TrainPortal : PoolSpawner
 
     void OnEnable()
     {
-        _spawnTrigger.TriggerEnter.AddListener(OnTrigger);
+        if(_spawnTriggerType == EnemySpawnTriggerType.Collision)
+            _spawnTrigger.TriggerEnter.AddListener(OnTrigger);
+        
         _train.OnTrainArrived.AddListener(OnTrainGateOpen);
         _train.OnGateClosed.AddListener(OnGateClosed);
     }
 
     void OnDisable()
     {
-        _spawnTrigger.TriggerEnter.RemoveListener(OnTrigger);
+        if(_spawnTriggerType == EnemySpawnTriggerType.Collision)
+            _spawnTrigger.TriggerEnter.RemoveListener(OnTrigger);
+        
         _train.OnTrainArrived.RemoveListener(OnTrainGateOpen);
         _train.OnGateClosed.RemoveListener(OnGateClosed);
         _moveTween.Stop();
     }
 
-    private void OnTrigger(Collider other)
+    public void OnTrigger(Collider other)
     {
         MoveTrainToMid();
     }
@@ -69,7 +73,8 @@ public class TrainPortal : PoolSpawner
         _moveTween.Stop();
         _moveTween = Tween.Position(_train.transform, _endPoint.position, _moveDuration).OnComplete(() =>
         {
-            gameObject.SetActive(false);
+            OnSpawnCompleted.Invoke(null);
+            _train.DisableShadow();
         });
     }
 
