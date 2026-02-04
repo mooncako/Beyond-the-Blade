@@ -2273,9 +2273,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2904209499200128437}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5886511505848923452}
   m_SourcePrefab: {fileID: 100100000, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
 --- !u!137 &728249704713056390 stripped
@@ -2318,29 +2315,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
   m_PrefabInstance: {fileID: 9104618242078276840}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2904209499200128437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8258321732097589689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fef78a80bbf0bb14793b4f26b1413733, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _skinnedMeshes:
-  - {fileID: 728249704713056390}
-  - {fileID: 5174605215829717461}
-  - {fileID: 4114739980460977559}
-  - {fileID: 3286727042391525253}
-  - {fileID: 7786862457207656551}
-  _lightDetectionRadius: 40
-  _lightMask:
-    serializedVersion: 2
-    m_Bits: 64
-  _fadeSpeed: 5
 --- !u!114 &5886511505848923452
 MonoBehaviour:
   m_ObjectHideFlags: 0

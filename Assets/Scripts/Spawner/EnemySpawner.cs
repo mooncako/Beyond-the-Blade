@@ -31,6 +31,7 @@ public class EnemySpawner : MonoBehaviour, IPoolable
 
     public virtual void OnPoolGet()
     {
+        _spawnedEntity?.SetActive(false);
     }
 
     public virtual void OnPoolReturn()
