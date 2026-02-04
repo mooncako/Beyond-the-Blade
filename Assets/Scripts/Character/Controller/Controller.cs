@@ -255,12 +255,14 @@ public class Controller : MonoBehaviour
 
     public void ToggleRootMotionOnAnimEvent()
     {
-        _animator.applyRootMotion = true;
+        if(!_animator.applyRootMotion)
+            _animator.applyRootMotion = true;
     }
 
     public void ToggleRootMotionOffAnimEvent()
     {
-        _animator.applyRootMotion = false;
+        if(_animator.applyRootMotion)
+            _animator.applyRootMotion = false;
     }
 
     public virtual void StartAttackCooldown()

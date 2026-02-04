@@ -119,7 +119,10 @@ public class AnimationStateMachine : MonoBehaviour
         _attackActionState.RefreshState();
         CurrentState = _idleState;
         CurrentState.OnEnterState();
+        _animancer.Evaluate();
+        _idleState.Clip.FadeDuration = .25f;
     }
+
     private void Update()
     {
         // Update directional movement parameters if we're in move state with directional movement enabled
