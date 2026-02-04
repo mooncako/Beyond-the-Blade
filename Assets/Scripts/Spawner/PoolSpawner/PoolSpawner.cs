@@ -14,6 +14,7 @@ public class PoolSpawner : MonoBehaviour
     [SerializeField, BoxGroup("Settings")] protected bool _isPrecisePos = false;
     [SerializeField, BoxGroup("Settings")] protected int _minEnemyCountPerWave = 3;
     [SerializeField, BoxGroup("Settings")] protected int _maxEnemyCountPerWave = 5;
+    [SerializeField, BoxGroup("Settings")] protected EnemySpawnerType _enemySpawnerType;
 
     [HideInInspector] public UnityEvent<Collider> OnSpawnCompleted;
 
@@ -33,6 +34,6 @@ public class PoolSpawner : MonoBehaviour
     {
         int enemyCount = Random.Range(_minEnemyCountPerWave, _maxEnemyCountPerWave + 1);
         _encounterSetting.StartEncounter(EncounterType.Combat, enemyCount);
-        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, EnemySpawnerType.Train, _spawnPositionType, _enemyPool, _isPrecisePos, enemyCount, _encounterSetting.EncounterID);
+        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, _enemySpawnerType, _spawnPositionType, _enemyPool, _isPrecisePos, enemyCount, _encounterSetting.EncounterID);
     }
 }

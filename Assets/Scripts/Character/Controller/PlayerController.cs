@@ -415,6 +415,7 @@ public class PlayerController : Controller,
     {
         if (context.started && IsActionAvailable(AnimationStateType.Attack))
         { 
+            _isInAimMode = true;
             ExecuteLightAttack(GetAimPoint());
             UpdateCurrentSkill(CurrentWeapon.LoopBasicAttack());
             if (_currentSkill != null)
@@ -426,9 +427,9 @@ public class PlayerController : Controller,
 
             Movement.Stop();
         }
-        else
+        else if(context.canceled)
         {
-
+            _isInAimMode = false;
         }
     }
 
@@ -438,12 +439,16 @@ public class PlayerController : Controller,
         {
             if (Stamina.ConsumeStamina(Stats.ParryStaminaCost))
             {
+                _isInAimMode = true;
                 Parry(GetAimPoint());
                 UpdateCurrentSkill(CurrentWeapon.GetParrySkill());
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Parry);
                 Movement.Stop();
             }
+        }else if(context.canceled)
+        {
+            _isInAimMode = false;
         }
     }
 

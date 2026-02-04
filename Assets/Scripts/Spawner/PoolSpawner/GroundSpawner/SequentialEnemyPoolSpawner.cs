@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SequentialEnemyPoolSpawner : PoolSpawner
 {
-    [SerializeField, BoxGroup("Settings")] private EnemySpawnerType _enemySpawnerType = EnemySpawnerType.Ground;
+    
 
     protected override void OnValidate()
     {

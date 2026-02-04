@@ -147,23 +147,25 @@ public class SpawnManager : MMSingleton<SpawnManager>,
                 enemies.Add(profile);
         }
 
-        switch(spawnerType)
-        {
-            case EnemySpawnerType.Train:
-                PickEnemiesToSpawn(enemies, 0f);
-                break;
-            case EnemySpawnerType.Ground:
-                PickEnemiesToSpawn(enemies, 0f);
-                break;
-        }
+        // switch(spawnerType)
+        // {
+        //     case EnemySpawnerType.Train:
+        //         PickEnemiesToSpawn(enemies, 0f);
+        //         break;
+        //     case EnemySpawnerType.Ground:
+        //         PickEnemiesToSpawn(enemies, 0f);
+        //         break;
+        // }
         
+        PickEnemiesToSpawn(enemies, 0f);
+
         switch(spawnPositionType)
         {
             case EnemySpawnModeType.Wave:
-                StartWave(isPrecisePos, encounterID);
+                StartWave(isPrecisePos, encounterID, spawnerType);
                 break;
             case EnemySpawnModeType.Fixed:
-                StartFixed(isPrecisePos, encounterID);
+                StartFixed(isPrecisePos, encounterID, spawnerType);
                 break;
         }
     }
@@ -208,7 +210,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     }
 
     [Button]
-    private void StartWave(bool isPrecisePos, string encounterID)
+    private void StartWave(bool isPrecisePos, string encounterID, EnemySpawnerType spawnerType)
     {
         if (_enemiesWaitingForSpawn.Count >= _maxEnemyCount)
         {
@@ -230,11 +232,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             return;
         }
 
-        StopCoroutine(SpawnEnemyCO(isPrecisePos, encounterID));
-        StartCoroutine(SpawnEnemyCO(isPrecisePos, encounterID));
+        StopCoroutine(SpawnEnemyCO(isPrecisePos, encounterID, spawnerType));
+        StartCoroutine(SpawnEnemyCO(isPrecisePos, encounterID, spawnerType));
     }
 
-    private void StartFixed(bool isPrecisePos, string encounterID)
+    private void StartFixed(bool isPrecisePos, string encounterID, EnemySpawnerType spawnerType)
     {
         if (_enemiesWaitingForSpawn.Count >= _maxEnemyCount)
         {
@@ -261,16 +263,16 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
         for(int i = 0; i < currentSpawningEnemyCount; i++)
         {
-            SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()), _enemySpawnPos[i], isPrecisePos, encounterID);
+            SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue(), spawnerType), _enemySpawnPos[i], isPrecisePos, encounterID);
         }
     }
     
-    private IEnumerator SpawnEnemyCO(bool isPrecisePos, string encounterID)
+    private IEnumerator SpawnEnemyCO(bool isPrecisePos, string encounterID, EnemySpawnerType spawnerType)
     {
         while (_currentSpawningEnemies.Count > 0)
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(_minSpawnDelay, _maxSpawnDelay));
-            GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
+            GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue(), spawnerType);
             SpawnEnemyWave(enemy, isPrecisePos, encounterID);
         }
         
