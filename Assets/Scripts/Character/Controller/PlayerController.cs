@@ -33,6 +33,7 @@ public class PlayerController : Controller,
     [SerializeField, FoldoutGroup("Base Reference")] private VisualEffect _teleportEffect;
     [Header("General Settings")]
     [BoxGroup("Input")] public InputProcessor InputProcessor;
+    [SerializeField, BoxGroup("Input"), Tooltip("The maximum distance for aim assist to find a target.")] private float _aimAssistDistance = 2.5f;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
@@ -322,7 +323,7 @@ public class PlayerController : Controller,
                 _aimPoint.y = transform.position.y;
                 Vector3 direction = (_aimPoint - transform.position).normalized;
                 Vector3 playerAimForward = transform.position + direction;
-                if(FindClosestEnemyToPosition(playerAimForward, 2.5f, out Vector3 aimPoint))
+                if(FindClosestEnemyToPosition(playerAimForward, _aimAssistDistance, out Vector3 aimPoint))
                 {
                     return aimPoint;
                 }
