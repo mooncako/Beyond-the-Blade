@@ -88,7 +88,7 @@ public class EncounterManager : MonoBehaviour,
         }
         else
         {
-            Debug.LogError("Encounter with ID " + e.EncounterID + " not found in database.");
+            Debug.LogError("Encounter with ID " + e.EncounterID + " not found in database.", _encounterDatabase);
             return;
         }
         

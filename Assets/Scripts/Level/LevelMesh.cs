@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LevelMesh : MonoBehaviour
+public class GroundMesh : MonoBehaviour
 {
     
 }
