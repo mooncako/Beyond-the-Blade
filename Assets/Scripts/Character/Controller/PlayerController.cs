@@ -321,8 +321,8 @@ public class PlayerController : Controller,
                 _aimPoint = mouseRay.GetPoint(planeDistance);
                 _aimPoint.y = transform.position.y;
                 Vector3 direction = (_aimPoint - transform.position).normalized;
-                Vector3 playerAimForward = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.z);
-                if(FindClosestEnemyToPosition(playerAimForward, .5f, out Vector3 aimPoint))
+                Vector3 playerAimForward = transform.position + direction;
+                if(FindClosestEnemyToPosition(playerAimForward, 2.5f, out Vector3 aimPoint))
                 {
                     return aimPoint;
                 }
@@ -385,7 +385,7 @@ public class PlayerController : Controller,
             return false;
         }
 
-        pos = closestEnemy.transform.position;
+        pos = new Vector3(closestEnemy.transform.position.x, position.y, closestEnemy.transform.position.z);
         return true;
     }
 
