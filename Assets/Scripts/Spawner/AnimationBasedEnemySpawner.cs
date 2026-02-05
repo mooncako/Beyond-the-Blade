@@ -28,6 +28,11 @@ public class AnimationBasedEnemySpawner : EnemySpawner
         _idleAnimation.NormalizedStartTime = 0;
     }
 
+    void Awake()
+    {
+        
+    }
+
     void OnEnable()
     {
         _animancer.Play(_idleDeathAnimation);
@@ -54,7 +59,9 @@ public class AnimationBasedEnemySpawner : EnemySpawner
     public override void StartSpawn()
     {
         base.StartSpawn();
-        _spawnedEntity.transform.localRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+        float rotation = Random.Range(-180f, 180f);
+        _spawnedEntity.transform.localRotation = Quaternion.Euler(0, rotation, 0);
+        _animancer.transform.localRotation = Quaternion.Euler(0, rotation, 0);
         _collider.enabled = true;
     }
 
@@ -74,5 +81,6 @@ public class AnimationBasedEnemySpawner : EnemySpawner
         _animancer.gameObject.SetActive(true);
         _collider.enabled = false;
         _spawnedEntity.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        _animancer.transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
 }

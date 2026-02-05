@@ -55,6 +55,8 @@ MonoBehaviour:
   _levelAssigner: {fileID: 2978567987033874926}
   _playerSpawnPos: {fileID: 5035686703726506679}
   PickupSpawnPosition: {fileID: 3408505272383012108}
+  _enemySequentialSpawners:
+  - {fileID: 2987715992244534890}
   _possibleRewardType: 3
   _encounterClearRequirements:
   - Level3-0-0
@@ -448,7 +450,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 36
+  m_VersionIndex: 66
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1510,6 +1512,10 @@ PrefabInstance:
       value: -13.69
       objectReference: {fileID: 0}
     - target: {fileID: 5920285393923188613, guid: c66f5bd8a1d5ec64b89444f74d9025ae, type: 3}
+      propertyPath: _spawnTriggerType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5920285393923188613, guid: c66f5bd8a1d5ec64b89444f74d9025ae, type: 3}
       propertyPath: _maxEnemyCountPerWave
       value: 4
       objectReference: {fileID: 0}
@@ -1577,6 +1583,17 @@ PrefabInstance:
       addedObject: {fileID: 8816967824729660245}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c66f5bd8a1d5ec64b89444f74d9025ae, type: 3}
+--- !u!114 &2987715992244534890 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5920285393923188613, guid: c66f5bd8a1d5ec64b89444f74d9025ae, type: 3}
+  m_PrefabInstance: {fileID: 8889942865418164719}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 853c3d902540be14389b9a29e2374b10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3739771245451960047 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5240287593520088832, guid: c66f5bd8a1d5ec64b89444f74d9025ae, type: 3}

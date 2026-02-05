@@ -13,15 +13,15 @@ public class SequentialEnemyPoolSpawner : PoolSpawner
 
     void OnEnable()
     {
-        _spawnTrigger.TriggerEnter.AddListener(OnSpawnTriggerEnter);
+        
     }
 
     void OnDisable()
     {
-        _spawnTrigger.TriggerEnter.RemoveListener(OnSpawnTriggerEnter);
+        
     }
 
-    private void OnSpawnTriggerEnter(Collider other)
+    public void TriggerSpawn()
     {
         SpawnEnemies();
     }

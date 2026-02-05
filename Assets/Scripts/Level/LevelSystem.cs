@@ -17,6 +17,8 @@ public class LevelSystem : MonoBehaviour,
     [SerializeField, FoldoutGroup("References")] public Transform PickupSpawnPosition;
     public Transform PlayerSpawnPos => _playerSpawnPos;
 
+    [SerializeField, FoldoutGroup("References")] private SequentialEnemyPoolSpawner[] _enemySequentialSpawners;
+
     [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardType;
     public LevelRewardType PossibleRewardType => _possibleRewardType;
 
@@ -97,6 +99,14 @@ public class LevelSystem : MonoBehaviour,
             {
                 LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType, true);
             }
+        }
+    }
+
+    public void TriggerSequentialSpawn()
+    {
+        for(int i = 0; i< _enemySequentialSpawners.Length; i++)
+        {
+            _enemySequentialSpawners[i].TriggerSpawn();
         }
     }
 }

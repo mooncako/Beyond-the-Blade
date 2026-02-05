@@ -727,11 +727,12 @@ public class PlayerController : Controller,
         _input.SwitchCurrentActionMap("UI");
     }
 
-    public void PortalTrigger(SplineContainer container, Vector3 exitPos)
+    public void PortalTrigger(SplineContainer container, Vector3 exitPos, float duration = 1f)
     {
         ToggleKillzEvent.Trigger(false);
         _splineAnimate.Container = container;
         _splineAnimate.NormalizedTime = 0;
+        _splineAnimate.Duration = duration;
         _splineAnimate.Play();
         _playerMesh.SetActive(false);
         _teleportEffect.Play();

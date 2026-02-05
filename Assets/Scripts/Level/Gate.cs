@@ -24,6 +24,7 @@ public class Gate : MonoBehaviour,
     [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
+    [SerializeField, BoxGroup("Settings")] private float _duration = 1f;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
     
 
@@ -93,7 +94,8 @@ public class Gate : MonoBehaviour,
             }
             else
             {
-                pC.PortalTrigger(_exit.SplineContainer, _exit.GetTeleportExit());
+                _targetLevel.TriggerSequentialSpawn();
+                pC.PortalTrigger(_exit.SplineContainer, _exit.GetTeleportExit(), _duration);
             }
             
         }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6516946715021869448}
   - component: {fileID: 8792491964218724262}
   m_Layer: 0
-  m_Name: HeadlessSamuraiAnimationBasedSpawner
+  m_Name: HeadlessSamuraiAggresiveAnimationBasedSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -261,7 +261,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 76b5680de2e1a4e48a4ca2a729ff5a9b, type: 2}
     - target: {fileID: 5866666021909216657, guid: fc905643dea34d54a98f97fb5b8d59c8, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
