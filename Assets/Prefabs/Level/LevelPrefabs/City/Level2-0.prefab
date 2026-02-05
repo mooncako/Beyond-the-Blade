@@ -270,8 +270,8 @@ MonoBehaviour:
   _levelMesh: {fileID: 1714393657827710740}
   _levelAssigner: {fileID: 5673208953417722393}
   _playerSpawnPos: {fileID: 548608905791323256}
-  _possibleRewardType: 2
   PickupSpawnPosition: {fileID: 3534514140714178679}
+  _possibleRewardType: 2
   _encounterClearRequirements:
   - Level2-0-0
   _currentEncounters: []
@@ -2331,6 +2331,10 @@ PrefabInstance:
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[2].Rotation.value.z
       value: -0.045512877
       objectReference: {fileID: 0}
+    - target: {fileID: 6211866894236314263, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
+      propertyPath: _gateLevel
+      value: 
+      objectReference: {fileID: 2415557059054946328}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

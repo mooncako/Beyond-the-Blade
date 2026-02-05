@@ -35,7 +35,6 @@ Transform:
   - {fileID: 2150192173840688447}
   - {fileID: 2890324599851392605}
   - {fileID: 195409870070191069}
-  - {fileID: 7004326662017462856}
   - {fileID: 638768335842941911}
   - {fileID: 4622722955865547738}
   m_Father: {fileID: 0}
@@ -89,7 +88,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7004326662017462856}
   m_Father: {fileID: 6699930955825119039}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5320519070448435375
@@ -1137,11 +1137,11 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 6699930955825119039}
+    m_TransformParent: {fileID: 638768335842941911}
     m_Modifications:
     - target: {fileID: 2724166857144119535, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 24.15
+      value: 24.150002
       objectReference: {fileID: 0}
     - target: {fileID: 2724166857144119535, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1149,7 +1149,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2724166857144119535, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.58
+      value: 4.580002
       objectReference: {fileID: 0}
     - target: {fileID: 2724166857144119535, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1359,6 +1359,10 @@ PrefabInstance:
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[3].Rotation.value.z
       value: -0.16212133
       objectReference: {fileID: 0}
+    - target: {fileID: 6211866894236314263, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
+      propertyPath: _gateLevel
+      value: 
+      objectReference: {fileID: 5089125006313987459}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

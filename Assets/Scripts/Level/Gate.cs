@@ -52,6 +52,7 @@ public class Gate : MonoBehaviour,
         {
             _portalVFX.Stop();
         }
+
     }
 
     void OnEnable()

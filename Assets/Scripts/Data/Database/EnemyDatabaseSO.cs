@@ -13,7 +13,7 @@ public class EnemyDatabaseSO : SerializedScriptableObject
     {
         for (int i = 0; i < EnemyDict.Count; i++)
         {
-            if (EnemyDict.Keys.ElementAt(i).EnemyName == enemyName)
+            if (EnemyDict.Keys.ElementAt(i).EnemyName == enemyName && EnemyDict.Keys.ElementAt(i).EnemySpawnerType == spawnerType)
             {
                 return EnemyDict.ElementAt(i).Value;
             }

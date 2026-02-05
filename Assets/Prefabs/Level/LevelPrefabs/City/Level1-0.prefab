@@ -1487,7 +1487,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 810
+  m_VersionIndex: 831
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1589,8 +1589,8 @@ MonoBehaviour:
   _levelMesh: {fileID: 2139276420037011865}
   _levelAssigner: {fileID: 7306354837715213123}
   _playerSpawnPos: {fileID: 168770587525601605}
-  _possibleRewardType: 4
   PickupSpawnPosition: {fileID: 1622134614623096638}
+  _possibleRewardType: 4
   _encounterClearRequirements:
   - Level1-0-0
   - Level1-0-1
@@ -1771,6 +1771,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gate01
       objectReference: {fileID: 0}
+    - target: {fileID: 6211866894236314263, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
+      propertyPath: _gateLevel
+      value: 
+      objectReference: {fileID: 5864826631646847923}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2886,6 +2890,10 @@ PrefabInstance:
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[2].Rotation.value.z
       value: -0.19868463
       objectReference: {fileID: 0}
+    - target: {fileID: 6211866894236314263, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
+      propertyPath: _gateLevel
+      value: 
+      objectReference: {fileID: 5864826631646847923}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

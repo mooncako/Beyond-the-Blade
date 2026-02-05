@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8689699654289430112}
   - component: {fileID: 6516946715021869448}
+  - component: {fileID: 8792491964218724262}
   m_Layer: 0
   m_Name: HeadlessSamuraiAnimationBasedSpawner
   m_TagString: Untagged
@@ -80,9 +81,31 @@ MonoBehaviour:
       _Names: []
     _Clip: {fileID: -203655887218126122, guid: 4922112cd2ce19a4ba41c0efbd0b252a, type: 3}
     _NormalizedStartTime: 0
+  _collider: {fileID: 8792491964218724262}
   references:
     version: 2
     RefIds: []
+--- !u!65 &8792491964218724262
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5806295095502962410}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 6.7451477, y: 2.5486715, z: 5.035314}
+  m_Center: {x: 0.18662189, y: 0.774336, z: 0.031960014}
 --- !u!1001 &4107518208511243762
 PrefabInstance:
   m_ObjectHideFlags: 0
