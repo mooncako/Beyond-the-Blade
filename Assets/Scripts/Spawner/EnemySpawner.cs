@@ -6,6 +6,7 @@ public class EnemySpawner : MonoBehaviour, IPoolable
     [SerializeField, BoxGroup("References")] protected GameObject _spawnedEntity;
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _spawnedEntityMovement;
     [SerializeField, BoxGroup("Settings"), ReadOnly] public string EncounterID;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] public EnemySpawnTriggerType SpawnTriggerType;
 
     protected virtual void OnValidate()
     {

@@ -34,6 +34,6 @@ public class PoolSpawner : MonoBehaviour
     {
         int enemyCount = Random.Range(_minEnemyCountPerWave, _maxEnemyCountPerWave + 1);
         _encounterSetting.StartEncounter(EncounterType.Combat, enemyCount);
-        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, _enemySpawnerType, _spawnPositionType, _enemyPool, _isPrecisePos, enemyCount, _encounterSetting.EncounterID);
+        EnemyStartSpawnEvent.Trigger(_enemySpawnPositions, _enemySpawnerType, _spawnPositionType, _spawnTriggerType, _enemyPool, _isPrecisePos, enemyCount, _encounterSetting.EncounterID);
     }
 }

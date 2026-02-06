@@ -50,6 +50,7 @@ MonoBehaviour:
   _spawnedEntity: {fileID: 4754733653595981904}
   _spawnedEntityMovement: {fileID: 6735722448558569253}
   EncounterID: 
+  SpawnTriggerType: 0
   _animancer: {fileID: 4761025233209544102}
   _idleDeathAnimation:
     _FadeDuration: 0
@@ -82,6 +83,9 @@ MonoBehaviour:
     _Clip: {fileID: -203655887218126122, guid: 4922112cd2ce19a4ba41c0efbd0b252a, type: 3}
     _NormalizedStartTime: 0
   _collider: {fileID: 8792491964218724262}
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 128
   references:
     version: 2
     RefIds: []
