@@ -223,6 +223,13 @@ namespace Unity.RaytracedHardShadow.Editor {
             }
             EditorGUILayout.Space();
 
+            
+            EditorGUILayout.LabelField("Ignore", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(so.FindProperty("m_ignoreLayers"));
+            EditorGUILayout.PropertyField(so.FindProperty("m_ignoreChildren"));
+            EditorGUILayout.PropertyField(so.FindProperty("m_ignoreObjects"), true);
+            EditorGUILayout.Space();
+
             // misc
             EditorGUILayout.LabelField("Misc", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(so.FindProperty("m_GPUSkinning"));

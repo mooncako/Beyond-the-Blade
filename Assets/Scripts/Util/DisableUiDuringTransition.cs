@@ -26,7 +26,7 @@ public class DisableUiDuringTransition : MonoBehaviour,
 
     public void OnMMEvent(LevelTransitionEvent e)
     {
-        if (e.Type == EventStateType.OnEventStart)
+        if (e.Type == EventStateType.OnEventStarted)
         {
             _canvasGroup.alpha = 0;
             _canvasGroup.blocksRaycasts = false;

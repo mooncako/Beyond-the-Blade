@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
@@ -7,180 +8,47 @@ using UnityEngine;
 using UnityUtils;
 
 
-public class LevelSystem : MonoBehaviour
+public class LevelSystem : MonoBehaviour,
+    MMEventListener<EncounterClearEvent>
 {
-    [field: SerializeField, FoldoutGroup("References")] private EnvironmentalObjectSpawner[] _environmentalObjectSpawners;
-    [field: SerializeField, FoldoutGroup("References")] private GameplayObjectSpawner[] _gameplayObjectSpawners;
     [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
     [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
+    [SerializeField, FoldoutGroup("References")] private Transform _playerSpawnPos;
+    public Transform PlayerSpawnPos => _playerSpawnPos;
 
-    [SerializeField, BoxGroup("Settings")] public BiomeType BiomeType;
-    [SerializeField, BoxGroup("Settings"), Range(1, 3)] private int _exitsAmount = 1;
-    [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardTypes;
-    [SerializeField, BoxGroup("Settings")] private LevelType _levelType;
-    [SerializeField, BoxGroup("Settings")] public ExitsProbability ExitsProbability;
+    [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardType;
+    public LevelRewardType PossibleRewardType => _possibleRewardType;
+
     [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
-    [field: SerializeField, BoxGroup("Settings")] public SpawnPos[] SpawnPositions { get; private set; }
-    [field: SerializeField, BoxGroup("Settings")] public EnemySpawnPos[] EnemySpawnPositions { get; private set; }
-    [field: SerializeField, BoxGroup("Settings")] public ExitPos[] ExitPositions { get; private set; }
+    [SerializeField, BoxGroup("Settings")] private string[] _encounterClearRequirements;
 
-    [SerializeField, BoxGroup("Debug")] public SpawnPos SpawnPos;
-    [SerializeField, BoxGroup("Debug")] public PlayerController _player;
-    [SerializeField, BoxGroup("Debug")] public List<ExitPos> ExitPosList = new List<ExitPos>();
-    [SerializeField, BoxGroup("Debug"), ReadOnly] public List<LevelType> ExitsLevelType = new List<LevelType>();
 
-#if UNITY_EDITOR
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 50, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Condition => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty()  || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null || EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "STATUS: <color=red>Invalid</color>" : "STATUS: <color=green>Clear</color>";
-    [DisplayAsString(Alignment = TextAlignment.Center, EnableRichText = true, FontSize = 20, Overflow = false), ShowInInspector, HideLabel, BoxGroup()] public string Suggestion => _environmentalObjectSpawners.IsNullOrEmpty() || SpawnPositions.IsNullOrEmpty() || ExitPositions.IsNullOrEmpty() || _levelMesh == null || _gameplayObjectSpawners.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length || PickupSpawnPosition == null|| EnemySpawnPositions.Length <= 1 || _levelAssigner == null ? "Check references and settings and hit apply setting" : "You are good to go";
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private List<string> _currentEncounters;
 
-    [Button(ButtonHeight = 60)]
-    private void ApplySetting()
-    {
-        _environmentalObjectSpawners = GetComponentsInChildren<EnvironmentalObjectSpawner>();
-        _gameplayObjectSpawners = GetComponentsInChildren<GameplayObjectSpawner>();
-        SpawnPositions = GetComponentsInChildren<SpawnPos>();
-        EnemySpawnPositions = GetComponentsInChildren<EnemySpawnPos>();
-        ExitPositions = GetComponentsInChildren<ExitPos>();
-        _levelMesh = GetComponentInChildren<LevelMesh>();
-        _levelAssigner = GetComponentInChildren<LevelAssigner>();
-    }
-#endif
 
     void OnValidate()
     {
         if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
+        if (_levelAssigner == null) _levelAssigner = GetComponentInChildren<LevelAssigner>();
     }
 
+    void OnEnable()
+    {
+        this.MMEventStartListening<EncounterClearEvent>();
+    }
+
+    void OnDisable()
+    {
+        this.MMEventStopListening<EncounterClearEvent>();
+    }
 
     void Awake()
     {
-        // Alter Level rotation
-        float y = Random.Range(-180, 180);
-        transform.Rotate(new Vector3(0, y, 0));
-
-        // Generate Environmental Props
-        GenerateEnvironmentalProps();
-
-        // Generate Gameplay Props
-        GenerateGameplayProps();
-
-        // Rebuild Navmesh
-        // RebuildNavmesh();
-
-        // Select Spawn/Exit Locations
-        SelectSpawnExitLocations();
-
-        Tween.Delay(.01f).OnComplete(() => {
-            
-            LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventEnd, SpawnPos.transform, this);
-
-            Tween.Delay(.01f).OnComplete(() =>
-            {
-                LevelRandomizeCompleteEvent.Trigger(EventStateType.OnEventStart, SpawnPos.transform, this);
-            });
-            
-        });
-    }
-
-    public void CalculateExitTypes()
-    {
-        float possibilityIndex;
-        ExitsLevelType.Clear();
-        for (int i = 0; i < ExitPosList.Count; i++)
+        for(int i = 0; i < _encounterClearRequirements.Length; i++)
         {
-            possibilityIndex = Random.Range(0, 1);
-            if (possibilityIndex <= ExitsProbability.RegularExitPercentage)
-            {
-                ExitsLevelType.Add(LevelType.Reguler);
-            }
-            else if (possibilityIndex <= ExitsProbability.RegularExitPercentage + ExitsProbability.RecoveryExitPercentage)
-            {
-                ExitsLevelType.Add(LevelType.Recover);
-            }
-            else
-            {
-                ExitsLevelType.Add(LevelType.Shop);
-            }
+            _currentEncounters.Add(_encounterClearRequirements[i]);
         }
     }
-
-    private void SelectSpawnExitLocations()
-    {
-        if (SpawnPositions.IsNullOrEmpty())
-        {
-            return;
-        }
-        int spawnPosIndex = Random.Range(0, SpawnPositions.Length);
-        SpawnPos = SpawnPositions[spawnPosIndex];
-
-        if (ExitPositions.IsNullOrEmpty() || _exitsAmount > ExitPositions.Length)
-        {
-            return;
-        }
-
-        if (_exitsAmount == 1)
-        {
-            int exitPosIndex = Random.Range(0, ExitPositions.Length);
-            ExitPosList.Add(ExitPositions[exitPosIndex]);
-        }
-        else if (_exitsAmount > 1)
-        {
-            if (_exitsAmount == ExitPositions.Length)
-            {
-                for (int i = 0; i < ExitPositions.Length; i++)
-                {
-                    ExitPosList.Add(ExitPositions[i]);
-                }
-            }
-            else
-            {
-                List<int> indexes = GenerateRandomIndexes(_exitsAmount, ExitPositions.Length, 0);
-                for (int i = 0; i < indexes.Count; i++)
-                {
-                    ExitPosList.Add(ExitPositions[i]);
-                }
-            }
-        }
-
-        
-    }
-
-    private void GenerateEnvironmentalProps()
-    {
-        if (_environmentalObjectSpawners.IsNullOrEmpty())
-        {
-            return;
-        }
-        else
-        {
-            for (int i = 0; i < _environmentalObjectSpawners.Length; i++)
-            {
-                _environmentalObjectSpawners[i].Respawn();
-            }
-        }
-    }
-
-    private void GenerateGameplayProps()
-    {
-        if (_gameplayObjectSpawners.IsNullOrEmpty())
-        {
-            return;
-        }
-        else
-        {
-            for (int i = 0; i < _gameplayObjectSpawners.Length; i++)
-            {
-                _gameplayObjectSpawners[i].Respawn();
-            }
-        }
-    }
-
-    // private void RebuildNavmesh()
-    // {
-    //     _navMeshSurface.BuildNavMesh();
-    //     // Generate Enemies
-        
-    // }
 
     private List<int> GenerateRandomIndexes(int amount, int maxRange, int minRange = 0)
     {
@@ -207,10 +75,18 @@ public class LevelSystem : MonoBehaviour
 
     }
 
-    public void ShiftLevel()
+    public void OnMMEvent(EncounterClearEvent e)
     {
-        Vector3 shiftDistance = transform.position - SpawnPos.transform.position;
-        transform.position += shiftDistance;
+        if(_currentEncounters.Contains(e.EncounterID))
+        {
+            _currentEncounters.Remove(e.EncounterID);
+
+
+            if(_currentEncounters.Count == 0)
+            {
+                LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType, true);
+            }
+        }
     }
 }
     

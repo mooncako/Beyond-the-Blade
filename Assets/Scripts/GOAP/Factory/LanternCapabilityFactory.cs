@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class LanternCapabilityFactory : CapabilityFactory
 {
-    //TODO: Add new goals to represent different personality
 
     public override ICapabilityConfig Create()
     {
@@ -31,7 +30,7 @@ public class LanternCapabilityFactory : CapabilityFactory
 
         builder.AddAction<AttackAction>()
             .SetTarget<IdleTarget>()
-            .AddCondition<PlayerDistance>(Comparison.SmallerThanOrEqual, 1)
+            .AddCondition<PlayerDistance>(Comparison.GreaterThanOrEqual, 1)
             .AddCondition<IsTargetVisible>(Comparison.GreaterThanOrEqual, 1)
             .AddEffect<PlayerHealth>(EffectType.Decrease)
             .SetStoppingDistance(2f)

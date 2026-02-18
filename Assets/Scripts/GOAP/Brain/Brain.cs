@@ -17,11 +17,13 @@ public class Brain : MonoBehaviour
     [SerializeField, BoxGroup("References")] protected AttackSensorConfigSO _attackSensorConfigSO;
     [SerializeField, BoxGroup("References")] protected CustomCharacterMovement _movement;
     [SerializeField, BoxGroup("References")] protected EnemyController _controller;
-    [SerializeField, BoxGroup("Settings")] protected float _spanwDelay = .2f;
+    [SerializeField, BoxGroup("Settings")] protected float _spawnDelay = .2f;
     [SerializeField, BoxGroup("Settings")] public PersonalityType Personality;
 
     [SerializeField, BoxGroup("Debug"), ReadOnly] protected bool _isPlayerInCombatRange = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly, ShowIf("Personality", PersonalityType.Evasive)] protected bool _isPlayerInCloseRange = false;
     public bool IsPlayerInCombatRange => _isPlayerInCombatRange;
+    public bool IsPlayerInCloseRange => _isPlayerInCloseRange;
 
     protected Tween _spawnDelayTween;
     protected Tween _staggerDelayTween;
@@ -46,8 +48,13 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        _combatRangeSensor.OnPlayerEnter += OnPlayerEnter;
-        _combatRangeSensor.OnPlayerExit += OnPlayerExit;
+        _combatRangeSensor.OnPlayerEnter += OnPlayerEnterCombatRange;
+        _combatRangeSensor.OnPlayerExit += OnPlayerExitCombatRange;
+        if(_evadeSensor != null)
+        {
+            _evadeSensor.OnPlayerEnter += OnPlayerEnterCloseRange;
+            _evadeSensor.OnPlayerExit += OnPlayerExitCloseRange;
+        }
         _agent.Events.OnActionEnd += OnActionEnd;
         _agent.IsPaused = false;
         _provider.ClearGoal();
@@ -55,8 +62,13 @@ public class Brain : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        _combatRangeSensor.OnPlayerEnter -= OnPlayerEnter;
-        _combatRangeSensor.OnPlayerExit -= OnPlayerExit;
+        _combatRangeSensor.OnPlayerEnter -= OnPlayerEnterCombatRange;
+        _combatRangeSensor.OnPlayerExit -= OnPlayerExitCombatRange;
+        if(_evadeSensor != null)
+        {
+            _evadeSensor.OnPlayerEnter -= OnPlayerEnterCloseRange;
+            _evadeSensor.OnPlayerExit -= OnPlayerExitCloseRange;
+        }
         _agent.Events.OnActionEnd -= OnActionEnd;
         _spawnDelayTween.Stop();
         _staggerDelayTween.Stop();
@@ -69,7 +81,11 @@ public class Brain : MonoBehaviour
 
     protected virtual void Start()
     {
-        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
+        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.CombatSensorRadius;
+        if(_evadeSensor != null)
+        {
+            _evadeSensor.Collider.radius = _attackSensorConfigSO.CloseRangeSensorRadius;
+        }
     }
 
     protected virtual void OnActionEnd(IAction action)
@@ -77,14 +93,24 @@ public class Brain : MonoBehaviour
 
     }
 
-    protected virtual void OnPlayerEnter(Transform player)
+    protected virtual void OnPlayerEnterCombatRange(Transform player)
     {
 
     }
 
-    protected virtual void OnPlayerExit(Vector3 lastKnownPosition)
+    protected virtual void OnPlayerExitCombatRange(Vector3 lastKnownPosition)
     {
 
+    }
+
+    protected virtual void OnPlayerEnterCloseRange(Transform player)
+    {
+        
+    }
+
+    protected virtual void OnPlayerExitCloseRange(Vector3 lastKnownPosition)
+    {
+        
     }
 
     [Sirenix.OdinInspector.Button]
@@ -110,5 +136,10 @@ public class Brain : MonoBehaviour
         _agent.IsPaused = true;
         _staggerDelayTween.Stop();
         _spawnDelayTween.Stop();
+    }
+
+    public void AssignAttackSensorConfig(AttackSensorConfigSO config)
+    {
+        _attackSensorConfigSO = config;
     }
 }

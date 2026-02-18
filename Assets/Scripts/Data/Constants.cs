@@ -39,20 +39,11 @@ public static class CHARGEVFX
 
 public static class LIGHTING
 {
+    public const string ShadowIgnoreLayer = "ShadowTracerOccludee";
+    public const string DefaultLayer = "Default";
     public const float MaxCandelaIntensity = 467083800;
     public const float MaxNitsIntensity = 10000000;
     public const float MaxAppliedBrightness = 40f;
-}
-
-public static class AVAILABLESKILLKEY
-{
-    public const int Attack = 0;
-    public const int Parry = 1;
-    public const int Ability = 2;
-    public const int Execution = 3;
-    public const int Dash = 4;
-    public const int Projectile = 5;
-    public const int HeavyAttack = 6;
 }
 
 public static class RARITYCOLOR

@@ -32,8 +32,8 @@ public class HososhiBrain : Brain
 
     protected override void Start()
     {
+        base.Start();
         _provider.RequestGoal<ChasePlayerGoal>(false);
-        _combatRangeSensor.Collider.radius = _attackSensorConfigSO.SensorRadius;
     }
 
     protected override void OnActionEnd(IAction action)
@@ -62,7 +62,7 @@ public class HososhiBrain : Brain
 
     }
 
-    protected override void OnPlayerEnter(Transform player)
+    protected override void OnPlayerEnterCombatRange(Transform player)
     {
         _provider.ClearGoal();
         switch(Personality)
@@ -81,7 +81,7 @@ public class HososhiBrain : Brain
         _isPlayerInCombatRange = true;
     }
 
-    protected override void OnPlayerExit(Vector3 lastKnownPosition)
+    protected override void OnPlayerExitCombatRange(Vector3 lastKnownPosition)
     {
         _provider.ClearGoal();
         _provider.RequestGoal<ChasePlayerGoal>();

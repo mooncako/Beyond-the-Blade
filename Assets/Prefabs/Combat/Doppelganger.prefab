@@ -962,8 +962,12 @@ MonoBehaviour:
   _controller: {fileID: 0}
   _animationDatabase: {fileID: 11400000, guid: 0196f29654b3f414f927624c476ccff3, type: 2}
   SkillDatabase: {fileID: 11400000, guid: 1a09d6739b4c8164e838f21a47b5b889, type: 2}
-  WeaponSkillSO: {fileID: 11400000, guid: 76e124b14889d114d949fd5a76c19685, type: 2}
+  WeaponSkill: {fileID: 11400000, guid: 76e124b14889d114d949fd5a76c19685, type: 2}
+  Combos: []
   _abilityIndex: 0
+  _currentComboIndex: 0
+  _comboSelectionIndex: 0
+  _inCombo: 0
 --- !u!1 &2820768165147954785
 GameObject:
   m_ObjectHideFlags: 0
@@ -2343,10 +2347,21 @@ MonoBehaviour:
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 4524613824046722150}
   _owner: {fileID: 0}
+  _displayStates: -1
   _idleState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2367,6 +2382,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2396,10 +2421,52 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 7400000, guid: fbc856ca8ad1b7245a8dee27060572da, type: 2}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _attackActionState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2416,10 +2483,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2436,10 +2515,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2456,10 +2547,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2476,10 +2579,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2496,10 +2611,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2520,6 +2647,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 3000251216169434687}
     _animancer: {fileID: 4524613824046722150}
     Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -2530,6 +2667,36 @@ MonoBehaviour:
       _Clip: {fileID: 0}
       _NormalizedStartTime: NaN
     Key: Death
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+  _reviveState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
     FadeDuration: 0
     FadeMode: 0
     PossibleInterruptStates: 0
@@ -2601,6 +2768,9 @@ MonoBehaviour:
     AnimationID: 
     Cooldown: 0
     Damage: 0
+    DamageTickTime: 0
+    WeaponType: 0
+    DamageType: 0
     SkillRange:
       AreaType: 0
       X: 0
@@ -2620,6 +2790,7 @@ MonoBehaviour:
       Rot: {x: 0, y: 0, z: 0, w: 1}
       Scale: {x: 1, y: 1, z: 1}
       IsPersistent: 0
+      UsingIndicator: 0
   Pool: {fileID: 0}
   _hitStopDuration: 0
   _weapon: {fileID: 0}

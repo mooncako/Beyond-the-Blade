@@ -105,9 +105,9 @@ public class AbilitySelectionUI : MonoBehaviour,
             _swapPanel.blocksRaycasts = true;
             _swapPanel.interactable = true;
 
-            for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count; i++)
+            for (int i = 0; i < _player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count; i++)
             {
-                _abilitySwapUIs[i].AssignData(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][i]], i);
+                _abilitySwapUIs[i].AssignData(_player.CurrentWeapon.SkillDict[_player.CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability][i]], i);
             }
         }
 
@@ -116,7 +116,7 @@ public class AbilitySelectionUI : MonoBehaviour,
 
     public void OnMMEvent(NewAbilityEvent e)
     {
-        if (e.Type == EventStateType.OnEventStart)
+        if (e.Type == EventStateType.OnEventStarted)
         {
             _alphaTween.Stop();
             _alphaTween = Tween.Alpha(_canvasGroup, 1, .5f);

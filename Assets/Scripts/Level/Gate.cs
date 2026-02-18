@@ -3,14 +3,20 @@ using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Splines;
 using UnityEngine.VFX;
 
-public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
+public class Gate : MonoBehaviour,
+    MMEventListener<GateOpenEvent>,
+    MMEventListener<GateSplineAdjustEvent>
 {
     [SerializeField, BoxGroup("References")] private VisualEffect _portalVFX;
     [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenVFX;
     [SerializeField, BoxGroup("References")] private VisualEffect _toriiGenParticleVFX;
     [SerializeField, BoxGroup("References")] private GameObject _torii;
+    [SerializeField, BoxGroup("References")] private ExitPos _exit;
+    [SerializeField, BoxGroup("References")] private LevelSystem _gateLevel;
+    [SerializeField, BoxGroup("References")] private LevelSystem _targetLevel;
 
     [SerializeField, BoxGroup("Settings")] private string _levelName;
     [SerializeField, BoxGroup("Settings")] private bool _isNewSession;
@@ -19,8 +25,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     [SerializeField, BoxGroup("Settings")] private LayerMask _playerMask;
     [SerializeField, BoxGroup("Settings")] private bool _alwaysOn = false;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _isOn = false;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private LevelSystem _gateLevel;
-    [SerializeField, BoxGroup("Debug")] private ExitPos _exit;
+    
 
     private Tween _toriiGenTween;
     private Tween _portalTween;
@@ -30,6 +35,10 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
         if ((_playerMask & (1 << 7)) == 0)
         {
             _playerMask |= 1 << 7;
+        }
+        if(_exit == null)
+        {
+            _exit = GetComponentInChildren<ExitPos>();
         }
     }
 
@@ -48,6 +57,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     void OnEnable()
     {
         this.MMEventStartListening<GateOpenEvent>();
+        this.MMEventStartListening<GateSplineAdjustEvent>();
         _toriiGenVFX.Play();
         
     }
@@ -55,9 +65,12 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     void OnDisable()
     {
         this.MMEventStopListening<GateOpenEvent>();
+        this.MMEventStopListening<GateSplineAdjustEvent>();
         _toriiGenTween.Stop();
         _portalTween.Stop();
     }
+
+
 
     void OnTriggerEnter(Collider other)
     {
@@ -99,10 +112,24 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
             OpenGate();
     }
 
+    public void OnMMEvent(GateSplineAdjustEvent e)
+    {
+        // if(_targetLevel == null) return;
+        // if(e.LevelSystem != _targetLevel) return;
+        // BezierKnot knot = _exit.GetLastKnot();
+        // knot.Position = _exit.SplineContainer.transform.InverseTransformPoint(_targetLevel.SpawnPos.transform.position);
+        // _exit.SplineContainer.Spline.SetKnot(_exit.SplineContainer.Spline.Count - 1, knot);
+    }
+
     public void AssignExit(ExitPos exit, LevelSystem gateLevel)
     {
         _exit = exit;
         _gateLevel = gateLevel;
+    }
+
+    public void AssignTargetLevel(LevelSystem targetLevel)
+    {
+        _targetLevel = targetLevel;
     }
 
     [Button]
@@ -135,7 +162,7 @@ public class Gate : MonoBehaviour, MMEventListener<GateOpenEvent>
     {
         switch(_levelType)
         {
-            case LevelType.Reguler:
+            case LevelType.Regular:
                 _portalVFX.SetInt("Icon", 0);
                 _portalVFX.SetVector4("IconColor", PORTALCOLOR.Reguler * 20);
                 _portalVFX.SetVector4("VoidColor", PORTALCOLOR.Reguler * 3.4f);

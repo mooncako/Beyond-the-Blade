@@ -1,10 +1,17 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(BoxCollider))]
 public class CollisionTrigger : MonoBehaviour
 {
+    [SerializeField, BoxGroup("References")] private BoxCollider _collider;
     [SerializeField] private LayerMask _activeMask;
+    public LayerMask LayerMask
+    {
+        get { return _activeMask; }
+        set { _activeMask = value; }
+    }
     [SerializeField] private bool _doOnce = false;
     
     [SerializeField] public UnityEvent<Collider> TriggerEnter;
@@ -12,6 +19,15 @@ public class CollisionTrigger : MonoBehaviour
 
     private bool _canTriggerEnter = true;
     private bool _canTriggerExit = true;
+
+    void OnValidate()
+    {
+        if(_collider == null) 
+        {
+            _collider = GetComponent<BoxCollider>();
+            _collider.isTrigger = true;
+        }
+    }
 
 
     void OnTriggerEnter(Collider other)

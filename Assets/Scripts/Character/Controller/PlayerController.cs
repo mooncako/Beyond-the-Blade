@@ -21,7 +21,8 @@ public class PlayerController : Controller,
     MMEventListener<AbilitySwapEvent>,
     MMEventListener<AddNewAbilityEvent>,
     MMEventListener<ParrySuccessEvent>,
-    MMEventListener<CurrencyEarnedEvent>
+    MMEventListener<CurrencyEarnedEvent>,
+    MMEventListener<LevelTransitionEvent>
 {
     [field: SerializeField, FoldoutGroup("Base Reference")] private PlayerInput _input;
     // [field: SerializeField, FoldoutGroup("Base Reference")] private BezierLine _bezierLine;
@@ -139,6 +140,7 @@ public class PlayerController : Controller,
         this.MMEventStartListening<AddNewAbilityEvent>();
         this.MMEventStartListening<ParrySuccessEvent>();
         this.MMEventStartListening<CurrencyEarnedEvent>();
+        this.MMEventStartListening<LevelTransitionEvent>();
         SceneManager.sceneLoaded += OnSceneLoaded;
         
         //Listen for projectile deflection
@@ -158,6 +160,7 @@ public class PlayerController : Controller,
         this.MMEventStopListening<AddNewAbilityEvent>();
         this.MMEventStopListening<ParrySuccessEvent>();
         this.MMEventStopListening<CurrencyEarnedEvent>();
+        this.MMEventStopListening<LevelTransitionEvent>();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _iframeTween.Stop();
         
@@ -183,10 +186,7 @@ public class PlayerController : Controller,
         if(scene.name == SCENENAME.Hub)
         {
             Reset();
-            if(_animationStateMachine.IsInDeathState())
-            {
-                _animationStateMachine.InterruptState(AnimationStateType.Revive);
-            }
+            PlayerRespawnTeleportEvent.Trigger(this);
         }
     }
 
@@ -202,23 +202,23 @@ public class PlayerController : Controller,
 
     public void OnMMEvent(SkillSwapEvent e)
     {
-        CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
+        CurrentWeapon.WeaponSkillDict[AvailableSkillType.Attack][CurrentWeapon.GetAttackSkillIndexWithCooldown(e.Skill.Cooldown)] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
     }
     public void OnMMEvent(AbilitySwapEvent e)
     {
-        CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability][e.Index] = e.SkillId;
+        CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability][e.Index] = e.SkillId;
         CurrentWeapon.RefreshAvailableSkills();
         NewAbilityCallbackEvent.Trigger(e.SkillId, e.Index, true, CurrentWeapon.SkillDict[e.SkillId]);
     }
 
     public void OnMMEvent(AddNewAbilityEvent e)
     {
-        if (CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count < LIMIT.MaxAbilityCount)
+        if (CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count < LIMIT.MaxAbilityCount)
         {
-            CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Add(e.SkillId);
+            CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Add(e.SkillId);
             CurrentWeapon.RefreshAvailableSkills();
-            NewAbilityCallbackEvent.Trigger(e.SkillId, CurrentWeapon.WeaponSkillDict[AVAILABLESKILLKEY.Ability].Count - 1, true, CurrentWeapon.SkillDict[e.SkillId]);
+            NewAbilityCallbackEvent.Trigger(e.SkillId, CurrentWeapon.WeaponSkillDict[AvailableSkillType.Ability].Count - 1, true, CurrentWeapon.SkillDict[e.SkillId]);
         }
         else
         {
@@ -241,6 +241,17 @@ public class PlayerController : Controller,
         else if (e.CurrencyType == CurrencyType.SoulShard)
         {
             PlayerStats.SoulShardCount += e.Amount;
+        }
+    }
+
+    public void OnMMEvent(LevelTransitionEvent e)
+    {
+        if(e.Type == EventStateType.OnEventCompleted)
+        {
+            if(_animationStateMachine.IsInDeathState())
+            {
+                _animationStateMachine.InterruptState(AnimationStateType.Revive);
+            }
         }
     }
 

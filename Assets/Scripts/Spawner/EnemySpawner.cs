@@ -7,11 +7,17 @@ public class EnemySpawner : MonoBehaviour, IPoolable
     [SerializeField, BoxGroup("References")] private VisualEffect _spawnVFX;
     [SerializeField, BoxGroup("References")] private VFXFinishedEventHandler _spawnVFXEventHandler;
     [SerializeField, BoxGroup("References")] private GameObject _spawnedEntity;
+    [SerializeField, BoxGroup("References")] private CustomCharacterMovement _spawnedEntityMovement;
+    [SerializeField, BoxGroup("Settings"), ReadOnly] public string EncounterID;
 
     void OnValidate()
     {
         if (_spawnVFX == null) _spawnVFX = GetComponentInChildren<VisualEffect>();
         if (_spawnVFXEventHandler == null) _spawnVFXEventHandler = GetComponentInChildren<VFXFinishedEventHandler>();
+        if (_spawnedEntityMovement == null && _spawnedEntity != null && _spawnedEntity.TryGetComponent(out CustomCharacterMovement movement))
+        {
+            _spawnedEntityMovement = movement;
+        }
     }
 
     void OnEnable()
@@ -34,7 +40,8 @@ public class EnemySpawner : MonoBehaviour, IPoolable
     private void SpawnEntity()
     {
         _spawnedEntity.SetActive(true);
-        EnemySpawnedEvent.Trigger(_spawnedEntity.GetComponent<Health>());
+        // _spawnedEntityMovement.Teleport(transform.position);
+        EnemySpawnedEvent.Trigger(_spawnedEntity.GetComponent<Health>(), EncounterID);
     }
 
     public void OnPoolGet()

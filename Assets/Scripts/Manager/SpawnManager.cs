@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using System.Linq;
+#endif
 using MoreMountains.Tools;
 using PrimeTween;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityUtils;
 
 public class SpawnManager : MMSingleton<SpawnManager>,
     MMEventListener<EnemyClearedEvent>,
@@ -18,10 +21,10 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [SerializeField, BoxGroup("Settings")] private GameDifficultyDataSO _gameDifficultySettings;
     [SerializeField, BoxGroup("Settings")] private float _minSpawnDelay = .1f;
     [SerializeField, BoxGroup("Settings")] private float _maxSpawnDelay = .4f;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _minDifficulty = 0;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _maxDifficulty = 0;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private float _difficultyIndex = 1;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _encounterAmount = 0;
 
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCountPerWave;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _maxEnemyCount;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _canSpawn = true;
     [field: SerializeField, BoxGroup("Debug"), ReadOnly] private List<(string enemyName, float timeOffset)> _picks = new List<(string, float)>();
 
@@ -31,8 +34,6 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> CurrentSpawningEnemies => _currentSpawningEnemies.ToList();
     [ShowInInspector, BoxGroup("Debug"), ReadOnly] public List<string> EnemiesWaitingForSpawn => _enemiesWaitingForSpawn.ToList();
 #endif
-
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private int _budget;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _poolInitialized = false;
 
     private Queue<string> _currentSpawningEnemies = new Queue<string>();
@@ -48,6 +49,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     protected override void Awake()
     {
         base.Awake();
+    }
+
+    void Start()
+    {
+        UpdateEnemyList();
     }
 
     void OnEnable()
@@ -78,7 +84,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
     public void OnMMEvent(EnemyClearedEvent e)
     {
-        SpawnWave();
+        // SpawnWave();
     }
 
     public void OnMMEvent(EnemyStartSpawnEvent e)
@@ -87,7 +93,9 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         {
             Array.Clear(_enemySpawnPos, 0, _enemySpawnPos.Length);
             _enemySpawnPos = e.EnemySpawnPositions;
-            SetupWaveInfo();
+            _maxEnemyCount = e.EnemyCount;
+            SetupSpawnInfo(e.EnemySpawnerType, e.SpawnPositionType, e.EnemyPool, e.IsPrecisePos, e.EncounterID);
+            
         }
         
     }
@@ -128,39 +136,83 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         
     }
 
-    private void SetupWaveInfo()
+    private void SetupSpawnInfo(EnemySpawnerType spawnerType, EnemySpawnModeType spawnPositionType, EnemyPool enemyPool, bool isPrecisePos, string encounterID)
     {
-        _picks.Clear();
-        _minDifficulty = _gameDifficultySettings.MinDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-        _maxDifficulty = _gameDifficultySettings.MaxDifficultyCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex / _gameDifficultySettings.TotalLevelCount);
-
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
         {
             profile.SpawnedThisWave = 0;
             profile.NextEligibleTime = 0;
-            enemies.Add(profile);
+            if(enemyPool.Enemies.Contains(profile.EnemyName) && profile.EnemySpawnerType == spawnerType)
+                enemies.Add(profile);
         }
-        _budget = _gameDifficultySettings.StartingWaveBudget * Mathf.RoundToInt(Mathf.Pow(_gameDifficultySettings.BudgetScale, LevelManager.Instance.CurrentLevelIndex - 1));
-        _maxEnemyCountPerWave = Mathf.RoundToInt(_gameDifficultySettings.StartingEnemyCountPerWave * _gameDifficultySettings.MaxWaveEnemyCountMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex));
-        float timer = _gameDifficultySettings.StartingSpawnTimer * _gameDifficultySettings.SpawnTimerMultiplierCurve.Evaluate(LevelManager.Instance.CurrentLevelIndex);
-        _picks = WaveSpawner.GenerateWaveScheduled(enemies, _budget, .25f);
+
+        switch(spawnerType)
+        {
+            case EnemySpawnerType.Train:
+                PickEnemiesToSpawn(enemies, 0f);
+                break;
+            case EnemySpawnerType.Ground:
+                PickEnemiesToSpawn(enemies, 0f);
+                break;
+        }
+        
+        switch(spawnPositionType)
+        {
+            case EnemySpawnModeType.Wave:
+                StartWave(isPrecisePos, encounterID);
+                break;
+            case EnemySpawnModeType.Fixed:
+                StartFixed(isPrecisePos, encounterID);
+                break;
+        }
+    }
+
+    private void PickEnemiesToSpawn(List<EnemyProfile> enemies, float timeOffset)
+    {
+        _picks.Clear();
+        int enemyCount = 0;
+        while (enemyCount < _maxEnemyCount)
+        {
+            List<EnemyProfile> eligibleEnemies = new List<EnemyProfile>();
+            foreach (EnemyProfile ep in enemies)
+            {
+                if (ep.NextEligibleTime <= Time.time)
+                {
+                    eligibleEnemies.Add(ep);
+                }
+            }
+
+            if (eligibleEnemies.Count == 0) break;
+
+
+
+            EnemyProfile pickedEnemy = AIUtil.PickEnemyBasedOnDifficultyIndex(eligibleEnemies, _difficultyIndex);
+            if (pickedEnemy != null)
+            {
+                _picks.Add((pickedEnemy.EnemyName, timeOffset));
+                pickedEnemy.SpawnedThisWave++;
+                pickedEnemy.NextEligibleTime = Time.time + pickedEnemy.Cooldown;
+                enemyCount++;
+            }
+            else
+            {
+                break;
+            }
+        }
 
         for (int i = 0; i < _picks.Count; i++)
         {
             _enemiesWaitingForSpawn.Enqueue(_picks[i].enemyName);
         }
-
-        EncounterStartEvent.Trigger(timer);
-        SpawnWave();
     }
 
     [Button]
-    private void SpawnWave()
+    private void StartWave(bool isPrecisePos, string encounterID)
     {
-        if (_enemiesWaitingForSpawn.Count >= _maxEnemyCountPerWave)
+        if (_enemiesWaitingForSpawn.Count >= _maxEnemyCount)
         {
-            for (int i = 0; i < _maxEnemyCountPerWave; i++)
+            for (int i = 0; i < _maxEnemyCount; i++)
             {
                 _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
             }
@@ -178,32 +230,79 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             return;
         }
 
-        StopCoroutine(SpawnEnemyCO());
-        StartCoroutine(SpawnEnemyCO());
+        StopCoroutine(SpawnEnemyCO(isPrecisePos, encounterID));
+        StartCoroutine(SpawnEnemyCO(isPrecisePos, encounterID));
+    }
+
+    private void StartFixed(bool isPrecisePos, string encounterID)
+    {
+        if (_enemiesWaitingForSpawn.Count >= _maxEnemyCount)
+        {
+            for (int i = 0; i < _maxEnemyCount; i++)
+            {
+                _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
+            }
+        }
+        else if (_enemiesWaitingForSpawn.Count > 0)
+        {
+            while (_enemiesWaitingForSpawn.Count > 0)
+            {
+                _currentSpawningEnemies.Enqueue(_enemiesWaitingForSpawn.Dequeue());
+            }
+        }
+        else
+        {
+            EnemySpawnStoppedEvent.Trigger();
+            return;
+        }
+
+        int currentSpawningEnemyCount = _currentSpawningEnemies.Count;
+        _enemySpawnPos.Shuffle();
+
+        for(int i = 0; i < currentSpawningEnemyCount; i++)
+        {
+            SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()), _enemySpawnPos[i], isPrecisePos, encounterID);
+        }
     }
     
-    private IEnumerator SpawnEnemyCO()
+    private IEnumerator SpawnEnemyCO(bool isPrecisePos, string encounterID)
     {
         while (_currentSpawningEnemies.Count > 0)
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(_minSpawnDelay, _maxSpawnDelay));
             GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
-            SpawnEnemy(enemy);
+            SpawnEnemyWave(enemy, isPrecisePos, encounterID);
         }
         
     }
 
     [Button]
-    private void SpawnEnemy(GameObject prefab)
+    private void SpawnEnemyWave(GameObject prefab, bool isPrecisePos, string encounterID)
     {
         EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
-        spawner.transform.position = AIUtil.GetRandomSpawnPos(_enemySpawnPos);
+        spawner.EncounterID = encounterID;
+        if(!isPrecisePos)
+            spawner.transform.position = AIUtil.GetRandomSpawnPosFromArry(_enemySpawnPos);
+        else
+            spawner.transform.position = AIUtil.GetRandomSpawnPosFromArry(_enemySpawnPos, true);
+        spawner.StartSpawn();
+    }
+
+    private void SpawnEnemyFixed(GameObject prefab, EnemySpawnPos spawnPos, bool isPrecisePos, string encounterID)
+    {
+        EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
+        spawner.EncounterID = encounterID;
+        if(!isPrecisePos)
+            spawner.transform.position = AIUtil.GetRandomSpawnPos(spawnPos);
+        else
+            spawner.transform.position = AIUtil.GetRandomSpawnPos(spawnPos, true);
         spawner.StartSpawn();
     }
 
     private void ResetManager()
     {
-        _minDifficulty = 0;
+        _difficultyIndex = _gameDifficultySettings.StartingDifficultyIndex;
+        _encounterAmount = 0;
         _poolInitialized = false;
     }
 

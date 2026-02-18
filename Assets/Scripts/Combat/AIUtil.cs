@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -53,11 +54,54 @@ public static class AIUtil
         return NavMesh.SamplePosition(p, out var hit, 0.5f, areaMask) ? hit.position : p;
     }
 
-    public static Vector3 GetRandomSpawnPos(EnemySpawnPos[] spawnPositions)
+    public static Vector3 GetRandomSpawnPosFromArry(EnemySpawnPos[] spawnPositions, bool isPrecisePos = false)
     {
         int index = Random.Range(0, spawnPositions.Length);
+        if (isPrecisePos)
+        {
+            return spawnPositions[index].transform.position;
+        }
         Vector2 offset = Random.insideUnitCircle * spawnPositions[index].Radius;
         Vector3 spawnPos = new Vector3(spawnPositions[index].transform.position.x + offset.x, spawnPositions[index].transform.position.y, spawnPositions[index].transform.position.z + offset.y);
         return spawnPos;
+    }
+
+    public static Vector3 GetRandomSpawnPos(EnemySpawnPos spawnPosition, bool isPrecisePos = false)
+    {
+        if(isPrecisePos)
+        {
+            return spawnPosition.transform.position;
+        }
+        Vector2 offset = Random.insideUnitCircle * spawnPosition.Radius;
+        Vector3 spawnPos = new Vector3(spawnPosition.transform.position.x + offset.x, spawnPosition.transform.position.y, spawnPosition.transform.position.z + offset.y);
+        return spawnPos;
+    }
+
+    public static EnemyProfile PickEnemyBasedOnDifficultyIndex(List<EnemyProfile> eligibleEnemies, float difficultyIndex)
+    {
+        float totalWeight = 0f;
+        foreach (var enemy in eligibleEnemies)
+        {
+            float weight = Mathf.Max(0f, difficultyIndex - enemy.DifficultyIndex + 1f);
+            totalWeight += weight;
+        }
+
+        if (totalWeight <= 0f) return null;
+
+        float r = Random.value * totalWeight;
+        float cumulativeWeight = 0f;
+
+        foreach (var enemy in eligibleEnemies)
+        {
+            float weight = Mathf.Max(0f, difficultyIndex - enemy.DifficultyIndex + 1f);
+            cumulativeWeight += weight;
+
+            if (r <= cumulativeWeight)
+            {
+                return enemy;
+            }
+        }
+
+        return null;
     }
 }

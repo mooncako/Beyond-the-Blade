@@ -35,7 +35,7 @@ public class ItemSelectionUI : MonoBehaviour, MMEventListener<NewItemSelectionEv
 
     public void OnMMEvent(NewItemSelectionEvent e)
     {
-        if (e.Type == EventStateType.OnEventStart)
+        if (e.Type == EventStateType.OnEventStarted)
         {
             _alphaTween.Stop();
             _alphaTween = Tween.Alpha(_canvasGroup, 1, .5f);

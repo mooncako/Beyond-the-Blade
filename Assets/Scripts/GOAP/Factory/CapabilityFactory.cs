@@ -14,6 +14,9 @@ public class CapabilityFactory : CapabilityFactoryBase
     {
         builder.AddGoal<ChasePlayerGoal>()
             .AddCondition<IsPlayerInCombatRange>(Comparison.GreaterThanOrEqual, 1);
+        
+        builder.AddGoal<EvadeGoal>()
+            .AddCondition<IsPlayerInCloseRange>(Comparison.GreaterThanOrEqual, 1);
 
         builder.AddGoal<KillPlayerGoal>()
             .AddCondition<PlayerHealth>(Comparison.SmallerThanOrEqual, 0);

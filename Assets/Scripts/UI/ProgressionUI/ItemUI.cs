@@ -28,7 +28,7 @@ public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public void OnPointerClick(PointerEventData e)
     {
         _item.ApplyEffect();
-        NewItemSelectionEvent.Trigger(EventStateType.OnEventEnd);
+        NewItemSelectionEvent.Trigger(EventStateType.OnEventEnded);
         ProgressionCanvasCloseEvent.Trigger();
     }
 

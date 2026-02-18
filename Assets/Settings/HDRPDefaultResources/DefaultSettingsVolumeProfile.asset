@@ -1206,6 +1206,7 @@ MonoBehaviour:
   - {fileID: 4460182794442052189}
   - {fileID: 5298061260499642777}
   - {fileID: 3622179779948959813}
+  - {fileID: 7058868854578177681}
 --- !u!114 &448115243408767295
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -2241,6 +2242,38 @@ MonoBehaviour:
   planetCenterPosition:
     m_OverrideState: 1
     m_Value: {x: 0, y: -6378100, z: 0}
+--- !u!114 &7058868854578177681
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec58028ab758544aa4096cd65b46e4a, type: 3}
+  m_Name: DistortedOutlineSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  outlineWidth:
+    m_OverrideState: 1
+    m_Value: 0
+  outlineColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  distortTex:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  distort:
+    m_OverrideState: 1
+    m_Value: 0
+  distortSpeed:
+    m_OverrideState: 1
+    m_Value: 0
+  enable:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &7502528774814404555
 MonoBehaviour:
   m_ObjectHideFlags: 3

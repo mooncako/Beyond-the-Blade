@@ -10,12 +10,10 @@ public class EnemyProfile
     public string EnemyName;
     [Header("Biome")]
     public BiomeType BiomeType;
-    [Header("Difficulty")]
-    public float Difficulty;
-    [Header("Cost")]
-    public int Cost;
-    [Header("Weight")]
-    public float Weight;
+    [Header("Spawner Type")]
+    public EnemySpawnerType EnemySpawnerType;
+    [Header("Difficulty Index")]
+    public float DifficultyIndex;
     [Header("MaxPerWave")]
     public int MaxPerWave;
     [Header("Cooldown")]

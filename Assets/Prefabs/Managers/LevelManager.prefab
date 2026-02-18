@@ -46,18 +46,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9795ac4c2f9396b4e89c828935cf53ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _availableNormalLevelPrefabs: []
-  _availableShopLevelPrefabs: []
-  _availableRecoveryLevelPrefabs: []
+  _availableNormalLevelPrefabs:
+  - {fileID: 4025184653406357562, guid: 169a163188b004a4a850be98eec60175, type: 3}
+  - {fileID: 4025184653406357562, guid: da65bf3b28be22249b6de8fdeb1a063f, type: 3}
+  - {fileID: 994061305106947902, guid: c101093082555164f9c8059597729b17, type: 3}
+  _availableShopLevelPrefabs:
+  - {fileID: 4025184653406357562, guid: f1228fde824502a4b9ea72bf93d6b468, type: 3}
+  _availableRecoveryLevelPrefabs:
+  - {fileID: 4025184653406357562, guid: f1228fde824502a4b9ea72bf93d6b468, type: 3}
+  _bossLevelPrefabs:
+  - {fileID: 1017218056663045771, guid: 20d8d134c078dfa44be442cce8397d01, type: 3}
   _gatePrefab: {fileID: 3230318739884087781, guid: f3571a8ef119a6e4a8652f8034b68d93, type: 3}
   _pickupFactory: {fileID: 8365107671556267791}
   _defaultBiome: 0
   _defaultLevelType: 0
+  _exitsProbability:
+    RegularExitPercentage: 0.6
+    ShopExitPercentage: 0.2
+    RecoveryExitPercentage: 0.2
   _currentBiome: 0
   CurrentLevelType: 0
   _currentLevel: {fileID: 0}
   _exitsLevelType: 
   CurrentLevelIndex: 0
+  _currentLevelCount: 0
+  _doOnce: 1
   _isSetupComplete: 0
 --- !u!114 &8365107671556267791
 MonoBehaviour:

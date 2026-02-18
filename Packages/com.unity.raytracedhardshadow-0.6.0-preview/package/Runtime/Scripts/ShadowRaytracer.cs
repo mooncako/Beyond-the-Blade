@@ -291,6 +291,18 @@ namespace Unity.RaytracedHardShadow
         [SerializeField] bool m_dbgVerboseLog = false;
         [SerializeField] List<Light> m_HDRPDirectionalLightList = new List<Light>();
         [SerializeField] RenderPipeline m_renderPipeLine;
+
+        [SerializeField] LayerMask m_ignoreLayers = 0;
+
+        // Objects to ignore in the raytracer (these objects and optionally their children will not be added as geometry)
+        [SerializeField] List<GameObject> m_ignoreObjects = new List<GameObject>();
+        [SerializeField] bool m_ignoreChildren = true;
+
+        // Cache for fast lookup (rebuilt when needed)
+        HashSet<int> m_ignoreObjectIds;
+        bool m_ignoreCacheDirty = true;
+
+
 #if UNITY_EDITOR
 #pragma warning disable CS0414
         [SerializeField] bool m_foldDebug = false;
@@ -508,6 +520,65 @@ namespace Unity.RaytracedHardShadow
 
 
         #region impl
+
+        void MarkIgnoreDirty() => m_ignoreCacheDirty = true;
+
+        void RebuildIgnoreCacheIfNeeded()
+        {
+            if (!m_ignoreCacheDirty) return;
+
+            if (m_ignoreObjectIds == null)
+                m_ignoreObjectIds = new HashSet<int>();
+            else
+                m_ignoreObjectIds.Clear();
+
+            if (m_ignoreObjects != null)
+            {
+                foreach (var go in m_ignoreObjects)
+                {
+                    if (go != null)
+                        m_ignoreObjectIds.Add(go.GetInstanceID());
+                }
+            }
+
+            m_ignoreCacheDirty = false;
+        }
+
+        bool ShouldIgnoreRenderer(Renderer r)
+        {
+            if (r == null) return true;
+
+            // Layer mask ignore (fast path)
+            if (((1 << r.gameObject.layer) & m_ignoreLayers.value) != 0)
+                return true;
+
+            // Object list ignore
+            RebuildIgnoreCacheIfNeeded();
+            if (m_ignoreObjectIds != null && m_ignoreObjectIds.Count > 0)
+            {
+                var t = r.transform;
+
+                // exact object match
+                if (m_ignoreObjectIds.Contains(r.gameObject.GetInstanceID()))
+                    return true;
+
+                // include children (t is child of any ignored root)
+                if (m_ignoreChildren)
+                {
+                    // Iterate roots only (list is usually small). This avoids storing every descendant in the hash.
+                    foreach (var go in m_ignoreObjects)
+                    {
+                        if (go == null) continue;
+                        if (t.IsChildOf(go.transform))
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
         // mesh cache serves two purposes:
         // 1. prevent multiple SkinnedMeshRenderer.Bake() if there are multiple ShadowRaytracers
         //    this is just for optimization.
@@ -822,11 +893,13 @@ namespace Unity.RaytracedHardShadow
                         continue;
 
                     foreach (var mr in go.GetComponentsInChildren<MeshRenderer>())
-                        if (mr.enabled)
+                        if (mr.enabled && !ShouldIgnoreRenderer(mr))
                             bodyMR.Invoke(mr);
+
                     foreach (var smr in go.GetComponentsInChildren<SkinnedMeshRenderer>())
-                        if (smr.enabled)
+                        if (smr.enabled && !ShouldIgnoreRenderer(smr))
                             bodySMR.Invoke(smr);
+
                 }
             };
 
@@ -846,11 +919,13 @@ namespace Unity.RaytracedHardShadow
             Action processEntireScene = () =>
             {
                 foreach (var mr in FindObjectsOfType<MeshRenderer>())
-                    if (mr.enabled)
+                    if (mr.enabled && !ShouldIgnoreRenderer(mr))
                         bodyMR.Invoke(mr);
+
                 foreach (var smr in FindObjectsOfType<SkinnedMeshRenderer>())
-                    if (smr.enabled)
+                    if (smr.enabled && !ShouldIgnoreRenderer(smr))
                         bodySMR.Invoke(smr);
+
             };
 
             switch (m_geometryScope)
@@ -1231,12 +1306,14 @@ namespace Unity.RaytracedHardShadow
         void OnValidate()
         {
             UpdateScenePaths();
+            MarkIgnoreDirty();
         }
 #endif
 
         void OnEnable()
         {
             m_camera = GetComponent<Camera>();
+            MarkIgnoreDirty();
             InitializeRenderer(true);
 
             EnableSrpCallbacks();

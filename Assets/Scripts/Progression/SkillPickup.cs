@@ -40,7 +40,7 @@ public class SkillPickup : MonoBehaviour, IPickup
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
             PlayerController controller = other.GetComponent<PlayerController>();
-            NewSkillEvent.Trigger(EventStateType.OnEventStart, controller, controller.CurrentWeapon.SkillDict[_skillId], _skillId);
+            NewSkillEvent.Trigger(EventStateType.OnEventStarted, controller, controller.CurrentWeapon.SkillDict[_skillId], _skillId);
         }
     }
 
@@ -48,7 +48,7 @@ public class SkillPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            NewSkillEvent.Trigger(EventStateType.OnEventEnd, null, null, "");
+            NewSkillEvent.Trigger(EventStateType.OnEventEnded, null, null, "");
         }
     }
 

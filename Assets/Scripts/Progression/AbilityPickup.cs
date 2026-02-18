@@ -39,7 +39,7 @@ public class AbilityPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            NewAbilityEvent.Trigger(EventStateType.OnEventStart);
+            NewAbilityEvent.Trigger(EventStateType.OnEventStarted);
         }
     }
 
@@ -47,7 +47,7 @@ public class AbilityPickup : MonoBehaviour, IPickup
     {
         if ((_playerMask.value & (1 << other.gameObject.layer)) != 0)
         {
-            NewAbilityEvent.Trigger(EventStateType.OnEventEnd);
+            NewAbilityEvent.Trigger(EventStateType.OnEventEnded);
         }
     }
 

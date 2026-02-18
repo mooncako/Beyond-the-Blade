@@ -21,6 +21,12 @@ public class Vision : MonoBehaviour
         FieldOfView = stats.StatsData.FieldOfView;
     }
 
+    public void SetupMasks(LayerMask visibilityMask, LayerMask occlusionMask)
+    {
+        _visibilityMask = visibilityMask;
+        _occlusionMask = occlusionMask;
+    }
+
     public bool TestVisibility(Vector3 point)
     {
         // distance

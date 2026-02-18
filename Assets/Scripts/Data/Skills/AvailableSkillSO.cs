@@ -7,5 +7,5 @@ using System.Collections.Generic;
 public class AvailableSkillSO : SerializedScriptableObject
 {   
     [Header("SkillKey")]
-    public Dictionary<int, List<string>> SkillDict = new Dictionary<int, List<string>>();
+    public Dictionary<AvailableSkillType, List<string>> SkillDict = new Dictionary<AvailableSkillType, List<string>>();
 }

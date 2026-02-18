@@ -45,6 +45,7 @@ public class CustomCharacterMovement : CharacterMovement3D
     {
         transform.position = position;
         Rigidbody.position = position;
+        NavMeshAgent.Warp(position);
     }
 
     public void Teleport(Transform transform)
