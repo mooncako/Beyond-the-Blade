@@ -94,7 +94,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             Array.Clear(_enemySpawnPos, 0, _enemySpawnPos.Length);
             _enemySpawnPos = e.EnemySpawnPositions;
             _maxEnemyCount = e.EnemyCount;
-            SetupSpawnInfo(e.EnemySpawnerType, e.SpawnPositionType, e.EnemyPool, e.IsPrecisePos, e.EncounterID);
+            SetupSpawnInfo(e.EnemySpawnerType, e.SpawnPositionType, e.SpawnTriggerType, e.EnemyPool, e.IsPrecisePos, e.EncounterID);
             
         }
         
@@ -136,7 +136,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         
     }
 
-    private void SetupSpawnInfo(EnemySpawnerType spawnerType, EnemySpawnModeType spawnPositionType, EnemyPool enemyPool, bool isPrecisePos, string encounterID)
+    private void SetupSpawnInfo(EnemySpawnerType spawnerType, EnemySpawnModeType spawnPositionType, EnemySpawnTriggerType spawnTriggerType, EnemyPool enemyPool, bool isPrecisePos, string encounterID)
     {
         List<EnemyProfile> enemies = new List<EnemyProfile>();
         foreach (var profile in _currentEnemyDict.Keys)
@@ -147,23 +147,25 @@ public class SpawnManager : MMSingleton<SpawnManager>,
                 enemies.Add(profile);
         }
 
-        switch(spawnerType)
-        {
-            case EnemySpawnerType.Train:
-                PickEnemiesToSpawn(enemies, 0f);
-                break;
-            case EnemySpawnerType.Ground:
-                PickEnemiesToSpawn(enemies, 0f);
-                break;
-        }
+        // switch(spawnerType)
+        // {
+        //     case EnemySpawnerType.Train:
+        //         PickEnemiesToSpawn(enemies, 0f);
+        //         break;
+        //     case EnemySpawnerType.Ground:
+        //         PickEnemiesToSpawn(enemies, 0f);
+        //         break;
+        // }
         
+        PickEnemiesToSpawn(enemies, 0f);
+
         switch(spawnPositionType)
         {
             case EnemySpawnModeType.Wave:
-                StartWave(isPrecisePos, encounterID);
+                StartWave(isPrecisePos, encounterID, spawnerType);
                 break;
             case EnemySpawnModeType.Fixed:
-                StartFixed(isPrecisePos, encounterID);
+                StartFixed(isPrecisePos, encounterID, spawnerType, spawnTriggerType);
                 break;
         }
     }
@@ -208,7 +210,7 @@ public class SpawnManager : MMSingleton<SpawnManager>,
     }
 
     [Button]
-    private void StartWave(bool isPrecisePos, string encounterID)
+    private void StartWave(bool isPrecisePos, string encounterID, EnemySpawnerType spawnerType)
     {
         if (_enemiesWaitingForSpawn.Count >= _maxEnemyCount)
         {
@@ -230,11 +232,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
             return;
         }
 
-        StopCoroutine(SpawnEnemyCO(isPrecisePos, encounterID));
-        StartCoroutine(SpawnEnemyCO(isPrecisePos, encounterID));
+        StopCoroutine(SpawnEnemyCO(isPrecisePos, encounterID, spawnerType));
+        StartCoroutine(SpawnEnemyCO(isPrecisePos, encounterID, spawnerType));
     }
 
-    private void StartFixed(bool isPrecisePos, string encounterID)
+    private void StartFixed(bool isPrecisePos, string encounterID, EnemySpawnerType spawnerType, EnemySpawnTriggerType spawnTriggerType)
     {
         if (_enemiesWaitingForSpawn.Count >= _maxEnemyCount)
         {
@@ -261,16 +263,16 @@ public class SpawnManager : MMSingleton<SpawnManager>,
 
         for(int i = 0; i < currentSpawningEnemyCount; i++)
         {
-            SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue()), _enemySpawnPos[i], isPrecisePos, encounterID);
+            SpawnEnemyFixed(_enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue(), spawnerType), _enemySpawnPos[i], isPrecisePos, encounterID, spawnTriggerType);
         }
     }
     
-    private IEnumerator SpawnEnemyCO(bool isPrecisePos, string encounterID)
+    private IEnumerator SpawnEnemyCO(bool isPrecisePos, string encounterID, EnemySpawnerType spawnerType)
     {
         while (_currentSpawningEnemies.Count > 0)
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(_minSpawnDelay, _maxSpawnDelay));
-            GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue());
+            GameObject enemy = _enemyDatabase.GetEnemy(_currentSpawningEnemies.Dequeue(), spawnerType);
             SpawnEnemyWave(enemy, isPrecisePos, encounterID);
         }
         
@@ -288,10 +290,11 @@ public class SpawnManager : MMSingleton<SpawnManager>,
         spawner.StartSpawn();
     }
 
-    private void SpawnEnemyFixed(GameObject prefab, EnemySpawnPos spawnPos, bool isPrecisePos, string encounterID)
+    private void SpawnEnemyFixed(GameObject prefab, EnemySpawnPos spawnPos, bool isPrecisePos, string encounterID, EnemySpawnTriggerType spawnTriggerType)
     {
         EnemySpawner spawner = _pool.Get(prefab).GetComponent<EnemySpawner>();
         spawner.EncounterID = encounterID;
+        spawner.SpawnTriggerType = spawnTriggerType;
         if(!isPrecisePos)
             spawner.transform.position = AIUtil.GetRandomSpawnPos(spawnPos);
         else

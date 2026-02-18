@@ -843,6 +843,7 @@ GameObject:
   m_Component:
   - component: {fileID: 81004992459423524}
   - component: {fileID: 5636784276810652028}
+  - component: {fileID: 7391579616537631968}
   m_Layer: 0
   m_Name: TrainPortal
   m_TagString: Untagged
@@ -884,18 +885,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyPool: {fileID: 8107207657627117529}
+  _encounterSetting: {fileID: 7391579616537631968}
   _enemySpawnPositions:
   - {fileID: 8716032709617267107}
   _spawnTrigger: {fileID: 674525323903572651}
   _spawnPositionType: 0
+  _spawnTriggerType: 0
   _isPrecisePos: 0
   _minEnemyCountPerWave: 2
   _maxEnemyCountPerWave: 2
+  OnSpawnCompleted:
+    m_PersistentCalls:
+      m_Calls: []
   _train: {fileID: 2724963351272958557}
   _startPoint: {fileID: 4275935259960127706}
   _endPoint: {fileID: 6662481688849675406}
   _moveDuration: 2
   _stopPoint: {x: -42.60284, y: 1.32, z: 32.777878}
+--- !u!114 &7391579616537631968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6733853388620416514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc155d675fdfce488e96e5b03e284c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _encounterID: 
 --- !u!1 &8610698501330562205
 GameObject:
   m_ObjectHideFlags: 0

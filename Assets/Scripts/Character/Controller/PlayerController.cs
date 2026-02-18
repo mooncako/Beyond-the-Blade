@@ -33,6 +33,7 @@ public class PlayerController : Controller,
     [SerializeField, FoldoutGroup("Base Reference")] private VisualEffect _teleportEffect;
     [Header("General Settings")]
     [BoxGroup("Input")] public InputProcessor InputProcessor;
+    [SerializeField, BoxGroup("Input"), Tooltip("The maximum distance for aim assist to find a target.")] private float _aimAssistDistance = 2.5f;
     [BoxGroup("Input"), ReadOnly] public Vector2 RotateInput { get; set; }
     [BoxGroup("Input"), ReadOnly] public PlayerStateType CurrentState { get; private set; }
     [BoxGroup("Input"), ReadOnly] public bool CanRotate = true;
@@ -321,8 +322,8 @@ public class PlayerController : Controller,
                 _aimPoint = mouseRay.GetPoint(planeDistance);
                 _aimPoint.y = transform.position.y;
                 Vector3 direction = (_aimPoint - transform.position).normalized;
-                Vector3 playerAimForward = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.z);
-                if(FindClosestEnemyToPosition(playerAimForward, .5f, out Vector3 aimPoint))
+                Vector3 playerAimForward = transform.position + direction;
+                if(FindClosestEnemyToPosition(playerAimForward, _aimAssistDistance, out Vector3 aimPoint))
                 {
                     return aimPoint;
                 }
@@ -385,7 +386,7 @@ public class PlayerController : Controller,
             return false;
         }
 
-        pos = closestEnemy.transform.position;
+        pos = new Vector3(closestEnemy.transform.position.x, position.y, closestEnemy.transform.position.z);
         return true;
     }
 
@@ -414,6 +415,7 @@ public class PlayerController : Controller,
     {
         if (context.started && IsActionAvailable(AnimationStateType.Attack))
         { 
+            _isInAimMode = true;
             ExecuteLightAttack(GetAimPoint());
             UpdateCurrentSkill(CurrentWeapon.LoopBasicAttack());
             if (_currentSkill != null)
@@ -425,9 +427,9 @@ public class PlayerController : Controller,
 
             Movement.Stop();
         }
-        else
+        else if(context.canceled)
         {
-
+            _isInAimMode = false;
         }
     }
 
@@ -437,12 +439,16 @@ public class PlayerController : Controller,
         {
             if (Stamina.ConsumeStamina(Stats.ParryStaminaCost))
             {
+                _isInAimMode = true;
                 Parry(GetAimPoint());
                 UpdateCurrentSkill(CurrentWeapon.GetParrySkill());
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Parry, _currentSkill);
                 AnimationStateMachine.InterruptState(AnimationStateType.Parry);
                 Movement.Stop();
             }
+        }else if(context.canceled)
+        {
+            _isInAimMode = false;
         }
     }
 
@@ -721,11 +727,12 @@ public class PlayerController : Controller,
         _input.SwitchCurrentActionMap("UI");
     }
 
-    public void PortalTrigger(SplineContainer container, Vector3 exitPos)
+    public void PortalTrigger(SplineContainer container, Vector3 exitPos, float duration = 1f)
     {
         ToggleKillzEvent.Trigger(false);
         _splineAnimate.Container = container;
         _splineAnimate.NormalizedTime = 0;
+        _splineAnimate.Duration = duration;
         _splineAnimate.Play();
         _playerMesh.SetActive(false);
         _teleportEffect.Play();

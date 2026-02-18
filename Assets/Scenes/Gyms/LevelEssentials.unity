@@ -708,14 +708,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2553532717415576835, guid: 7d5753fdc5af5bf41a058865ebe31e2d, type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: 338b20452abea9f46ac6c9b8262e4952, type: 2}
-    - target: {fileID: 2553532717415576835, guid: 7d5753fdc5af5bf41a058865ebe31e2d, type: 3}
-      propertyPath: m_GenerateLinks
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3278186244356218540, guid: 7d5753fdc5af5bf41a058865ebe31e2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -29.828217
@@ -759,6 +751,10 @@ PrefabInstance:
     - target: {fileID: 8809732593411231306, guid: 7d5753fdc5af5bf41a058865ebe31e2d, type: 3}
       propertyPath: m_Name
       value: NavMeshBuilder
+      objectReference: {fileID: 0}
+    - target: {fileID: 8809732593411231306, guid: 7d5753fdc5af5bf41a058865ebe31e2d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1457,7 +1453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7604237531410845711, guid: 6829b5402a417624b9385c3677efd7b2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.4
+      value: -16.5
       objectReference: {fileID: 0}
     - target: {fileID: 7604237531410845711, guid: 6829b5402a417624b9385c3677efd7b2, type: 3}
       propertyPath: m_LocalPosition.z

@@ -167,6 +167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 32901913199475752}
   - component: {fileID: 5920285393923188613}
+  - component: {fileID: 2858540843626355723}
   m_Layer: 0
   m_Name: SequentialEnemyPoolSpawner
   m_TagString: Untagged
@@ -205,16 +206,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyPool: {fileID: 8899601085652705322}
+  _encounterSetting: {fileID: 2858540843626355723}
   _enemySpawnPositions:
   - {fileID: 3686147775353132157}
   - {fileID: 7531908273562027183}
   - {fileID: 4404360099478685177}
   _spawnTrigger: {fileID: 3513428318152896228}
   _spawnPositionType: 1
+  _spawnTriggerType: 0
   _isPrecisePos: 0
   _minEnemyCountPerWave: 2
   _maxEnemyCountPerWave: 2
   _enemySpawnerType: 1
+  OnSpawnCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &2858540843626355723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8606572984287939320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc155d675fdfce488e96e5b03e284c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _encounterID: 
 --- !u!1001 &86065947082655434
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -9,11 +9,11 @@ public class EnemyDatabaseSO : SerializedScriptableObject
 {
     public Dictionary<EnemyProfile, GameObject> EnemyDict = new Dictionary<EnemyProfile, GameObject>();
 
-    public GameObject GetEnemy(string enemyName)
+    public GameObject GetEnemy(string enemyName, EnemySpawnerType spawnerType)
     {
         for (int i = 0; i < EnemyDict.Count; i++)
         {
-            if (EnemyDict.Keys.ElementAt(i).EnemyName == enemyName)
+            if (EnemyDict.Keys.ElementAt(i).EnemyName == enemyName && EnemyDict.Keys.ElementAt(i).EnemySpawnerType == spawnerType)
             {
                 return EnemyDict.ElementAt(i).Value;
             }

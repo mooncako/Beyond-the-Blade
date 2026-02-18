@@ -61,8 +61,8 @@ GameObject:
   - component: {fileID: 8603676096848177205}
   - component: {fileID: 2054509112993783971}
   - component: {fileID: 8016566717477088041}
-  - component: {fileID: 8798416106402121756}
   - component: {fileID: 6266151859748244355}
+  - component: {fileID: 8798416106402121756}
   - component: {fileID: 5416810635430714}
   - component: {fileID: 4458276716399103277}
   - component: {fileID: 2553810978626859978}
@@ -183,6 +183,21 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6266151859748244355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ad50f81b1d25c441943c37a89ba23f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Animator: {fileID: 8798416106402121756}
+  _Transitions: {fileID: 11400000, guid: c8fa2674fa4fbdf43ab1fcae4fb68dcb, type: 2}
+  _ActionOnDisable: 2
 --- !u!95 &8798416106402121756
 Animator:
   serializedVersion: 7
@@ -205,21 +220,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6266151859748244355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6509017619537120799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ad50f81b1d25c441943c37a89ba23f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _Animator: {fileID: 0}
-  _Transitions: {fileID: 11400000, guid: c8fa2674fa4fbdf43ab1fcae4fb68dcb, type: 2}
-  _ActionOnDisable: 0
 --- !u!114 &5416810635430714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -814,6 +814,7 @@ MonoBehaviour:
   _splineAnimate: {fileID: 5037641759929213361}
   _playerMesh: {fileID: 8258321732097589689}
   _teleportEffect: {fileID: 2087213223900482984}
+  _aimAssistDistance: 2.5
   CanRotate: 1
   OnAbilityStartCooldown:
     m_PersistentCalls:
@@ -917,7 +918,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     Clip:
-      _FadeDuration: 0.25
+      _FadeDuration: 0
       _Speed: 1
       _Events:
         _NormalizedTimes: []
@@ -1471,7 +1472,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.16952434
+      value: -0.1695244
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1479,7 +1480,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.021623373
+      value: 0.021623429
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1739,7 +1740,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.7635727
+      value: 0.7635729
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1747,11 +1748,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.11696315
+      value: 0.1169631
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.6210747
+      value: 0.62107456
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1759,7 +1760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.3483723
+      value: 0.34837255
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2272,9 +2273,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2904209499200128437}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5886511505848923452}
   m_SourcePrefab: {fileID: 100100000, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
 --- !u!137 &728249704713056390 stripped
@@ -2317,29 +2315,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8d6686de0f0227e4599bbb6377c9a5be, type: 3}
   m_PrefabInstance: {fileID: 9104618242078276840}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2904209499200128437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8258321732097589689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fef78a80bbf0bb14793b4f26b1413733, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _skinnedMeshes:
-  - {fileID: 728249704713056390}
-  - {fileID: 5174605215829717461}
-  - {fileID: 4114739980460977559}
-  - {fileID: 3286727042391525253}
-  - {fileID: 7786862457207656551}
-  _lightDetectionRadius: 40
-  _lightMask:
-    serializedVersion: 2
-    m_Bits: 64
-  _fadeSpeed: 5
 --- !u!114 &5886511505848923452
 MonoBehaviour:
   m_ObjectHideFlags: 0

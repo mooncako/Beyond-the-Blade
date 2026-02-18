@@ -24,6 +24,14 @@ public class LevelMechanicTrain : MonoBehaviour
         }
     }
 
+    public void DisableShadow()
+    {
+        for(int i = 0; i < _colliders.Length; i++)
+        {
+            _colliders[i].gameObject.layer = LayerMask.NameToLayer(LIGHTING.ShadowIgnoreLayer);
+        }
+    }
+
     public void OpenGate()
     {
         _animator.SetTrigger("OpenGate");   

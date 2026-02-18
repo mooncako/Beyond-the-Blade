@@ -12,7 +12,7 @@ public class CollisionTrigger : MonoBehaviour
         get { return _activeMask; }
         set { _activeMask = value; }
     }
-    [SerializeField] private bool _doOnce = false;
+    [SerializeField] public bool DoOnce = false;
     
     [SerializeField] public UnityEvent<Collider> TriggerEnter;
     [SerializeField] public UnityEvent<Collider> TriggerExit;
@@ -39,7 +39,7 @@ public class CollisionTrigger : MonoBehaviour
                 TriggerEnter?.Invoke(other);
             }
 
-            if(_doOnce)
+            if(DoOnce)
             {
                 _canTriggerEnter = false;
             }
@@ -55,7 +55,7 @@ public class CollisionTrigger : MonoBehaviour
                 TriggerExit?.Invoke(other);
             }
 
-            if(_doOnce)
+            if(DoOnce)
             {
                 _canTriggerExit = false;
             }

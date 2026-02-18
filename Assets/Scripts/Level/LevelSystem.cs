@@ -11,15 +11,18 @@ using UnityUtils;
 public class LevelSystem : MonoBehaviour,
     MMEventListener<EncounterClearEvent>
 {
-    [SerializeField, FoldoutGroup("References")] private LevelMesh _levelMesh;
+    [SerializeField, FoldoutGroup("References")] private GroundMesh _levelMesh;
     [SerializeField, FoldoutGroup("References")] private LevelAssigner _levelAssigner;
     [SerializeField, FoldoutGroup("References")] private Transform _playerSpawnPos;
+    [SerializeField, FoldoutGroup("References")] public Transform PickupSpawnPosition;
     public Transform PlayerSpawnPos => _playerSpawnPos;
+
+    [SerializeField, FoldoutGroup("References")] private SequentialEnemyPoolSpawner[] _enemySequentialSpawners;
 
     [SerializeField, BoxGroup("Settings")] private LevelRewardType _possibleRewardType;
     public LevelRewardType PossibleRewardType => _possibleRewardType;
 
-    [SerializeField, BoxGroup("Settings")] public Transform PickupSpawnPosition;
+    
     [SerializeField, BoxGroup("Settings")] private string[] _encounterClearRequirements;
 
 
@@ -28,8 +31,18 @@ public class LevelSystem : MonoBehaviour,
 
     void OnValidate()
     {
-        if (_levelMesh == null) _levelMesh = GetComponentInChildren<LevelMesh>();
+        if (_levelMesh == null) _levelMesh = GetComponentInChildren<GroundMesh>();
         if (_levelAssigner == null) _levelAssigner = GetComponentInChildren<LevelAssigner>();
+        if (_playerSpawnPos == null) _playerSpawnPos = GetComponentInChildren<SpawnPos>().transform;
+        if (PickupSpawnPosition == null) PickupSpawnPosition = GetComponentInChildren<PickupSpawnPos>().transform;
+    }
+
+    public void AssignReferences()
+    {
+        if (_levelMesh == null) _levelMesh = GetComponentInChildren<GroundMesh>();
+        if (_levelAssigner == null) _levelAssigner = GetComponentInChildren<LevelAssigner>();
+        if (_playerSpawnPos == null) _playerSpawnPos = GetComponentInChildren<SpawnPos>().transform;
+        if (PickupSpawnPosition == null) PickupSpawnPosition = GetComponentInChildren<PickupSpawnPos>().transform;
     }
 
     void OnEnable()
@@ -86,6 +99,14 @@ public class LevelSystem : MonoBehaviour,
             {
                 LevelClearedEvent.Trigger(LevelManager.Instance.CurrentLevel.PossibleRewardType, true);
             }
+        }
+    }
+
+    public void TriggerSequentialSpawn()
+    {
+        for(int i = 0; i< _enemySequentialSpawners.Length; i++)
+        {
+            _enemySequentialSpawners[i].TriggerSpawn();
         }
     }
 }
