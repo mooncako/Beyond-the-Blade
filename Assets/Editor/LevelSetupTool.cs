@@ -122,7 +122,9 @@ public class LevelSetupTool : EditorWindow
         MeshFilter meshFilter = groundMesh.GetComponent<MeshFilter>();
         if(meshFilter == null || meshFilter.sharedMesh == null)
         {
-            return false;
+            meshFilter = groundMesh.GetComponentInChildren<MeshFilter>();
+            if(meshFilter == null || meshFilter.sharedMesh == null)
+                return false;
         }
         return true;
     }
