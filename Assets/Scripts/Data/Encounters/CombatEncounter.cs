@@ -9,7 +9,7 @@ public class CombatEncounter: BaseEncounter
     public EnemySpawnModeType SpawnModeType; 
     [SerializeField, BoxGroup("Debug"), ReadOnly] public int EnemyCount;
     [SerializeField, BoxGroup("Debug"), ReadOnly] private List<Health> _enemies;
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _startCountingEnemies = false;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] private bool _startCountingEnemies;
 
     public CombatEncounter(int enemyCount, string encounterID, EnemySpawnModeType spawnModeType)
     {
