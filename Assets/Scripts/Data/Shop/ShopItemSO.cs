@@ -122,9 +122,9 @@ public class ShopItemSO : ScriptableObject
                 
             case ItemEffectType.IncreaseDashForce:
                 if(UpgradeType == UpgradeType.InGame)
-                    player.Stats.TempDashForce += DashForceIncrease;
+                    player.Stats.TempDashDistance += DashForceIncrease;
                 else
-                    player.Stats.StatsData.BaseDashForce += DashForceIncrease;
+                    player.Stats.StatsData.BaseDashDistance += DashForceIncrease;
                 break;
                 
             case ItemEffectType.IncreaseMaxEnergy:

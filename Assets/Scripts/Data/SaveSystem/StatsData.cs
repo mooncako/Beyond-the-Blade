@@ -39,7 +39,7 @@ public class StatsData
 
     public float BaseResourceGainMultiplier = 1f;
 
-    public float BaseDashForce = 1000f;
+    public float BaseDashDistance = 5f;
     
     public float BaseIframeDuration = .2f;
 

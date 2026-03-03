@@ -460,7 +460,7 @@ public class PlayerController : Controller,
             if (Movement.IsGrounded && Stamina.ConsumeStamina(Stats.DashStaminaCost))
             {
 
-                Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashForce);
+                Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashDistance);
                 StartIframe();
                 UpdateCurrentSkill(CurrentWeapon.GetDashSkill());
                 AnimationStateMachine.SetAction(CurrentWeapon.GetAnimationClip(_currentSkill.AnimationID), AnimationStateType.Dash, _currentSkill);

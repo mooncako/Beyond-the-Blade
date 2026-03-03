@@ -12,32 +12,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59075828f6171040bb888631c2e9855, type: 3}
   m_Name: DefaultPlayerStats
   m_EditorClassIdentifier: 
-  Range: 4
-  AlertRange: 7.3
-  FieldOfView: 140
-  BaseMaxHealth: 100
+  StatsData:
+    Range: 4
+    AlertRange: 6
+    FieldOfView: 140
+    BaseMaxHealth: 100
+    BaseMaxEnergy: 10
+    BaseMaxStamina: 10
+    BaseStaminaRegeneration: 1
+    BaseDashStaminaCost: 3
+    BaseParryStaminaCost: 2
+    BaseMovementSpeedMultiplier: 1
+    BaseDamageMultiplier: 1
+    BaseDamageReduction: 0
+    BaseAttackSpeed: 1
+    BaseParryEnergyGain: 1.5
+    BaseDashEnergyGain: 0.8
+    BaseHitStunDuration: 0.5
+    BaseRegulerStunDuration: 3
+    BaseResourceGainMultiplier: 1
+    BaseDashDistance: 5
+    BaseIframeDuration: 0.2
   TempMaxHealth: 0
-  BaseMaxEnergy: 10
   TempMaxEnergy: 0
-  BaseMovementSpeedMultiplier: 1
+  TempMaxStamina: 0
+  TempStaminaRegeneration: 0
+  TempDashStaminaCost: 0
+  TempParryStaminaCost: 0
   TempMovementSpeedMultiplier: 0
-  BaseDamageMultiplier: 1
   TempDamageMultiplier: 0
-  BaseDamageReduction: 0
   TempDamageReduction: 0
-  BaseAttackSpeed: 1
   TempAttackSpeed: 0
-  BaseParryEnergyGain: 1.5
   TempParryEnergyGain: 0
-  BaseDashEnergyGain: 0.8
   TempDashEnergyGain: 0
-  BaseHitStunDuration: 0.5
   TempHitStunDuration: 0
-  BaseRegulerStunDuration: 3
   TempRegulerStunDuration: 0
-  BaseResourceGainMultiplier: 1
   TempResourceGainMultiplier: 0
-  BaseDashForce: 1000
-  TempDashForce: 0
-  BaseIframeDuration: 0.2
+  TempDashDistance: 0
   TempIframeDuration: 0
+  GoldCount: 0
+  SoulShardCount: 0
+  BaseGoldDropRate: 0.3
+  TempGoldDropRate: 0

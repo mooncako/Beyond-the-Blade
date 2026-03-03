@@ -1,6 +1,8 @@
 using System;
 using Animancer;
 using CharacterMovement;
+using MoreMountains.Tools;
+using PrimeTween;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,6 +15,14 @@ public class CustomCharacterMovement : CharacterMovement3D
     
     [Header("Character Setup")]
     [SerializeField] private bool _isHumanoid = true;
+
+    private Tween _dashTween;
+    private int _ogLayer;
+
+    private void Start()
+    {
+        _ogLayer = gameObject.layer;
+    }
 
     protected override void OnValidate()
     {
@@ -179,6 +189,11 @@ public class CustomCharacterMovement : CharacterMovement3D
         }
     }
 
+    private void OnDisable()
+    {
+        _dashTween.Stop();
+    }
+
 
     public void Teleport(Vector3 position)
     {
@@ -198,14 +213,30 @@ public class CustomCharacterMovement : CharacterMovement3D
     {
         Vector3 knockBackDirection = transform.position - instigator.position;
         Rigidbody.AddForce(knockBackDirection.normalized * knockbackForce);
+
     }
 
-    public void Dash(Vector3 direction, float dashForce = 2000f)
+    public void Dash(Vector3 direction, float dashDistance = 5f)
     {
+        _dashTween.Stop();
         if (direction == Vector3.zero)
-            Rigidbody.AddForce(transform.forward.normalized * dashForce);
+        { 
+            direction = transform.forward;
+        }
         else
-            Rigidbody.AddForce(direction.normalized * dashForce);
+        {
+            direction = direction.normalized;
+        }
+        
+        float dashDuration =.2f;
+        Vector3 startPos = transform.position;
+        Vector3 endPos = startPos + direction * dashDistance;
+        gameObject.layer = LayerMask.NameToLayer("NoClip");
+
+        _dashTween = Tween.RigidbodyMovePosition(Rigidbody, endPos, dashDuration, Ease.OutExpo).OnComplete(() =>
+        {
+            gameObject.layer = _ogLayer;
+        });
     }
 
     public void ResetSpeed() => MoveSpeedMultiplier = 1f;

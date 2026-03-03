@@ -62,8 +62,8 @@ public class Stats : ScriptableObject
     [ShowInInspector, ReadOnly] public float ResourceGainMultiplier => StatsData.BaseResourceGainMultiplier + TempResourceGainMultiplier;
 
 
-    [ReadOnly] public float TempDashForce = 0f;
-    [ShowInInspector, ReadOnly] public float DashForce => StatsData.BaseDashForce + TempDashForce;
+    [ReadOnly] public float TempDashDistance = 0f;
+    [ShowInInspector, ReadOnly] public float DashDistance => StatsData.BaseDashDistance + TempDashDistance;
 
 
     [ReadOnly] public float TempIframeDuration = 0f;
@@ -81,7 +81,7 @@ public class Stats : ScriptableObject
         TempMovementSpeedMultiplier = 0;
         TempParryEnergyGain = 0;
         TempDashEnergyGain = 0;
-        TempDashForce = 0;
+        TempDashDistance = 0;
         TempHitStunDuration = 0;
         TempIframeDuration = 0;
         TempRegulerStunDuration = 0;
@@ -104,7 +104,7 @@ public class Stats : ScriptableObject
         StatsData.BaseMovementSpeedMultiplier = stats.BaseMovementSpeedMultiplier;
         StatsData.BaseParryEnergyGain = stats.BaseParryEnergyGain;
         StatsData.BaseDashEnergyGain = stats.BaseDashEnergyGain;
-        StatsData.BaseDashForce = stats.BaseDashForce;
+        StatsData.BaseDashDistance = stats.BaseDashDistance;
         StatsData.BaseHitStunDuration = stats.BaseHitStunDuration;
         StatsData.BaseIframeDuration = stats.BaseIframeDuration;
         StatsData.BaseRegulerStunDuration = stats.BaseRegulerStunDuration;
