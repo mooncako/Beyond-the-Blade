@@ -60,6 +60,11 @@ public abstract class AnimationState
 
     }
 
+    public virtual void OnUpdateState()
+    {
+        
+    }
+
     public virtual void OnInterrupt()
     {
         _onInterruptEvent.Invoke();

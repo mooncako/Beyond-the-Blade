@@ -12,6 +12,8 @@ public class ActionAnimationState : AnimationState
 
     [SerializeField, BoxGroup("Settings")] private bool _canNaturalInterrupt = true;
     [SerializeField, BoxGroup("Settings")] private bool _autoTransition = true;
+    private bool _animationStarted;
+    private float _animationSpeed;
 
     public ActionAnimationState()
     {
@@ -45,7 +47,9 @@ public class ActionAnimationState : AnimationState
         {
             ToggleInterruption(false);
             AnimancerState = _animancer.Play(Clip);
-            AnimancerState.Speed *= Owner.Stats.AttackSpeed;
+            _animationSpeed = AnimancerState.Speed;
+            AnimancerState.Speed = _animationSpeed * Owner.Stats.AttackSpeed * Owner.TimeScale.CurrentTimeScale;
+            _animationStarted = true;
             AddEvents(AnimancerState);
         }
         else
@@ -60,6 +64,15 @@ public class ActionAnimationState : AnimationState
             
         }
 
+    }
+
+    public override void OnUpdateState()
+    {
+        base.OnUpdateState();
+        if (_animationStarted)
+        {
+            AnimancerState.Speed = _animationSpeed * Owner.Stats.AttackSpeed * Owner.TimeScale.CurrentTimeScale;
+        }
     }
 
 

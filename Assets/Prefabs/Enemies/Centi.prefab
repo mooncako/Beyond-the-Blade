@@ -298,6 +298,7 @@ GameObject:
   - component: {fileID: -5065653963056194739}
   - component: {fileID: 5162801268352820049}
   - component: {fileID: 4452831636959043059}
+  - component: {fileID: 1982813432002572004}
   m_Layer: 8
   m_Name: Centi
   m_TagString: Untagged
@@ -582,6 +583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Movement>k__BackingField: {fileID: 3418439087366576687}
   _animationStateMachine: {fileID: -5065653963056194739}
+  _animator: {fileID: 6233116775064065168}
   <Targetable>k__BackingField: {fileID: 6264934010256777202}
   <Health>k__BackingField: {fileID: 2640687494238271249}
   Energy: {fileID: 4452831636959043059}
@@ -593,6 +595,7 @@ MonoBehaviour:
   _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 8018554212169038474}
   _matController: {fileID: 0}
+  TimeScale: {fileID: 1982813432002572004}
   <Stats>k__BackingField: {fileID: 11400000, guid: 76d106cf8563894499d316229cab92f9, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -609,6 +612,9 @@ MonoBehaviour:
     AnimationID: 
     Cooldown: 0
     Damage: 0
+    DamageTickTime: 0
+    WeaponType: 0
+    DamageType: 0
     SkillRange:
       AreaType: 0
       X: 0
@@ -636,9 +642,11 @@ MonoBehaviour:
   _playerSensor: {fileID: 5061576002193979983}
   _brain: {fileID: 5188838144320936889}
   Agent: {fileID: 3926015235504465536}
+  Posture: {fileID: 0}
   _attackCooldown: 0.3
   _canRotate: 1
   CurrentTargetTransform: {fileID: 0}
+  _currentStunDuration: 0
 --- !u!114 &6524476659326703885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -702,14 +710,15 @@ MonoBehaviour:
   _agent: {fileID: 6420835648838700933}
   _provider: {fileID: 7628456600314050354}
   _goap: {fileID: 2652234782751008208}
-  _playerSensor: {fileID: 5061576002193979983}
+  _combatRangeSensor: {fileID: 5061576002193979983}
+  _evadeSensor: {fileID: 0}
   _attackSensorConfigSO: {fileID: 11400000, guid: b821335b54ef329489287c86b81da6f3, type: 2}
   _movement: {fileID: 3418439087366576687}
-  _spanwDelay: 0.2
-  IsTank: 1
+  _controller: {fileID: 4962864894029839974}
+  _spawnDelay: 0.2
   Personality: 0
-  _isPlayerInRange: 0
-  _isPlayerDetected: 0
+  _isPlayerInCombatRange: 0
+  _isPlayerInCloseRange: 0
 --- !u!114 &7628456600314050354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -876,10 +885,21 @@ MonoBehaviour:
   _modifierDatabase: {fileID: 11400000, guid: 1f5273672c7f0dd45bee280ebdfaa828, type: 2}
   _animancer: {fileID: 8394953832475103564}
   _owner: {fileID: 4962864894029839974}
+  _displayStates: -1
   _idleState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.1
       _Speed: 1
@@ -900,6 +920,16 @@ MonoBehaviour:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.1
       _Speed: 1
@@ -929,10 +959,52 @@ MonoBehaviour:
         _Names: []
       _Clip: {fileID: 7400000, guid: 25e81d77fe09c714585edf4f41a97b03, type: 2}
       _NormalizedStartTime: NaN
+  _readyActionState:
+    _stateMachine: {fileID: 0}
+    _animancer: {fileID: 0}
+    Owner: {fileID: 0}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    Clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 0}
+      _NormalizedStartTime: NaN
+    Key: 
+    FadeDuration: 0
+    FadeMode: 0
+    PossibleInterruptStates: 0
+    _emptyStates: 0
+    _tempStates: 0
+    _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _attackActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -949,10 +1021,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _parryActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -969,10 +1053,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _dashActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -989,10 +1085,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _abilityActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1009,10 +1117,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _executionActionState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1029,10 +1149,22 @@ MonoBehaviour:
     _emptyStates: 0
     _tempStates: 0
     _isInterruptionBlocked: 0
+    _canNaturalInterrupt: 1
+    _autoTransition: 1
   _staggerState:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1053,6 +1185,16 @@ MonoBehaviour:
     _stateMachine: {fileID: -5065653963056194739}
     _animancer: {fileID: 8394953832475103564}
     Owner: {fileID: 4962864894029839974}
+    _enableCustomEvents: 1
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1073,6 +1215,16 @@ MonoBehaviour:
     _stateMachine: {fileID: 0}
     _animancer: {fileID: 0}
     Owner: {fileID: 0}
+    _enableCustomEvents: 0
+    _onEnterEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onInterruptEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _onExitEvent:
+      m_PersistentCalls:
+        m_Calls: []
     Clip:
       _FadeDuration: 0.25
       _Speed: 1
@@ -1134,6 +1286,20 @@ MonoBehaviour:
   OnStatsUpdated:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1982813432002572004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f66d97fa3f37448b3c9429cec0a03a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseTimeScale: 1
+  CurrentTimeScale: 1
 --- !u!1 &5414845805400176818
 GameObject:
   m_ObjectHideFlags: 0

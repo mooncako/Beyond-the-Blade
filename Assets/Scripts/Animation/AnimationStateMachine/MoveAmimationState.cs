@@ -82,6 +82,13 @@ public class MoveAnimationState : AnimationState
         }
     }
 
+    public override void OnUpdateState()
+    {
+        base.OnUpdateState();
+        _stateMachine.UpperBodyLayer.Speed = Owner.Stats.MovementSpeedMultiplier * Owner.TimeScale.CurrentTimeScale;
+        _stateMachine.BaseLayer.Speed = Owner.Stats.MovementSpeedMultiplier * Owner.TimeScale.CurrentTimeScale;
+    }
+
     private void EnterDirectionalMovement()
     {
         // Get directional animations from the state machine

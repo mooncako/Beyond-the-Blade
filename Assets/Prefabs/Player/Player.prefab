@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 3238098461528385645}
   - component: {fileID: 5037641759929213361}
   - component: {fileID: 3446524857641578666}
+  - component: {fileID: 855547960455196677}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -495,6 +496,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 2054509112993783971}
   <NavMeshAgent>k__BackingField: {fileID: 8016566717477088041}
   <CapsuleCollider>k__BackingField: {fileID: 8603676096848177205}
+  _timeScale: {fileID: 855547960455196677}
   _isHumanoid: 1
 --- !u!114 &2553810978626859978
 MonoBehaviour:
@@ -766,6 +768,7 @@ MonoBehaviour:
   _persistentVFXHelper: {fileID: 3238098461528385645}
   _parryCollider: {fileID: 1005716894996644360}
   _matController: {fileID: 5886511505848923452}
+  TimeScale: {fileID: 855547960455196677}
   <Stats>k__BackingField: {fileID: 11400000, guid: 557be447e5c527843ad0fa9480313799, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -1362,6 +1365,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _Animator: {fileID: 8798416106402121756}
   _Target: {fileID: 2054509112993783971}
+--- !u!114 &855547960455196677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509017619537120799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f66d97fa3f37448b3c9429cec0a03a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _team: 1
+  _baseTimeScale: 1
+  CurrentTimeScale: 1
 --- !u!1 &7498923644987429484
 GameObject:
   m_ObjectHideFlags: 0

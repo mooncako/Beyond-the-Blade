@@ -65,6 +65,7 @@ public class Health : MonoBehaviour
             if (_controller is PlayerController p)
             {
                 p.Energy.GainEnergy(p.Stats.DashEnergyGain * p.Stats.ResourceGainMultiplier);
+                WitchTimeEvent.Trigger(3f, .2f, TeamType.Enemy);
             }
             return;
         }

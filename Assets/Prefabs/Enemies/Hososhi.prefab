@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 5162801268352820049}
   - component: {fileID: 4452831636959043059}
   - component: {fileID: 9068663134935549255}
+  - component: {fileID: 4415029831742479886}
   m_Layer: 8
   m_Name: Hososhi
   m_TagString: Untagged
@@ -295,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Speed>k__BackingField: 5
   <Acceleration>k__BackingField: 10
-  <TurnSpeed>k__BackingField: 50
+  <TurnSpeed>k__BackingField: 5
   <OnlyTurnWithInput>k__BackingField: 1
   <StoppingDistance>k__BackingField: 0.25
   <LookInMoveDirection>k__BackingField: 1
@@ -342,6 +343,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 8598472387181080395}
   <NavMeshAgent>k__BackingField: {fileID: 3926015235504465536}
   <CapsuleCollider>k__BackingField: {fileID: 4191314971418661949}
+  _timeScale: {fileID: 4415029831742479886}
   _isHumanoid: 1
 --- !u!114 &6264934010256777202
 MonoBehaviour:
@@ -475,6 +477,7 @@ MonoBehaviour:
   _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 8018554212169038474}
   _matController: {fileID: 6940067216120982943}
+  TimeScale: {fileID: 4415029831742479886}
   <Stats>k__BackingField: {fileID: 11400000, guid: 071960f8fba6a4142a9ef95b9387637f, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -1234,6 +1237,21 @@ MonoBehaviour:
   OnStunUpdate:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4415029831742479886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f66d97fa3f37448b3c9429cec0a03a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _team: 0
+  _baseTimeScale: 1
+  CurrentTimeScale: 1
 --- !u!1001 &519891415355162520
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1252,7 +1270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.11435835
+      value: 0.114358306
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 77519b1d1a4f61f458860a02ddb53fb7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1509,7 +1527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c77f12c21edfbd642819241408d4ab15, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.123166665
+      value: 0.12316668
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c77f12c21edfbd642819241408d4ab15, type: 3}
       propertyPath: m_LocalRotation.w

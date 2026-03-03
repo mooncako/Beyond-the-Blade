@@ -130,6 +130,8 @@ public class AnimationStateMachine : MonoBehaviour
         {
             _moveState.UpdateMovementParameters();
         }
+        
+        CurrentState.OnUpdateState();
     }
     public void SwapAnimation(AnimationStateType type, ClipTransition clip)
     {

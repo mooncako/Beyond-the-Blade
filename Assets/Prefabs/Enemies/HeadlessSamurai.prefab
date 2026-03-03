@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 3185499813960374161}
   - component: {fileID: 7963954931857946615}
   - component: {fileID: 8564739311905814571}
+  - component: {fileID: 7878415969445763125}
   m_Layer: 8
   m_Name: HeadlessSamurai
   m_TagString: Untagged
@@ -342,6 +343,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 8598472387181080395}
   <NavMeshAgent>k__BackingField: {fileID: 3926015235504465536}
   <CapsuleCollider>k__BackingField: {fileID: 4191314971418661949}
+  _timeScale: {fileID: 7878415969445763125}
   _isHumanoid: 1
 --- !u!114 &6264934010256777202
 MonoBehaviour:
@@ -544,6 +546,7 @@ MonoBehaviour:
   _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 222520671504956991}
   _matController: {fileID: 892959076032922647}
+  TimeScale: {fileID: 7878415969445763125}
   <Stats>k__BackingField: {fileID: 11400000, guid: 40806dd3b32d4334595aa39afe3346c0, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -1180,6 +1183,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _Animator: {fileID: 6233116775064065168}
   _Target: {fileID: 8598472387181080395}
+--- !u!114 &7878415969445763125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f66d97fa3f37448b3c9429cec0a03a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _team: 0
+  _baseTimeScale: 1
+  CurrentTimeScale: 1
 --- !u!1001 &394492389435386265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1765,7 +1783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.11696307
+      value: 0.11696303
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1944,7 +1962,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.021623451
+      value: 0.021623492
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.w

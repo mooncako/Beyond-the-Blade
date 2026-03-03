@@ -178,6 +178,7 @@ GameObject:
   - component: {fileID: 5162801268352820049}
   - component: {fileID: 2277548745975462270}
   - component: {fileID: 1916950120843236822}
+  - component: {fileID: 1680034757828782143}
   m_Layer: 8
   m_Name: Lantern
   m_TagString: Untagged
@@ -294,7 +295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Speed>k__BackingField: 5
   <Acceleration>k__BackingField: 10
-  <TurnSpeed>k__BackingField: 50
+  <TurnSpeed>k__BackingField: 5
   <OnlyTurnWithInput>k__BackingField: 1
   <StoppingDistance>k__BackingField: 0.25
   <LookInMoveDirection>k__BackingField: 1
@@ -341,6 +342,7 @@ MonoBehaviour:
   <Rigidbody>k__BackingField: {fileID: 8598472387181080395}
   <NavMeshAgent>k__BackingField: {fileID: 3926015235504465536}
   <CapsuleCollider>k__BackingField: {fileID: 4191314971418661949}
+  _timeScale: {fileID: 1680034757828782143}
   _isHumanoid: 1
 --- !u!114 &6264934010256777202
 MonoBehaviour:
@@ -497,6 +499,7 @@ MonoBehaviour:
   _persistentVFXHelper: {fileID: 5162801268352820049}
   _parryCollider: {fileID: 797566862508417072}
   _matController: {fileID: 1960093338022467650}
+  TimeScale: {fileID: 1680034757828782143}
   <Stats>k__BackingField: {fileID: 11400000, guid: 6ac54f7457858c843ac482b61c8b1af8, type: 2}
   _attackableMask:
     serializedVersion: 2
@@ -1133,6 +1136,21 @@ MonoBehaviour:
   OnStunUpdate:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1680034757828782143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3744354742756812122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f66d97fa3f37448b3c9429cec0a03a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _team: 0
+  _baseTimeScale: 1
+  CurrentTimeScale: 1
 --- !u!1001 &972372032365803414
 PrefabInstance:
   m_ObjectHideFlags: 0
