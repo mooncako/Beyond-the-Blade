@@ -576,8 +576,9 @@ public class PlayerController : Controller,
 
         Movement.SetLookPosition(aimPosition);
         _isPerfectParryWindowActive = true;
+        ParryInitSoundEvent.Trigger();
     }
-
+    
     private void DetectParry()
     {
         // get all colliders in arc

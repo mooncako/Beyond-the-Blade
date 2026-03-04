@@ -2,12 +2,13 @@ using MoreMountains.Tools;
 using UnityEngine;
 
 public class PlayerSoundController : SoundController,
-    MMEventListener<ParrySuccessEvent>
+    MMEventListener<ParrySuccessEvent>, 
+    MMEventListener<ParryInitSoundEvent>
 {
     [Header("SFX")]
     [SerializeField] private FMODUnity.EventReference _heavyAttackSFX;
     [SerializeField] private FMODUnity.EventReference _musoAttackSFX;
-    [SerializeField] private FMODUnity.EventReference _weakParrySFX;
+    [SerializeField] private FMODUnity.EventReference _parryInitSFX;
     [SerializeField] private FMODUnity.EventReference _perfectParrySFX;
     [SerializeField] private FMODUnity.EventReference _sheatheSFX;
     [SerializeField] private FMODUnity.EventReference _musoActivatedSFX;
@@ -20,12 +21,14 @@ public class PlayerSoundController : SoundController,
     {
        
         this.MMEventStartListening<ParrySuccessEvent>();
+        this.MMEventStartListening<ParryInitSoundEvent>();
     }
 
     void OnDisable()
     {
 
         this.MMEventStopListening<ParrySuccessEvent>();
+        this.MMEventStopListening<ParryInitSoundEvent>();
     }
     public override void PlayFootstep()
     {
@@ -64,5 +67,11 @@ public class PlayerSoundController : SoundController,
     {
         FMODUnity.RuntimeManager.PlayOneShot(_perfectParrySFX, transform.position);
     }
+    public void OnMMEvent(ParryInitSoundEvent e)
+    {
+        FMODUnity.RuntimeManager.PlayOneShot(_parryInitSFX, transform.position);
+    }
+
+
    
 }
