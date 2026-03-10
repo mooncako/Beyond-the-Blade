@@ -27,6 +27,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-8651221395265706182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/Hososhi/HososhiShieldHit
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/Hososhi/HososhiShieldHit
+  Guid:
+    Data1: -1557215430
+    Data2: 1116583721
+    Data3: -298521171
+    Data4: -171562920
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-8111128446026480175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,33 +162,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 265
---- !u!114 &-4472254075960380436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/Enemies/HososhiHit
-  m_EditorClassIdentifier: 
-  Path: event:/SFX/Enemies/HososhiHit
-  Guid:
-    Data1: -1557215430
-    Data2: 1116583721
-    Data3: -298521171
-    Data4: -171562920
-  Banks:
-  - {fileID: 1667499214880025089}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
 --- !u!114 &-4332801493084317880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +189,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 100
   Length: 1120
+--- !u!114 &-3793334877883500325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/Hososhi/HososhiBodyHit
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/Hososhi/HososhiBodyHit
+  Guid:
+    Data1: 1692684554
+    Data2: 1116304699
+    Data3: -1116020070
+    Data4: -981021155
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-1138822804711436300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,10 +231,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639086967905495144
+  lastModified: 639086978707077564
   FileSizes:
   - Name: Desktop
-    Value: 1340
+    Value: 1404
   Exists: 1
 --- !u!114 &-739332947194891199
 MonoBehaviour:
@@ -252,7 +279,6 @@ MonoBehaviour:
   - {fileID: -1138822804711436300}
   - {fileID: 1667499214880025089}
   EditorEvents:
-  - {fileID: -4472254075960380436}
   - {fileID: 4325133015037362717}
   - {fileID: -8031171611054598253}
   - {fileID: -8111128446026480175}
@@ -263,12 +289,14 @@ MonoBehaviour:
   - {fileID: -739332947194891199}
   - {fileID: 3881416592594345101}
   - {fileID: -6934509038088636660}
+  - {fileID: -3793334877883500325}
+  - {fileID: -8651221395265706182}
   EditorParameters: []
   MasterBanks:
   - {fileID: 1667499214880025089}
   StringsBanks:
   - {fileID: -1138822804711436300}
-  cacheTime: 639086967905495144
+  cacheTime: 639086978707077564
   cacheVersion: 131632
 --- !u!114 &1667499214880025089
 MonoBehaviour:
@@ -285,10 +313,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639086967905474678
+  lastModified: 639086978707057359
   FileSizes:
   - Name: Desktop
-    Value: 241728
+    Value: 243136
   Exists: 1
 --- !u!114 &2036003414244322501
 MonoBehaviour:
