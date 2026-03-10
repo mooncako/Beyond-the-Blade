@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-9092725640299678111
+--- !u!114 &-9182877720043450758
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/ParryInit
+  m_Name: event:/SFX/Enemies/BossHit
   m_EditorClassIdentifier: 
-  Path: event:/SFX/ParryInit
+  Path: event:/SFX/Enemies/BossHit
   Guid:
-    Data1: -1630465844
-    Data2: 1270083380
-    Data3: -2839375
-    Data4: -1637085890
+    Data1: -1162536205
+    Data2: 1304349492
+    Data3: 958791573
+    Data4: -1834762291
   Banks:
   - {fileID: 1667499214880025089}
   IsStream: 0
@@ -26,36 +26,8 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 265
---- !u!114 &-4554938467197485602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/Footstep
-  m_EditorClassIdentifier: 
-  Path: event:/SFX/Footstep
-  Guid:
-    Data1: 44596553
-    Data2: 1227294806
-    Data3: 795252128
-    Data4: 1976150765
-  Banks:
-  - {fileID: 1667499214880025089}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters:
-  - {fileID: 7481788320532916408}
-  MinDistance: 1
-  MaxDistance: 100
   Length: 0
---- !u!114 &-3810115227202331774
+--- !u!114 &-8111128446026480175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -65,9 +37,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/EnemyOnHitSFX
+  m_Name: event:/SFX/Enemies/EnemyOnHitSFX
   m_EditorClassIdentifier: 
-  Path: event:/SFX/EnemyOnHitSFX
+  Path: event:/SFX/Enemies/EnemyOnHitSFX
   Guid:
     Data1: 1742837162
     Data2: 1201194138
@@ -82,7 +54,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 95
   Length: 280
---- !u!114 &-2061505266707235154
+--- !u!114 &-8031171611054598253
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,9 +64,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/PlayerAttack
+  m_Name: event:/SFX/Player/PlayerAttack
   m_EditorClassIdentifier: 
-  Path: event:/SFX/PlayerAttack
+  Path: event:/SFX/Player/PlayerAttack
   Guid:
     Data1: -242908779
     Data2: 1115343970
@@ -108,7 +80,115 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 100
-  Length: 600
+  Length: 590
+--- !u!114 &-6934509038088636660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiAttack
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiAttack
+  Guid:
+    Data1: -572086286
+    Data2: 1266172110
+    Data3: 841441434
+    Data4: -1660373060
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-4526292329662443795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Player/ParryInit
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Player/ParryInit
+  Guid:
+    Data1: -1630465844
+    Data2: 1270083380
+    Data3: -2839375
+    Data4: -1637085890
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 265
+--- !u!114 &-4472254075960380436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/HososhiHit
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/HososhiHit
+  Guid:
+    Data1: -1557215430
+    Data2: 1116583721
+    Data3: -298521171
+    Data4: -171562920
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-4332801493084317880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Player/PerfectParrySFX
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Player/PerfectParrySFX
+  Guid:
+    Data1: 760639426
+    Data2: 1222294234
+    Data3: -1741793372
+    Data4: 615940458
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 100
+  Length: 1120
 --- !u!114 &-1138822804711436300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,11 +204,38 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639081604266621240
+  lastModified: 639086936167754651
   FileSizes:
   - Name: Desktop
-    Value: 1060
+    Value: 1340
   Exists: 1
+--- !u!114 &-739332947194891199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiHit
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiHit
+  Guid:
+    Data1: -1531327924
+    Data2: 1232308958
+    Data3: 466667706
+    Data4: -754192849
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 480
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,18 +252,23 @@ MonoBehaviour:
   - {fileID: -1138822804711436300}
   - {fileID: 1667499214880025089}
   EditorEvents:
-  - {fileID: -2061505266707235154}
-  - {fileID: -4554938467197485602}
-  - {fileID: 1823962624617289361}
-  - {fileID: -3810115227202331774}
-  - {fileID: 4759571373721339209}
-  - {fileID: -9092725640299678111}
+  - {fileID: -4472254075960380436}
+  - {fileID: 4325133015037362717}
+  - {fileID: -8031171611054598253}
+  - {fileID: -8111128446026480175}
+  - {fileID: 2036003414244322501}
+  - {fileID: -4332801493084317880}
+  - {fileID: -4526292329662443795}
+  - {fileID: -9182877720043450758}
+  - {fileID: -739332947194891199}
+  - {fileID: 3881416592594345101}
+  - {fileID: -6934509038088636660}
   EditorParameters: []
   MasterBanks:
   - {fileID: 1667499214880025089}
   StringsBanks:
   - {fileID: -1138822804711436300}
-  cacheTime: 639081604266621240
+  cacheTime: 639086936167754651
   cacheVersion: 131632
 --- !u!114 &1667499214880025089
 MonoBehaviour:
@@ -173,12 +285,12 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639081604266606241
+  lastModified: 639086936167739586
   FileSizes:
   - Name: Desktop
-    Value: 137792
+    Value: 222688
   Exists: 1
---- !u!114 &1823962624617289361
+--- !u!114 &2036003414244322501
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,9 +300,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/PlayerDash
+  m_Name: event:/SFX/Player/PlayerDash
   m_EditorClassIdentifier: 
-  Path: event:/SFX/PlayerDash
+  Path: event:/SFX/Player/PlayerDash
   Guid:
     Data1: -790243909
     Data2: 1123366995
@@ -205,7 +317,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 100
   Length: 600
---- !u!114 &4759571373721339209
+--- !u!114 &3881416592594345101
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -215,24 +327,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/SFX/PerfectParrySFX
+  m_Name: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiDeath
   m_EditorClassIdentifier: 
-  Path: event:/SFX/PerfectParrySFX
+  Path: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiDeath
   Guid:
-    Data1: 760639426
-    Data2: 1222294234
-    Data3: -1741793372
-    Data4: 615940458
+    Data1: -45371166
+    Data2: 1167948985
+    Data3: 1642341566
+    Data4: -225296329
   Banks:
   - {fileID: 1667499214880025089}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
-  MaxDistance: 100
-  Length: 1120
---- !u!114 &7481788320532916408
+  MaxDistance: 20
+  Length: 1500
+--- !u!114 &4207645408960562133
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -259,3 +371,31 @@ MonoBehaviour:
   - Water
   - None
   Exists: 1
+--- !u!114 &4325133015037362717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Player/Footstep
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Player/Footstep
+  Guid:
+    Data1: 44596553
+    Data2: 1227294806
+    Data3: 795252128
+    Data4: 1976150765
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 4207645408960562133}
+  MinDistance: 1
+  MaxDistance: 100
+  Length: 0

@@ -838,6 +838,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7764664105039818142, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
+      propertyPath: _attackSFX.Path
+      value: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764664105039818142, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
+      propertyPath: _attackSFX.Guid.Data1
+      value: -572086286
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764664105039818142, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
+      propertyPath: _attackSFX.Guid.Data2
+      value: 1266172110
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764664105039818142, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
+      propertyPath: _attackSFX.Guid.Data3
+      value: 841441434
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764664105039818142, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
+      propertyPath: _attackSFX.Guid.Data4
+      value: -1660373060
+      objectReference: {fileID: 0}
     - target: {fileID: 8594782585277001859, guid: a53c4923883d7ee4897330738489b3d2, type: 3}
       propertyPath: m_Name
       value: HeadlessSamuraiSpawner
@@ -1199,7 +1219,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &920339246
+--- !u!84 &876962506
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1211,8 +1231,8 @@ RenderTexture:
     Hash: 00000000000000000000000000000000
   m_IsAlphaChannelOptional: 0
   serializedVersion: 6
-  m_Width: 1000
-  m_Height: 498
+  m_Width: 1101
+  m_Height: 506
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthStencilFormat: 0
@@ -1365,8 +1385,16 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _dashSFX.Path
+      value: event:/SFX/Player/PlayerDash
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: _parryInitSFX.Path
-      value: event:/SFX/ParryInit
+      value: event:/SFX/Player/ParryInit
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
+      propertyPath: _perfectParrySFX.Path
+      value: event:/SFX/Player/PerfectParrySFX
       objectReference: {fileID: 0}
     - target: {fileID: 9112547462766832494, guid: 4ddcd4b2c3d678c4f8598298ec22098e, type: 3}
       propertyPath: _parryInitSFX.Guid.Data1

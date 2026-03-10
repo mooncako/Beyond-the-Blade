@@ -486,11 +486,11 @@ MonoBehaviour:
     Path: 
   _onHitSFX:
     Guid:
-      Data1: 1742837162
-      Data2: 1201194138
-      Data3: 1635568018
-      Data4: 1653407886
-    Path: event:/SFX/EnemyOnHitSFX
+      Data1: -1531327924
+      Data2: 1232308958
+      Data3: 466667706
+      Data4: -754192849
+    Path: event:/SFX/Enemies/HeadlessSamuraiHit
   _onSpawnSFX:
     Guid:
       Data1: 0
@@ -500,11 +500,11 @@ MonoBehaviour:
     Path: 
   _onDeathSFX:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -45371166
+      Data2: 1167948985
+      Data3: 1642341566
+      Data4: -225296329
+    Path: event:/SFX/Enemies/HeadlessSamurai/HeadlessSamuraiDeath
   _dissolveDeathSFX:
     Guid:
       Data1: 0
@@ -1783,11 +1783,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.11696303
+      value: 0.11696315
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.67962575
+      value: 0.679626
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1795,11 +1795,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.38121483
+      value: 0.38121465
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.54660726
+      value: 0.54660714
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da7b56ec6df4ae94b89a3d1a24086897, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1954,7 +1954,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.16952434
+      value: -0.16952443
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1962,7 +1962,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.021623492
+      value: 0.021623373
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56698daf87f9294e8262934b11b9ffb, type: 3}
       propertyPath: m_LocalRotation.w
