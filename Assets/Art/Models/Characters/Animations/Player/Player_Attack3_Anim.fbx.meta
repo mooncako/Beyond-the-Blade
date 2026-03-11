@@ -55,16 +55,16 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.07812508
-        functionName: DamageAnimEvent
-        data: SWORD_BASIC_03_ANIM
+      - time: 0.034561414
+        functionName: PlayAttackSFX
+        data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.063432805
-        functionName: PlayAttackSFX
-        data: 
+      - time: 0.07812508
+        functionName: DamageAnimEvent
+        data: SWORD_BASIC_03_ANIM
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0

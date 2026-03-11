@@ -31,6 +31,8 @@ public class PlayerController : Controller,
     [SerializeField, FoldoutGroup("Base Reference")] private SplineAnimate _splineAnimate;
     [SerializeField, FoldoutGroup("Base Reference")] private GameObject _playerMesh;
     [SerializeField, FoldoutGroup("Base Reference")] private VisualEffect _teleportEffect;
+    [SerializeField, FoldoutGroup("Base Reference")] private PlayerSoundController _playerSoundController;
+
     [Header("General Settings")]
     [BoxGroup("Input")] public InputProcessor InputProcessor;
     [SerializeField, BoxGroup("Input"), Tooltip("The maximum distance for aim assist to find a target.")] private float _aimAssistDistance = 2.5f;
@@ -72,6 +74,7 @@ public class PlayerController : Controller,
         if (Energy == null) Energy = GetComponent<Energy>();
         if (Stamina == null) Stamina = GetComponent<Stamina>();
         if (_splineAnimate == null) _splineAnimate = GetComponent<SplineAnimate>();
+        if (_playerSoundController == null) _playerSoundController = GetComponent<PlayerSoundController>();
         if ((_attackableMask & (1 << 8)) == 0)
         {
             _attackableMask |= 1 << 8;
@@ -459,7 +462,7 @@ public class PlayerController : Controller,
 
             if (Movement.IsGrounded && Stamina.ConsumeStamina(Stats.DashStaminaCost))
             {
-
+                _playerSoundController.PlayDashSFX();
                 Movement.Dash(InputProcessor.RawInputVector != Vector2.zero ? CameraUtil.GetSnappedDir(InputProcessor.RawInputVector, Camera.main, 8) : GetMoveDir(), Stats.DashDistance);
                 StartIframe();
                 UpdateCurrentSkill(CurrentWeapon.GetDashSkill());
