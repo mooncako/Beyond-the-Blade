@@ -228,7 +228,7 @@ public class CustomCharacterMovement : CharacterMovement3D
             direction = direction.normalized;
         }
         
-        float dashDuration =.2f;
+        float dashDuration = .5f;
         Vector3 startPos = transform.position;
         Vector3 endPos = startPos + direction * dashDistance;
         gameObject.layer = LayerMask.NameToLayer("NoClip");
