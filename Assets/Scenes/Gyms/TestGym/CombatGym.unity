@@ -1219,43 +1219,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &893754865
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: RaytracedHardShadow
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 1191
-  m_Height: 621
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 0
-  m_ColorFormat: 45
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &930218448
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1687,7 +1650,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onDeathSFX.Path
-      value: event:/SFX/Enemies/EnemySpawn
+      value: event:/SFX/Enemies/Hososhi/HohoshiDeath
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onSpawnSFX.Path
@@ -1711,19 +1674,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onDeathSFX.Guid.Data1
-      value: -107516211
+      value: 145367864
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onDeathSFX.Guid.Data2
-      value: 1087282918
+      value: 1338611362
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onDeathSFX.Guid.Data3
-      value: -1703200846
+      value: -1905765712
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onDeathSFX.Guid.Data4
-      value: -1915832577
+      value: -1483042995
       objectReference: {fileID: 0}
     - target: {fileID: 4878083594051433882, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
       propertyPath: _onSpawnSFX.Guid.Data1
@@ -1794,6 +1757,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1f52c1de10b78d46b79963b0d6a79d7, type: 3}
+--- !u!84 &1231747258
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RaytracedHardShadow
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 1245
+  m_Height: 646
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 0
+  m_ColorFormat: 45
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1312715436
 GameObject:
   m_ObjectHideFlags: 0
