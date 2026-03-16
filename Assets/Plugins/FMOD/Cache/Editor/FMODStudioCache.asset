@@ -27,6 +27,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-9082886832534475780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/EnemySpawn
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/EnemySpawn
+  Guid:
+    Data1: -107516211
+    Data2: 1087282918
+    Data3: -1703200846
+    Data4: -1915832577
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-8651221395265706182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +242,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 0
+  Length: 420
 --- !u!114 &-1138822804711436300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,10 +258,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639086978707077564
+  lastModified: 639091968411680122
   FileSizes:
   - Name: Desktop
-    Value: 1404
+    Value: 1504
   Exists: 1
 --- !u!114 &-739332947194891199
 MonoBehaviour:
@@ -263,6 +290,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 480
+--- !u!114 &-541944734569332020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SFX/Enemies/Hososhi/HohoshiDeath
+  m_EditorClassIdentifier: 
+  Path: event:/SFX/Enemies/Hososhi/HohoshiDeath
+  Guid:
+    Data1: 145367864
+    Data2: 1338611362
+    Data3: -1905765712
+    Data4: -1483042995
+  Banks:
+  - {fileID: 1667499214880025089}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,12 +345,14 @@ MonoBehaviour:
   - {fileID: -6934509038088636660}
   - {fileID: -3793334877883500325}
   - {fileID: -8651221395265706182}
+  - {fileID: -541944734569332020}
+  - {fileID: -9082886832534475780}
   EditorParameters: []
   MasterBanks:
   - {fileID: 1667499214880025089}
   StringsBanks:
   - {fileID: -1138822804711436300}
-  cacheTime: 639086978707077564
+  cacheTime: 639091968411680122
   cacheVersion: 131632
 --- !u!114 &1667499214880025089
 MonoBehaviour:
@@ -313,10 +369,10 @@ MonoBehaviour:
   Path: FMOD/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639086978707057359
+  lastModified: 639091968411659676
   FileSizes:
   - Name: Desktop
-    Value: 243136
+    Value: 262656
   Exists: 1
 --- !u!114 &2036003414244322501
 MonoBehaviour:
