@@ -20,7 +20,7 @@ public class SoundController : MonoBehaviour
         if (_health == null) _health = GetComponent<Health>();
     }
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         if (_health != null)
         {
@@ -30,7 +30,7 @@ public class SoundController : MonoBehaviour
         }
     }
 
-    void OnDisable()
+    protected virtual void OnDisable()
     {
         if (_health != null)
         {
