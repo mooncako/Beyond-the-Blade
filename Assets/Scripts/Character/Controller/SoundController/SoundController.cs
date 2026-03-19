@@ -1,6 +1,8 @@
+using MoreMountains.Tools;
 using UnityEngine;
 
-public class SoundController : MonoBehaviour
+public class SoundController : MonoBehaviour,
+    MMEventListener<OnZeroDamageEvent>
 {
     [Header("SFX")]
     [SerializeField] protected FMODUnity.EventReference _attackSFX;
@@ -28,6 +30,7 @@ public class SoundController : MonoBehaviour
             _health.OnDeath.AddListener(PlayOnDeathSFX);
             _health.OnHealthRecovery.AddListener(PlayOnHealthRecoverySFX);
         }
+        this.MMEventStartListening<OnZeroDamageEvent>();
     }
 
     protected virtual void OnDisable()
@@ -38,6 +41,7 @@ public class SoundController : MonoBehaviour
             _health.OnDeath.RemoveListener(PlayOnDeathSFX);
             _health.OnHealthRecovery.RemoveListener(PlayOnHealthRecoverySFX);
         }
+        this.MMEventStopListening<OnZeroDamageEvent>();
     }
 
     public virtual void PlayFootstep()
@@ -77,5 +81,10 @@ public class SoundController : MonoBehaviour
     public virtual void PlayOnHealthRecoverySFX(float amount)
     {
         FMODUnity.RuntimeManager.PlayOneShot(_onHealthRecoverySFX, transform.position);
+    }
+
+    public virtual void OnMMEvent(OnZeroDamageEvent e)
+    {
+        
     }
 }
