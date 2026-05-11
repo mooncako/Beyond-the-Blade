@@ -36,6 +36,20 @@ public class ParryCollider : MonoBehaviour
         CloseCollider();
     }
 
+    void OnDisable()
+    {
+        if (_collider != null)
+            CloseCollider();
+    }
+
+    void LateUpdate()
+    {
+        if (_playerController == null || !_collider.enabled) return;
+
+        if (!_playerController.IsPerfectParryWindowActive)
+            CloseCollider();
+    }
+
     public void OpenCollider()
     {
         _collider.enabled = true;
