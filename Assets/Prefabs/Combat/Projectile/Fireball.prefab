@@ -155,6 +155,9 @@ MonoBehaviour:
   OnProjectileDestroyed:
     m_PersistentCalls:
       m_Calls: []
+  OnProjectileDeflected:
+    m_PersistentCalls:
+      m_Calls: []
   ObjectPool: {fileID: 0}
   _data:
     speed: 2
@@ -169,11 +172,12 @@ MonoBehaviour:
     ownerTeam: 1
     targetLayers:
       serializedVersion: 2
-      m_Bits: 128
+      m_Bits: 2176
     collisionLayers:
       serializedVersion: 2
-      m_Bits: 128
+      m_Bits: 2176
     rotateInFlight: 0
     rotationSpeed: 0
+  _canBeDeflected: 1
   _projectileVFX: {fileID: 0}
   _onDestroyVFX: {fileID: 0}

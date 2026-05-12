@@ -76,6 +76,8 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     {
         if (!IsActive) return;
 
+        if (IsParryCollider(other)) return;
+
         HandleCollision(other);
     }
 
@@ -217,7 +219,7 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
         OnProjectileDeflected?.RemoveAllListeners();
 
         IsActive = false;
-        _rigidbody.linearVelocity = Vector3.zero;
+        // _rigidbody.linearVelocity = Vector3.zero;
         _hasBeenDeflected = false;
     }
     #endregion
@@ -256,6 +258,15 @@ public class BaseProjectile : MonoBehaviour, IProjectile, IPoolable
     private void UpdateRotation()
     {
         transform.Rotate(Vector3.forward, _data.rotationSpeed * Time.fixedDeltaTime);
+    }
+
+    private bool IsParryCollider(Collider other)
+    {
+        if (!_canBeDeflected || _hasBeenDeflected) return false;
+
+        if (other.TryGetComponent<ParryCollider>(out _)) return true;
+
+        return other.GetComponentInParent<ParryCollider>() != null;
     }
 
     protected virtual void HandleCollision(Collider other)

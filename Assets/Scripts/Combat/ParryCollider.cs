@@ -72,7 +72,15 @@ public class ParryCollider : MonoBehaviour
         if (_playerController == null || !_playerController.IsPerfectParryWindowActive) return;
         
 
-        BaseProjectile projectile = other.GetComponent<BaseProjectile>();
+        BaseProjectile projectile = other.attachedRigidbody != null
+            ? other.attachedRigidbody.GetComponent<BaseProjectile>()
+            : other.GetComponent<BaseProjectile>();
+
+        if (projectile == null)
+        {
+            projectile = other.GetComponentInParent<BaseProjectile>();
+        }
+
         if (projectile == null || !projectile.IsActive) return;
         
         if (!projectile.CanBeDeflected) return;
