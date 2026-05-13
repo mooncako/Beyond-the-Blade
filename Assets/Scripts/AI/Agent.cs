@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using CrashKonijn.Agent.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,8 +6,9 @@ using UnityEngine;
 public class Agent : SerializedMonoBehaviour
 {
     [SerializeField, BoxGroup("References")] protected AgentBlackboard _blackboard;
-    [SerializeField, BoxGroup("Settings")] protected List<IAgentAction> _actions = new List<IAgentAction>();
-    [SerializeField, BoxGroup("Debug"), ReadOnly] protected IAgentAction _currentAction;
+    [field: SerializeField, BoxGroup("Settings")] protected List<AgentStateSO> _states = new List<AgentStateSO>();
+    [SerializeField, BoxGroup("Settings")] protected AgentStateSO _initialState;
+    [SerializeField, BoxGroup("Debug"), ReadOnly] protected AgentStateSO _currentState;
     protected Queue<IAgentAction> _actionQueue = new Queue<IAgentAction>();
 
     protected virtual void OnValidate()
@@ -20,9 +20,9 @@ public class Agent : SerializedMonoBehaviour
 
     protected virtual void Update()
     {
-        if(_currentAction != null)
+        if(_currentState != null)
         {
-            _currentAction.Update(Time.deltaTime);
+            _currentState.OnStateUpdate(Time.deltaTime);
         }
     }
 }
