@@ -3,49 +3,41 @@ using System.Collections;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(EnemyController), typeof(AgentBehaviour))]
+[RequireComponent(typeof(EnemyController))]
 public class AgentMoveBehavior : MonoBehaviour
 {
-    [SerializeField, FoldoutGroup("References")] private Animator _animator;
-    [SerializeField, FoldoutGroup("References")] private AgentBehaviour _agentBehavior;
+    // [SerializeField, FoldoutGroup("References")] private Animator _animator;
+    [SerializeField, FoldoutGroup("References")] private Agent _agent;
     [SerializeField, FoldoutGroup("References")] private EnemyController _controller;
     [SerializeField, FoldoutGroup("References")] private AnimationStateMachine _animationStateMachine;
 
-
-    [SerializeField, BoxGroup("Debug"), ReadOnly] private ITarget _currentTarget;
-
     private void OnValidate()
     {
-        if (_animator == null) _animator = GetComponent<Animator>();
+        // if (_animator == null) _animator = GetComponent<Animator>();
         if (_controller == null) _controller = GetComponent<EnemyController>();
-        if (_agentBehavior == null) _agentBehavior = GetComponent<AgentBehaviour>(); //similar to the navmeshagent
+        if (_agent == null) _agent = GetComponent<Agent>();
         if (_animationStateMachine == null) _animationStateMachine = GetComponent<AnimationStateMachine>();
 
     }
 
     private void OnEnable()
     {
-        _agentBehavior.Events.OnTargetChanged += OnTargetChanged;
-        _agentBehavior.Events.OnTargetNotInRange += OnTargetNotInRange;
+        _agent.OnStateChanged += OnStateChanged;
     }
 
     private void OnDisable()
     {
-        _agentBehavior.Events.OnTargetChanged -= OnTargetChanged;
-        _agentBehavior.Events.OnTargetNotInRange -= OnTargetNotInRange;
+        _agent.OnStateChanged -= OnStateChanged;
     }
 
     void FixedUpdate()
     {
-        if (_agentBehavior.IsPaused) 
-        {
-            _controller.Movement.Stop();
-            return;
-        }
-        if (_currentTarget == null) 
+        
+        if (_agent.Blackboard == null || _agent.Blackboard.TargetTransform == null) 
         {
             _controller.Movement.Stop();
             return;
@@ -61,20 +53,18 @@ public class AgentMoveBehavior : MonoBehaviour
             return;
         }
         
-        _controller.MoveTo(_currentTarget.Position);
+        if(_agent.GetNextMovementPosition(out Vector3 nextPosition))
+        {
+            _controller.MoveTo(nextPosition);
+            // transform.position = Vector3.MoveTowards(transform.position, nextPosition, Time.fixedDeltaTime * 3f);
+        }
     }
 
-    private void OnTargetChanged(ITarget target, bool inRange)
-    {
-        _currentTarget = target;
-        _controller.MoveTo(_currentTarget.Position);
-    }
-
-
-    private void OnTargetNotInRange(ITarget target)
+    private void OnStateChanged(AgentStateSO newState)
     {
         
     }
+
     
     
 }
